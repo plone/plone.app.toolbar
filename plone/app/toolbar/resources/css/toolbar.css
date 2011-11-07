@@ -1,0 +1,253 @@
+* {
+    font-family: Arial;
+}
+body {
+    margin: 0;
+}
+.toolbartop {
+    height: 6px;
+    background-color: #3d8cd5;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.3);
+    -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.3);
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.3);
+}
+
+.toolbarglobal {
+    background-image: linear-gradient(top, #3e3f42, #2e2f32);
+    background-image: -moz-linear-gradient(top, #3e3f42, #2e2f32);
+    background-image: -webkit-linear-gradient(top, #3e3f42, #2e2f32);
+    border-bottom: solid 1px #000;
+}
+
+.toolbarlocal {
+    background-color: #f2f2f2;
+    border-bottom: solid 1px #e5e5e5;
+}
+
+.toolbarleft {
+    padding-bottom: 4px;
+}
+.toolbarright {
+    border-bottom-left-radius: 34px 34px;
+    -moz-border-bottom-left-radius: 34px 34px;
+    -webkit-border-bottom-left-radius: 34px 34px;
+    background-image: linear-gradient(top, #3d8cd5, #347ebf);
+    background-image: -moz-linear-gradient(top, #3d8cd5, #347ebf);
+    background-image: -webkit-linear-gradient(top, #3d8cd5, #347ebf);
+    float: right;
+    height: 34px;
+}
+.toolbarglobal .toolbarright {
+    box-shadow: inset 0 -1px rgba(255,255,255,0.3);
+    -moz-box-shadow: inset 0 -1px rgba(255,255,255,0.3);
+    -webkit-box-shadow: inset 0 -1px rgba(255,255,255,0.3);
+}
+.swirl {
+    width: 32px;
+    height: 16px;
+    display: block;
+    float: left;
+    top: 0px;
+    left: 0px;
+    margin-left: -24px;
+    background-image: linear-gradient(top, #3d8cd5, #3a86cb);
+    background-image: -moz-linear-gradient(top, #3d8cd5, #3a86cb);
+    background-image: -webkit-linear-gradient(top, #3d8cd5, #3a86cb);
+    overflow: hidden;
+}
+.swirl div {
+    border-top-right-radius: 34px 34px;
+    -moz-border-top-right-radius: 34px 34px;
+    -webkit-border-top-right-radius: 34px 34px;
+    width: 32px;
+    height: 32px;
+}
+.toolbarglobal .swirl div {
+    background-image: linear-gradient(top, #3e3f42, #2e2f32);
+    background-image: -moz-linear-gradient(top, #3e3f42, #2e2f32);
+    background-image: -webkit-linear-gradient(top, #3e3f42, #2e2f32);
+}
+.toolbarlocal .swirl div {
+    background-color: #f2f2f2;
+}
+.personalbar {
+    padding: 2px 8px 0 26px;
+    font: 13px Arial,sans-serif;
+    color: #fff;
+    line-height: 24px;
+    margin: 0;
+}
+.personalbar li {
+    display: inline-block;
+    margin: 0 4px;
+}
+.cog:hover {
+    cursor: pointer;
+    background: blue;
+}
+.messages {
+    background-color: #cc3c2f;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    font-size: 11px;
+    color: white;
+}
+.personalbar img,
+.personalbar span {
+    vertical-align: middle;
+    color: #fff;
+}
+.portaltabs {
+    margin: 0;
+    padding: 0 0 0 6px;
+}
+.portaltabs a,
+.portaltabs button {
+    display: inline-block;
+    font: 13px Arial;
+    padding: 3px 16px;
+    margin: 4px 4px 0 0;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    cursor: pointer;
+}
+.toolbarglobal .portaltabs button a {
+    text-decoration: none;
+    color: #fff;
+}
+.toolbarglobal .portaltabs a.menu:hover,
+.toolbarglobal .portaltabs button.menu:hover {
+    background: #fff;
+    border-color: #fff;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    border-radius: 4px 4px 0px 0px;
+    -moz-border-radius: 4px 4px 0px 0px;
+    -webkit-border-radius: 4px 4px 0px 0px;
+}
+.toolbarglobal .portaltabs a.menu:hover a,
+.toolbarglobal .portaltabs button.menu:hover a {
+    color: #000;
+}
+.toolbarglobal .portaltabs a,
+.toolbarglobal .portaltabs button {
+    -moz-transition: all 0.1s linear 0s;
+    background-repeat: no-repeat;
+    background-color: #222;
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#404040), color-stop(25%, #404040), to(#222));
+    background-image: linear-gradient(center top , #404040, #404040 25%, #222);
+    background-image: -moz-linear-gradient(center top , #404040, #404040 25%, #222);
+    background-image: -webkit-linear-gradient(center top , #404040, #404040 25%, #222);
+    border-color: #222;
+    border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    border-style: solid;
+    border-width: 1px;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 13px;
+    line-height: normal;
+    padding: 5px 14px 6px;
+    box-shadow: 0 1px rgba(255, 255, 255, 0.1) inset;
+    -moz-box-shadow: 0 1px rgba(255, 255, 255, 0.1) inset;
+    -webkit-box-shadow: 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+.toolbarglobal .portaltabs a:hover,
+.toolbarglobal .portaltabs button:hover,
+.toolbarglobal .portaltabs label:hover {
+    background-position: 0 -15px;
+}
+.toolbarlocal .portaltabs a,
+.toolbarlocal .portaltabs button,
+.toolbarlocal .portaltabs label {
+    -moz-transition: all 0.1s linear 0s;
+    background-repeat: no-repeat;
+    background-color: #E6E6E6;
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#FFFFFF), color-stop(25%, #FFFFFF), to(#E6E6E6));
+    background-image: linear-gradient(center top , #FFFFFF, #FFFFFF 25%, #E6E6E6);
+    background-image: -moz-linear-gradient(center top , #FFFFFF, #FFFFFF 25%, #E6E6E6);
+    background-image: -webkit-linear-gradient(center top , #FFFFFF, #FFFFFF 25%, #E6E6E6);
+    border-color: #CCCCCC #CCCCCC #BBBBBB;
+    border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
+    -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
+    color: #333333;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 13px;
+    line-height: normal;
+    padding: 5px 14px 6px;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+    position: relative;
+}
+.toolbarlocal .portaltabs a:hover,
+.toolbarlocal .portaltabs button:hover,
+.toolbarlocal .portaltabs label:hover {
+    background-position: 0 -15px;
+}
+.toolbarglobal button .panel {
+    display: none;
+}
+.toolbarglobal button.menu:hover .panel {
+    display: block;
+    position: absolute;
+    color: #000;
+    background: #fff;
+    padding: 16px;
+    margin: 5px 0 0 -18px;
+    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.4);
+    -moz-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.4);
+    -webkit-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.4);
+    border-radius: 0px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+}
+.rightactions {
+    float: right;
+    padding: 0 20px 0 0;
+}
+
+label select {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    padding: 5px 14px 6px;
+}
+
+/* BBB */
+#contentActionMenus {
+    top: 0;
+    right: 0;
+    padding: 0;
+}
+
+dl.actionMenu.deactivated dt {
+    margin: 0;
+}
+dl.actionMenu {
+    margin-left: 2px;
+}
+#contentActionMenus dl.actionMenu a, #contentActionMenus dl.actionMenu.activated dd {
+    background-color: #222222;
+}
+#contentActionMenus {
+    background: none;
+}
+#edit-bar {
+    display: none;
+}
