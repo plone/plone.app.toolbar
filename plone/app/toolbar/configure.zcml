@@ -8,12 +8,19 @@
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="plone">
 
+    <!-- Permissions -->
+
+    <permission
+        id="plone.ViewToolbar"
+        title="Plone: View Toolbar"
+        />
+
     <include package=".bbb" />
 
     <gs:registerProfile
         name="default"
         title="Plone Toolbar"
-        description="Installs a the Plone Toolbar"
+        description="Installs the Plone Toolbar"
         directory="profiles/default"
         for="Products.CMFPlone.interfaces.IPloneSiteRoot"
         provides="Products.GenericSetup.interfaces.EXTENSION"
@@ -29,14 +36,6 @@
         directory="bbb/profiles/bbb"
         for="Products.CMFPlone.interfaces.IMigratingPloneSiteRoot"
         provides="Products.GenericSetup.interfaces.EXTENSION"
-        />
-
-
-    <!-- Permissions -->
-
-    <permission
-        id="plone.ViewToolbar"
-        title="Plone: View Toolbar"
         />
 
 

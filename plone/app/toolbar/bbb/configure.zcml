@@ -20,7 +20,7 @@
         layer="..interfaces.IToolbarLayer"
         manager="plone.app.layout.viewlets.interfaces.IPortalTop"
         template="toolbarlink.pt"
-        class=".toolbarlink.ToolbarViewlet"
+        class=".toolbarlink.ToolbarLinkViewlet"
         permission="plone.ViewToolbar"
         />
 
@@ -42,10 +42,6 @@
         permission="zope.Public"
         />
     
-    <cmf:registerDirectory name="skins"
-        directory="skins"
-        recursive="true" />
-
     <!-- disable KSS -->
     <browser:viewletManager
         name="plone.resourceregistries.kineticstylesheets"

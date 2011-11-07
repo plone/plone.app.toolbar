@@ -19,7 +19,7 @@ class Toolbar(BrowserView):
         self.request.response.setHeader('X-Theme-Disabled', 'True')
 
         # Set the CMSUI skin so that we get the correct resources
-        self.context.changeSkin(self.settings.skinName, self.request)
+        #self.context.changeSkin(self.settings.skinName, self.request)
 
         # Commonly useful variables
         self.securityManager = getSecurityManager()

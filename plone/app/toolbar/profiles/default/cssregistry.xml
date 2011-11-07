@@ -1,11 +1,6 @@
 <?xml version="1.0"?>
 <object name="portal_javascripts">
     
-    <stylesheet bundle="toolbar" applyPrefix="true" id="++resource++plone.app.toolbar/css/boilerplate.css"  />
-    <stylesheet bundle="toolbar" applyPrefix="true" id="++resource++plone.app.toolbar/css/structure.css"  />
-    <stylesheet bundle="toolbar" applyPrefix="true" id="++resource++plone.app.toolbar/css/authoring.css"  />
-    <stylesheet bundle="toolbar" applyPrefix="true" id="++resource++plone.app.toolbar/css/sprites.css"  />
-    <stylesheet bundle="toolbar" applyPrefix="true" id="++resource++plone.app.toolbar/css/toolbar.css"  />
-    <stylesheet bundle="toolbar" applyPrefix="true" id="++resource++plone.app.toolbar/css/history-panel.css"  />
+    <stylesheet bundle="default" applyPrefix="true" id="++resource++plone.app.toolbar/css/toolbar.css"  />
 
 </object>
