@@ -1,0 +1,6 @@
+<layers>
+    <layer
+        name="plone.app.toolbar"
+        interface="plone.app.toolbar.interfaces.IToolbarLayer"
+        />
+</layers>

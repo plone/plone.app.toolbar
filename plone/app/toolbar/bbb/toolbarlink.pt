@@ -1,0 +1,52 @@
+<!-- Fallback link to the menu, replaced on page load with an iframe version -->
+
+<div id="plone-cmsui-trigger">
+  <!-- diazo prepend rule -->
+  <script type="text/javascript">
+      (function () {
+          document.getElementById('plone-cmsui-trigger').style.display = 'none';
+      }());
+  </script>
+  <a id="plone-cmsui-menu-link" href="" tal:attributes="href view/getLink">Manage page</a>
+  <style type="text/css">
+      iframe#plone-cmsui-menu {    
+          margin: 0;
+          padding: 0;
+          border: 0;
+          outline: 0;
+          background: #3272aa;
+          position: fixed;
+          _position: absolute;
+          _top: expression(eval((document.body.scrollTop)?document.body.scrollTop:document.documentElement.scrollTop));
+          left: 0;
+          top: 0;
+          width: 100%;
+          z-index: 9999;
+          -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+          -moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+      }
+      body {
+          margin-top: 0;
+      }
+  </style>
+  <script type="text/javascript">
+      (function () {
+          var iframe = document.createElement('iframe'),
+              link = document.getElementById('plone-toolbar-link'),
+              height_cookie = document.cookie.match(/__plone_height=([^;]*)/),
+              height = height_cookie ? height_cookie[1] : '0';
+          if (iframe.allowTransparency !== undefined) {
+              iframe.allowTransparency = 'true';
+          }
+          iframe.src = link.href;
+          iframe.id = iframe.name = 'plone-toolbar';
+          iframe.style.height = height + 'px';
+          document.body.insertBefore(iframe, document.body.childNodes[0])
+          iframe.appendChild(link.cloneNode('true'));
+          if (height) {
+            document.body.style.marginTop = height + 'px';
+          }
+       }());
+  </script>
+</div>

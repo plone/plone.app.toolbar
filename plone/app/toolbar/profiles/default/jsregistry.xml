@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<object name="portal_javascripts">
+    
+    <javascript bundle="toolbar" compression="none" id="++resource++plone.app.toolbar/js/jquery.js" insert-before="*" />
+
+    <!-- JSvariables view from CMFPlone. Defines portal_url, etc. -->
+    <javascript bundle="toolbar" id="plone_javascript_variables.js" />    
+
+    <javascript bundle="toolbar" id="++resource++plone.app.toolbar/js/menu.js"  />
+    <javascript bundle="toolbar" id="++resource++plone.app.toolbar/js/dragdropreorder.js"  />
+    <javascript bundle="toolbar" id="++resource++plone.app.toolbar/js/structure.js"  />
+    <javascript bundle="toolbar" id="++resource++plone.app.toolbar/js/formtabbing.js"  />
+    <javascript bundle="toolbar" id="++resource++plone.app.toolbar/js/history-panel.js"  />
+
+</object>

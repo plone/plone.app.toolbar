@@ -1,0 +1,34 @@
+.contenttype-document {
+    background: no-repeat transparent 0px 4px url(++resource++plone.app.cmsui/images/contenttypes-sprite.png);
+}
+.contenttype-event {
+    background: no-repeat transparent 0px -212px url(++resource++plone.app.cmsui/images/contenttypes-sprite.png);
+}
+.contenttype-folder {
+    background: no-repeat transparent 0px -644px url(++resource++plone.app.cmsui/images/contenttypes-sprite.png);
+}
+.contenttype-link {
+    background: no-repeat transparent 0px -1076px url(++resource++plone.app.cmsui/images/contenttypes-sprite.png);
+}
+.contenttype-news-item {
+    background: no-repeat transparent 0px -1292px url(++resource++plone.app.cmsui/images/contenttypes-sprite.png);
+}
+.contenttype-plone-site {
+    background: no-repeat transparent 0px -1508px url(++resource++plone.app.cmsui/images/contenttypes-sprite.png);
+}
+.contenttype-topic {
+    background: no-repeat transparent 0px -1724px url(++resource++plone.app.cmsui/images/contenttypes-sprite.png);
+}
+
+.contenttype-document,
+.contenttype-event,
+.contenttype-folder,
+.contenttype-link,
+.contenttype-news-item,
+.contenttype-plone-site,
+.contenttype-topic {
+    line-height: 2em;
+    display: inline-block;
+    *display: block;
+    padding-left: 20px !important;
+}
