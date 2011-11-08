@@ -26,7 +26,7 @@ setup(name='plone.app.toolbar',
           'setuptools',
       ],
       extras_require={
-        'test': ['plone.app.toolbar'],
+        'test': ['plone.app.testing'],
       },
       entry_points="""
       [z3c.autoinclude.plugin]
