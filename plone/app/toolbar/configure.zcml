@@ -8,6 +8,8 @@
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="plone">
 
+    <include package="Products.ResourceRegistries" />
+
     <!-- Permissions -->
 
     <permission

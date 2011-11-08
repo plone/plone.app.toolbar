@@ -24,9 +24,10 @@ setup(name='plone.app.toolbar',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'Products.ResourceRegistries',
       ],
       extras_require={
-        'test': ['plone.app.toolbar'],
+        'test': ['plone.app.testing'],
       },
       entry_points="""
       [z3c.autoinclude.plugin]
