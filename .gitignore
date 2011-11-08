@@ -1,0 +1,6 @@
+.DS_Store
+*.py?
+*.sw?
+
+plone.app.toolbar.egg-info/
+build/
