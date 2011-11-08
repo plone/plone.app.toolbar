@@ -24,6 +24,7 @@ setup(name='plone.app.toolbar',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'Products.ResourceRegistries',
       ],
       extras_require={
         'test': ['plone.app.testing'],
