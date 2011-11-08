@@ -6,7 +6,7 @@ version = '0.1'
 setup(name='plone.app.toolbar',
       version=version,
       description="Toolbar for Plone",
-      long_description=open("README.txt").read() + "\n\n" +
+      long_description=open("README.rst").read() + "\n\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
       classifiers=[
         "Framework :: Plone",
