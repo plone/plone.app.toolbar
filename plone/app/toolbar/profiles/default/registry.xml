@@ -6,10 +6,9 @@
         <value purge="false">
             <element key="toolbar">
                 <element>jquerytools</element>
-                <element>default</element>
                 <element>toolbar</element>
             </element>
         </value>
     </record>
-    
+
 </registry>

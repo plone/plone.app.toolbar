@@ -1,6 +1,14 @@
 <?xml version="1.0"?>
 <object name="portal_javascripts">
-    
+
+  <javascript cacheable="False"
+              compression="none"
+              cookable="False"
+              enabled="True"
+              id="++resource++plone.app.toolbar/js/plone.notify.js"
+              bundle="toolbar"
+              inline="False" />
+
   <javascript cacheable="False"
               compression="none"
               cookable="False"
