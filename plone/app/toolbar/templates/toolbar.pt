@@ -32,7 +32,7 @@
       <ul class="personalbar">
         <li>
           <img src="++resource++plone.app.toolbar/images/portrait.png"
-               width="24"
+               height="24"
                tal:attributes="src view/userPortrait" />
           <span tal:content="view/userName">Rob Gietema</span>
           <span> &#9660;</span>
