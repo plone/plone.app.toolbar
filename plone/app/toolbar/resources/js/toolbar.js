@@ -1,465 +1,310 @@
-/**
- * This plugin is used to create a deco toolbar.
- *
- * @author Rob Gietema
- * @version 0.1
- * @licstart  The following is the entire license notice for the JavaScript
- *            code in this page.
- *
- * Copyright (C) 2010 Plone Foundation
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
- * more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 51
- * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * @licend  The above is the entire license notice for the JavaScript code in
- *          this page.
- */
-"use strict";
+/*
+    Code that runs inside the iframe menu
 
-/*global jQuery: false, window: false */
-/*jslint white: true, browser: true, onevar: true, undef: true, nomen: true,
-eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true,
-immed: true, strict: true, maxlen: 80, maxerr: 9999 */
+    XXX: Way too many globals created; needs a namespace
+    Globals exported:
+        CURRENT_OVERLAY_TRIGGER
+        PloneQuickUpload
+        TinyMCEConfig
+        contractMenu
+        createCookie
+        eraseCookie
+        expandMenu
+        forceContractMenu
+        menu_offset
+        menu_size,
+        readCookie
+        toggleMenu
 
-(function ($) {
+*/
 
-    // Define deco namespace if it doesn't exist
-    if (typeof($.deco) === "undefined") {
-        $.deco = {};
+ /*jslint white:false, onevar:true, undef:true, nomen:false, eqeqeq:true,
+   plusplus:true, bitwise:true, regexp:false, newcap:true, immed:true,
+   strict:false, browser:true */
+/*global jQuery:false, $:false, document:false, window:false, location:false,
+  common_content_filter:false, TinyMCEConfig:false */
+
+
+var CURRENT_OVERLAY_TRIGGER = null;
+var menu_offset;
+var menu_size = 'menu';
+
+function expandMenu() {
+    menu_offset = $(window.parent).scrollTop();
+    $('body', window.parent.document).css('overflow', 'hidden');
+    $(window.parent).scrollTop(menu_offset);
+    $('#plone-toolbar', window.parent.document).css('height', '100%');
+    menu_size = 'full';
+}
+function forceContractMenu() {
+    $('body', window.parent.document).css('overflow', 'auto');
+    $(window.parent).scrollTop(menu_offset);
+    $('#plone-toolbar', window.parent.document).css('height', $('#toolbar').outerHeight());
+    menu_size = 'menu';
+}
+function contractMenu() {
+    if ($('.overlay').length === 0 && $('.dropdownItems:visible').length === 0) {
+        forceContractMenu();
     }
+}
+function toggleMenu() {
+    if (menu_size === 'menu') {
+        expandMenu();
+    } else {
+        contractMenu();
+    }
+}
 
-    /**
-     * Adds a control to the toolbar
-     *
-     * @id AddControl
-     * @param {Object} parent Parent object to append control to
-     * @param {Object} action Object of the action
-     */
-    function AddControl(parent, action) {
+// http://www.quirksmode.org/js/cookies.html
+function createCookie(name, value, days) {
+    var expires = '', date;
+    if (days) {
+        date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = '; expires=' + date.toGMTString();
+    }
+    document.cookie = name + '=' + value + expires + '; path=/';
+}
 
-        // Check if button or menu
-        if ((typeof (action.menu) !== undefined) && (action.menu)) {
-
-            // Check if icon menu
-            if (action.icon) {
-
-                // Create menu
-                parent.append($(document.createElement("label"))
-                    .addClass("deco-icon-menu deco-icon-menu-" +
-                              action.name.replace(/_/g, "-") + ' deco-icon')
-                    .html(action.label)
-                    .attr("title", action.label)
-                    .append($(document.createElement("select"))
-                        .addClass("deco-menu-" + action.name.replace(/_/g, "-"))
-                        .data("action", action.action)
-                        .change(function () {
-                            $(this).decoExecAction();
-                        })
-                        .each(function () {
-
-                            // Local variables
-                            var z, elm, y;
-
-                            for (z in action.items) {
-
-                                // Check if child objects
-                                if (action.items[z].items !== undefined) {
-                                    $(this).append($(document.createElement("optgroup"))
-                                        .addClass("deco-option-group deco-option-group-" + action.items[z].value.replace(/_/g, "-").replace(/\//g, "-"))
-                                        .attr("label", action.items[z].label)
-                                    );
-                                    elm = $(this).find(".deco-option-group-" + action.items[z].value.replace(/_/g, "-").replace(/\//g, "-"));
-
-                                    // Add child nodes
-                                    for (y in action.items[z].items) {
-                                        elm.append(
-                                            $(document.createElement("option"))
-                                                .attr('value', action.items[z].items[y].value)
-                                                .addClass('deco-option deco-option-' + action.items[z].items[y].value.replace(/\//g, "-"))
-                                                .html(action.items[z].items[y].label)
-                                        );
-                                    }
-
-                                // Else no child objects
-                                } else {
-                                    $(this).append(
-                                        $(document.createElement("option"))
-                                            .attr('value', action.items[z].value)
-                                            .addClass('deco-option deco-option-' + action.items[z].value.replace(/\//g, "-"))
-                                            .html(action.items[z].label)
-                                    );
-                                }
-                            }
-                        })
-                    )
-                );
-
-            // Else text menu
-            } else {
-
-                // Create menu
-                parent.append($(document.createElement("select"))
-                    .addClass("deco-menu deco-menu-" + action.name.replace(/_/g, "-"))
-                    .data("action", action.action)
-                    .change(function () {
-                        $(this).decoExecAction();
-                    })
-                    .each(function () {
-
-                        // Local variables
-                        var z, elm, y;
-                        for (z = 0; z < action.items.length; z += 1) {
-
-                            // Check if child objects
-                            if (action.items[z].items !== undefined) {
-                                $(this).append($(document.createElement("optgroup"))
-                                    .addClass("deco-option-group deco-option-group-" + action.items[z].value.replace(/_/g, "-").replace(/\//g, "-"))
-                                    .attr("label", action.items[z].label)
-                                );
-                                elm = $(this).find(".deco-option-group-" + action.items[z].value.replace(/_/g, "-").replace(/\//g, "-"));
-
-                                // Add child nodes
-                                for (y in action.items[z].items) {
-                                    elm.append(
-                                        $(document.createElement("option"))
-                                            .attr('value', action.items[z].items[y].value)
-                                            .addClass('deco-option deco-option-' + action.items[z].items[y].value.replace(/\//g, "-"))
-                                            .html(action.items[z].items[y].label)
-                                    );
-                                }
-
-                            // Else no child objects
-                            } else {
-                                $(this).append(
-                                    $(document.createElement("option"))
-                                        .attr('value', action.items[z].value)
-                                        .addClass('deco-option deco-option-' + action.items[z].value.replace(/\//g, "-"))
-                                        .html(action.items[z].label)
-                                );
-                            }
-                        }
-                    })
-                );
-            }
-
-        } else {
-            // Create button
-            parent.append($(document.createElement("button"))
-                .addClass("deco-button deco-button-" + action.name.replace(/_/g, "-") + (action.icon ? ' deco-icon' : ''))
-                .html(action.label)
-                .attr("title", action.label)
-                .attr("type", "button")
-                .data("action", action.action)
-                .mousedown(function () {
-                    $(this).decoExecAction();
-                })
-            );
+function readCookie(name) {
+    var nameEQ = name + '=',
+        ca = document.cookie.split(';'),
+        c, i;
+    for (i = 0; i < ca.length; i += 1) {
+        c = ca[i];
+        while (c.charAt(0) === ' ') {
+            c = c.substring(1, c.length);
+        }
+        if (c.indexOf(nameEQ) === 0) {
+            return c.substring(nameEQ.length, c.length);
         }
     }
+    return null;
+}
 
-    /**
-     * Create a new instance of a deco toolbar.
-     *
-     * @constructor
-     * @id jQuery.fn.decoToolbar
-     * @return {Object} Returns a jQuery object of the matched elements.
-     */
-    $.fn.decoToolbar = function () {
+function eraseCookie(name) {
+    createCookie(name, '', -1);
+}
 
-        // Loop through matched elements
-        return this.each(function () {
+(function ($) {
+    // jquery method to load an overlay
+    $.fn.loadOverlay = function(href, data, callback) {
+        $(document).trigger('startLoadOverlay', [this, href, data]);
+        var self = $(this),
+            $overlay = this.closest('.pb-ajax');
 
-            // Local variables
-            var obj, content, actions, a, x, action_group, elm_action_group, y,
-            elm_select_insert, tile, elm_select_format, action,
-            RepositionToolbar, SelectedTileChange;
-
-            // Get current object
-            obj = $(this);
-
-            // Empty object
-            obj.html("");
-
-            // Add deco toolbar class
-            obj.append($(document.createElement("div"))
-                .addClass("deco-inline-toolbar")
-            );
-            obj = obj.children(".deco-inline-toolbar");
-
-            // Add content
-            obj.append($(document.createElement("div"))
-                .addClass("deco-toolbar-content")
-            );
-            content = obj.children(".deco-toolbar-content");
-
-            // Add primary and secondary function div's
-            actions = {};
-            content.append($(document.createElement("div"))
-                .addClass("deco-toolbar-primary-functions")
-            );
-            actions.primary_actions =
-                content.children(".deco-toolbar-primary-functions");
-            content.append($(document.createElement("div"))
-                .addClass("deco-toolbar-secondary-functions")
-            );
-            actions.secondary_actions =
-                content.children(".deco-toolbar-secondary-functions");
-
-            // Loop through action groups
-            for (a in actions) {
-
-                // Add actions to toolbar
-                for (x = 0; x < $.deco.options[a].length; x += 1) {
-
-                    // If single action
-                    if ($.deco.options[a][x].actions === undefined) {
-
-                        // Add control
-                        AddControl(actions[a], $.deco.options[a][x]);
-
-                    // If fieldset
-                    } else {
-                        action_group = $.deco.options[a][x];
-                        actions[a].append($(document.createElement("fieldset"))
-                            .addClass("deco-button-group deco-button-group-" +
-                                $.deco.options[a][x].name.replace(/_/g, "-"))
-                        );
-                        elm_action_group = actions[a]
-                            .children(".deco-button-group-" +
-                            $.deco.options[a][x].name.replace(/_/g, "-"));
-                        for (y = 0; y < action_group.actions.length; y += 1) {
-
-                            // Add control
-                            AddControl(elm_action_group,
-                                       action_group.actions[y]);
-                        }
-                    }
-                }
+        if(self.length === 0){
+            $overlay = $('div.overlay-ajax:visible div.pb-ajax');
+            self = $overlay;
+        }
+        self.load(href, data, function () {
+            $overlay[0].handle_load_inside_overlay.apply(this, arguments);
+            if (callback !== undefined) {
+                callback.apply(this, arguments);
             }
-
-            // Add formats to toolbar
-            if ($.deco.options.formats !== undefined) {
-                for (x = 0; x < $.deco.options.formats.length; x += 1) {
-                    action_group = $.deco.options.formats[x];
-                    actions.primary_actions.append($(document.createElement("fieldset"))
-                        .addClass("deco-button-group deco-button-group-" + action_group.name.replace(/_/g, "-"))
-                    );
-                    elm_action_group = actions.primary_actions.children(".deco-button-group-" + action_group.name.replace(/_/g, "-"));
-                    for (y = 0; y < action_group.actions.length; y += 1) {
-                        if (action_group.actions[y].favorite) {
-
-                            // Add control
-                            AddControl(elm_action_group, action_group.actions[y]);
-                        }
-                    }
-                    if (elm_action_group.children().length === 0) {
-                        elm_action_group.remove();
-                    }
-                }
-            }
-
-            // Add items to the insert menu
-            if ($.deco.options.tiles !== undefined) {
-                elm_select_insert = actions.secondary_actions.find(".deco-menu-insert");
-                for (x = 0; x < $.deco.options.tiles.length; x += 1) {
-                    action_group = $.deco.options.tiles[x];
-                    elm_select_insert.append($(document.createElement("optgroup"))
-                        .addClass("deco-option-group deco-option-group-" + action_group.name.replace(/_/g, "-"))
-                        .attr("label", action_group.label)
-                    );
-                    elm_action_group = actions.secondary_actions.find(".deco-option-group-" + action_group.name.replace(/_/g, "-"));
-                    for (y = 0; y < action_group.tiles.length; y += 1) {
-                        tile = action_group.tiles[y];
-                        elm_action_group.append($(document.createElement("option"))
-                            .addClass("deco-option deco-option-" + tile.name.replace(/_/g, "-"))
-                            .attr("value", tile.name)
-                            .html(tile.label)
-                        );
-                    }
-                    if (elm_action_group.children().length === 0) {
-                        elm_action_group.remove();
-                    }
-                }
-            }
-
-            // Add items to the format menu
-            if ($.deco.options.formats !== undefined) {
-                elm_select_format = actions.secondary_actions.find(".deco-menu-format");
-                for (x = 0; x < $.deco.options.formats.length; x += 1) {
-                    action_group = $.deco.options.formats[x];
-                    elm_select_format.append($(document.createElement("optgroup"))
-                        .addClass("deco-option-group deco-option-group-" + action_group.name.replace(/_/g, "-"))
-                        .attr("label", action_group.label)
-                    );
-                    elm_action_group = actions.secondary_actions.find(".deco-option-group-" + action_group.name.replace(/_/g, "-"));
-                    for (y = 0; y <  action_group.actions.length; y += 1) {
-                        action = action_group.actions[y];
-                        if (action.favorite === false) {
-                            elm_action_group.append($(document.createElement("option"))
-                                .addClass("deco-option deco-option-" + action.name.replace(/_/g, "-"))
-                                .attr("value", action.name)
-                                .html(action.label)
-                                .data("action", action.action)
-                            );
-                        }
-                    }
-                    if (elm_action_group.children().length === 0) {
-                        elm_action_group.remove();
-                    }
-                }
-            }
-
-            // Reposition toolbar on scroll
-            RepositionToolbar = function () {
-
-                // Local variables
-                var left;
-
-                if (parseInt($(window).scrollTop(), 10) >
-                    parseInt(obj.parent().offset().top, 10)) {
-                    if (obj.hasClass("deco-inline-toolbar")) {
-                        left = obj.offset().left;
-
-                        obj
-                            .width(obj.width())
-                            .css({
-                                'left': left,
-                                'margin-left': '0px'
-                            })
-                            .removeClass("deco-inline-toolbar")
-                            .addClass("deco-external-toolbar")
-                            .parent().height(obj.height());
-                    }
-                } else {
-                    if (obj.hasClass("deco-external-toolbar")) {
-                        obj
-                            .css({
-                                'width': '',
-                                'left': '',
-                                'margin-left': ''
-                            })
-                            .removeClass("deco-external-toolbar")
-                            .addClass("deco-inline-toolbar")
-                            .parent().css('height', '');
-                    }
-                }
-            };
-
-            // Bind method and add to array
-            $(window).bind('scroll', RepositionToolbar);
-
-            // Bind selected tile change event
-            SelectedTileChange = function () {
-
-                // Local variables
-                var obj, tiletype, selected_tile, classes, actions, x,
-                tile_group, y;
-
-                // Disable edit html source
-                $.deco.disableEditHtmlSource();
-
-                // Get object
-                obj = $(this);
-
-                // Get selected tile and tiletype
-                tiletype = "";
-                selected_tile = $(".deco-selected-tile", $.deco.document);
-                if (selected_tile.length > 0) {
-                    classes = selected_tile.attr('class').split(" ");
-                    $(classes).each(function () {
-                        var classname = this.match(/^deco-(.*)-tile$/);
-                        if (classname !== null) {
-                            if ((classname[1] !== 'selected') &&
-                                (classname[1] !== 'new') &&
-                                (classname[1] !== 'read-only') &&
-                                (classname[1] !== 'helper') &&
-                                (classname[1] !== 'original')) {
-                                tiletype = classname[1];
-                            }
-                        }
-                    });
-                }
-
-                // Get actions
-                actions = $.deco.options.default_available_actions;
-                for (x = 0; x < $.deco.options.tiles.length; x += 1) {
-                    tile_group = $.deco.options.tiles[x];
-                    for (y = 0; y <  tile_group.tiles.length; y += 1) {
-                        if (tile_group.tiles[y].name === tiletype) {
-                            actions = actions
-                                .concat(tile_group.tiles[y].available_actions);
-                        }
-                    }
-                }
-
-                // Show option groups
-                obj.find(".deco-option-group").show();
-
-                // Hide all actions
-                obj.find(".deco-button").hide();
-                obj.find(".deco-menu").hide();
-                obj.find(".deco-icon-menu").hide();
-                obj.find(".deco-menu-format").find(".deco-option")
-                    .hide()
-                    .attr("disabled", "disabled");
-                $(obj.find(".deco-menu-format").find(".deco-option").get(0))
-                    .show()
-                    .attr("disabled", "");
-
-                // Show actions
-                $(actions).each(function () {
-                    obj.find(".deco-button-" + this).show();
-                    obj.find(".deco-icon-menu-" + this).show();
-                    obj.find(".deco-menu-" + this).show();
-                    obj.find(".deco-option-" + this)
-                        .show()
-                        .attr("disabled", "");
-                });
-
-                // Set available fields
-                obj.find(".deco-menu-insert")
-                    .children(".deco-option-group-fields")
-                    .children().each(function () {
-                    if ($.deco.options.panels
-                        .find(".deco-" + $(this).attr("value") + "-tile")
-                        .length === 0) {
-                        $(this).show().attr("disabled", "");
-                    } else {
-                        $(this).hide().attr("disabled", "disabled");
-                    }
-                });
-
-                // Hide option group if no visible items
-                obj.find(".deco-option-group").each(function () {
-                    if ($(this).children(":enabled").length === 0) {
-                        $(this).hide();
-                    }
-                });
-
-                // Hide menu if no enabled items
-                $(".deco-menu, .deco-icon-menu",
-                  $.deco.document).each(function () {
-                    if ($(this).find(".deco-option:enabled").length === 1) {
-                        $(this).hide();
-                    }
-                });
-            };
-
-            // Bind method and add to array
-            $(this).bind("selectedtilechange", SelectedTileChange);
-
-            // Set default actions
-            $(this).trigger("selectedtilechange");
+            $(document).trigger('endLoadOverlay', [this, href, data]);
         });
+        return this;
     };
+
+    $().ready(function () {
+        // var iframe = $('#plone-toolbar', window.parent.document);
+
+        $('#toolbar').css({'opacity': 0});
+        $(document).bind('formOverlayLoadSuccess', function () {
+            $.plone.showNotifyFromElements($(".overlay"));
+            if ($('#form-widgets-ILayoutAware-content').length > 0) {
+                $.deco.init();
+                forceContractMenu();
+            }
+        });
+
+        $('a.overlayLink,.configlets a').prepOverlay({
+            subtype: 'ajax',
+            filter: common_content_filter,
+            // Add this to a link or button to make it close the overlay e.g.
+            // on cancel without reloading the page
+            closeselector: '.overlayCloseAction',
+            formselector: 'form.overlayForm,form.edit-form,#document-base-edit,form#form',
+            noform: 'reload', // XXX : this will probably need to get smarter
+            config: {
+                closeOnClick: false,
+                top: 130,
+                mask: {
+                    color: '#000000',
+                    opacity: 0.5
+                },
+                onBeforeLoad: function (e) {
+                    $('.dropdownItems').slideUp();
+                    this.getOverlay().addClass($(CURRENT_OVERLAY_TRIGGER).closest('li').attr('id') + '-overlay');
+                    $(document).trigger('beforeOverlay', [this, e]);
+                    if (this.getOverlay().find('#form-widgets-ILayoutAware-content').length > 0) {
+                        $.deco.init();
+                        $('body', window.document).css('overflow', 'hidden');
+                    } else {
+                        expandMenu();
+                        return true;
+                    }
+                },
+                onLoad: function (e) {
+                    if (this.getOverlay().find('#form-widgets-ILayoutAware-content').length > 0) {
+                        $(".overlay").hide();
+                        $('body', window.document).css('overflow', 'auto');
+                    }
+                    $.plone.showNotifyFromElements($(".overlay"));
+                    $(document).trigger('loadOverlay', [this, e]);
+                    return true;
+                },
+                onClose: function (e) {
+                    CURRENT_OVERLAY_TRIGGER = null;
+                    $(document).trigger('closeOverlay', [this, e]);
+                    forceContractMenu();
+                    return true;
+                }
+            }
+        });
+        $(document).bind('beforeAjaxClickHandled', function(event, ele, api, clickevent){
+            if(ele === CURRENT_OVERLAY_TRIGGER){
+                return event.preventDefault();
+            }else{
+                if(CURRENT_OVERLAY_TRIGGER !== null){
+                    var overlays = $('div.overlay:visible');
+                    overlays.fadeOut(function(){ $(this).remove(); });
+                }
+                CURRENT_OVERLAY_TRIGGER = ele;
+
+            }
+        });
+
+        $("a.overlayLink,.configlets a").live('click', function(){
+            $(document).trigger('overlayLinkClicked', [this]);
+            var url = $(this).attr("href");
+            $(this).closest('#overlay-content').loadOverlay(url + ' ' + common_content_filter);
+            return false;
+        });
+        $('.dropdownLink').bind('click', function (e) {
+            if (menu_size === 'menu') {
+                // iframe is collapsed
+                expandMenu();
+                $(this).nextAll('.dropdownItems').slideToggle();
+            }
+            else {
+                $(this).nextAll('.dropdownItems').slideToggle(function () {
+                    contractMenu();
+                });
+            }
+            e.preventDefault();
+        });
+    });
+
+    $(window).load(function () {
+        var menu_state = readCookie('__plone_menu'),
+            iframe = $('#plone-toolbar', window.parent.document),
+            parent_body = $('body', window.parent.document),
+            toolbar = $('#toolbar'),
+            height,
+            url,
+            button;
+
+        $('.portalMessage:visible').addClass('showNotify').hide();
+
+        if (menu_state === 'small' || menu_state === 'large') {
+            toolbar.addClass(menu_state);
+            iframe.height(toolbar.outerHeight());
+            parent_body.css('margin-top', toolbar.outerHeight());
+            toolbar.animate({'opacity': 1}, 250, function () {
+                iframe.css('background', 'transparent');
+
+                // Check if an overlay should be opened
+                url = window.parent.document.location.href.match(/#!\/menu\/(.*)$/);
+                if (url) {
+                    button = $('#' + url[1] + ' > a');
+                    if (button.length !== 0) {
+                        button.click();
+                    }
+                }
+
+                // Append iframe to the document
+                parent_body.append(
+                    $(window.parent.document.createElement('iframe'))
+                    .attr({
+                        'src': '@@plone-notifications',
+                        'id': 'plone-notifications',
+                        'name': 'plone-notifications'
+                    })
+                    .css({
+                        'top': toolbar.outerHeight(),
+                        'margin': 0,
+                        'padding': 0,
+                        'border': 0,
+                        'outline': 0,
+                        'background': 'transparent',
+                        'position': 'fixed',
+                        '_position': 'absolute',
+                        '_top': 'expression(eval((document.body.scrollTop)?document.body.scrollTop:document.documentElement.scrollTop))',
+                        'width': '320px',
+                        'height': '0px',
+                        'z-index': 100000
+                    })
+                );
+            });
+        } else {
+            createCookie('__plone_menu', 'small');
+            toolbar
+                .addClass('small')
+                .css('opacity', 1);
+            height = toolbar.outerHeight();
+            iframe.css({
+                'top': -height,
+                'height': height
+            });
+            iframe.animate({'top': 0}, 500);
+            parent_body.animate({'margin-top': toolbar.outerHeight()}, 500);
+        }
+        createCookie('__plone_height', $('#toolbar').outerHeight());
+
+        $('#manage-page-open').click(function () {
+            $(document).trigger('managePageOpening', [this]);
+            var bottom_height = $('#toolbar-bottom').outerHeight();
+            toolbar.addClass('large').removeClass('small');
+            height = toolbar.outerHeight();
+            $('#toolbar-bottom').css('top', -bottom_height);
+            parent_body.stop().animate({'margin-top': height}, 250);
+            $('#toolbar-bottom').stop().animate({'top': 0}, 250);
+            iframe.stop().animate({'height': height}, 250);
+            createCookie('__plone_menu', 'large');
+            createCookie('__plone_height', height);
+            $(document).trigger('managePageOpened', [this]);
+            return false;
+        });
+        $('#manage-page-close').click(function () {
+            $(document).trigger('managePageClosing', [this]);
+            var bottom_height = $('#toolbar-bottom').outerHeight();
+            height = toolbar.outerHeight() - bottom_height + 1;
+            iframe.stop().animate({'height': height}, 250);
+            parent_body.stop().animate({'margin-top': height}, 250, function () {
+                toolbar.addClass('small').removeClass('large');
+            });
+            $('#toolbar-bottom').stop().animate({'top': -bottom_height}, 250);
+            createCookie('__plone_menu', 'small');
+            createCookie('__plone_height', height);
+            $(document).trigger('managePageClosed', [this]);
+            return false;
+        });
+    });
+
+    // workaround this MSIE bug :
+    // https://dev.plone.org/plone/ticket/10894
+    if (jQuery.browser.msie) {jQuery("#settings").remove();}
+
 }(jQuery));
+
+/**
+ * Initialize tinymce
+ */
+$(document).bind('loadInsideOverlay', function() {
+    $('textarea.mce_editable').each(function() {
+        var config = new TinyMCEConfig($(this).attr('id'));
+        config.init();
+    });
+});
