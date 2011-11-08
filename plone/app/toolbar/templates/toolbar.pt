@@ -30,9 +30,15 @@
     <div class="toolbarright">
       <div class="swirl"><div></div></div>
       <ul class="personalbar">
-        <li><img src="++resource++plone.app.toolbar/images/portrait.png"/> Rob Gietema</li>
-        <li><span class="messages">1</span></li>
-        <li><img class="cog" src="++resource++plone.app.toolbar/images/cog.png"/></li>
+        <li>
+          <img src="++resource++plone.app.toolbar/images/portrait.png"
+               width="24"
+               tal:attributes="src view/userPortrait" />
+          <span tal:content="view/userName">Rob Gietema</span>
+          <span> &#9660;</span>
+        </li>
+        <!--li><a href=""><span class="messages">1</span></a></li-->
+        <!--li><a href=""><img class="cog" src="++resource++plone.app.toolbar/images/cog.png"/></a></li-->
       </ul>
     </div>
     <div class="toolbarleft">
