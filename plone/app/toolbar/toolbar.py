@@ -88,6 +88,16 @@ class Toolbar(BrowserView):
         return "%s/author/%s" % (self.portalState.navigation_root_url(), userid)
 
     @memoize
+    def userPortrait(self):
+        """Get the URL of the user's portrait
+        """
+
+        member = self.portalState.member()
+        membership = self.tools.membership()
+        portrait = membership.getPersonalPortrait(member.getId());
+        return portrait.absolute_url()
+
+    @memoize
     def workflowState(self):
         """Get the name of the workflow state
         """
