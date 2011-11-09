@@ -17,4 +17,28 @@
               bundle="toolbar"
               inline="False" />
 
+  <javascript cacheable="False"
+              compression="none"
+              cookable="False"
+              enabled="True"
+              id="++resource++plone.app.toolbar/js/bootstrap-modal.js"
+              bundle="toolbar"
+              inline="False" />
+
+  <javascript cacheable="False"
+              compression="none"
+              cookable="False"
+              enabled="True"
+              id="++resource++plone.app.toolbar/js/bootstrap-twipsy.js"
+              bundle="toolbar"
+              inline="False" />
+
+  <javascript cacheable="False"
+              compression="none"
+              cookable="False"
+              enabled="True"
+              id="++resource++plone.app.toolbar/js/bootstrap-popover.js"
+              bundle="toolbar"
+              inline="False" />
+
 </object>
