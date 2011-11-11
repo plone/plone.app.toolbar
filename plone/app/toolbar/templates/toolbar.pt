@@ -49,18 +49,19 @@
            tal:condition="ploneview/showEditableBorder">
 
         <tal:actions repeat="action content_actions">
-
+        
           <a class=""
-               href=""
-               tal:define="icon python:view.icon(action)"
-               tal:attributes="href action/url;
-                               id string:contentaction-${action/id};">
-              <tal:action tal:content="action/title"
-                          i18n:translate="">
-                Action name
-              </tal:action>
+            href=""
+            tal:define="icon python:view.icon(action)"
+            tal:attributes="href action/url;
+              id string:contentaction-${action/id};">
+            <tal:action tal:content="action/title"
+              i18n:translate="">
+            Action name
+            </tal:action>
           </a>
         </tal:actions>
+
         <div tal:replace="structure provider:plone.contentmenu" />
 
       </div>
@@ -72,12 +73,12 @@
         <tal:block define="view_actions view/prepareObjectTabs;">
           <tal:views repeat="action view_actions">
             <a href=""
-               tal:define="selected action/selected|nothing;"
-               tal:attributes="id string:contentview-${action/id};
-                               class python:selected and 'selected' or 'plain';
-                               href action/url;"
-               tal:content="action/title"
-               i18n:translate="">
+              tal:define="selected action/selected|nothing;"
+              tal:attributes="id string:contentview-${action/id};
+                class python:selected and 'selected' or 'plain';
+                href action/url;"
+              tal:content="action/title"
+              i18n:translate="">
                 View name
             </a>
           </tal:views>
