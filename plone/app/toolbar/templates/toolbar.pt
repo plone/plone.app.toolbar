@@ -24,45 +24,22 @@
     tal:attributes="dir python:isRTL and 'rtl' or 'ltr'">
 
 
-    <div class="toolbar toolbarglobal">
-        <div class="toolbartop">
-        </div>
-        <div class="toolbarright">
-            <div class="swirl"><div></div></div>
-            <ul class="personalbar">
-                <li>
-                    <img src="++resource++plone.app.toolbar/images/portrait.png"
-                        width="24"
-                        tal:attributes="src view/userPortrait" />
-                    <span tal:content="view/userName">Rob Gietema</span>
-                    <span> &#9660;</span>
-                </li>
-                <!--li><a href=""><span class="messages">1</span></a></li-->
-                <!--li><a href=""><img class="cog" src="++resource++plone.app.toolbar/images/cog.png"/></a></li-->
-            </ul>
-        </div>
-        <div class="toolbarleft">
-
-    <div class="portaltabs rightactions"
-        tal:define="ploneview context/@@plone;
-            content_actions view/object_actions;"
-        tal:condition="ploneview/showEditableBorder">
-
-    <tal:actions repeat="action content_actions">
-
-    <a class=""
-        href=""
-        tal:define="icon python:view.icon(action)"
-        tal:attributes="href action/url;
-            id string:contentaction-${action/id};">
-    <tal:action tal:content="action/title"
-        i18n:translate="">
-    Action name
-    </tal:action>
-    </a>
-</tal:actions>
-<div tal:replace="structure provider:plone.contentmenu" />
-
+  <div class="toolbar toolbarglobal">
+    <div class="toolbartop">
+    </div>
+    <div class="toolbarright">
+      <div class="swirl"><div></div></div>
+      <ul class="personalbar">
+        <li>
+          <img src="++resource++plone.app.toolbar/images/portrait.png"
+               height="24"
+               tal:attributes="src view/userPortrait" />
+          <span tal:content="view/userName">Rob Gietema</span>
+          <span> &#9660;</span>
+        </li>
+        <!--li><a href=""><span class="messages">1</span></a></li-->
+        <!--li><a href=""><img class="cog" src="++resource++plone.app.toolbar/images/cog.png"/></a></li-->
+      </ul>
     </div>
 
     <div class="portaltabs"
