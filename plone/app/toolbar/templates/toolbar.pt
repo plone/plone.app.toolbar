@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-    tal:define="portal_state context/@@plone_portal_state;
-        context_state context/@@plone_context_state;
-        plone_view context/@@plone;
-        lang portal_state/language;
-        portal_url portal_state/portal_url;
-        checkPermission nocall: context/portal_membership/checkPermission"
-    tal:attributes="lang lang;">
+      tal:define="portal_state context/@@plone_portal_state;
+          context_state context/@@plone_context_state;
+          plone_view context/@@plone;
+          lang portal_state/language;
+          portal_url portal_state/portal_url;
+          checkPermission nocall: context/portal_membership/checkPermission"
+      tal:attributes="lang lang;">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <!-- Forces IE8+ into newest rendering engine even if on an intranet. This has to be defined before any script/style tags. -->
@@ -15,8 +15,8 @@
     <base tal:attributes="href plone_view/renderBase" target="_parent" /><!--[if lt IE 7]></base><![endif]-->
 
     <tal:resourceregistries>
-        <tal:scripts replace="structure provider:plone.resourceregistries.scripts" />
-        <tal:styles replace="structure provider:plone.resourceregistries.styles" />
+      <tal:scripts replace="structure provider:plone.resourceregistries.scripts" />
+      <tal:styles replace="structure provider:plone.resourceregistries.styles" />
     </tal:resourceregistries>
 
 </head>
@@ -41,47 +41,54 @@
         <!--li><a href=""><img class="cog" src="++resource++plone.app.toolbar/images/cog.png"/></a></li-->
       </ul>
     </div>
+    <div class="toolbarleft">
 
-    <div class="portaltabs"
-        tal:define="ploneview context/@@plone;"
-        tal:condition="ploneview/showEditableBorder">
+      <div class="portaltabs rightactions"
+           tal:define="ploneview context/@@plone;
+                       content_actions view/object_actions;"
+           tal:condition="ploneview/showEditableBorder">
 
-    <tal:block define="view_actions view/prepareObjectTabs;">
-        <tal:views repeat="action view_actions">
+        <tal:actions repeat="action content_actions">
+
+          <a class=""
+               href=""
+               tal:define="icon python:view.icon(action)"
+               tal:attributes="href action/url;
+                               id string:contentaction-${action/id};">
+              <tal:action tal:content="action/title"
+                          i18n:translate="">
+                Action name
+              </tal:action>
+          </a>
+        </tal:actions>
+        <div tal:replace="structure provider:plone.contentmenu" />
+
+      </div>
+
+      <div class="portaltabs"
+           tal:define="ploneview context/@@plone;"
+           tal:condition="ploneview/showEditableBorder">
+
+        <tal:block define="view_actions view/prepareObjectTabs;">
+          <tal:views repeat="action view_actions">
             <a href=""
-                tal:define="selected action/selected|nothing;"
-                tal:attributes="id string:contentview-${action/id};
-                    class python:selected and 'selected' or 'plain';
-                    href action/url;"
-                tal:content="action/title"
-                i18n:translate="">
-                    View name
+               tal:define="selected action/selected|nothing;"
+               tal:attributes="id string:contentview-${action/id};
+                               class python:selected and 'selected' or 'plain';
+                               href action/url;"
+               tal:content="action/title"
+               i18n:translate="">
+                View name
             </a>
-        </tal:views>
-    </tal:block>
+          </tal:views>
+        </tal:block>
 
+      </div>
     </div>
-
-    </div>
-</div>
+  </div>
 
 <div metal:use-macro="context/global_statusmessage/macros/portal_message">
-    Status message
-</div>
-
-<div id="overlay-wrapper">
-    <div class="overlay-container modal">
-        <div class="modal-header">
-            <a class="close" href="#">×</a>
-            <h3>Modal Heading</h3>
-        </div>
-        <div class="modal-body">
-        </div>
-        <div class="modal-footer">
-            <a class="btn primary" href="#">Primary</a>
-            <a class="btn secondary" href="#">Secondary</a>
-        </div>
-    </div>
+  Status message
 </div>
 
 </body>
