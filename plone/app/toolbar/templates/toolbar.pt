@@ -75,7 +75,7 @@
             <a href=""
               tal:define="selected action/selected|nothing;"
               tal:attributes="id string:contentview-${action/id};
-                class python:selected and 'selected' or 'plain';
+                class python:selected and 'overlayLink selected' or 'overlayLink plain';
                 href action/url;"
               tal:content="action/title"
               i18n:translate="">
