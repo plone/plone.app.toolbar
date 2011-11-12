@@ -267,7 +267,9 @@ immed: true, strict: true, maxlen: 80, maxerr: 9999 */
     // Init Deco on load
     $(window).load(function () {
         var menu_frame = window.parent.frames['plone-toolbar'];
-
+        if (typeof(menu_frame) === "undefined") {
+            menu_frame = this;
+        }
         // Init notification
         $.plone.initNotify();
 
@@ -282,7 +284,7 @@ immed: true, strict: true, maxlen: 80, maxerr: 9999 */
             $.plone.showNotifyFromElements;
  
         // Show first notifications
-        $('.showNotify', window.parent.frames['plone-toolbar'].document).each(function () {
+        $('.showNotify', menu_frame.document).each(function () {
             var type,
                 portal_message = $(this),
                 sticky = true;
