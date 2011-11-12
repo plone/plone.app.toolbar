@@ -22,7 +22,7 @@
    plusplus:true, bitwise:true, regexp:false, newcap:true, immed:true,
    strict:false, browser:true */
 /*global jQuery:false, $:false, document:false, window:false, location:false,
-  common_content_filter:false, TinyMCEConfig:false */
+  common_content_filter:false, TinyMCEConfig:false pb:false */
 
 
 var CURRENT_OVERLAY_TRIGGER = null;
@@ -109,6 +109,45 @@ function eraseCookie(name) {
 
     $().ready(function () {
         // var iframe = $('#plone-toolbar', window.parent.document);
+        /******
+            override p.a.jquerytool's create_content_div method (in overlayhelpers.js)
+            to create a bootstrap compatible overlay container
+        ******/
+        pb.create_content_div = function (pbo, trigger) {
+            var content,
+                top,
+                pbw = pbo.width;
+
+            content = $(
+                '<div id="' + pbo.nt +
+                '" class="overlay overlay-' + pbo.subtype +
+                ' ' + (pbo.cssclass || '') +
+                '"><div class="close"><span>Close</span></div><h2>XXX</h2></div>'
+            );
+
+            content.data('pbo', pbo);
+
+            // if a width option is specified, set it on the overlay div,
+            // computing against the window width if a % was specified.
+            if (pbw) {
+                if (pbw.indexOf('%') > 0) {
+                    content.width(parseInt(pbw, 10) / 100 * $(window).width());
+                } else {
+                    content.width(pbw);
+                }
+            }
+
+            // add the target element at the end of the body.
+            if (trigger) {
+                trigger.after(content);
+            } else {
+                content.appendTo($("body"));
+            }
+
+            return content;
+        };
+
+
 
         $('#toolbar').css({'opacity': 0});
         $(document).bind('formOverlayLoadSuccess', function () {
