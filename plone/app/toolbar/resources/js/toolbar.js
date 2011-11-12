@@ -120,9 +120,9 @@ function eraseCookie(name) {
 
             content = $(
                 '<div id="' + pbo.nt +
-                '" class="overlay overlay-' + pbo.subtype +
+                '" class="modal overlay-' + pbo.subtype +
                 ' ' + (pbo.cssclass || '') +
-                '"><div class="close"><span>Close</span></div><h2>XXX</h2></div>'
+                '"><div class="modal-header"><div class="close"><span>Close</span></div><h3>XXX</h3></div><div class="modal-body"></div></div>'
             );
 
             content.data('pbo', pbo);
