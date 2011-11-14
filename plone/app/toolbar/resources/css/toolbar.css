@@ -235,7 +235,11 @@ label select {
     right: 0;
     padding: 0;
 }
-
+dl.actionMenu.activated dt a,
+dl.actionMenu.activated dd a,
+dl.actionMenu.activated dd div {
+    margin: 4px 4px 0 0;
+}
 dl.actionMenu.deactivated dt {
     margin: 0;
 }
