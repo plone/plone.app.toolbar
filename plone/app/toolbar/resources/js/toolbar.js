@@ -52,7 +52,6 @@
             if (toolbar_stretched === true) {
                 shrink();
             }
-            e.preventDefault();
         });
 
 
