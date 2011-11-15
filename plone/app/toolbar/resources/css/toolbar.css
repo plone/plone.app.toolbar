@@ -3,6 +3,8 @@
 }
 body {
     margin: 0;
+    background: transparent;
+    overflow: hidden;
 }
 .toolbartop {
     height: 6px;
