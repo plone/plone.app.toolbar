@@ -60,9 +60,7 @@
                 if (toolbar_stretched === false) {
                     stretch();
                 } else {
-                    //if (item.is_open() === true) {
-                        shrink();
-                    //}
+                    shrink();
                 }
                 e.preventDefault();
             });
@@ -103,8 +101,8 @@
  * Initialization of plone's toolbar
  */
 $(document).ready(function () {
-    $('#plone-toolbar', window.parent.document).toolbar([
-        {
+    $('#plone-toolbar', window.parent.document).toolbar({
+        actions: [{
             bind_to: 'dt.actionMenuHeader a',
             is_open: function() {
                 if ($('dd.actionMenuContent:visible').length === 0) {
@@ -113,6 +111,6 @@ $(document).ready(function () {
                     return true;
                 }
             }
-        }
-    ]);
+        }]
+    });
 });
