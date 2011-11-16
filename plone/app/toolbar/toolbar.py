@@ -95,7 +95,8 @@ class Toolbar(BrowserView):
         member = self.portalState.member()
         membership = self.tools.membership()
         portrait = membership.getPersonalPortrait(member.getId());
-        return portrait.absolute_url()
+        if portrait is not None:
+            return portrait.absolute_url()
 
     @memoize
     def workflowState(self):
