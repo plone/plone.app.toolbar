@@ -108,6 +108,12 @@ body {
     margin: 0;
     padding: 0 0 0 6px;
 }
+.portaltabs fieldset {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
 .portaltabs a,
 .portaltabs button {
     display: inline-block;
