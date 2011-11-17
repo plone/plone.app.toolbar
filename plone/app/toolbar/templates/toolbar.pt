@@ -33,6 +33,7 @@
         <li>
           <img src="++resource++plone.app.toolbar/images/portrait.png"
                height="24"
+               tal:condition="view/userPortrait"
                tal:attributes="src view/userPortrait" />
           <span tal:content="view/userName">Rob Gietema</span>
           <span> &#9660;</span>
