@@ -254,12 +254,40 @@ dl.actionMenu.deactivated dt {
 dl.actionMenu {
     margin-left: 2px;
 }
-#contentActionMenus dl.actionMenu a, #contentActionMenus dl.actionMenu.activated dd {
-    background-color: #222222;
-}
 #contentActionMenus {
     background: none;
 }
 #edit-bar {
     display: none;
+}
+
+#contentActionMenus dl.actionMenu a {
+    background-color: #222222;
+}
+#contentActionMenus dl.actionMenu.activated dd {
+    background: #FFFFFF;
+    border-color: #FFFFFF;
+    border-radius: 0 0 4px 4px;
+}
+#contentActionMenus dl.actionMenu.activated dd.actionMenuContent {
+    background: #FFFFFF;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.4);
+    color: #000000;
+    display: block;
+    margin: 5px 0 0 -18px;
+    padding: 16px;
+}
+.rightactions #contentActionMenus dl.actionMenu.activated dd.actionMenuContent {
+    margin: 0 7px 0 -18px;
+    border-radius: 4px 0 4px 4px;
+}
+#contentActionMenus dl.actionMenu dd.actionMenuContent a,
+#contentActionMenus dl.actionMenu.activated dt a {
+    background: #FFFFFF;
+    border-color: #FFFFFF;
+    border-radius: 4px 4px 0 0;
+    box-shadow: none;
+    color: #000000;
+    border: 0;
 }
