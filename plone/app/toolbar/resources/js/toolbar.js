@@ -3,6 +3,11 @@
 
 (function ($) {
 
+ /*jslint white:false, onevar:true, undef:true, nomen:false, eqeqeq:true,
+   plusplus:true, bitwise:true, regexp:false, newcap:true, immed:true,
+   strict:false, browser:true */
+/*global jQuery:false, $:false, document:false, window:false, location:false,
+  common_content_filter:false, TinyMCEConfig:false pb:false */
     var default_config = {
         actions: [{
             bind_to: '.dropdownLink',
@@ -45,7 +50,6 @@
             toolbar.height(toolbar_height);
             toolbar_stretched = false;
         }
-
 
         // is somebody clicks on streched iframe then we shrink it
         $(window).bind('click', function(e) {
@@ -113,4 +117,41 @@ $(document).ready(function () {
             }
         }]
     });
+    /******
+        override p.a.jquerytool's create_content_div method (in overlayhelpers.js)
+        to create a bootstrap compatible overlay container
+    ******/
+    pb.create_content_div = function (pbo, trigger) {
+        var content,
+            top,
+            pbw = pbo.width;
+
+        content = $(
+            '<div id="' + pbo.nt +
+            '" class="modal overlay-' + pbo.subtype +
+            ' ' + (pbo.cssclass || '') +
+            '"><div class="modal-header"><div class="close"><span>Close</span></div><h3>XXX</h3></div><div class="modal-body"></div></div>'
+        );
+
+        content.data('pbo', pbo);
+
+        // if a width option is specified, set it on the overlay div,
+        // computing against the window width if a % was specified.
+        if (pbw) {
+            if (pbw.indexOf('%') > 0) {
+                content.width(parseInt(pbw, 10) / 100 * $(window).width());
+            } else {
+                content.width(pbw);
+            }
+        }
+
+        // add the target element at the end of the body.
+        if (trigger) {
+            trigger.after(content);
+        } else {
+            content.appendTo($("body"));
+        }
+
+        return content;
+    };
 });
