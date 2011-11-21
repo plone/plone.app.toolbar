@@ -9,6 +9,25 @@
                 <element>jquerytools</element>
                 <element>toolbar</element>
             </element>
+
+            <!-- BBB: These bundel assignments should go into each theme's package -->
+            <element key="Plone Classic Theme">
+                <element>default</element>
+                <element>jquery</element>
+                <element>jquerytools</element>
+            </element>
+
+            <element key="Plone Default">
+                <element>default</element>
+                <element>jquery</element>
+                <element>jquerytools</element>
+            </element>
+
+            <element key="Sunburst Theme">
+                <element>default</element>
+                <element>jquery</element>
+                <element>jquerytools</element>
+            </element>
         </value>
     </record>
 
