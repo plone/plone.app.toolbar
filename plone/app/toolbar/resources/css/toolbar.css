@@ -1,9 +1,12 @@
 * {
     font-family: Arial;
 }
+html {
+    overflow-y: visible !important;
+}
 body {
     margin: 0;
-    background: transparent;
+    background: transparent !important;
     overflow: hidden;
 }
 .toolbartop {
@@ -173,6 +176,7 @@ body {
 .toolbarglobal .portaltabs button:hover,
 .toolbarglobal .portaltabs label:hover {
     background-position: 0 -15px;
+    text-decoration: none;
 }
 .toolbarlocal .portaltabs a,
 .toolbarlocal .portaltabs button,
@@ -238,36 +242,66 @@ label select {
 }
 
 /* BBB */
+
 #contentActionMenus {
+    float: right;
+    position: relative;
     top: 0;
     right: 0;
     padding: 0;
-}
-dl.actionMenu.activated dt a,
-dl.actionMenu.activated dd a,
-dl.actionMenu.activated dd div {
-    margin: 4px 4px 0 0;
-}
-dl.actionMenu.deactivated dt {
     margin: 0;
-}
-dl.actionMenu {
-    margin-left: 2px;
-}
-#contentActionMenus {
+    list-style: none;
     background: none;
 }
-#edit-bar {
-    display: none;
-}
 
+#contentActionMenus ul {
+    list-style: none;
+    margin: 0;
+}
+#contentActionMenus li {
+    display: inline;
+}
+#contentActionMenus dl.actionMenu {
+    margin-left: 2px;
+    line-height: 2em;
+    float: right;
+    position: relative;
+    white-space: nowrap;
+}
+#contentActionMenus dl.actionMenu a, dl.actionMenu div {
+    display: block !important;
+    white-space: nowrap;
+}
+#contentActionMenus dl.actionMenu.deactivated dt {
+    margin: 0 0.25em;
+}
+#contentActionMenus dl.actionMenu dt {
+    font-weight: normal;
+}
 #contentActionMenus dl.actionMenu a {
     background-color: #222222;
 }
+#contentActionMenus dl.actionMenu.activated dt a,
+#contentActionMenus dl.actionMenu.activated dd a,
+#contentActionMenus dl.actionMenu.activated dd div {
+    margin: 4px 4px 0 0;
+}
 #contentActionMenus dl.actionMenu.activated dd {
+    background: transparent;
+    border: 0;
+    right: -3px;
+}
+#contentActionMenus dl.actionMenu dd.actionMenuContent a,
+#contentActionMenus dl.actionMenu.activated dt a {
     background: #FFFFFF;
     border-color: #FFFFFF;
-    border-radius: 0 0 4px 4px;
+    border-radius: 4px 4px 0 0;
+    box-shadow: none;
+    color: #000000;
+    border: 0;
+}
+#contentActionMenus dl.actionMenu.deactivated dd.actionMenuContent {
+    display: none;
 }
 #contentActionMenus dl.actionMenu.activated dd.actionMenuContent {
     background: #FFFFFF;
@@ -281,13 +315,13 @@ dl.actionMenu {
 .rightactions #contentActionMenus dl.actionMenu.activated dd.actionMenuContent {
     margin: 0 7px 0 -18px;
     border-radius: 4px 0 4px 4px;
+    z-index: 10000;
 }
-#contentActionMenus dl.actionMenu dd.actionMenuContent a,
-#contentActionMenus dl.actionMenu.activated dt a {
+#contentActionMenus dl.actionMenu.activated dd {
     background: #FFFFFF;
     border-color: #FFFFFF;
-    border-radius: 4px 4px 0 0;
-    box-shadow: none;
-    color: #000000;
-    border: 0;
+    border-radius: 0 0 4px 4px;
+    position: absolute;
+    width: auto;
+    min-width: 100%;
 }

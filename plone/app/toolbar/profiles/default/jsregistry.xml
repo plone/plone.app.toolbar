@@ -1,30 +1,6 @@
 <?xml version="1.0"?>
 <object name="portal_javascripts">
 
-  <javascript id="jquery.js" 
-    compression="none"
-    bundle="toolbar"
-  />
-
-  <javascript id="jquery-integration.js" 
-    compression="none"
-    bundle="toolbar"
-  />
-
-  <!-- BBB: Create bundles for jQuery tools and Tiny MCE - see registry.xml -->
-  <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.js"  />
-  <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.form.js"  />
-  <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.overlayhelpers.js"  />
-  <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.plugins.js"  />
-  <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.dateinput.js"  />
-  <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.rangeinput.js"  />
-  <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.validator.js"  />
-  <javascript bundle="jquerytools" id="popupforms.js"  />
-  
-  <javascript bundle="tinymce" id="tiny_mce.js" />
-  <javascript bundle="tinymce" id="tiny_mce_init.js" />
-
-
   <javascript cacheable="False"
               compression="none"
               cookable="False"
@@ -64,5 +40,19 @@
               id="++resource++plone.app.toolbar/js/bootstrap-popover.js"
               bundle="toolbar"
               inline="False" />
+
+  <!-- BBB: Create bundles for jQuery, jQueryTools and TinyMCE - see registry.xml -->
+  <javascript bundle="jquery" id="jquery.js" />
+  <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.js"  />
+  <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.form.js"  />
+  <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.overlayhelpers.js"  />
+  <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.plugins.js"  />
+  <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.dateinput.js"  />
+  <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.rangeinput.js"  />
+  <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.validator.js"  />
+  <javascript bundle="tinymce" id="tiny_mce.js" />
+  <javascript bundle="tinymce" id="tiny_mce_init.js" />
+  <javascript bundle="toolbar" id="popupforms.js"  />
+  <javascript bundle="toolbar" id="dropdown.js"  />
 
 </object>
