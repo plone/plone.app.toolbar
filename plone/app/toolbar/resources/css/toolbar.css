@@ -272,11 +272,9 @@ label select {
     display: block !important;
     white-space: nowrap;
 }
-#contentActionMenus dl.actionMenu.deactivated dt {
-    margin: 0 0.25em;
-}
 #contentActionMenus dl.actionMenu dt {
     font-weight: normal;
+    margin: 0 0.25em;
 }
 #contentActionMenus dl.actionMenu a {
     background-color: #222222;
