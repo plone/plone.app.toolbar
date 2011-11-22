@@ -31,17 +31,15 @@
       <div class="swirl"><div></div></div>
     
       <div class="personalbar" i18n:domain="plone">
+            <img src="++resource++plone.app.toolbar/images/portrait.png"
+                height="24"
+                tal:condition="view/userPortrait"
+                tal:attributes="src view/userPortrait" />
             <dl class="actionMenu deactivated" id="portal-personaltools"
                 tal:condition="python:view.personalActions and not view.anonymous">
                 <dt class="actionMenuHeader">
                     <a id="user-name"
                         tal:attributes="href view/userHomeLinkURL">
-                        <!--
-                        <img src="++resource++plone.app.toolbar/images/portrait.png"
-                           height="24"
-                           tal:condition="view/userPortrait"
-                           tal:attributes="src view/userPortrait" />&nbsp;
-                       -->
                         <span tal:content="view/userName">John</span>
                         <span> &#9660;</span>
                     </a>
