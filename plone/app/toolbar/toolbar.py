@@ -1,15 +1,17 @@
 from zope.component import getMultiAdapter
-from zope.component import getUtility
+#from zope.component import getUtility
 from zope.publisher.browser import BrowserView
-from plone.registry.interfaces import IRegistry
+#from plone.registry.interfaces import IRegistry
 from plone.memoize.instance import memoize
+from plone.app.layout.viewlets.common import PersonalBarViewlet as BasePersonalBarViewlet
 from Acquisition import aq_inner
 from urllib import unquote
 
-from Acquisition import aq_base
+#from Acquisition import aq_base
 from AccessControl import getSecurityManager
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.interfaces import IPloneSiteRoot
+#from Products.CMFCore.utils import getToolByName
+#from Products.CMFPlone.interfaces import IPloneSiteRoot
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 
 class Toolbar(BrowserView):
@@ -245,3 +247,7 @@ class Toolbar(BrowserView):
     def icon(self, action):
         return action.get('icon', None)
 
+
+class PersonalBarViewlet(BasePersonalBarViewlet):
+
+    index = ViewPageTemplateFile('templates/personal_bar.pt')

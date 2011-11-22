@@ -66,6 +66,15 @@
         permission="plone.ViewToolbar"
         />
 
+    <!-- The personal bar for anonymous only-->
+    <browser:viewlet
+        name="plone.personal_bar"
+        manager="plone.app.layout.viewlets.interfaces.IPortalHeader"
+        class=".toolbar.PersonalBarViewlet"
+        permission="zope2.View"
+        layer="plone.app.toolbar.interfaces.IToolbarLayer"
+        />
+
 
     <!-- Static resources -->
 

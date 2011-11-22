@@ -1,0 +1,20 @@
+<div id="portal-personaltools-wrapper" i18n:domain="plone"
+    tal:condition="python: view.anonymous and view.user_actions">
+
+<h5 class="hiddenStructure" i18n:translate="heading_personal_tools">Personal tools</h5>
+
+<ul class="actionMenu deactivated" id="portal-personaltools">
+  <li id="anon-personalbar">
+    <tal:actions repeat="action view/user_actions">
+        <a href=""
+           tal:attributes="href action/url;
+                           id string:personaltools-${action/id};"
+           tal:content="action/title"
+           i18n:translate="">
+            action title
+        </a>
+    </tal:actions>
+  </li>
+</ul>
+
+</div>

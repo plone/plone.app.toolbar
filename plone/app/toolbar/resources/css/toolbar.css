@@ -75,17 +75,16 @@ body {
 .toolbarlocal .swirl div {
     background-color: #f2f2f2;
 }
+
 .personalbar {
-    padding: 2px 8px 0 26px;
-    font: 13px Arial,sans-serif;
-    color: #fff;
-    line-height: 24px;
-    margin: 0;
+    min-width:120px;
+    margin:0 5px 0 25px;
 }
-.personalbar li {
-    display: inline-block;
-    margin: 0 4px;
+
+.personalbar a:hover {
+    text-decoration:none;
 }
+
 .cog:hover {
     cursor: pointer;
     background: blue;
@@ -102,11 +101,7 @@ body {
     font-size: 11px;
     color: white;
 }
-.personalbar img,
-.personalbar span {
-    vertical-align: middle;
-    color: #fff;
-}
+
 .portaltabs {
     margin: 0;
     padding: 0 0 0 6px;
@@ -147,6 +142,8 @@ body {
 .toolbarglobal .portaltabs button.menu:hover a {
     color: #000;
 }
+
+.personalbar dt.actionMenuHeader a,
 .toolbarglobal .portaltabs a,
 .toolbarglobal .portaltabs button {
     -moz-transition: all 0.1s linear 0s;
@@ -154,7 +151,7 @@ body {
     background-color: #222;
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#404040), color-stop(25%, #404040), to(#222));
     background-image: linear-gradient(center top , #404040, #404040 25%, #222);
-    background-image: -moz-linear-gradient(center top , #404040, #404040 25%, #222);
+    background-image: -moz-linear-gradient(center top , #40404, #404040 25%, #222);
     background-image: -webkit-linear-gradient(center top , #404040, #404040 25%, #222);
     border-color: #222;
     border-radius: 4px 4px 4px 4px;
@@ -172,6 +169,17 @@ body {
     -moz-box-shadow: 0 1px rgba(255, 255, 255, 0.1) inset;
     -webkit-box-shadow: 0 1px rgba(255, 255, 255, 0.1) inset;
 }
+
+.personalbar dt.actionMenuHeader a {
+    background-color: #fff !important;
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fff), color-stop(25%, #fff), to(#E6E6E6));
+    background-image: linear-gradient(center top , #fff, #fff 25%, #E6E6E6);
+    background-image: -moz-linear-gradient(center top , #fff, #fff 25%, #E6E6E6);
+    background-image: -webkit-linear-gradient(center top , #fff, #fff 25%, #E6E6E6);
+    border-color: #ccc;
+    color: #333333;
+}
+
 .toolbarglobal .portaltabs a:hover,
 .toolbarglobal .portaltabs button:hover,
 .toolbarglobal .portaltabs label:hover {
@@ -254,43 +262,55 @@ label select {
     background: none;
 }
 
-#contentActionMenus ul {
+.toolbarglobal ul {
     list-style: none;
     margin: 0;
 }
-#contentActionMenus li {
+
+.toolbarglobal li {
     display: inline;
 }
-#contentActionMenus dl.actionMenu {
+
+.toolbarglobal dl.actionMenu {
     margin-left: 2px;
     line-height: 2em;
     float: right;
     position: relative;
     white-space: nowrap;
 }
-#contentActionMenus dl.actionMenu a, dl.actionMenu div {
+
+.toolbarglobal dl.actionMenu a, dl.actionMenu div {
     display: block !important;
     white-space: nowrap;
 }
-#contentActionMenus dl.actionMenu dt {
+
+.toolbarglobal dl.actionMenu dt {
     font-weight: normal;
     margin: 0 0.25em;
 }
-#contentActionMenus dl.actionMenu a {
+
+.toolbarglobal dl.actionMenu a {
     background-color: #222222;
 }
-#contentActionMenus dl.actionMenu.activated dt a,
-#contentActionMenus dl.actionMenu.activated dd a,
-#contentActionMenus dl.actionMenu.activated dd div {
+
+.toolbarglobal dl.actionMenu.activated dt a,
+.toolbarglobal dl.actionMenu.activated dd a,
+.toolbarglobal dl.actionMenu.activated dd div {
     margin: 4px 4px 0 0;
 }
-#contentActionMenus dl.actionMenu.activated dd {
+
+.personalbar dl.actionMenu.activated dt a {
+    margin:0;
+}
+
+.toolbarglobal dl.actionMenu.activated dd {
     background: transparent;
     border: 0;
     right: -3px;
 }
-#contentActionMenus dl.actionMenu dd.actionMenuContent a,
-#contentActionMenus dl.actionMenu.activated dt a {
+
+.toolbarglobal dl.actionMenu dd.actionMenuContent a,
+.toolbarglobal dl.actionMenu.activated dt a {
     background: #FFFFFF;
     border-color: #FFFFFF;
     border-radius: 4px 4px 0 0;
@@ -298,28 +318,47 @@ label select {
     color: #000000;
     border: 0;
 }
-#contentActionMenus dl.actionMenu.deactivated dd.actionMenuContent {
+.toolbarglobal dl.actionMenu.deactivated dd.actionMenuContent {
     display: none;
 }
-#contentActionMenus dl.actionMenu.activated dd.actionMenuContent {
+
+.toolbarglobal dl.actionMenu.activated dd.actionMenuContent {
     background: #FFFFFF;
     border-radius: 4px 4px 4px 4px;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.4);
     color: #000000;
     display: block;
     margin: 5px 0 0 -18px;
-    padding: 16px;
+    padding: 8px;
 }
-.rightactions #contentActionMenus dl.actionMenu.activated dd.actionMenuContent {
+
+.toolbarglobal dl.actionMenu.activated dd.actionMenuContent {
     margin: 0 7px 0 -18px;
     border-radius: 4px 0 4px 4px;
     z-index: 10000;
 }
-#contentActionMenus dl.actionMenu.activated dd {
+
+.toolbarglobal dl.actionMenu.activated dd {
     background: #FFFFFF;
     border-color: #FFFFFF;
     border-radius: 0 0 4px 4px;
     position: absolute;
     width: auto;
     min-width: 100%;
+}
+
+.personalbar dd.actionMenuContent a {
+    margin:4px 4px 0 0;
+    padding:5px 14px 6px;
+}
+
+.personalbar dl.actionMenu.activated dd {
+    right: -7px;
+}
+
+.toolbarglobal dd.actionMenuContent a:hover {
+    background:#E6E6E6!important;
+    border-radius: 0 0 0 0 !important;
+    -moz-border-radius: 0 0 0 0 !important;
+    -webkit-border-radius: 0 0 0 0 !important;
 }
