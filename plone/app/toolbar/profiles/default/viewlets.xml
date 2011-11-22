@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<object>
-    <hidden manager="plone.portalheader" skinname="Plone Default" purge="True">
-        <viewlet name="plone.personal_bar"/>
-    </hidden>
-</object>
