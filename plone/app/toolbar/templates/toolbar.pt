@@ -29,19 +29,54 @@
     </div>
     <div class="toolbarright">
       <div class="swirl"><div></div></div>
-      <ul class="personalbar">
-        <li>
-          <img src="++resource++plone.app.toolbar/images/portrait.png"
-               height="24"
-               tal:condition="view/userPortrait"
-               tal:attributes="src view/userPortrait" />
-          <span tal:content="view/userName">Rob Gietema</span>
-          <span> &#9660;</span>
-        </li>
-        <!--li><a href=""><span class="messages">1</span></a></li-->
-        <!--li><a href=""><img class="cog" src="++resource++plone.app.toolbar/images/cog.png"/></a></li-->
-      </ul>
+    
+      <div class="personalbar" i18n:domain="plone">
+            <dl class="actionMenu deactivated" id="portal-personaltools"
+                tal:condition="python:view.personalActions and not view.anonymous">
+                <dt class="actionMenuHeader">
+                    <a id="user-name"
+                        tal:attributes="href view/userHomeLinkURL">
+                        <!--
+                        <img src="++resource++plone.app.toolbar/images/portrait.png"
+                           height="24"
+                           tal:condition="view/userPortrait"
+                           tal:attributes="src view/userPortrait" />&nbsp;
+                       -->
+                        <span tal:content="view/userName">John</span>
+                        <span> &#9660;</span>
+                    </a>
+                </dt>
+                    
+                <dd class="actionMenuContent">
+                    <ul>
+                        <li tal:repeat="action view/personalActions"
+                            tal:attributes="id string:personaltools-${action/id}">
+                            <a href=""
+                                tal:attributes="href action/url">
+                                <span class="subMenuTitle" tal:content="action/title" i18n:translate="">action title</span>
+                            </a>
+                        </li>
+                    </ul>
+                </dd>
+            </dl>
+
+            <ul class="actionMenu deactivated" id="portal-personaltools"
+                tal:condition="python:view.personalActions and view.anonymous">
+                <li id="anon-personalbar">
+                    <tal:actions repeat="action view/personalActions">
+                        <a href=""
+                            tal:attributes="href action/url;
+                            id string:personaltools-${action/id};"
+                            tal:content="action/title"
+                            i18n:translate="">
+                            action title
+                        </a>
+                    </tal:actions>
+                </li>
+            </ul>
+        </div>
     </div>
+
     <div class="toolbarleft">
 
       <div class="portaltabs rightactions"
