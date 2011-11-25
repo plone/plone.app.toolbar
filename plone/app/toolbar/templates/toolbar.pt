@@ -110,7 +110,7 @@
               tal:define="selected action/selected|nothing;"
               tal:attributes="id string:contentview-${action/id};
                 class python:selected and 'overlayLink selected' or 'overlayLink plain';
-                href action/url;"
+                href python:action['id'] == 'edit' and view.editLink() or action['url'];"
               tal:content="action/title"
               i18n:translate="">
                 View name

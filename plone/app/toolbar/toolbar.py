@@ -124,7 +124,7 @@ class Toolbar(BrowserView):
             return self.context.absolute_url() + "/@@toolbar-lock-info"
         objectActions = self.contextState.actions('object')
         for action in objectActions:
-            if action['id'] == self.settings.editActionId:
+            if action['id'] == 'edit':
                 return "%s?last_referer=%s" % (action['url'], self.context.absolute_url())
         return None
 
