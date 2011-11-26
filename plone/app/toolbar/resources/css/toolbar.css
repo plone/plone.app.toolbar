@@ -77,8 +77,12 @@ body {
 }
 
 .personalbar {
-    min-width:120px;
+    min-width:150px;
     margin:0 5px 0 25px;
+}
+
+.personalbar img {
+    float:left;
 }
 
 .personalbar a:hover {
@@ -237,7 +241,11 @@ body {
 }
 .rightactions {
     float: right;
-    padding: 0 20px 0 0;
+    padding: 0 30px 0 0;
+}
+
+.rightactions select {
+    margin-top:4px;
 }
 
 label select {
@@ -336,16 +344,18 @@ label select {
     background: none;
 }
 
-.toolbarglobal ul {
+.toolbarglobal ul,
+.toolbarlocal ul {
     list-style: none;
     margin: 0;
 }
 
-.toolbarglobal li {
+.toolbarglobal li,
+.toolbarlocal li {
     display: inline;
 }
 
-.toolbarglobal dl.actionMenu {
+dl.actionMenu {
     margin-left: 2px;
     line-height: 2em;
     float: right;
@@ -353,23 +363,23 @@ label select {
     white-space: nowrap;
 }
 
-.toolbarglobal dl.actionMenu a, dl.actionMenu div {
+dl.actionMenu a, dl.actionMenu div {
     display: block !important;
     white-space: nowrap;
 }
 
-.toolbarglobal dl.actionMenu dt {
+dl.actionMenu dt {
     font-weight: normal;
     margin: 0 0.25em;
 }
 
-.toolbarglobal dl.actionMenu a {
+dl.actionMenu a {
     background-color: #222222;
 }
 
-.toolbarglobal dl.actionMenu.activated dt a,
-.toolbarglobal dl.actionMenu.activated dd a,
-.toolbarglobal dl.actionMenu.activated dd div {
+dl.actionMenu.activated dt a,
+dl.actionMenu.activated dd a,
+dl.actionMenu.activated dd div {
     margin: 4px 4px 0 0;
 }
 
@@ -377,14 +387,14 @@ label select {
     margin:0;
 }
 
-.toolbarglobal dl.actionMenu.activated dd {
+dl.actionMenu.activated dd {
     background: transparent;
     border: 0;
     right: -3px;
 }
 
-.toolbarglobal dl.actionMenu dd.actionMenuContent a,
-.toolbarglobal dl.actionMenu.activated dt a {
+dl.actionMenu dd.actionMenuContent a,
+dl.actionMenu.activated dt a {
     background-color: #FFFFFF;
     border-color: #FFFFFF;
     border-radius: 4px 4px 0 0;
@@ -392,11 +402,12 @@ label select {
     color: #000000;
     border: 0;
 }
-.toolbarglobal dl.actionMenu.deactivated dd.actionMenuContent {
+
+dl.actionMenu.deactivated dd.actionMenuContent {
     display: none;
 }
 
-.toolbarglobal dl.actionMenu.activated dd.actionMenuContent {
+dl.actionMenu.activated dd.actionMenuContent {
     background: #FFFFFF;
     border-radius: 4px 4px 4px 4px;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.4);
@@ -406,19 +417,23 @@ label select {
     padding: 8px;
 }
 
-.toolbarglobal dl.actionMenu.activated dd.actionMenuContent {
+dl.actionMenu.activated dd.actionMenuContent {
     margin: 0 7px 0 -18px;
     border-radius: 4px 0 4px 4px;
     z-index: 10000;
 }
 
-.toolbarglobal dl.actionMenu.activated dd {
+dl.actionMenu.activated dd {
     background: #FFFFFF;
     border-color: #FFFFFF;
     border-radius: 0 0 4px 4px;
     position: absolute;
     width: auto;
     min-width: 100%;
+}
+
+.personalbar dt.actionMenu {
+    display:inline-block;
 }
 
 .personalbar dd.actionMenuContent a {
@@ -430,13 +445,13 @@ label select {
     right: -7px;
 }
 
-.toolbarglobal dd.actionMenuContent a:hover {
+dd.actionMenuContent a:hover {
     background-color: #E6E6E6 !important;
     border-radius: 0 0 0 0 !important;
     -moz-border-radius: 0 0 0 0 !important;
     -webkit-border-radius: 0 0 0 0 !important;
 }
 
-.toolbarglobal dd.actionMenuContent a img {
+dd.actionMenuContent a img {
     margin: 0 4px 0 -14px;
 }
