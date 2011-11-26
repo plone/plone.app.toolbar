@@ -125,7 +125,11 @@ class Toolbar(BrowserView):
         objectActions = self.contextState.actions('object')
         for action in objectActions:
             if action['id'] == 'edit':
-                return "%s?last_referer=%s" % (action['url'], self.context.absolute_url())
+                if hasattr(self.context, 'archetype_name'):
+                    return "%s?last_referer=%s" % (
+                        action['url'], self.context.absolute_url())
+                else:
+                    return action['url']
         return None
 
     @memoize
