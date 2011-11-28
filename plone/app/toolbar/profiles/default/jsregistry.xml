@@ -1,58 +1,49 @@
 <?xml version="1.0"?>
 <object name="portal_javascripts">
 
-  <javascript cacheable="False"
+    <!-- XXX: undescore and backbone are now included as dependencies 
+        but this is merely because it was easier to prototype toolbar.js.
+        toolbar.js could also be written without them, but wouldn't be 
+        maintainable as it is now -->
+    <!-- TODO: we need to add condition that this applies only if you're
+         logged in -->
+    <javascript 
+        cacheable="False" compression="none" cookable="False"
+        enabled="True" inline="False" bundle="default"
+        id="++resource++plone.app.toolbar/js/backbone-0.5.4.min.js"
+        />
+    <javascript 
+        cacheable="False" compression="none" cookable="False"
+        enabled="True" inline="False" bundle="default"
+        id="++resource++plone.app.toolbar/js/underscore-1.2.2.min.js"
+        />
+    <javascript 
+        cacheable="False" compression="none" cookable="False"
+        enabled="True" inline="False" bundle="default"
+        id="++resource++plone.app.toolbar/js/toolbar.js"
+        />
+
+    <!-- TODO: next thing to be reviewed, for now i'll remove it
+    <javascript cacheable="False"
               compression="none"
               cookable="False"
               enabled="True"
               id="++resource++plone.app.toolbar/js/plone.notify.js"
               bundle="toolbar"
-              inline="False" />
+              inline="False" /> -->
 
-  <javascript cacheable="False"
-              compression="none"
-              cookable="False"
-              enabled="True"
-              id="++resource++plone.app.toolbar/js/toolbar.js"
-              bundle="toolbar"
-              inline="False" />
-
-  <javascript cacheable="False"
-              compression="none"
-              cookable="False"
-              enabled="True"
-              id="++resource++plone.app.toolbar/js/bootstrap-modal.js"
-              bundle="toolbar"
-              inline="False" />
-
-  <javascript cacheable="False"
-              compression="none"
-              cookable="False"
-              enabled="True"
-              id="++resource++plone.app.toolbar/js/bootstrap-twipsy.js"
-              bundle="toolbar"
-              inline="False" />
-
-  <javascript cacheable="False"
-              compression="none"
-              cookable="False"
-              enabled="True"
-              id="++resource++plone.app.toolbar/js/bootstrap-popover.js"
-              bundle="toolbar"
-              inline="False" />
-
-  <!-- BBB: Create bundles for jQuery, jQueryTools and TinyMCE - see registry.xml -->
-  <javascript bundle="jquery" id="jquery.js" />
-  <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.js"  />
-  <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.form.js"  />
-  <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.overlayhelpers.js"  />
-  <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.plugins.js"  />
-  <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.dateinput.js"  />
-  <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.rangeinput.js"  />
-  <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.validator.js"  />
-  <javascript bundle="tinymce" id="tiny_mce.js" />
-  <javascript bundle="tinymce" id="tiny_mce_init.js" />
-  <javascript bundle="toolbar" id="popupforms.js"  />
-  <javascript bundle="toolbar" id="dropdown.js"  />
+    <!-- BBB: Create bundles for jQuery, jQueryTools and TinyMCE - see registry.xml
+               -->
+    <javascript bundle="jquery" id="jquery.js" />
+    <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.js"  />
+    <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.form.js"  />
+    <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.overlayhelpers.js"  />
+    <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.plugins.js"  />
+    <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.dateinput.js"  />
+    <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.rangeinput.js"  />
+    <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.validator.js"  />
+    <javascript bundle="jquerytools" id="popupforms.js"  />
+    <javascript bundle="tinymce" id="tiny_mce.js" />
+    <javascript bundle="tinymce" id="tiny_mce_init.js" />
 
 </object>

@@ -1,13 +1,15 @@
 <!-- Fallback link to the menu, replaced on page load with an iframe version -->
 
 <div id="plone-cmsui-trigger">
-  <!-- diazo prepend rule -->
+
   <script type="text/javascript">
       (function () {
           document.getElementById('plone-cmsui-trigger').style.display = 'none';
       }());
   </script>
+
   <a id="plone-toolbar-link" href="" tal:attributes="href view/getLink">Manage page</a>
+
   <style type="text/css">
       iframe#plone-toolbar {    
           margin: 0;
