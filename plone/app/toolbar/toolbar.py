@@ -19,10 +19,11 @@ class Toolbar(BrowserView):
     """
 
     def __call__(self):
-        # Disable theming
+
+        # Disable diazo theming
         self.request.response.setHeader('X-Theme-Disabled', 'True')
 
-        # Set the CMSUI skin so that we get the correct resources
+        # Set the 'toolbar' skin so that we get the correct resources
         self.context.changeSkin('toolbar', self.request)
 
         # Commonly useful variables
