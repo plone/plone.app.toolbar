@@ -1,18 +1,12 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:gs="http://namespaces.zope.org/genericsetup"
-    xmlns:zcml="http://namespaces.zope.org/zcml"
     xmlns:browser="http://namespaces.zope.org/browser"
-    xmlns:i18n="http://namespaces.zope.org/i18n"
-    xmlns:cmf="http://namespaces.zope.org/cmf"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="plone">
     
-    
-    <!-- BBB registrations: Used to override/disable parts of Plone 4.x that
-         should not be in place when using plone.app.toolbar
-      -->
-
-    <include package="plone.app.workflow" />
+    <!-- BBB: Used to override/disable parts of Plone 4.x that
+         should not be in place when using plone.app.Toolbar
+         -->
 
     <browser:viewlet
         name="plone.toolbar.toolbarlink"
@@ -20,7 +14,7 @@
         layer="..interfaces.IToolbarLayer"
         manager="plone.app.layout.viewlets.interfaces.IPortalTop"
         template="toolbarlink.pt"
-        class=".toolbarlink.ToolbarLinkViewlet"
+        class="plone.app.layout.viewlets.common.ViewletBase"
         permission="plone.ViewToolbar"
         />
 
@@ -42,13 +36,30 @@
         permission="zope.Public"
         />
     
-    <!-- disable KSS -->
+    <browser:viewlet
+        name="plone.personal_bar"
+        for="*"
+        layer="..interfaces.IToolbarLayer"
+        manager="plone.app.layout.viewlets.interfaces.IPortalHeader"
+        class=".personal_bar.PersonalBarViewlet"
+        permission="zope2.View"
+        />
+
     <browser:viewletManager
         name="plone.resourceregistries.kineticstylesheets"
         provides="Products.ResourceRegistries.interfaces.IHtmlHeadStyles"
         template="null.pt"
         permission="zope2.View"
         layer="..interfaces.IToolbarLayer"
+        />
+
+    <genericsetup:registerProfile
+        name="z_bbb"
+        title="Plone Toolbar - BBB registrations"
+        description="Performs backwards compatibility migrations"
+        directory="bbb/profiles/bbb"
+        for="Products.CMFPlone.interfaces.IMigratingPloneSiteRoot"
+        provides="Products.GenericSetup.interfaces.EXTENSION"
         />
 
 </configure>

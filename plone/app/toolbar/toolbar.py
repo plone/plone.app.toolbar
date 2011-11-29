@@ -1,257 +1,136 @@
-from zope.component import getMultiAdapter
-#from zope.component import getUtility
-from zope.publisher.browser import BrowserView
-#from plone.registry.interfaces import IRegistry
-from plone.memoize.instance import memoize
-from plone.app.layout.viewlets.common import PersonalBarViewlet as BasePersonalBarViewlet
-from Acquisition import aq_inner
-from urllib import unquote
 
-#from Acquisition import aq_base
-from AccessControl import getSecurityManager
-#from Products.CMFCore.utils import getToolByName
-#from Products.CMFPlone.interfaces import IPloneSiteRoot
+try:
+    import json
+except:
+    import simplejson as json
+
+from urllib import unquote
+from zope.component import getMultiAdapter
+from zope.publisher.browser import BrowserView
+
+from plone.memoize.instance import memoize
+
+from Acquisition import aq_inner
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 
 class Toolbar(BrowserView):
-    """The view containing the overlay toolbar
-    """
 
-    def __call__(self):
-        # Disable theming
-        self.request.response.setHeader('X-Theme-Disabled', 'True')
+    render = ViewPageTemplateFile('templates/toolbar.pt')
 
-        # Set the CMSUI skin so that we get the correct resources
-        self.context.changeSkin('toolbar', self.request)
+    def __init__(self, context, request, view=None):
+        super(Toolbar, self).__init__(context, request)
+        self.__parent__ = view
 
-        # Commonly useful variables
-        self.securityManager = getSecurityManager()
-        self.anonymous = self.portalState.anonymous()
-        self.tools = getMultiAdapter((self.context, self.request), name=u'plone_tools')
-
-        # Render the template
-        return self.index()
-
-    # Personal actions
-
-    @property
-    @memoize
-    def contextState(self):
-        return getMultiAdapter((self.context, self.request), name=u'plone_context_state')
-
-    @property
-    @memoize
-    def portalState(self):
-        return getMultiAdapter((self.context, self.request), name=u'plone_portal_state')
-
-    @memoize
-    def personalActions(self):
-        """Get the personal actions
-        """
-        actions = []
-        for action in self.contextState.actions('user'):
-            actions.append({
-                'id': action['id'],
-                'url': action['url'],
-                'title': action['title'],
-                'description': action['description'],
-            })
-
-        return actions
-
-    @memoize
-    def userName(self):
-        """Get the username of the currently logged in user
-        """
-        if self.anonymous:
-            return None
-
-        member = self.portalState.member()
-        userid = member.getId()
-
-        membership = self.tools.membership()
-        memberInfo = membership.getMemberInfo(userid)
-
-        fullname = userid
-
-        # Member info is None if there's no Plone user object, as when using OpenID.
-        if memberInfo is not None:
-            fullname = memberInfo.get('fullname', '') or fullname
-
-        return fullname
-
-    @memoize
-    def userHomeLinkURL(self):
-        """Get the URL of the user's home page (profile age)
-        """
-        member = self.portalState.member()
-        userid = member.getId()
-        return "%s/author/%s" % (self.portalState.navigation_root_url(), userid)
-
-    @memoize
-    def userPortrait(self):
-        """Get the URL of the user's portrait
-        """
-
-        member = self.portalState.member()
-        membership = self.tools.membership()
-        portrait = membership.getPersonalPortrait(member.getId());
-        if portrait is not None:
-            return portrait.absolute_url()
-
-    @memoize
-    def workflowState(self):
-        """Get the name of the workflow state
-        """
-        state = self.contextState.workflow_state()
-        if state is None:
-            return None
-        workflows = self.tools.workflow().getWorkflowsFor(self.context)
-        if workflows:
-            for w in workflows:
-                if state in w.states:
-                    return w.states[state].title or state
-        return state
-
-    @memoize
-    def editLink(self):
-        """Get the URL of the edit action - taking locking into account
-        """
-        if not self.securityManager.checkPermission('Modify portal content', self.context):
-            return None
-        if self.contextState.is_locked():
-            return self.context.absolute_url() + "/@@toolbar-lock-info"
-        objectActions = self.contextState.actions('object')
-        for action in objectActions:
-            if action['id'] == 'edit':
-                if hasattr(self.context, 'archetype_name'):
-                    return "%s?last_referer=%s" % (
-                        action['url'], self.context.absolute_url())
-                else:
-                    return action['url']
-        return None
-
-    @memoize
-    def settingsActions(self):
-        """Render every action other than the excluded ones (edit, view).
-        Use the action icon if applicable, but fall back on the default icon.
-        """
-
-        actions = []
-        objectActions = self.contextState.actions('object')
-
-        defaultIcon = self.portalState.navigation_root_url() + self.settings.defaultActionIcon
-
-        for action in objectActions:
-            if action['id'] in self.settings.excludedActionIds:
-                continue
-
-            icon = action['icon']
-            if not icon:
-                icon = defaultIcon
-
-            actions.append({
-                'id': action['id'],
-                'url': action['url'],
-                'title': action['title'],
-                'description': action['description'],
-                'icon': icon,
-            })
-
-        return actions
-
-    @memoize
-    def baseURL(self):
-        return self.context.absolute_url()
-
-    @memoize
-    def prepareObjectTabs(self, default_tab='view',
-                          sort_first=['folderContents']):
-        """Prepare the object tabs by determining their order and working
-        out which tab is selected. Used in global_contentviews.pt
-        """
-        context = aq_inner(self.context)
-        context_url = context.absolute_url()
-        context_fti = context.getTypeInfo()
-
-        context_state = getMultiAdapter(
-            (context, self.request), name=u'plone_context_state')
-        actions = context_state.actions
-
-        action_list = []
-        if context_state.is_structural_folder():
-            action_list = actions('folder')
-        action_list.extend(actions('object'))
-
-        tabs = []
-        found_selected = False
-        fallback_action = None
-
-        # we use the context-acquired request object here, which is
-        # different from the request fetching the tile HTML
-        request_url = self.context.REQUEST['ACTUAL_URL']
-        request_url_path = request_url[len(context_url):]
-
+        self.context = aq_inner(self.context)
+        self.context_url = context.absolute_url()
+        self.context_fti = context.getTypeInfo()
+        self.request_url = self.request.get('ACTUAL_URL')
+        request_url_path = self.request_url[len(self.context_url):]
         if request_url_path.startswith('/'):
             request_url_path = request_url_path[1:]
+        self.request_url_path = request_url_path
 
-        for action in action_list:
-            item = {'title': action['title'],
-                    'id': action['id'],
-                    'url': '',
-                    'selected': False}
+        self.default_action = 'view'
+        self.sort_order = ['folderContents']
 
-            action_url = action['url'].strip()
-            starts = action_url.startswith
-            if starts('http') or starts('javascript'):
-                item['url'] = action_url
+        self.context_state = getMultiAdapter((context, self.request),
+                name=u'plone_context_state')
+
+    def update(self):
+        pass
+
+    #@memoize
+    @property
+    def action_list(self):
+        """ actions registered for
+        """
+        action_list = []
+        actions = self.context_state.actions
+
+        # 'folder' actions
+        if self.context_state.is_structural_folder():
+            action_list = actions('folder')
+
+        # 'object' actions
+        action_list.extend(actions('object'))
+
+        # sort actions
+        def sort_buttons(action):
+            try:
+                return self.sort_order.index(action['id'])
+            except ValueError:
+                return 255
+        action_list.sort(key=sort_buttons)
+
+        return action_list
+
+    #@memoize
+    @property
+    def buttons(self):
+        buttons = []
+
+        selected_button_found = False
+        selected_button = None
+
+        for action in self.action_list:
+            item = {
+                'title': action['title'],
+                'id': 'toolbar-button-' + action['id'],
+                }
+
+            # button url
+            button_url = action['url'].strip()
+            if button_url.startswith('http') or \
+               button_url.startswith('javascript'):
+                item['url'] = button_url
             else:
-                item['url'] = '%s/%s' % (context_url, action_url)
-
-            action_method = item['url'].split('/')[-1]
+                item['url'] = '%s/%s' % (self.context_url, button_url)
 
             # Action method may be a method alias:
             # Attempt to resolve to a template.
-            action_method = context_fti.queryMethodID(
-                action_method, default=action_method)
+            action_method = item['url'].split('/')[-1]
+            action_method = self.context_fti.queryMethodID(
+                    action_method, default=action_method)
+
+            # Determine if button is selected
             if action_method:
-                request_action = unquote(request_url_path)
-                request_action = context_fti.queryMethodID(
+                request_action = unquote(self.request_url_path)
+                request_action = self.context_fti.queryMethodID(
                     request_action, default=request_action)
                 if action_method == request_action:
-                    item['selected'] = True
-                    found_selected = True
+                    item['klass'] = 'selected'
+                    selected_button_found = True
 
-            current_id = item['id']
-            if current_id == default_tab:
-                fallback_action = item
+            if action['id'] == self.default_action:
+                selected_button = item
 
-            tabs.append(item)
+            buttons.append(item)
 
-        if not found_selected and fallback_action is not None:
-            fallback_action['selected'] = True
+        if not selected_button_found and selected_button is not None:
+            selected_button['klass'] = 'selected'
 
-        def sortOrder(tab):
-            try:
-                return sort_first.index(tab['id'])
-            except ValueError:
-                return 255
+        return buttons
 
-        tabs.sort(key=sortOrder)
-        return tabs
+    def toolbar_initialize_js(self):
+        return '$.toolbar.initialize(%s);' % json.dumps({
+            'id': 'plone-toolbar',
+            'name': 'plone-toolbar',
+            'klass': 'plone-toolbar', 
+            'buttons': self.buttons,
+            })
 
-    def object_actions(self):
-        context = aq_inner(self.context)
-        context_state = getMultiAdapter((context, self.request),
-                                        name=u'plone_context_state')
+class ToolbarFallback(BrowserView):
+    """ View which is going to be shown when javascript is not available.
+    """
 
-        return context_state.actions('object_actions')
+    recurse = ViewPageTemplateFile('templates/toolbar_fallback_recurse.pt')
 
-    def icon(self, action):
-        return action.get('icon', None)
+    def __init__(self, context, request):
+        super(ToolbarFallback, self).__init__(context, request)
+        self.toolbar = getMultiAdapter(
+                (context, request, self), name=u'plone_toolbar')
 
-
-class PersonalBarViewlet(BasePersonalBarViewlet):
-
-    index = ViewPageTemplateFile('templates/personal_bar.pt')
+    @property
+    def buttons(self):
+        return self.toolbar.buttons

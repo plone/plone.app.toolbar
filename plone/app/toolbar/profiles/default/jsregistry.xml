@@ -10,12 +10,12 @@
     <javascript 
         cacheable="False" compression="none" cookable="False"
         enabled="True" inline="False" bundle="default"
-        id="++resource++plone.app.toolbar/js/backbone-0.5.4.min.js"
+        id="++resource++plone.app.toolbar/js/underscore-1.2.2.min.js"
         />
     <javascript 
         cacheable="False" compression="none" cookable="False"
         enabled="True" inline="False" bundle="default"
-        id="++resource++plone.app.toolbar/js/underscore-1.2.2.min.js"
+        id="++resource++plone.app.toolbar/js/backbone-0.5.4.min.js"
         />
     <javascript 
         cacheable="False" compression="none" cookable="False"

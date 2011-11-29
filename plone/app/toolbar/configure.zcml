@@ -1,11 +1,11 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:gs="http://namespaces.zope.org/genericsetup"
-    xmlns:zcml="http://namespaces.zope.org/zcml"
-    xmlns:browser="http://namespaces.zope.org/browser"
-    xmlns:i18n="http://namespaces.zope.org/i18n"
     xmlns:z3c="http://namespaces.zope.org/z3c"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
     xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="plone">
 
     <include package="Products.ResourceRegistries" />
@@ -17,9 +17,16 @@
         title="Plone: View Toolbar"
         />
 
-    <include package=".bbb" />
+    <!-- Static resources -->
 
-    <gs:registerProfile
+    <browser:resourceDirectory
+        name="plone.app.toolbar"
+        directory="resources"
+        />
+
+    <!-- GS profile -->
+
+    <genericsetup:registerProfile
         name="default"
         title="Plone Toolbar"
         description="Installs the Plone Toolbar"
@@ -28,30 +35,34 @@
         provides="Products.GenericSetup.interfaces.EXTENSION"
         />
 
-
-    <!-- BBB profile -->
-
-    <gs:registerProfile
-        name="z_bbb"
-        title="Plone Toolbar - BBB registrations"
-        description="Performs backwards compatibility migrations"
-        directory="bbb/profiles/bbb"
-        for="Products.CMFPlone.interfaces.IMigratingPloneSiteRoot"
-        provides="Products.GenericSetup.interfaces.EXTENSION"
-        />
-
-
     <!-- Views -->
 
     <browser:page
-        name="portal-toolbar"
+        name="plone_toolbar_fallback"
         for="*"
-        class=".toolbar.Toolbar"
-        template="templates/toolbar.pt"
+        class=".toolbar.ToolbarFallback"
+        template="templates/toolbar_fallback.pt"
         permission="plone.ViewToolbar"
         />
 
-    <browser:page
+    <adapter
+        name="plone_toolbar"
+        for="* .interfaces.IToolbarLayer *"
+        provides="zope.contentprovider.interfaces.IContentProvider"
+        factory=".toolbar.Toolbar"
+        />
+
+
+    <!-- BBB: Used to override/disable parts of Plone 4.x that
+         should not be in place when using plone.app.Toolbar
+         -->
+    <include package=".bbb" />
+
+
+
+
+    <!-- TODO: commenting out until its working
+     browser:page
         name="portal-notifications"
         for="*"
         template="templates/notifications.pt"
@@ -64,23 +75,9 @@
         class=".overlaycontainer.OverlayContainer"
         template="templates/overlay-container.pt"
         permission="plone.ViewToolbar"
-        />
-
-    <!-- The personal bar for anonymous only-->
-    <browser:viewlet
-        name="plone.personal_bar"
-        manager="plone.app.layout.viewlets.interfaces.IPortalHeader"
-        class=".toolbar.PersonalBarViewlet"
-        permission="zope2.View"
-        layer="plone.app.toolbar.interfaces.IToolbarLayer"
-        />
+        /-->
 
 
-    <!-- Static resources -->
 
-    <browser:resourceDirectory
-        name="plone.app.toolbar"
-        directory="resources"
-        />
 
 </configure>
