@@ -10,16 +10,6 @@
     <javascript 
         cacheable="False" compression="none" cookable="False"
         enabled="True" inline="False" bundle="default"
-        id="++resource++plone.app.toolbar/js/underscore-1.2.2.min.js"
-        />
-    <javascript 
-        cacheable="False" compression="none" cookable="False"
-        enabled="True" inline="False" bundle="default"
-        id="++resource++plone.app.toolbar/js/backbone-0.5.4.min.js"
-        />
-    <javascript 
-        cacheable="False" compression="none" cookable="False"
-        enabled="True" inline="False" bundle="default"
         id="++resource++plone.app.toolbar/js/toolbar.js"
         />
 
@@ -32,8 +22,8 @@
               bundle="toolbar"
               inline="False" /> -->
 
-    <!-- BBB: Create bundles for jQuery, jQueryTools and TinyMCE - see registry.xml
-               -->
+    <!-- BBB: Create bundles for jQuery, jQueryTools and TinyMCE - see
+         registry.xml -->
     <javascript bundle="jquery" id="jquery.js" />
     <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.js"  />
     <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.form.js"  />
