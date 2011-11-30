@@ -54,10 +54,10 @@
         />
 
     <genericsetup:registerProfile
-        name="z_bbb"
+        name="default"
         title="Plone Toolbar - BBB registrations"
         description="Performs backwards compatibility migrations"
-        directory="bbb/profiles/bbb"
+        directory="profiles/default"
         for="Products.CMFPlone.interfaces.IMigratingPloneSiteRoot"
         provides="Products.GenericSetup.interfaces.EXTENSION"
         />
