@@ -51,4 +51,9 @@
         layer="..interfaces.IToolbarLayer"
         />
 
+    <browser:resourceDirectory
+        name="plone.app.toolbar.bbb"
+        directory="resources"
+        />
+
 </configure>

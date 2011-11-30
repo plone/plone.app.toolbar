@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<object name="portal_css">
+
+  <stylesheet cacheable="False"
+              compression="safe"
+              cookable="True"
+              enabled="True"
+              id="++resource++plone.app.toolbar.bbb/css/toolbar.css" />
+
+</object>
