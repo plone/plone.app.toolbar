@@ -155,7 +155,7 @@ body {
     background-color: #222;
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#404040), color-stop(25%, #404040), to(#222));
     background-image: linear-gradient(center top , #404040, #404040 25%, #222);
-    background-image: -moz-linear-gradient(center top , #40404, #404040 25%, #222);
+    background-image: -moz-linear-gradient(center top , #404040, #404040 25%, #222);
     background-image: -webkit-linear-gradient(center top , #404040, #404040 25%, #222);
     border-color: #222;
     border-radius: 4px 4px 4px 4px;
@@ -173,6 +173,8 @@ body {
     -moz-box-shadow: 0 1px rgba(255, 255, 255, 0.1) inset;
     -webkit-box-shadow: 0 1px rgba(255, 255, 255, 0.1) inset;
 }
+
+.toolbarglobal .portaltabs a
 
 .personalbar dt.actionMenuHeader a {
     background-color: #fff !important;
@@ -256,81 +258,6 @@ label select {
     padding: 5px 14px 6px;
 }
 
-/* @group Core content type sprites */
-
-/* Generated using http://spritegen.website-performance.org, with the following
-   parameters:
-   - Build direction: Vertical
-   - Horizontal offset: (doesn't matter, but can't be 0)
-   - Vertical offset: 200px
-   - Compress image with OptiPNG: yes
-   - Class prefix: contenttype-
-   - Display width and height: no
-  Then, add 4 px to the background-position to line up the icons to text.
-
-.contenttype-document_icon { background-position: 0 0;  }
-.contenttype-event_icon { background-position: 0 -216px;  }
-.contenttype-file_icon { background-position: 0 -432px;  }
-.contenttype-folder_icon { background-position: 0 -648px;  }
-.contenttype-image_icon { background-position: 0 -864px;  }
-.contenttype-link_icon { background-position: 0 -1080px;  }
-.contenttype-newsitem_icon { background-position: 0 -1296px;  }
-.contenttype-site_icon { background-position: 0 -1512px;  }
-.contenttype-topic_icon { background-position: 0 -1728px;  }
-
-*/
-
-.contenttype-document {
-    background: no-repeat transparent 0px 5px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
-}
-.contenttype-event {
-    background: no-repeat transparent 0px -211px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
-}
-.contenttype-folder {
-    background: no-repeat transparent 0px -643px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
-}
-.contenttype-link {
-    background: no-repeat transparent 0px -1075px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
-}
-.contenttype-news-item {
-    background: no-repeat transparent 0px -1291px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
-}
-.contenttype-plone-site {
-    background: no-repeat transparent 0px -1503px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
-}
-.contenttype-collection {
-    background: no-repeat transparent 0px -1721px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
-}
-.contenttype-topic {
-    background: no-repeat transparent 0px -1721px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
-}
-
-/* These should only appear in the add menu */
-#plone-contentmenu-factories .contenttype-file {
-    background: no-repeat transparent 0px -423px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
-}
-#plone-contentmenu-factories .contenttype-image {
-    background: no-repeat transparent 0px -855px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
-}
-
-.contenttype-document,
-.contenttype-event,
-.contenttype-folder,
-.contenttype-link,
-.contenttype-news-item,
-.contenttype-plone-site,
-.contenttype-collection,
-.contenttype-topic,
-#plone-contentmenu-factories .contenttype-file,
-#plone-contentmenu-factories .contenttype-image {
-    line-height: 2em;
-    display: inline-block;
-    *display: block;
-    padding-left: 20px !important;
-}
-
-/* @end */
-
 /* BBB */
 
 #contentActionMenus {
@@ -396,6 +323,7 @@ dl.actionMenu.activated dd {
 dl.actionMenu dd.actionMenuContent a,
 dl.actionMenu.activated dt a {
     background-color: #FFFFFF;
+    background-image: none;
     border-color: #FFFFFF;
     border-radius: 4px 4px 0 0;
     box-shadow: none;
@@ -455,3 +383,78 @@ dd.actionMenuContent a:hover {
 dd.actionMenuContent a img {
     margin: 0 4px 0 -14px;
 }
+
+/* @group Core content type sprites */
+
+/* Generated using http://spritegen.website-performance.org, with the following
+   parameters:
+   - Build direction: Vertical
+   - Horizontal offset: (doesn't matter, but can't be 0)
+   - Vertical offset: 200px
+   - Compress image with OptiPNG: yes
+   - Class prefix: contenttype-
+   - Display width and height: no
+  Then, add 4 px to the background-position to line up the icons to text.
+
+.contenttype-document_icon { background-position: 0 0;  }
+.contenttype-event_icon { background-position: 0 -216px;  }
+.contenttype-file_icon { background-position: 0 -432px;  }
+.contenttype-folder_icon { background-position: 0 -648px;  }
+.contenttype-image_icon { background-position: 0 -864px;  }
+.contenttype-link_icon { background-position: 0 -1080px;  }
+.contenttype-newsitem_icon { background-position: 0 -1296px;  }
+.contenttype-site_icon { background-position: 0 -1512px;  }
+.contenttype-topic_icon { background-position: 0 -1728px;  }
+
+*/
+
+dl.actionMenu dd.actionMenuContent .contenttype-document {
+    background: no-repeat transparent 0px 5px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
+}
+dl.actionMenu dd.actionMenuContent .contenttype-event {
+    background: no-repeat transparent 0px -211px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
+}
+dl.actionMenu dd.actionMenuContent .contenttype-folder {
+    background: no-repeat transparent 0px -643px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
+}
+dl.actionMenu dd.actionMenuContent .contenttype-link {
+    background: no-repeat transparent 0px -1075px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
+}
+dl.actionMenu dd.actionMenuContent .contenttype-news-item {
+    background: no-repeat transparent 0px -1291px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
+}
+dl.actionMenu dd.actionMenuContent .contenttype-plone-site {
+    background: no-repeat transparent 0px -1503px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
+}
+dl.actionMenu dd.actionMenuContent .contenttype-collection {
+    background: no-repeat transparent 0px -1721px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
+}
+dl.actionMenu dd.actionMenuContent .contenttype-topic {
+    background: no-repeat transparent 0px -1721px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
+}
+
+/* These should only appear in the add menu */
+#plone-contentmenu-factories .contenttype-file {
+    background: no-repeat transparent 0px -423px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
+}
+#plone-contentmenu-factories .contenttype-image {
+    background: no-repeat transparent 0px -855px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
+}
+
+.contenttype-document,
+.contenttype-event,
+.contenttype-folder,
+.contenttype-link,
+.contenttype-news-item,
+.contenttype-plone-site,
+.contenttype-collection,
+.contenttype-topic,
+#plone-contentmenu-factories .contenttype-file,
+#plone-contentmenu-factories .contenttype-image {
+    line-height: 2em;
+    display: inline-block;
+    *display: block;
+    padding-left: 20px !important;
+}
+
+/* @end */
