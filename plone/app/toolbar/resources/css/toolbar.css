@@ -224,6 +224,19 @@ body {
 .toolbarlocal .portaltabs label:hover {
     background-position: 0 -15px;
 }
+.toolbarlocal .portaltabs a.active,
+.toolbarlocal .portaltabs button.active,
+.toolbarlocal .portaltabs label.active {
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#E6E6E6), color-stop(25%, #E6E6E6), to(#FFFFFF));
+    background-image: linear-gradient(center top , #E6E6E6, #E6E6E6 25%, #FFFFFF);
+    background-image: -moz-linear-gradient(center top , #E6E6E6, #E6E6E6 25%, #FFFFFF);
+    background-image: -webkit-linear-gradient(center top , #E6E6E6, #E6E6E6 25%, #FFFFFF);
+}
+.toolbarlocal .portaltabs a.active:hover,
+.toolbarlocal .portaltabs button.active:hover,
+.toolbarlocal .portaltabs label.active:hover {
+    background-position: 0 0;
+}
 .toolbarglobal button .panel {
     display: none;
 }
