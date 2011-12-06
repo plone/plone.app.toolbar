@@ -3,7 +3,7 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="plone">
-    
+
     <!-- BBB: Used to override/disable parts of Plone 4.x that
          should not be in place when using plone.app.Toolbar
          -->
@@ -26,7 +26,7 @@
         class=".nullviewlet.NullViewlet"
         permission="zope.Public"
         />
-    
+
     <browser:viewlet
         name="plone.contentactions"
         for="*"
@@ -35,7 +35,7 @@
         class=".nullviewlet.NullViewlet"
         permission="zope.Public"
         />
-    
+
     <browser:viewlet
         name="plone.personal_bar"
         for="*"

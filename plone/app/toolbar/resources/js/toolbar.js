@@ -8,265 +8,6 @@
 
 
 (function ($) {
-    /*
-    // # Namespace
-    $.toolbar = {};
-
-    // # Default options
-    $.toolbar.options = $.toolbar.default_options = {
-        id: 'jquery-toolbar',
-        name: 'jquery-toolbar',
-        klass: 'toolbar',
-        klass_category_prefix: 'toolbar-category-',
-        buttons: []
-    };
-
-    // # Router
-    var Router = Backbone.Router.extend({
-
-        initialize: function(options) {
-
-            $.toolbar.iframe = new $.toolbar.view.IFrame(options);
-
-        }
-
-    });
-
-
-
-    // # Models
-    $.toolbar.models = {};
-
-    // ## Button
-    $.toolbar.models.Button = Backbone.Model.extend({
-        initialize: function() {
-            if (this.get('category') === undefined) {
-                this.set({ category: 'default' });
-            }
-        }
-    });
-
-
-
-    // # Collections
-    $.toolbar.collection = {};
-
-    // ## Buttons
-    $.toolbar.collection.Buttons = Backbone.Collection.extend({
-        model: $.toolbar.models.Button
-    });
-    $.toolbar.buttons = new $.toolbar.collection.Buttons();
-
-
-
-    // # Views
-    $.toolbar.view = {};
-
-    // ## IFrame
-    $.toolbar.view.IFrame= Backbone.View.extend({
-        tagName: 'iframe',
-        attributes: { allowtransparency: 'true' },
-
-        initialize: function() {
-            this.render();
-        },
-
-        render: function() {
-
-            var iframe_el = $(this.el);
-
-            $('body').prepend(iframe_el);
-
-            var buttons = new $.toolbar.view.Buttons({
-                className: 'toolbar',
-                collection: $.toolbar.buttons
-            });
-
-            // Add buttons to toolbar
-            _.forEach($.toolbar.options.buttons, function(item) {
-                $.toolbar.buttons.add(item);
-            });
-
-            // Basic styles
-            iframe_el.css('background', 'trasparent !important');
-            iframe_el.css('width', '100%');
-
-            iframe_el.load(function() {
-
-                var toolbar_wrapper = $('<div/>', {'class': 'toolbar-wrapper'});
-
-                toolbar_wrapper.append(buttons.el);
-
-                $('body', $($.toolbar.iframe.el).contents()).prepend(toolbar_wrapper);
-
-                $.toolbar.iframe.height = $($.toolbar.iframe.el).height();
-
-                $('a', $($.toolbar.iframe.el).contents()).bind('click', {
-                    window: window
-                }, function(event) {
-
-                    var url = $(event.target).attr('href');
-
-                    if (url !== '#') {
-
-                        window.location = url;
-
-                    }
-                });
-
-            });
-
-            return this;
-        },
-
-        make: function(tagName, attributes, content) {
-            _.extend(attributes, {
-                'id':     this.options.id,
-                'src':    this.options.src,
-                'class':  this.options.klass,
-                'name':  this.options.name
-            });
-            var el = document.createElement(tagName);
-            if (attributes) $(el).attr(attributes);
-            return el;
-
-        }
-
-    });
-
-    // ## Buttons
-    $.toolbar.view.Buttons = Backbone.View.extend({
-
-        initialize: function(options) {
-            options.collection.bind('add', this.renderItem, this);
-        },
-
-        renderItem: function(model) {
-            var button = new $.toolbar.view.Button({model: model});
-
-            var category_name = $.toolbar.options.klass_category_prefix +
-                model.get('category');
-
-            var category = this.$('.'+category_name);
-            if (category.length === 0)  {
-                category = $('<div/>', {'class': category_name});
-                category.html('<ul></ul>');
-                $(this.el).append(category);
-            }
-
-            this.$('div.' + category_name +' > ul').append(button.el);
-        }
-
-    });
-
-    // ## Button
-    $.toolbar.view.Button = Backbone.View.extend({
-        tagName: 'li',
-
-        initialize: function() {
-            this.render();
-        },
-
-        render: function() {
-
-            var options = _.extend({
-                id: '',
-                url: '#',
-                klass: 'button',
-                submenu: [],
-                events: [],
-                initialize: function() {}
-            }, this.model.attributes);
-
-            this.renderButton($(this.el), options);
-
-        },
-
-        renderButton: function(el, options) {
-
-            var button = $('<a/>', {
-                'id': options.id,
-                'class': options.klass,
-                'href': $.toolbar.utils.url_join(window.location.href, options.url)
-            });
-            button.html(options.title);
-            el.html(button);
-
-            options.initialize(this);
-
-            if (options.submenu.length > 0) {
-
-                var collection = new $.toolbar.collection.Buttons();
-
-                this.submenu = new $.toolbar.view.Buttons({
-                    className: 'toolbar-submenu',
-                    collection: collection
-                });
-                el.append(this.submenu.el);
-
-                $(this.submenu.el).hide();
-
-                button.bind('click', { button: this }, function(event) {
-                    $(event.data.button.el).addClass('active');
-                    $(event.data.button.submenu.el).show();
-                    $($.toolbar.iframe.el).height($(window.document).height());
-
-                    event.stopPropagation();
-                    $($.toolbar.iframe.el).contents().bind('click', {
-                        button: event.data.button
-                    }, function(event) {
-                        $(event.data.button.el).removeClass('active');
-                        $(event.data.button.submenu.el).hide();
-                        $($.toolbar.iframe.el).height($.toolbar.iframe.height);
-                    });
-                });
-
-                // bellow is "hover" version of button
-                //button.bind('mouseenter', { button: this }, function(event) {
-                //    $(event.data.button.el).addClass('active');
-                //    $(event.data.button.submenu.el).show();
-                //    $($.toolbar.iframe.el).height($(window.document).height());
-                //});
-                //$(this.el).bind('mouseleave', { button: this
-                //}, function(event) {
-                //    $(event.data.button.el).removeClass('active');
-                //    $(event.data.button.submenu.el).hide();
-                //    $($.toolbar.iframe.el).height($.toolbar.iframe.height);
-                //});
-
-                _.forEach(options.submenu, function(item) {
-                    this.submenu.collection.add(item);
-                }, this);
-
-            }
-
-            button.bind(options.events);
-
-        }
-
-    });
-
-
-    // # Initialization method
-    $.toolbar.initialize = function(custom_options) {
-
-        $.toolbar.options = _.extend($.toolbar.default_options, custom_options);
-
-        $(document).ready(function() {
-
-            $.toolbar.router = new Router($.toolbar.options);
-
-        });
-    };
-
-    // #
-    $.toolbar.remove = function() {
-        $.toolbar.options = $.toolbar.default_options;
-        $.toolbar.iframe.remove();
-        $.toolbar.buttons = new $.toolbar.collection.Buttons();
-        console.log('reseting toolbar');
-    };
-    */
 
     var url_join = function(base, relative) {
 
@@ -383,7 +124,7 @@
                     this[attr] = options[attr];
                 }
             }
-            
+
             this.options = options;
 
         },
@@ -492,7 +233,7 @@
                     });
                 });
             }
-            
+
             var category_name = 'toolbar-category-' + options['category'];
 
             var category = this.$('div.'+category_name);
@@ -504,7 +245,7 @@
 
             this.$('div.' + category_name +' > ul').append(button_wrapper);
         }
-        
+
 
     });
 
@@ -516,7 +257,7 @@
 
         initialize: function() {
 
-            // attributes 
+            // attributes
             var options = {
                 'id': this.options.id,
                 'src': this.options.src,
@@ -535,36 +276,74 @@
         },
 
         renderStyles: function(item) {
-            return $('<link rel="stylesheet" type="text/css" href="' + 
+            return $('<link rel="stylesheet" type="text/css" href="' +
                     url_join(window.location.href, item) + '" />');
         },
 
         renderScripts: function(item) {
-            return $('<script type="text/javascript"" src="' + 
+            return $('<script type="text/javascript"" src="' +
                     url_join(window.location.href, item) + '"></script>');
         },
-        renderResources: function(resources) {
+
+        renderCSSResources: function(resources) {
             var styles = [];
-            var scripts = [];
-            var renderStyles = this.renderStyles;
-            var renderScripts = this.renderScripts;
-
             $.each(resources, function(index, item) {
+                var style = '';
 
-                if (item.substring(item.length - 4, item.length) === '.css') {
-                    styles.push(renderStyles(item));
-                } else if (item.substring(0, 4) === 'css!') {
-                    styles.push(renderStyles(item.substring(4, item.length)));
-                } else if (item.substring(item.length - 3, item.length) === '.js') {
-                    scripts.push(renderScripts(item));
-                } else if (item.substring(0, 3) === 'js!') {
-                    scripts.push(renderScripts(item.substring(3, item.length)));
+                // 
+                if (item.rendering === 'link') {
+                    style = '<link rel="stylesheet" type="text/css" ' +
+                            'href="' + item.src + '" ' +
+                            'media="' + item.media + '" ' +
+                            'rel="' + item.rel + '" ' +
+                            'title="' + item.title + '" />';
+
+                //
+                } else if (item.rendering === 'import') {
+                    style = '<style type="text/css" media="' + item.media + '">' +
+                            '@import url(' + item.src + ');' +
+                            '</style>';
+
+                //
+                } else if (item.rendering === 'inline') {
+                    style = '<style type="text/css" media="' + item.media + '">' +
+                            item.content +
+                            '</style>';
                 }
 
-            });
+                // conditional comment
+                if (item.conditionalcomment) {
+                    style = '<!--[if]>' + style + '<![endif]-->';
+                }
 
-            styles.concat(scripts);
+                styles.push(style);
+            });
             return styles;
+        },
+
+        renderJSResources: function(resources) {
+            var scripts = [];
+            $.each(resources, function(index, item) {
+
+                // include script inline
+                var script = '<scr' + 'ipt type="text/javascript"';
+                if (item.inline) {
+                    script += '>' + item.content;
+
+                // include script via src attribute
+                } else {
+                    script += ' src="' + item.src + '">';
+                }
+                script += '</scr' + 'ipt>';
+
+                // conditional comment
+                if (item.conditionalcomment) {
+                    script = '<!--[if]>' + script + '<![endif]-->';
+                }
+
+                scripts.push(script);
+            });
+            return scripts;
 
         },
 
@@ -595,17 +374,16 @@
 
             });
 
-            var resources = this.renderResources(this.options.resources);
+            var css_resources = this.renderCSSResources(this.options.css_resources);
+            var js_resources = this.renderJSResources(this.options.js_resources);
 
             el.load(function() {
 
                 var el_body = $('body', el.contents());
 
-                el_body.prepend(toolbar_wrapper);
-
-                $.each(resources, function(index, item) {
-                    el_body.prepend(item);
-                });
+                el_body.append(css_resources.join(''));
+                el_body.append(toolbar_wrapper);
+                el_body.append(js_resources.join(''));
 
                 self.initial_height = el_body.height();
 
@@ -620,7 +398,7 @@
                         window.location = url;
 
                     }
-                    
+
                     return false;
                 });
 
@@ -658,7 +436,7 @@
         return this.data('toolbar');
 
     };
-    
+
     // Initialization method
     $.toolbar = function(custom_options) {
 
@@ -669,7 +447,8 @@
             name: 'toolbar',
             klass: '',
             klass_category_prefix: 'toolbar-category-',
-            resources: [],
+            css_resources: [],
+            js_resources: [],
             buttons: []
         }, custom_options);
 

@@ -5,14 +5,16 @@ except:
     import simplejson as json
 
 from urllib import unquote
+from zope.i18n import translate
+from zope.component import getUtility
 from zope.component import getMultiAdapter
 from zope.publisher.browser import BrowserView
+from zope.browsermenu.interfaces import IBrowserMenu
 
 from plone.memoize.instance import memoize
 
 from Acquisition import aq_inner
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-
 
 class Toolbar(BrowserView):
 
@@ -23,8 +25,8 @@ class Toolbar(BrowserView):
         self.__parent__ = view
 
         self.context = aq_inner(self.context)
-        self.context_url = context.absolute_url()
-        self.context_fti = context.getTypeInfo()
+        self.context_url = self.context.absolute_url()
+        self.context_fti = self.context.getTypeInfo()
         self.request_url = self.request.get('ACTUAL_URL')
         request_url_path = self.request_url[len(self.context_url):]
         if request_url_path.startswith('/'):
@@ -34,14 +36,18 @@ class Toolbar(BrowserView):
         self.default_action = 'view'
         self.sort_order = ['folderContents']
 
-        self.context_state = getMultiAdapter((context, self.request),
+        self.context_state = getMultiAdapter((self.context, self.request),
                 name=u'plone_context_state')
+        self.resource_scripts = getMultiAdapter((self.context, self.request),
+                name=u'resourceregistries_scripts_view')
+        self.resource_styles = getMultiAdapter((self.context, self.request),
+                name=u'resourceregistries_styles_view')
+
+        self.context.changeSkin('toolbar', self.request)
 
     def update(self):
         pass
 
-    #@memoize
-    @property
     def action_list(self):
         """ actions registered for
         """
@@ -65,15 +71,18 @@ class Toolbar(BrowserView):
 
         return action_list
 
+    def contentmenu(self):
+        menu = getUtility(IBrowserMenu, name='plone_contentmenu')
+        return menu.getMenuItems(self.context, self.request)
+
     #@memoize
-    @property
     def buttons(self):
         buttons = []
 
-        selected_button_found = False
+        # content actions (eg. Contents, Edit, View, Sharing...)
         selected_button = None
-
-        for action in self.action_list:
+        selected_button_found = False
+        for action in self.action_list():
             item = {
                 'title': action['title'],
                 'id': 'toolbar-button-' + action['id'],
@@ -110,15 +119,44 @@ class Toolbar(BrowserView):
         if not selected_button_found and selected_button is not None:
             selected_button['klass'] = 'selected'
 
+        # contentmenu (eg: Display, Add new..., State)
+        def contentmenu_buttons(items=self.contentmenu()):
+            buttons = []
+            for item in items:
+                button = {
+                    'title': translate(item['title']),
+                    'description': translate(item['description']),
+                    'url': item['action'] and item['action'] or '#',
+                    'icon': item['icon'],
+                    }
+
+                if item.has_key('extra'):
+                    if item['extra'].has_key('id') and item['extra']['id']:
+                        button['id'] = 'toolbar-button-'+item['extra']['id']
+                    if item['extra'].has_key('class') and item['extra']['class']:
+                        button['klass'] = 'button ' + item['extra']['class']
+
+                if item['submenu']:
+                    button['buttons'] = contentmenu_buttons(item['submenu'])
+
+                buttons.append(button)
+
+            return buttons
+
+        buttons += contentmenu_buttons()
+
         return buttons
 
     def toolbar_initialize_js(self):
-        return '$.toolbar.initialize(%s);' % json.dumps({
+        return '$.toolbar(%s);' % json.dumps({
             'id': 'plone-toolbar',
             'name': 'plone-toolbar',
-            'klass': 'plone-toolbar', 
-            'buttons': self.buttons,
+            'klass': 'plone-toolbar',
+            'css_resources': self.resource_styles.styles(),
+            'js_resources': self.resource_scripts.scripts(),
+            'buttons': self.buttons(),
             })
+
 
 class ToolbarFallback(BrowserView):
     """ View which is going to be shown when javascript is not available.
