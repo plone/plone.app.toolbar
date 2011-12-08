@@ -1,3 +1,10 @@
+<style type="text/css">
+
+iframe#plone-toolbar {
+    height: 50px;
+}
+
+</style>
 <script type="text/javascript"
     tal:content="view/toolbar_initialize_js">
     toolbar initialization code

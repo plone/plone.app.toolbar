@@ -86,6 +86,7 @@ class Toolbar(BrowserView):
             item = {
                 'title': action['title'],
                 'id': 'toolbar-button-' + action['id'],
+                'category': 'left',
                 }
 
             # button url
@@ -128,6 +129,7 @@ class Toolbar(BrowserView):
                     'description': translate(item['description']),
                     'url': item['action'] and item['action'] or '#',
                     'icon': item['icon'],
+                    'category': 'right',
                     }
 
                 if item.has_key('extra'):
