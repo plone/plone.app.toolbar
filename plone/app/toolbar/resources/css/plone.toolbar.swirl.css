@@ -6,11 +6,11 @@
     border: 0;
 }
 html {
-    overflow-y: visible !important;
+    overflow-y: visible;
 }
 body {
     margin: 0;
-    background: transparent !important;
+    background-color: transparent;
     overflow: hidden;
 }
 

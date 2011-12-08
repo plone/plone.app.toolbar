@@ -166,7 +166,7 @@
                 href: item.url
             }).html(item.title);
 
-            if (item.icon !== undefined) {
+            if (item.icon !== undefined && item.icon !== null) {
                 button.prepend($('<img src="' + item.icon + '" />'));
             }
 

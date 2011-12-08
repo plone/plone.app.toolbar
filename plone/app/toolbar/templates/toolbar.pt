@@ -1,7 +1,17 @@
 <style type="text/css">
-
+/*
+ * TODO: this is here only temporary
+ */
+#visual-portal-wrapper {
+    position: relative;
+    top: 46px;
+}
 iframe#plone-toolbar {
-    height: 50px;
+    width: 100%;
+    height: 46px;
+    background-color: transparent;
+    position: fixed;
+    z-index: 500;
 }
 
 </style>

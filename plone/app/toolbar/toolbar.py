@@ -86,7 +86,7 @@ class Toolbar(BrowserView):
             item = {
                 'title': action['title'],
                 'id': 'toolbar-button-' + action['id'],
-                'category': 'left',
+                'category': 'leftactions',
                 }
 
             # button url
@@ -109,7 +109,7 @@ class Toolbar(BrowserView):
                 request_action = self.context_fti.queryMethodID(
                     request_action, default=request_action)
                 if action_method == request_action:
-                    item['klass'] = 'selected'
+                    item['klass'] = 'toolbar-button selected'
                     selected_button_found = True
 
             if action['id'] == self.default_action:
@@ -118,7 +118,7 @@ class Toolbar(BrowserView):
             buttons.append(item)
 
         if not selected_button_found and selected_button is not None:
-            selected_button['klass'] = 'selected'
+            selected_button['klass'] = 'toolbar-button selected'
 
         # contentmenu (eg: Display, Add new..., State)
         def contentmenu_buttons(items=self.contentmenu()):
@@ -129,17 +129,17 @@ class Toolbar(BrowserView):
                     'description': translate(item['description']),
                     'url': item['action'] and item['action'] or '#',
                     'icon': item['icon'],
-                    'category': 'right',
+                    'category': 'rightactions',
                     }
 
                 if item.has_key('extra'):
                     if item['extra'].has_key('id') and item['extra']['id']:
                         button['id'] = 'toolbar-button-'+item['extra']['id']
                     if item['extra'].has_key('class') and item['extra']['class']:
-                        button['klass'] = 'button ' + item['extra']['class']
+                        button['klass'] = 'toolbar-button ' + item['extra']['class']
 
                 if item['submenu']:
-                    button['buttons'] = contentmenu_buttons(item['submenu'])
+                    button['submenu'] = contentmenu_buttons(item['submenu'])
 
                 buttons.append(button)
 
@@ -150,12 +150,12 @@ class Toolbar(BrowserView):
         return buttons
 
     def toolbar_initialize_js(self):
-        return '$.toolbar(%s);' % json.dumps({
+        return '$.plone.toolbar(%s);' % json.dumps({
             'id': 'plone-toolbar',
             'name': 'plone-toolbar',
             'klass': 'plone-toolbar',
-            'css_resources': self.resource_styles.styles(),
-            'js_resources': self.resource_scripts.scripts(),
+            'resources_css': self.resource_styles.styles(),
+            'resources_js': self.resource_scripts.scripts(),
             'buttons': self.buttons(),
             })
 
