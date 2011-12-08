@@ -26,7 +26,6 @@
                 <element>default</element>
                 <element>jquery</element>
                 <element>jquerytools</element>
-                <element>toolbar</element>
             </element>
         </value>
     </record>
