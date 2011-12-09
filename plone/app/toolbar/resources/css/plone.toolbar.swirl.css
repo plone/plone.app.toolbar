@@ -93,7 +93,7 @@ body {
 
 
 .toolbar-category-personalactions {
-    min-width: 150px;
+    min-width: 25px;
     margin: 0 0 0 1em;
 }
 
@@ -208,5 +208,5 @@ body {
 
 .activated .toolbar-submenu .toolbar-button.selected a,
 .activated .toolbar-submenu .toolbar-button a:hover {
-    background: #E6E6E6;
+    background-color: #E6E6E6;
 }

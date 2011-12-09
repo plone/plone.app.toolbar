@@ -158,12 +158,13 @@
                 title: '',
                 url: '#',
                 id: '',
-                klass: 'toolbar-button',
+                klass: '',
                 category: 'default'
             }, options);
 
             var button = $('<a/>').attr({
-                href: item.url
+                'href': item.url,
+                'class': item.klass
             }).html(item.title);
 
             if (item.icon !== undefined && item.icon !== null) {
@@ -172,7 +173,7 @@
 
             var button_wrapper = $('<li/>').attr({
                 'id': item.id,
-                'class': item.klass
+                'class': 'toolbar-button'
             });
             button_wrapper.append(button);
 

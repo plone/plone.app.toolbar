@@ -109,7 +109,7 @@ class Toolbar(BrowserView):
                 request_action = self.context_fti.queryMethodID(
                     request_action, default=request_action)
                 if action_method == request_action:
-                    item['klass'] = 'toolbar-button selected'
+                    item['klass'] = 'selected'
                     selected_button_found = True
 
             if action['id'] == self.default_action:
@@ -118,7 +118,7 @@ class Toolbar(BrowserView):
             buttons.append(item)
 
         if not selected_button_found and selected_button is not None:
-            selected_button['klass'] = 'toolbar-button selected'
+            selected_button['klass'] = 'selected'
 
         # contentmenu (eg: Display, Add new..., State)
         def contentmenu_buttons(items=self.contentmenu()):
@@ -139,9 +139,9 @@ class Toolbar(BrowserView):
 
                     if item['extra'].has_key('class') and item['extra']['class']:
                         if item['extra']['class'] == 'actionMenuSelected':
-                            button['klass'] = 'toolbar-button selected'
+                            button['klass'] = 'selected'
                         else:
-                            button['klass'] = 'toolbar-button ' + 'label-' + item['extra']['class']
+                            button['klass'] = 'label-' + item['extra']['class']
 
                     if item['extra'].has_key('stateTitle') and item['extra']['stateTitle']:
                         button['title'] += '<span class="%s">%s</span>' % (
