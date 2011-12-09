@@ -139,6 +139,7 @@ class Toolbar(BrowserView):
                         button['klass'] = 'toolbar-button ' + item['extra']['class']
 
                 if item['submenu']:
+                    button['title'] += ' &#9660;'
                     button['submenu'] = contentmenu_buttons(item['submenu'])
 
                 buttons.append(button)

@@ -16,6 +16,6 @@ iframe#plone-toolbar {
 
 </style>
 <script type="text/javascript"
-    tal:content="view/toolbar_initialize_js">
+    tal:content="structure view/toolbar_initialize_js">
     toolbar initialization code
 </script>
