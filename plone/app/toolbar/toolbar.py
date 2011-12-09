@@ -201,25 +201,25 @@ class Toolbar(BrowserView):
 
                 buttons.append(button)
 
-            # personal actions (Dashboard, Personal Properties, Site Setup)
-            buttons.append({
-                'title': '<span>%s</span><span> &#9660;</span>' % self.userName(),
-                'icon': self.userPortrait(),
-                'url': self.userHomeLinkURL(),
-                'klass': 'personalactions-user',
-                'category': 'personalactions',
-                'submenu': [{
-                        'title': item['title'],
-                        'url': item['url'],
-                        'class': item.get('class', ''),
-                        'id': item.get('id', ''),
-                    } for item in self.context_state.actions('user')
-                        if item['available']],
-                })
-
             return buttons
 
         buttons += contentmenu_buttons()
+
+        # personal actions (Dashboard, Personal Properties, Site Setup)
+        buttons.append({
+            'title': '<span>%s</span><span> &#9660;</span>' % self.userName(),
+            'icon': self.userPortrait(),
+            'url': self.userHomeLinkURL(),
+            'klass': 'personalactions-user',
+            'category': 'personalactions',
+            'submenu': [{
+                    'title': item['title'],
+                    'url': item['url'],
+                    'class': item.get('class', ''),
+                    'id': item.get('id', ''),
+                } for item in self.context_state.actions('user')
+                    if item['available']],
+            })
 
         return buttons
 
