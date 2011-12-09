@@ -87,3 +87,8 @@
     background: no-repeat transparent 0px -1721px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
 }
 
+
+.toolbar-button a.personalactions-user img {
+    height: 21px;
+    margin: 0 0.5em;
+}

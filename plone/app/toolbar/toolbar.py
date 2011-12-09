@@ -16,6 +16,7 @@ from plone.memoize.instance import memoize
 from Acquisition import aq_inner
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
+
 class Toolbar(BrowserView):
 
     render = ViewPageTemplateFile('templates/toolbar.pt')
@@ -38,10 +39,15 @@ class Toolbar(BrowserView):
 
         self.context_state = getMultiAdapter((self.context, self.request),
                 name=u'plone_context_state')
+        self.portal_state = getMultiAdapter((self.context, self.request),
+                name=u'plone_portal_state')
         self.resource_scripts = getMultiAdapter((self.context, self.request),
                 name=u'resourceregistries_scripts_view')
         self.resource_styles = getMultiAdapter((self.context, self.request),
                 name=u'resourceregistries_styles_view')
+        self.tools = getMultiAdapter((self.context, self.request),
+                name=u'plone_tools')
+        self.anonymous = self.portal_state.anonymous()
 
         self.context.changeSkin('toolbar', self.request)
 
@@ -74,6 +80,46 @@ class Toolbar(BrowserView):
     def contentmenu(self):
         menu = getUtility(IBrowserMenu, name='plone_contentmenu')
         return menu.getMenuItems(self.context, self.request)
+
+    @memoize
+    def userName(self):
+        """Get the username of the currently logged in user
+        """
+
+        if self.anonymous:
+            return None
+
+        member = self.portal_state.member()
+        userid = member.getId()
+
+        membership = self.tools.membership()
+        memberInfo = membership.getMemberInfo(userid)
+
+        fullname = userid
+
+        # Member info is None if there's no Plone user object, as when using OpenID.
+        if memberInfo is not None:
+            fullname = memberInfo.get('fullname', '') or fullname
+
+        return fullname
+
+    @memoize
+    def userHomeLinkURL(self):
+        """Get the URL of the user's home page (profile age)
+        """
+        member = self.portal_state.member()
+        userid = member.getId()
+        return "%s/author/%s" % (self.portal_state.navigation_root_url(), userid)
+
+    @memoize
+    def userPortrait(self):
+        """Get the URL of the user's portrait
+        """
+        member = self.portal_state.member()
+        membership = self.tools.membership()
+        portrait = membership.getPersonalPortrait(member.getId());
+        if portrait is not None:
+            return portrait.absolute_url()
 
     #@memoize
     def buttons(self):
@@ -150,10 +196,26 @@ class Toolbar(BrowserView):
                             )
 
                 if item['submenu']:
-                    button['title'] += ' &#9660;'
+                    button['title'] += '<span> &#9660;</span>'
                     button['submenu'] = contentmenu_buttons(item['submenu'])
 
                 buttons.append(button)
+
+            # personal actions (Dashboard, Personal Properties, Site Setup)
+            buttons.append({
+                'title': '<span>%s</span><span> &#9660;</span>' % self.userName(),
+                'icon': self.userPortrait(),
+                'url': self.userHomeLinkURL(),
+                'klass': 'personalactions-user',
+                'category': 'personalactions',
+                'submenu': [{
+                        'title': item['title'],
+                        'url': item['url'],
+                        'class': item.get('class', ''),
+                        'id': item.get('id', ''),
+                    } for item in self.context_state.actions('user')
+                        if item['available']],
+                })
 
             return buttons
 
