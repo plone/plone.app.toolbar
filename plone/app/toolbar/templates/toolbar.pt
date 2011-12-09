@@ -7,11 +7,26 @@
     top: 46px;
 }
 iframe#plone-toolbar {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+
     width: 100%;
-    height: 46px;
-    background-color: transparent;
-    position: fixed;
+    height: 45px;
     z-index: 500;
+
+
+    position: fixed;
+    _position: absolute;
+    _top: expression(eval((document.body.scrollTop)?document.body.scrollTop:document.documentElement.scrollTop));
+    left: 0;
+    top: 0;
+
+    background-color: transparent;
+    -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 </style>
