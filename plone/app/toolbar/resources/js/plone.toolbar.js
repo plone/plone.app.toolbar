@@ -117,7 +117,7 @@
 
             styles.push(style);
         });
-        return $(styles.join(''));
+        return styles.join('');
     };
 
     $.plone.resources_js = function(resources) {
@@ -142,7 +142,7 @@
 
             scripts.push(script);
         });
-        return $(scripts.join(''));
+        return scripts.join('');
     };
 
     // # Button
@@ -266,7 +266,13 @@
         var css = $.plone.resources_css(options.resources_css);
         var js = $.plone.resources_js(options.resources_js);
 
+
         el.load(function() {
+
+            el[0].contentWindow.document.open();
+            el[0].contentWindow.document.write(''+
+                '<html><head></head><body>' + css + js + '</body></html>');
+            el[0].contentWindow.document.close();
 
             var el_body = $('body', el.contents());
 
@@ -293,9 +299,7 @@
 
             });
 
-            el_body.append(css);
             el_body.append(toolbar);
-            el_body.append(js);
 
         });
 
