@@ -175,7 +175,7 @@ body {
     display: block;
     color: #000000;
     background: #FFFFFF;
-    padding: 0.5em 0;
+    padding: 0.5em;
     margin: 0;
     min-width: 150px;
     position: absolute;
@@ -197,3 +197,15 @@ body {
     float: none;
 }
 
+.activated .toolbar-submenu .toolbar-button a {
+    margin: 0.3em;
+    padding: 0.5em;
+    display: block;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+}
+
+.activated .toolbar-submenu .toolbar-button a:hover {
+    background: #E6E6E6;
+}
