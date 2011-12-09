@@ -207,7 +207,7 @@ body {
     -webkit-border-radius: 0;
 }
 
-.activated .toolbar-submenu .toolbar-button.selected a,
+.activated .toolbar-submenu .toolbar-button a.selected,
 .activated .toolbar-submenu .toolbar-button a:hover {
     background-color: #E6E6E6;
 }
