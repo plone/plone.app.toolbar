@@ -1,0 +1,40 @@
+
+/*
+ * XXX: this is only temporaty
+ */
+
+
+
+
+/* 
+ * taken from members.css and changed a bit
+ */
+
+.state-private,
+.state-visible,
+.state-published,
+.state-pending,
+.state-expired {
+    border-radius: 0.2em;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    margin: 0.3em;
+    padding: 0.1em 0.4em;
+    color: #FFFFFF;
+}
+
+.state-private {
+    background-color: Red !important;
+}
+.state-visible {
+    background-color: #74AE0B !important;
+}
+.state-published {
+    background-color: #436976 !important;
+}
+.state-pending {
+    background-color: #FFA500 !important;
+}
+.state-expired {
+    background-color: Red !important;
+}

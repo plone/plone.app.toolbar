@@ -125,7 +125,7 @@ class Toolbar(BrowserView):
             buttons = []
             for item in items:
                 button = {
-                    'title': translate(item['title']),
+                    'title': '<span>' + translate(item['title']) + '</span>',
                     'description': translate(item['description']),
                     'url': item['action'] and item['action'] or '#',
                     'icon': item['icon'],
@@ -133,10 +133,21 @@ class Toolbar(BrowserView):
                     }
 
                 if item.has_key('extra'):
+
                     if item['extra'].has_key('id') and item['extra']['id']:
                         button['id'] = 'toolbar-button-'+item['extra']['id']
+
                     if item['extra'].has_key('class') and item['extra']['class']:
-                        button['klass'] = 'toolbar-button ' + item['extra']['class']
+                        if item['extra']['class'] == 'actionMenuSelected':
+                            button['klass'] = 'toolbar-button selected'
+                        else:
+                            button['klass'] = 'toolbar-button ' + 'label-' + item['extra']['class']
+
+                    if item['extra'].has_key('stateTitle') and item['extra']['stateTitle']:
+                        button['title'] += '<span class="%s">%s</span>' % (
+                            item['extra'].get('class', ''),
+                            item['extra']['stateTitle'],
+                            )
 
                 if item['submenu']:
                     button['title'] += ' &#9660;'
