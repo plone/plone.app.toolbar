@@ -9,9 +9,9 @@ html {
     overflow-y: visible;
 }
 body {
-    margin: 0;
-    background-color: transparent;
-    overflow: hidden;
+    margin: 0 !important;
+    background-color: transparent !important;
+    overflow: hidden !important;
 }
 
 .toolbar-top {
@@ -80,15 +80,19 @@ body {
     -webkit-box-shadow: inset 0 -1px rgba(255,255,255,0.3);
 }
 
-
 .toolbar-category {
     display: inline-block;
     padding-left: 6px;
 }
 
+.toolbar-category-leftactions {
+    margin: 0;
+}
+
 .toolbar-category-rightactions {
     float: right;
     padding: 0 30px 0 0;
+    margin: 0;
 }
 
 
@@ -138,6 +142,10 @@ body {
     -moz-border-radius: 4px 4px 0px 0px;
     -webkit-border-radius: 4px 4px 0px 0px;
 }
+.toolbar-left .toolbar-button.activated a:hover,
+.toolbar-right .toolbar-button.activated a:hover {
+    color: #000000;
+}
 
 .toolbar-left .toolbar-button a {
     padding: 5px 14px 6px;
@@ -163,6 +171,8 @@ body {
 }
 
 .toolbar-left .toolbar-button a:hover {
+    color: #FFFFFF;
+    text-decoration: none;
     background-position: 0 -15px;
 }
 
