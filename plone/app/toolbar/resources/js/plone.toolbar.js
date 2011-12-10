@@ -291,7 +291,7 @@
                     iframe.removeClass('toolbar-dropdown-activated');
                 }
 
-                if ($(e.target).parent().hasClass('toolbar-button')) {
+                if ($(e.target).closest('a').parent().hasClass('toolbar-button')) {
                     window.location = $(e.target).attr('href');
                 }
 
