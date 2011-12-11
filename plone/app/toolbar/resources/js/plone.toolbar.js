@@ -292,7 +292,7 @@
                 }
 
                 if ($(e.target).closest('a').parent().hasClass('toolbar-button')) {
-                    window.location = $(e.target).attr('href');
+                    window.location = $(e.target).closest('a').attr('href');
                 }
 
                 return false;
