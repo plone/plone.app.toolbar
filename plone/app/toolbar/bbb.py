@@ -7,6 +7,6 @@ class NullViewlet(ViewletBase):
     for the same name and context, specific to the ICMSUILayer layer, using
     this class to render nothing.
     """
-    
+
     def render(self):
         return u""

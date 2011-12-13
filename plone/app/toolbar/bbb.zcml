@@ -11,53 +11,54 @@
     <browser:viewlet
         name="plone.toolbar.toolbarlink"
         for="*"
-        layer="..interfaces.IToolbarLayer"
         manager="plone.app.layout.viewlets.interfaces.IPortalTop"
-        template="toolbarlink.pt"
         class="plone.app.layout.viewlets.common.ViewletBase"
+        template="templates/toolbarlink.pt"
         permission="plone.ViewToolbar"
+        layer=".interfaces.IToolbarLayer"
         />
 
     <browser:viewlet
         name="plone.contentviews"
         for="*"
-        layer="..interfaces.IToolbarLayer"
         manager="plone.app.layout.viewlets.interfaces.IContentViews"
-        class=".nullviewlet.NullViewlet"
         permission="zope.Public"
+        class=".bbb.NullViewlet"
+        layer=".interfaces.IToolbarLayer"
         />
 
     <browser:viewlet
         name="plone.contentactions"
         for="*"
-        layer="..interfaces.IToolbarLayer"
         manager="plone.app.layout.viewlets.interfaces.IContentViews"
-        class=".nullviewlet.NullViewlet"
+        class=".bbb.NullViewlet"
         permission="zope.Public"
+        layer=".interfaces.IToolbarLayer"
         />
 
     <browser:viewlet
         name="plone.personal_bar"
         for="*"
-        layer="..interfaces.IToolbarLayer"
         manager="plone.app.layout.viewlets.interfaces.IPortalHeader"
-        class=".personal_bar.PersonalBarViewlet"
+        class="plone.app.layout.viewlets.common.PersonalBarViewlet"
+        template="templates/personal_bar.pt"
         permission="zope2.View"
+        layer=".interfaces.IToolbarLayer"
         />
 
     <browser:viewletManager
         name="plone.resourceregistries.kineticstylesheets"
         provides="Products.ResourceRegistries.interfaces.IHtmlHeadStyles"
-        template="null.pt"
+        template="templates/nullviewlet.pt"
         permission="zope2.View"
-        layer="..interfaces.IToolbarLayer"
+        layer=".interfaces.IToolbarLayer"
         />
 
     <genericsetup:registerProfile
-        name="default"
-        title="Plone Toolbar - BBB registrations"
+        name="bbb"
+        title="Plone Toolbar - Compatibility with Plone 4"
         description="Performs backwards compatibility migrations"
-        directory="profiles/default"
+        directory="profiles/bbb"
         for="Products.CMFPlone.interfaces.IMigratingPloneSiteRoot"
         provides="Products.GenericSetup.interfaces.EXTENSION"
         />

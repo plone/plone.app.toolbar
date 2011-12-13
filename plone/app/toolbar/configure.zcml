@@ -56,7 +56,7 @@
     <!-- BBB: Used to override/disable parts of Plone 4.x that
          should not be in place when using plone.app.Toolbar
          -->
-    <include package=".bbb" />
+    <include file="bbb.zcml" />
 
 
 
