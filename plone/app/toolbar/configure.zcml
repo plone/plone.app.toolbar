@@ -67,17 +67,6 @@
         for="*"
         template="templates/notifications.pt"
         permission="plone.ViewToolbar"
-        />
-
-    <browser:page
-        name="portal-overlay-container"
-        for="*"
-        class=".overlaycontainer.OverlayContainer"
-        template="templates/overlay-container.pt"
-        permission="plone.ViewToolbar"
         /-->
-
-
-
 
 </configure>
