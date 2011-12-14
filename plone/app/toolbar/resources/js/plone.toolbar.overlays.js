@@ -57,7 +57,7 @@ pb.create_content_div = function (pbo, trigger) {
     }
 
     content.bind('click', {pbo: pbo}, function(event) {
-        event.preventDefault();
+        event.stopPropagation();
     });
 
     return content;
