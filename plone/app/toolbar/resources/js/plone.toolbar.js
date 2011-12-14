@@ -280,6 +280,7 @@
             options.initial_height = el.height();
 
             el.contents().bind('click', { options: options }, function(e) {
+
                 var iframe = e.data.options.iframe,
                     el = e.data.options.iframe.contents(),
                     initial_height = e.data.options.initial_height;
@@ -295,7 +296,7 @@
                     window.location = $(e.target).closest('a').attr('href');
                 }
 
-                return false;
+                return e.preventDefault();
 
             });
 

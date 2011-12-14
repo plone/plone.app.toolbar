@@ -56,6 +56,10 @@ pb.create_content_div = function (pbo, trigger) {
         content.appendTo($("body"));
     }
 
+    content.bind('click', {pbo: pbo}, function(event) {
+        event.preventDefault();
+    });
+
     return content;
 
 };
