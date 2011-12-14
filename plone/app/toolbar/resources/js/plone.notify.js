@@ -33,6 +33,9 @@ immed: true, strict: true, maxlen: 80, maxerr: 9999 */
 
 (function ($) {
 
+    // Hide static notifications
+    $("dl.portalMessage", window.parent.document).attr('style', 'display:none;');
+
     // Define plone namespace if it doesn't exist
     if (typeof($.plone) === "undefined") {
         $.plone = {};
@@ -46,13 +49,17 @@ immed: true, strict: true, maxlen: 80, maxerr: 9999 */
     $.plone.initNotify = function () {
 
         // Check if not already initialized
-        if ($(".notification").length === 0) {
+        if ($(".notification", window.parent.document).length === 0) {
 
             // Append notification container to body element
-            $("body").append(
+            $("body", window.parent.document).append(
                 $(document.createElement("div"))
-                    .addClass("notifications")
+                    .attr('id', 'plone-notify')
+                    .append('<link href="++resource++plone.app.toolbar/css/plone.notify.css" media="screen" type="text/css" rel="stylesheet"/>')
+                    .append('<div class="notifications">')
             );
+
+            console.log('Notifications initialized..');
         }
     };
 
@@ -139,7 +146,7 @@ immed: true, strict: true, maxlen: 80, maxerr: 9999 */
             last_notification.height() + 10 : 0;
 
         // Add notification
-        $(".notifications")
+        $(".notifications", window.parent.document)
 
             // Add notification div
             .append($(document.createElement("div"))
@@ -265,7 +272,10 @@ immed: true, strict: true, maxlen: 80, maxerr: 9999 */
     };
 
     // Init Deco on load
-    $(window).load(function () {
+    function startNotifications() {
+        
+        console.log('Starting notifications..');
+
         var menu_frame = window.parent.frames['plone-toolbar'];
         if (typeof(menu_frame) === "undefined") {
             menu_frame = this;
@@ -303,6 +313,9 @@ immed: true, strict: true, maxlen: 80, maxerr: 9999 */
                 'sticky': sticky
             });
         });
-    });
+    };
+
+    startNotifications();
+    $.plone.showNotifyFromElements(window.top.document);
 
 }(jQuery));
