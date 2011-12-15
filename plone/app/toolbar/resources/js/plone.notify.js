@@ -33,9 +33,6 @@ immed: true, strict: true, maxlen: 80, maxerr: 9999 */
 
 (function ($) {
 
-    // Hide static notifications
-    $("dl.portalMessage", window.parent.document).attr('style', 'display:none;');
-
     // Define plone namespace if it doesn't exist
     if (typeof($.plone) === "undefined") {
         $.plone = {};
@@ -59,7 +56,6 @@ immed: true, strict: true, maxlen: 80, maxerr: 9999 */
                     .append('<div class="notifications">')
             );
 
-            console.log('Notifications initialized..');
         }
     };
 
@@ -273,8 +269,6 @@ immed: true, strict: true, maxlen: 80, maxerr: 9999 */
 
     // Init Deco on load
     function startNotifications() {
-        
-        console.log('Starting notifications..');
 
         var menu_frame = window.parent.frames['plone-toolbar'];
         if (typeof(menu_frame) === "undefined") {

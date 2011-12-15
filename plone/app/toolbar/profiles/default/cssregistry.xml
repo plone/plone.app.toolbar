@@ -18,6 +18,11 @@
         enabled="True" bundle="toolbar"
         id="++resource++plone.app.toolbar/css/toolbar.css"
         />
+    <stylesheet
+        cacheable="False" compression="safe" cookable="True"
+        enabled="True" bundle="default"
+        id="++resource++plone.app.toolbar/css/toolbar_default.css"
+        />
 
 
 </object>
