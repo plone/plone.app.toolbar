@@ -228,6 +228,20 @@ class Toolbar(BrowserView):
             'id': 'plone-toolbar',
             'name': 'plone-toolbar',
             'klass': 'plone-toolbar',
+            'toolbar_template':
+                '<div class="toolbar-wrapper">' + \
+                ' <div class="toolbar">' + \
+                '  <div class="toolbar-top"></div>' + \
+                '  <div class="toolbar-right">' + \
+                '   <div class="toolbar-swirl"><div></div></div>' + \
+                '   <div class="toolbar-category-personalactions"></div>' + \
+                '  </div>' + \
+                '  <div class="toolbar-left">' + \
+                '   <div class="toolbar-category-rightactions"></div>' + \
+                '   <div class="toolbar-category-leftactions"></div>' + \
+                '  </div>' + \
+                ' </div>' + \
+                '</div>',
             'resources_css': self.resource_styles.styles(),
             'resources_js': self.resource_scripts.scripts(),
             'buttons': self.buttons(),
