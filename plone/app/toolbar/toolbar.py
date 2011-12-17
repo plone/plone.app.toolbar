@@ -135,6 +135,20 @@ class Toolbar(BrowserView):
                 'category': 'leftactions',
                 }
 
+            # enable editing
+            if action['id'] == 'edit':
+                try:
+                    from plone.app.blocks.layoutbehavior import ILayoutAware
+                    if ILayoutAware.providedBy(self.context):
+                        item['exec'] = \
+                            "function(el) {" + \
+                            "  el.bind('click', function(e) {" + \
+                            "    console.log('init deco editor'); return false; " + \
+                            "  });" + \
+                            "}"
+                except:
+                    pass
+
             # button url
             button_url = action['url'].strip()
             if button_url.startswith('http') or \
@@ -224,7 +238,8 @@ class Toolbar(BrowserView):
         return buttons
 
     def toolbar_initialize_js(self):
-        return '$.plone.toolbar(%s);' % json.dumps({
+        buttons = self.buttons()
+        js = '$.plone.toolbar(%s);' % json.dumps({
             'id': 'plone-toolbar',
             'name': 'plone-toolbar',
             'klass': 'plone-toolbar',
@@ -244,8 +259,17 @@ class Toolbar(BrowserView):
                 '</div>',
             'resources_css': self.resource_styles.styles(),
             'resources_js': self.resource_scripts.scripts(),
-            'buttons': self.buttons(),
-            })
+            'buttons': buttons,
+            }, sort_keys=True, indent=4)
+
+        def remove_quotes_from_exec_code(buttons, text):
+            for button in buttons:
+                if 'exec' in button.keys():
+                    text = text.replace('"%s"' % button['exec'], button['exec'])
+                if 'submenu' in button.keys():
+                    text = remove_quotes_from_exec_code(button['submenu'], text)
+            return text
+        return remove_quotes_from_exec_code(buttons, js)
 
 
 class ToolbarFallback(BrowserView):
