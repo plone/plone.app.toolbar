@@ -1,11 +1,4 @@
 
-/*
- * XXX: this is only temporaty
- */
-
-
-
-
 /* 
  * taken from >> members.css << and changed a bit
  */
@@ -59,36 +52,9 @@
 .toolbar-button.activated a.label-contenttype-image {
     background: no-repeat transparent 0px -858px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
 }
-.toolbar-button.activated a.label-contenttype-file {
-    background: no-repeat transparent 0px -426px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
-}
-.toolbar-button.activated a.label-contenttype-document {
-    background: no-repeat transparent 0px 5px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
-}
-.toolbar-button.activated a.label-contenttype-event {
-    background: no-repeat transparent 0px -211px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
-}
-.toolbar-button.activated a.label-contenttype-folder {
-    background: no-repeat transparent 0px -643px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
-}
-.toolbar-button.activated a.label-contenttype-link {
-    background: no-repeat transparent 0px -1075px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
-}
-.toolbar-button.activated a.label-contenttype-news-item {
-    background: no-repeat transparent 0px -1291px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
-}
-.toolbar-button.activated a.label-contenttype-plone-site {
-    background: no-repeat transparent 0px -1503px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
-}
-.toolbar-button.activated a.label-contenttype-collection {
-    background: no-repeat transparent 0px -1721px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
-}
-.toolbar-button.activated a.label-contenttype-topic {
-    background: no-repeat transparent 0px -1721px url(++resource++plone.app.toolbar/images/contenttypes-sprite.png);
-}
-
 
 .toolbar-button a.personalactions-user img {
     height: 21px;
     margin: 0 0.5em;
 }
+
