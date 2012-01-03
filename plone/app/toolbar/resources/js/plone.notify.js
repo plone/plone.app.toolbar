@@ -46,13 +46,16 @@ immed: true, strict: true, maxlen: 80, maxerr: 9999 */
     $.plone.initNotify = function () {
 
         // Check if not already initialized
-        if ($(".notification").length === 0) {
+        if ($(".notification", window.parent.document).length === 0) {
 
             // Append notification container to body element
-            $("body").append(
+            $("body", window.parent.document).append(
                 $(document.createElement("div"))
-                    .addClass("notifications")
+                    .attr('id', 'plone-notify')
+                    .append('<link href="++resource++plone.app.toolbar/css/plone.notify.css" media="screen" type="text/css" rel="stylesheet"/>')
+                    .append('<div class="notifications">')
             );
+
         }
     };
 
@@ -139,7 +142,7 @@ immed: true, strict: true, maxlen: 80, maxerr: 9999 */
             last_notification.height() + 10 : 0;
 
         // Add notification
-        $(".notifications")
+        $(".notifications", window.parent.document)
 
             // Add notification div
             .append($(document.createElement("div"))
@@ -265,7 +268,8 @@ immed: true, strict: true, maxlen: 80, maxerr: 9999 */
     };
 
     // Init Deco on load
-    $(window).load(function () {
+    function startNotifications() {
+
         var menu_frame = window.parent.frames['plone-toolbar'];
         if (typeof(menu_frame) === "undefined") {
             menu_frame = this;
@@ -303,6 +307,9 @@ immed: true, strict: true, maxlen: 80, maxerr: 9999 */
                 'sticky': sticky
             });
         });
-    });
+    };
+
+    startNotifications();
+    $.plone.showNotifyFromElements(window.top.document);
 
 }(jQuery));

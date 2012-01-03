@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <base tal:attributes="href context/@@plone/renderBase" target="_parent" /><!--[if lt IE 7]></base><![endif]-->
+
+</head>
+
+<body>
+
+    <div class="toolbar">
+        <tal:buttons
+            replace="structure python:view.recurse(buttons=view.buttons)" />
+    </div>
+
+</body>
+
+</html>

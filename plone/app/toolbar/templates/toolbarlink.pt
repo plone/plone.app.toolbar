@@ -1,0 +1,19 @@
+<!-- Fallback link to the menu, replaced on page load with an iframe version
+     -->
+<div id="plone-toolbar-trigger" style="display: none;">
+
+    <script type="text/javascript">
+        (function ($) {
+            $('plone-toolbar-trigger').show();
+        }(jQuery));
+    </script>
+
+    <a id="plone-toolbar-link" href=""
+       tal:attributes="href python:context.absolute_url()+'/@@plone_toolbar_fallback'"
+       i18n:translate="">
+        Manage page
+    </a>
+
+    <tal:toolbar replace="structure provider:plone_toolbar" />
+
+</div>

@@ -7,7 +7,6 @@
             <element key="toolbar">
                 <element>jquery</element>
                 <element>jquerytools</element>
-                <element>toolbar</element>
             </element>
 
             <!-- BBB: These bundel assignments should go into each theme's package -->

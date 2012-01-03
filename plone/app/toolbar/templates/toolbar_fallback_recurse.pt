@@ -1,0 +1,20 @@
+<ul tal:define="buttons options/buttons"
+    tal:condition="buttons">
+
+    <li tal:repeat="button buttons">
+
+        <a href="#"
+            tal:attributes="id button/id|nothing;
+                            href button/url|nothing;
+                            class button/klass|nothing;"
+            tal:content="button/title">
+            Title
+        </a>
+
+        <tal:submenu
+            condition="button/submenu|nothing"
+            replace="structure python:view.render_buttons(button['submenu'])" />
+
+    </li>
+
+</ul>

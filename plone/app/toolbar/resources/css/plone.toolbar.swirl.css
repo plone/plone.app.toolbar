@@ -1,0 +1,223 @@
+* {
+    font-family: Arial;
+    font-size: 13px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+html {
+    overflow-y: visible;
+}
+body {
+    margin: 0 !important;
+    background-color: transparent !important;
+    overflow: hidden !important;
+}
+
+.toolbar-top {
+    height: 6px;
+    background-color: #3d8cd5;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.3);
+    -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.3);
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.3);
+}
+
+
+.toolbar-swirl {
+    width: 32px;
+    height: 16px;
+    display: block;
+    float: left;
+    top: 0px;
+    left: 0px;
+    margin-left: -24px;
+    background-image: linear-gradient(top, #3d8cd5, #3a86cb);
+    background-image: -moz-linear-gradient(top, #3d8cd5, #3a86cb);
+    background-image: -webkit-linear-gradient(top, #3d8cd5, #3a86cb);
+    overflow: hidden;
+}
+
+.toolbar-swirl div {
+    width: 32px;
+    height: 32px;
+    border-top-right-radius: 34px 34px;
+    -moz-border-top-right-radius: 34px 34px;
+    -webkit-border-top-right-radius: 34px 34px;
+    background-image: linear-gradient(top, #3e3f42, #2e2f32);
+    background-image: -moz-linear-gradient(top, #3e3f42, #2e2f32);
+    background-image: -webkit-linear-gradient(top, #3e3f42, #2e2f32);
+}
+.toolbar-deco .toolbar-swirl div {
+    background-color: #f2f2f2;
+}
+
+
+.toolbar-left {
+    background-image: linear-gradient(top, #3e3f42, #2e2f32);
+    background-image: -moz-linear-gradient(top, #3e3f42, #2e2f32);
+    background-image: -webkit-linear-gradient(top, #3e3f42, #2e2f32);
+    border-bottom: solid 1px #000;
+    padding-bottom: 4px;
+    height: 34px;
+}
+
+.toolbar-deco .toolbar-left {
+    background-color: #f2f2f2;
+    border-bottom: solid 1px #e5e5e5;
+}
+
+.toolbar-right {
+    border-bottom-left-radius: 34px 34px;
+    -moz-border-bottom-left-radius: 34px 34px;
+    -webkit-border-bottom-left-radius: 34px 34px;
+    background-image: linear-gradient(top, #3d8cd5, #347ebf);
+    background-image: -moz-linear-gradient(top, #3d8cd5, #347ebf);
+    background-image: -webkit-linear-gradient(top, #3d8cd5, #347ebf);
+    float: right;
+    height: 34px;
+    box-shadow: inset 0 -1px rgba(255,255,255,0.3);
+    -moz-box-shadow: inset 0 -1px rgba(255,255,255,0.3);
+    -webkit-box-shadow: inset 0 -1px rgba(255,255,255,0.3);
+}
+
+.toolbar-category {
+    display: inline-block;
+    padding-left: 6px;
+}
+
+.toolbar-category-leftactions {
+    margin: 0;
+}
+
+.toolbar-category-rightactions {
+    float: right;
+    padding: 0 30px 0 0;
+    margin: 0;
+}
+
+
+.toolbar-category-personalactions {
+    min-width: 25px;
+    margin: 0 0.5em 0 1em;
+}
+
+.toolbar-button {
+    display: inline-block;
+    position: relative;
+    float: left;
+}
+
+.toolbar-left .toolbar-button {
+    margin: 1px 0 0 0;
+}
+
+.toolbar-right .toolbar-button {
+    margin: 5px 0 0 0;
+}
+
+.toolbar-button a {
+    display: inline-block;
+    color: #FFFFFF;
+    text-decoration: none;
+    line-height: normal;
+    cursor: pointer;
+}
+
+.toolbar-button a img {
+    margin: 0 3px 0 0;
+    padding: 0;
+    border: 0;
+    vertical-align: middle;
+}
+
+.toolbar-left .toolbar-button.activated a,
+.toolbar-right .toolbar-button.activated a {
+    color: #000000;
+    background: #FFFFFF;
+    border-color: #FFFFFF;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    border-radius: 4px 4px 0px 0px;
+    -moz-border-radius: 4px 4px 0px 0px;
+    -webkit-border-radius: 4px 4px 0px 0px;
+}
+.toolbar-left .toolbar-button.activated a:hover,
+.toolbar-right .toolbar-button.activated a:hover {
+    color: #000000;
+}
+
+.toolbar-left .toolbar-button a {
+    padding: 5px 14px 6px;
+    margin: 4px 4px 0 0;
+
+    -moz-transition: all 0.1s linear 0s;
+
+    background-image: -moz-linear-gradient(center top , #404040, #404040 25%, #222);
+    background-image: -webkit-linear-gradient(center top , #404040, #404040 25%, #222);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#404040), color-stop(25%, #404040), to(#222));
+    background-image: linear-gradient(center top , #404040, #404040 25%, #222);
+    background-repeat: no-repeat;
+    background-color: #222;
+
+    border: 1px solid #222;
+    border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+
+    box-shadow: 0 1px rgba(255, 255, 255, 0.1) inset;
+    -moz-box-shadow: 0 1px rgba(255, 255, 255, 0.1) inset;
+    -webkit-box-shadow: 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.toolbar-left .toolbar-button a:hover {
+    color: #FFFFFF;
+    text-decoration: none;
+    background-position: 0 -15px;
+}
+
+.toolbar-right .toolbar-button a {
+    padding: 0.2em 0.3em;
+    margin: 0 4px;
+}
+
+.toolbar-submenu {
+    display: block;
+    color: #000000;
+    background: #FFFFFF;
+    padding: 0.5em;
+    margin: 0;
+    z-index: 9999;
+    min-width: 150px;
+    position: absolute;
+    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.4);
+    -moz-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.4);
+    -webkit-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.4);
+}
+
+.toolbar-category-personalactions .toolbar-submenu,
+.toolbar-category-rightactions .toolbar-submenu {
+    right: 4px;
+    border-radius: 4px 0px 4px 4px;
+    -moz-border-radius: 4px 0px 4px 4px;
+    -webkit-border-radius: 4px 0px 4px 4px;
+}
+
+.toolbar-submenu .toolbar-button {
+    display: block;
+    float: none;
+}
+
+.activated .toolbar-submenu .toolbar-button a {
+    margin: 0.3em;
+    padding: 0.5em;
+    display: block;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+}
+
+.activated .toolbar-submenu .toolbar-button a.selected,
+.activated .toolbar-submenu .toolbar-button a:hover {
+    background-color: #E6E6E6;
+}
