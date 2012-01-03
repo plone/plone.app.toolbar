@@ -21,14 +21,6 @@ class Toolbar(BrowserView):
 
     render = ViewPageTemplateFile('templates/toolbar.pt')
 
-    def __call__(self):
-
-        # Disable diazo theming
-        self.request.response.setHeader('X-Theme-Disabled', 'True')
-
-        # Set the 'toolbar' skin so that we get the correct resources
-        self.context.changeSkin('toolbar', self.request)
-
     def __init__(self, context, request, view=None):
         super(Toolbar, self).__init__(context, request)
         self.__parent__ = view
@@ -56,6 +48,9 @@ class Toolbar(BrowserView):
         self.tools = getMultiAdapter((self.context, self.request),
                 name=u'plone_tools')
         self.anonymous = self.portal_state.anonymous()
+
+        # Set the 'toolbar' skin so that we get the correct resources
+        self.context.changeSkin('toolbar', self.request)
 
     def update(self):
         pass
