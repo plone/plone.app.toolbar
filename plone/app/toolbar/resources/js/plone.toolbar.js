@@ -7,8 +7,11 @@
 // For all details and documentation:
 // <http://garbas.github.com/plone.toolbar.js>
 
+/*jslint browser:true, unparam:true, vars:true */
+/*global jQuery:true, console:true */
 
 (function ($) {
+    "use strict";
 
     // # Namespace
     //
@@ -53,13 +56,13 @@
     //     <link media="screen" rel="stylesheet" title="" href="main.css" />
     //     <![endif]-->
     //
-    $.plone.utils.resources_css = function(resources) {
+    $.plone.utils.resources_css = function (resources) {
 
         // here we will collect all resources as list of strings
         var styles = [];
 
         // processing every resource in resources list
-        $.each(resources, function(index, options) {
+        $.each(resources, function (index, options) {
 
             // end style string which we will append to styles variable
             var style = '';
@@ -74,26 +77,24 @@
 
             // include css as link element
             if (item.rendering === 'link') {
-                style = '' +
-                    '<link type="text/css" ' +
-                          'href="' + item.src + '" ' +
-                          'media="' + item.media + '" ' +
-                          'rel="' + item.rel + '" ' +
-                          'title="' + item.title + '"' +
-                          '/>';
+                style = '<link type="text/css" ' +
+                    'href="' + item.src + '" ' +
+                    'media="' + item.media + '" ' +
+                    'rel="' + item.rel + '" ' +
+                    'title="' + item.title + '"' +
+                    '/>';
 
             // include css as style element which is importing/pointing to
             // other css
             } else if (item.rendering === 'import') {
                 style = '<style type="text/css" media="' + item.media + '">' +
-                        '    @import url(' + item.src + ');' +
-                        '</style>';
+                    '    @import url(' + item.src + ');' +
+                    '</style>';
 
             // include css as inline css inside style element
             } else if (item.rendering === 'inline') {
                 style = '<style type="text/css" media="' + item.media + '">' +
-                        item.content +
-                        '</style>';
+                    item.content + '</style>';
             }
 
             // wrap around with conditional comment
@@ -140,13 +141,13 @@
     //     <script type="text/javascript" src="main.js"></script>
     //     <![endif]-->
     //
-    $.plone.utils.resources_js = function(resources) {
+    $.plone.utils.resources_js = function (resources) {
 
         // here we will collect all resources as list of strings
         var scripts = [];
 
         // processing every resource in resources list
-        $.each(resources, function(index, item) {
+        $.each(resources, function (index, item) {
 
             // include javascript as script element
             var script = '<scr' + 'ipt type="text/javascript"';
@@ -183,13 +184,13 @@
     //
     // Here we cover logic of how buttons and categories are render, but not
     // where they are placed, except in the case of submenus.
-    var Buttons = function(buttons, global_options) {
+    var Buttons = function (buttons, global_options) {
 
         // registry of categories inside which buttons are listed
         var categories = {};
 
         // we group buttons into categories
-        $.each(buttons, function(index, options) {
+        $.each(buttons, function (index, options) {
 
             // default options of a button
             var item = $.extend({
@@ -229,14 +230,12 @@
                 var submenu = new Buttons(item.submenu, global_options);
 
                 // for each category we append buttons
-                $.each(submenu.categories, function(category, items) {
-                    button_wrapper.append(
-                        submenu.render_category(items, category,
-                            'toolbar-submenu').hide());
+                $.each(submenu.categories, function (category, items) {
+                    button_wrapper.append(submenu.render_category(items, category, 'toolbar-submenu').hide());
                 });
 
                 // on click we should 
-                button.click(function(e) {
+                button.click(function (e) {
 
                     var el = $(this).parent(),  // current button
                         iframe = global_options.iframe,  // iframe element 
@@ -314,7 +313,7 @@
                 el = $('<ul/>').attr('class', klass);
 
             // appending buttong to category element
-            $.each(buttons, function(index, button) {
+            $.each(buttons, function (index, button) {
                 el.append(button);
             });
 
@@ -335,7 +334,7 @@
     //
     // Here we create iframe and initialize buttons and map them to categories
     // which were predefined in template or we simple append them
-    var Toolbar = function(options) {
+    var Toolbar = function (options) {
 
         var el = $('<iframe/>', options.attributes),  // iframe element
             buttons = new Buttons(options.buttons, options),  // buttons instance
@@ -344,19 +343,18 @@
             js = $.plone.utils.resources_js(options.resources_js);  // javascript resources string
 
         // render categories and append them iframe
-        $.each(buttons.categories, function(category, items) {
+        $.each(buttons.categories, function (category, items) {
 
             // toolbar category which we are searching in template
             var category_el = $('.toolbar-category-' + category, toolbar);
 
             // if no category found in template then we append it
             if (category_el.length === 0) {
-                $('.toolbar', toolbar).append(
-                    buttons.render_category(items, category));
+                $('.toolbar', toolbar).append(buttons.render_category(items, category));
 
             // replace category element with generated category with buttons
             } else {
-                category_el.replaceWith(function() {
+                category_el.replaceWith(function () {
                     return buttons.render_category(items, category);
                 });
             }
@@ -364,12 +362,11 @@
         });
 
         // when iframe is loaded
-        el.load(function() {
+        el.load(function () {
 
             // append css and javascript resorces
             el[0].contentWindow.document.open();
-            el[0].contentWindow.document.write(''+
-                '<html><head></head><body>' + css + js + '</body></html>');
+            el[0].contentWindow.document.write('<html><head></head><body>' + css + js + '</body></html>');
             el[0].contentWindow.document.close();
 
             // iframe body element
@@ -384,7 +381,7 @@
             options.initial_height = el.height();
 
             // we need to check any click on iframe
-            el.contents().bind('click', { options: options }, function(e) {
+            el.contents().bind('click', { options: options }, function (e) {
 
                 var iframe = e.data.options.iframe,
                     el = e.data.options.iframe.contents(),
@@ -415,15 +412,18 @@
         });
 
         // when document is ready we prepend iframe to body
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('body').prepend(el);
         });
+
 
         // toolbar api
         return {
             'el': el,
-            'buttons': buttons
-            // TODO: destroy and add_button option are missing
+            'buttons': buttons,
+            'create_buttons': function(buttons, global_options) {
+                return new Buttons(buttons, global_options);
+            }
         };
 
     };
@@ -435,7 +435,7 @@
     // manipulation already created toolbar.
 
     // Method for retriving already created toolbar
-    $.fn.toolbar = function() {
+    $.fn.toolbar = function () {
 
         // Check if we are dealing with iframe
         if (this.tagName === 'IFRAME') {
@@ -455,7 +455,7 @@
     };
 
     // Initialization method
-    $.plone.toolbar = function(custom_options) {
+    $.plone.toolbar = function (custom_options) {
 
         // Merge custom provided option with default ones
         var options = $.extend({
@@ -464,10 +464,9 @@
                 name: 'plone-toolbar',
                 allowtransparency: 'true'
             },
-            toolbar_template: '' +
-                '<div class="toolbar-wrapper">' +
-                ' <div class="toolbar"></div>' +
-                '</div>',
+            toolbar_template: '<div class="toolbar-wrapper">' +
+                              ' <div class="toolbar"></div>' +
+                              '</div>',
             buttons: []
         }, custom_options);
 
@@ -482,4 +481,4 @@
 
     };
 
-})(jQuery);
+}(jQuery));
