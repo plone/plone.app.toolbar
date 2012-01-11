@@ -28,10 +28,10 @@ pb.create_content_div = function (pbo, trigger) {
             '     class="modal overlay-' + pbo.subtype +
                     ' ' + (pbo.cssclass || '') + '">' +
             ' <div class="modal-header">' +
-            '  <div class="close">' +
+            '  <a href="#" class="close">' +
             '   <span>Close</span>' +
-            '  </div>' +
-            '  <h3>Title</h3>' +
+            '  </a>' +
+            '  <h3>Loading ...</h3>' +
             ' </div>' +
             ' <div class="modal-body pb-ajax">' +
             ' </div>' +
@@ -49,13 +49,10 @@ pb.create_content_div = function (pbo, trigger) {
         }
     }
 
-    // add the target element at the end of the body.
-    if (trigger) {
-        trigger.after(content);
-    } else {
-        content.appendTo($("body"));
-    }
+    // always place it at the end of the body
+    content.appendTo($("body"));
 
+    //
     content.bind('click', {pbo: pbo}, function(event) {
         event.stopPropagation();
     });
@@ -67,6 +64,22 @@ pb.create_content_div = function (pbo, trigger) {
 
 (function($) {
 
+    // override overriding of jqt default effect to take account of position of
+    // parent elements
+    jQuery.tools.overlay.addEffect('default',
+        function(pos, onLoad) {
+            var conf = this.getConf(),
+                 w = $(window.parent),
+                 ovl = this.getOverlay(),
+                 op = ovl.parent().offsetParent().offset();
+
+            pos.position = conf.fixed ? 'fixed' : 'absolute';
+            ovl.fadeIn(conf.speed, onLoad);
+
+        }, function(onClose) {
+            this.getOverlay().fadeOut(this.getConf().closeSpeed, onClose);
+        }
+    );
     if (jQuery.browser.msie && parseInt(jQuery.browser.version, 10) < 7) {
         // it's not realistic to think we can deal with all the bugs
         // of IE 6 and lower. Fortunately, all this is just progressive
@@ -104,7 +117,7 @@ pb.create_content_div = function (pbo, trigger) {
         filter: common_content_filter,
         formselector: 'form[name="default_page_form"]',
         noform: function(el) { return noformerrorshow(el, 'reload'); },
-        closeselector: '[name=form.button.Cancel]',
+        closeselector: '[name="form.button.Cancel"]',
         width:'40%'
     });
 
@@ -134,8 +147,17 @@ pb.create_content_div = function (pbo, trigger) {
     $('#toolbar-button-rename > a').prepOverlay({
         subtype: 'ajax',
         filter: common_content_filter,
-        closeselector: '[name=form.button.Cancel]',
-        width:'40%'
+        closeselector: '[name="form.button.Cancel"], div.modal-header > a.close',
+        width:'40%',
+        config: {
+            onBeforeLoad: function(e) {
+                var modal = this.getOverlay(),
+                    title = $('.modal-body h1.documentFirstHeading', modal);
+                $('.modal-header > h3').html(title.html());
+                title.remove();
+                return true;
+            }
+        }
     });
 
 })(jQuery);
