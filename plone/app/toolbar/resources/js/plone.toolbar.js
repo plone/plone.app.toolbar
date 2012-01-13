@@ -216,23 +216,43 @@
             // we wrap button ("a" element) with "li" element
             var button_wrapper = $('<li/>').attr({
                 'id': item.id,
-                'class': 'toolbar-button'
+                'class': 'toolbar-button',
+                'category_label': ''
             });
 
             // we now append button to button wrapper element
             button_wrapper.append(button);
 
             // if submenu is defined here is how we create it
-            if (item.submenu !== undefined) {
+            if (item.buttons !== undefined) {
 
                 // we instantiate Buttons as they were before just now we pass
                 // submenu since this is now our sub list of buttons
-                var submenu = new Buttons(item.submenu, global_options);
+                var submenu = new Buttons(item.buttons, global_options),
+                    submenu_wrapper = $('<div class="toolbar-submenu" />').hide(),
+                    submenu_category_label = $('<h3/>');
 
                 // for each category we append buttons
                 $.each(submenu.categories, function (category, items) {
-                    button_wrapper.append(submenu.render_category(items, category, 'toolbar-submenu').hide());
+
+                    if (submenu.category !== 'default') {
+
+                        if (global_options.categories_labels[category] !== undefined) {
+                            submenu_wrapper.append($('<h3/>').append(
+                                global_options.categories_labels[category]));
+                        }
+
+                        submenu_wrapper.append(submenu.render_category(items, category));
+
+                    } else {
+
+                        submenu_wrapper.prepend(submenu.render_category(items, category));
+
+                    }
+
                 });
+
+                button_wrapper.append(submenu_wrapper);
 
                 // on click we should 
                 button.click(function (e) {
@@ -249,7 +269,7 @@
                         el.removeClass('activated');
 
                         // hiding submenu
-                        $('> ul', el).hide();
+                        $('> div.toolbar-submenu', el).hide();
 
                         // shrinking iframe to its initial height
                         iframe.height(global_options.initial_height);
@@ -269,7 +289,7 @@
                         el.addClass('activated');
 
                         // we show submenu, was initialy hidden
-                        $('> ul', el).show();
+                        $('> div.toolbar-submenu', el).show();
 
                         // we stretch iframe over whole top frame which should
                         // be marked as transparent so user wont see it
@@ -304,12 +324,12 @@
         });
 
         // this is helper function to render category
-        function render_category(buttons, custom_category, custom_klass) {
+        function render_category(buttons, custom_category) {
 
             // we can provide custom options for rendering (custom_category,
             // custom_klass)
             var category = custom_category || 'default',
-                klass = custom_klass || 'toolbar-category toolbar-category-' + category,
+                klass = 'toolbar-category toolbar-category-' + category,
                 el = $('<ul/>').attr('class', klass);
 
             // appending buttong to category element
@@ -420,6 +440,7 @@
         // toolbar api
         return {
             'el': el,
+            'options': options,
             'buttons': buttons,
             'create_buttons': function(buttons, global_options) {
                 return new Buttons(buttons, global_options);
@@ -464,6 +485,7 @@
                 name: 'plone-toolbar',
                 allowtransparency: 'true'
             },
+            categories_labels: {},
             toolbar_template: '<div class="toolbar-wrapper">' +
                               ' <div class="toolbar"></div>' +
                               '</div>',

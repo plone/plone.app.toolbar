@@ -12,9 +12,22 @@ from zope.publisher.browser import BrowserView
 from zope.browsermenu.interfaces import IBrowserMenu
 
 from plone.memoize.instance import memoize
+from plone.app.toolbar import PloneMessageFactory as _
 
 from Acquisition import aq_inner
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
+
+CATEGORIES_LABELS = {
+    'tile-category-structure':
+        _(u'tile-category-structure-label', default=u"Structure"),
+    'tile-category-media':
+        _(u'tile-category-media-label', default=u"Media"),
+    'tile-category-fields':
+        _(u'tile-category-fields-label', default=u"Fields"),
+    'tile-category-other':
+        _(u'tile-category-other-label', default=u"Other"),
+    }
 
 
 class Toolbar(BrowserView):
@@ -98,7 +111,8 @@ class Toolbar(BrowserView):
 
         fullname = userid
 
-        # Member info is None if there's no Plone user object, as when using OpenID.
+        # Member info is None if there's no Plone user object, as when using
+        # OpenID.
         if memberInfo is not None:
             fullname = memberInfo.get('fullname', '') or fullname
 
@@ -110,7 +124,8 @@ class Toolbar(BrowserView):
         """
         member = self.portal_state.member()
         userid = member.getId()
-        return "%s/author/%s" % (self.portal_state.navigation_root_url(), userid)
+        return "%s/author/%s" % (
+                self.portal_state.navigation_root_url(), userid)
 
     @memoize
     def userPortrait(self):
@@ -118,11 +133,11 @@ class Toolbar(BrowserView):
         """
         member = self.portal_state.member()
         membership = self.tools.membership()
-        portrait = membership.getPersonalPortrait(member.getId());
+        portrait = membership.getPersonalPortrait(member.getId())
         if portrait is not None:
             return portrait.absolute_url()
 
-    #@memoize
+    @memoize
     def buttons(self):
         buttons = []
 
@@ -168,29 +183,36 @@ class Toolbar(BrowserView):
             selected_button['klass'] = 'selected'
 
         # contentmenu (eg: Display, Add new..., State)
-        def contentmenu_buttons(items=self.contentmenu()):
+        def contentmenu_buttons(items, category='default'):
             buttons = []
             for item in items:
                 button = {
-                    'title': '<span>' + translate(item['title']) + '</span>',
-                    'description': translate(item['description']),
+                    'title': '<span>' + translate(
+                            item['title'],
+                            context=self.request,
+                            ) + '</span>',
+                    'description': translate(
+                            item['description'],
+                            context=self.request,
+                            ),
                     'url': item['action'] and item['action'] or '#',
                     'icon': item['icon'],
-                    'category': 'rightactions',
+                    'category': category,
                     }
 
-                if item.has_key('extra'):
+                if 'extra' in item:
 
-                    if item['extra'].has_key('id') and item['extra']['id']:
-                        button['id'] = 'toolbar-button-'+item['extra']['id']
+                    if 'id'  in item['extra'] and item['extra']['id']:
+                        button['id'] = 'toolbar-button-' + item['extra']['id']
 
-                    if item['extra'].has_key('class') and item['extra']['class']:
+                    if 'class' in item['extra'] and item['extra']['class']:
                         if item['extra']['class'] == 'actionMenuSelected':
                             button['klass'] = 'selected'
                         else:
                             button['klass'] = 'label-' + item['extra']['class']
 
-                    if item['extra'].has_key('stateTitle') and item['extra']['stateTitle']:
+                    if 'stateTitle' in item['extra'] and \
+                            item['extra']['stateTitle']:
                         button['title'] += '<span class="%s">%s</span>' % (
                             item['extra'].get('class', ''),
                             item['extra']['stateTitle'],
@@ -198,13 +220,14 @@ class Toolbar(BrowserView):
 
                 if item['submenu']:
                     button['title'] += '<span> &#9660;</span>'
-                    button['submenu'] = contentmenu_buttons(item['submenu'])
+                    button['buttons'] = contentmenu_buttons(item['submenu'])
 
                 buttons.append(button)
 
             return buttons
 
-        buttons += contentmenu_buttons()
+        buttons += contentmenu_buttons(
+                self.contentmenu(), category='rightactions')
 
         # personal actions (Dashboard, Personal Properties, Site Setup)
         buttons.append({
@@ -213,7 +236,7 @@ class Toolbar(BrowserView):
             'url': self.userHomeLinkURL(),
             'klass': 'personalactions-user',
             'category': 'personalactions',
-            'submenu': [{
+            'buttons': [{
                     'title': item['title'],
                     'url': item['url'],
                     'class': item.get('class', ''),
@@ -224,8 +247,19 @@ class Toolbar(BrowserView):
 
         return buttons
 
+    def categories_labels(self):
+        # TODO: this needs to be pluggable
+        labels = {}
+        for item_id in CATEGORIES_LABELS:
+            labels[item_id] = translate(
+                    CATEGORIES_LABELS[item_id],
+                    context=self.request,
+                    )
+        return labels
+
     def toolbar_initialize_js(self):
         buttons = self.buttons()
+
         return '$.plone.toolbar(%s);' % json.dumps({
             'id': 'plone-toolbar',
             'name': 'plone-toolbar',
@@ -246,9 +280,9 @@ class Toolbar(BrowserView):
                 '</div>',
             'resources_css': self.resource_styles.styles(),
             'resources_js': self.resource_scripts.scripts(),
+            'categories_labels': self.categories_labels(),
             'buttons': buttons,
             }, sort_keys=True, indent=4)
-
 
 
 class ToolbarFallback(BrowserView):
