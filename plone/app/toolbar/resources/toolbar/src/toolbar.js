@@ -15,13 +15,8 @@
 
     // # Namespace
     //
-    // ensure there is "plone" namespace
-    $.plone = $.plone || {};
-
-    // # Utilities
-    //
-    // ensure there is "plone.utils" namespace
-    $.plone.utils = $.plone.utils || {};
+    // ensure there is "toolbar" namespace
+    $.toolbar = $.toolbar || {};
 
     // ## resources_css
     //
@@ -381,59 +376,60 @@
 
         });
 
-        // when iframe is loaded
-        el.load(function () {
-
-            // append css and javascript resorces
-            el[0].contentWindow.document.open();
-            el[0].contentWindow.document.write('<html><head></head><body>' + css + js + '</body></html>');
-            el[0].contentWindow.document.close();
-
-            // iframe body element
-            var el_body = $('body', el.contents());
-
-            // we pass iframe as element in options later on we access it in
-            // Buttons as global_options.iframe 
-            options.iframe = el;
-
-            // we also remember initial height since we will later use it when
-            // creating overlay
-            options.initial_height = el.height();
-
-            // we need to check any click on iframe
-            el.contents().bind('click', { options: options }, function (e) {
-
-                var iframe = e.data.options.iframe,
-                    el = e.data.options.iframe.contents(),
-                    initial_height = e.data.options.initial_height;
-
-                // if iframe is stretched then we shrink it
-                if (iframe.hasClass('toolbar-dropdown-activated')) {
-                    $('.activated', el).removeClass('activated');
-                    $('.toolbar-submenu', el).hide();
-                    iframe.height(initial_height);
-                    iframe.removeClass('toolbar-dropdown-activated');
-                }
-
-                // if click on button was made then we redirect main frame to
-                // new location
-                if ($(e.target).closest('a').parent().hasClass('toolbar-button')) {
-                    window.parent.location.href = $(e.target).closest('a').attr('href');
-                }
-
-                // we ignore any other click
-                return e.preventDefault();
-
-            });
-
-            // append toolbar element to iframe body 
-            el_body.append(toolbar);
-
-        });
-
         // when document is ready we prepend iframe to body
         $(document).ready(function () {
             $('body').prepend(el);
+
+            // when iframe is loaded
+            el.load(function () {
+
+                // append css and javascript resorces
+                el[0].contentWindow.document.open();
+                el[0].contentWindow.document.write(css + js);
+                el[0].contentWindow.document.close();
+
+                // iframe body element
+                var el_body = $('body', el.contents());
+
+                // we pass iframe as element in options later on we access it in
+                // Buttons as global_options.iframe 
+                options.iframe = el;
+
+                // we also remember initial height since we will later use it when
+                // creating overlay
+                options.initial_height = el.height();
+
+                // we need to check any click on iframe
+                el.contents().bind('click', { options: options }, function (e) {
+
+                    var iframe = e.data.options.iframe,
+                        el = e.data.options.iframe.contents(),
+                        initial_height = e.data.options.initial_height;
+
+                    // if iframe is stretched then we shrink it
+                    if (iframe.hasClass('toolbar-dropdown-activated')) {
+                        $('.activated', el).removeClass('activated');
+                        $('.toolbar-submenu', el).hide();
+                        iframe.height(initial_height);
+                        iframe.removeClass('toolbar-dropdown-activated');
+                    }
+
+                    // if click on button was made then we redirect main frame to
+                    // new location
+                    if ($(e.target).closest('a').parent().hasClass('toolbar-button')) {
+                        window.parent.location.href = $(e.target).closest('a').attr('href');
+                    }
+
+                    // we ignore any other click
+                    return e.preventDefault();
+
+                });
+
+                // append toolbar element to iframe body 
+                el_body.append(toolbar);
+
+            });
+
         });
 
 
