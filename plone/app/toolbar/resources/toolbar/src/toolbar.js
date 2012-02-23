@@ -1,261 +1,443 @@
-// Version: 0.1 (not released)
+// This plugin is used to create and edit deco layout. {{{
 //
-// (c) 2011 Rok Garbas
+// @author Rok Garbas
+// @version 1.0
+// @licstart  The following is the entire license notice for the JavaScript
+//            code in this page.
 //
-// May be freely distributed under the BSD license.
+// Copyright (C) 2010 Plone Foundation
 //
-// For all details and documentation:
-// <http://garbas.github.com/plone.toolbar.js>
+// This program is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+// FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+// more details.
+//
+// You should have received a copy of the GNU General Public License along with
+// this program; if not, write to the Free Software Foundation, Inc., 51
+// Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+//
+// @licend  The above is the entire license notice for the JavaScript code in
+//          this page.
+//
 
-/*jslint browser:true, unparam:true, vars:true */
-/*global jQuery:true, console:true */
+/*jshint bitwise:true, curly:true, eqeqeq:true, immed:true, latedef:true,
+  newcap:true, noarg:true, noempty:true, nonew:true, plusplus:true,
+  regexp:true, undef:true, strict:true, trailing:true, browser:true */
+/*global $:false, jQuery:false, alert:false */
+
+// }}}
 
 (function ($) {
     "use strict";
 
-    // # Namespace
-    //
-    // ensure there is "toolbar" namespace
+    // # outerHtml {{{
+    function outerHtml(el) {
+        el = el[0];
+        if ($.nodeName(el, 'script')) {
+            var attrs;
+            if (el.attributes) {
+                attrs = $.map(el.attributes, function(attr) {
+                    return attr.name + '="' + attr.value + '"';
+                });
+            }
+            return '<script ' + attrs.join(' ') + '>' +
+                $(el).html() + '</script>';
+        } else {
+            return $('<div>').append(el).remove().html();
+        }
+    }
+    // }}}
+
+    // # Micro Templating {{{
+    function template(tmpl, data) {
+        tmpl = $(tmpl);
+        $.each(data, function(key, el) {
+            if (typeof(el) === 'string') {
+                $(key, tmpl).append(el);
+            } else if (el.size() !== 0) {
+                $(key, tmpl).append(el);
+            }
+        });
+        return tmpl;
+    }
+    // }}}
+
+    // # Namespace {{{
     $.toolbar = $.toolbar || {};
+    // }}}
 
-    // ## resources_css
-    //
-    // Utility which creates link/style element from resources_css passed
-    // as argument.
-    //
-    // Code was taken from Products.ResourceRegistries and converted into
-    // javascript.
+    // # Options {{{
+    $.toolbar.defaults = $.extend(true, {
+        resources: [],
+
+        iframe_id: 'toolbar',
+        iframe_name: 'toolbar',
+        iframe_allowtransparency: 'true',
+        iframe_overlay_open_klass: 'toolbar-overlay-open',
+
+        groups_labels: {},
+        groups_klass: 'toolbar-groups',
+        group_open_klass: 'toolbar-group-open',
+        group_klass_prefix: 'toolbar-group-',
+
+        button_klass: 'toolbar-button',
+        button_options: {
+            title: '',
+            url: '#',
+            id: '',
+            klass: '',
+            category: 'default'
+            },
+
+        template: '<div class="toolbar-wrapper">' +
+            '<div id="toolbar"></div></div>',
+        template_options: function(groups) {
+            return { '#toolbar': groups.render() };
+            }
+    }, $.toolbar.defaults);
+    // }}}
+
+    // # Render resources {{{
     //
     // Example:
     //
-    //     $.plone.utils.resources_css([
-    //         {src: 'main.css'},
-    //         {rendering: 'import', src: 'main.css'},
-    //         {rendering: 'inline', content: '* { margin: 0; }'},
-    //         {conditionalcomment: 'IE 6', src: 'main.css'},
-    //     ]);
-    //     
+    //      new Resource('main'js').render_as_string();
+    //
     // Which will output...
     //
-    //     <link media="screen" rel="stylesheet" title="" href="main.css" />
+    //      <script type="text/javascript" src="main.js"></script>
     //
-    //     <style type="text/css" media="screen">
-    //         @import url(main.css);
-    //     </style>
-    //
-    //     <style type="text/css" media="screen">
-    //          * { margin: 0; }
-    //     </style>
-    //
-    //     <!--[if IE 6]>
-    //     <link media="screen" rel="stylesheet" title="" href="main.css" />
-    //     <![endif]-->
-    //
-    $.plone.utils.resources_css = function (resources) {
-
-        // here we will collect all resources as list of strings
-        var styles = [];
-
-        // processing every resource in resources list
-        $.each(resources, function (index, options) {
-
-            // end style string which we will append to styles variable
-            var style = '';
-
-            // default values for css resource
-            var item = $.extend({
-                rendering: 'link',
-                media: 'screen',
-                rel: 'stylesheet',
-                title: ''
-            }, options);
-
-            // include css as link element
-            if (item.rendering === 'link') {
-                style = '<link type="text/css" ' +
-                    'href="' + item.src + '" ' +
-                    'media="' + item.media + '" ' +
-                    'rel="' + item.rel + '" ' +
-                    'title="' + item.title + '"' +
-                    '/>';
-
-            // include css as style element which is importing/pointing to
-            // other css
-            } else if (item.rendering === 'import') {
-                style = '<style type="text/css" media="' + item.media + '">' +
-                    '    @import url(' + item.src + ');' +
-                    '</style>';
-
-            // include css as inline css inside style element
-            } else if (item.rendering === 'inline') {
-                style = '<style type="text/css" media="' + item.media + '">' +
-                    item.content + '</style>';
+    var Resource = function(r, a) { this.init(r, a); return this; };
+    Resource.prototype = {
+        init: function(res, attrs) {
+            var self = this,
+                tmp = $(res.split('!'));
+            self._is = {};
+            self.attrs = attrs;
+            if (tmp.size() === 2) {
+                res = tmp[1];
+                self._is[tmp[0]] = true;
             }
-
-            // wrap around with conditional comment
-            if (item.conditionalcomment) {
-                style = '<!--[if ' + item.conditionalcomment + ']>' +
-                    style + '<![endif]-->';
+            self.res = res;
+        },
+        is: function(type) {
+            var self = this,
+                res = self.res;
+            if (self._is[type] === undefined) {
+                if ((res.substr((type.length + 1) * -1) === '.' + type) ||
+                    (res.substr((type.length + 1)) === type + '!')) {
+                    self._is[type] = true;
+                } else {
+                    self._is[type] = false;
+                }
             }
-
-            // add style string to styles list
-            styles.push(style);
-
-        });
-
-        // join and return as string
-        return styles.join('');
-
+            return self._is[type];
+        },
+        render: function() {
+            var self = this,
+                attr_name = 'src',
+                attrs = $.extend({}, self.attrs);
+            if (self.is('css')) {
+                attr_name = 'href';
+            }
+            attrs[attr_name] = self.res;
+            if (self.is('css')) {
+                return $('<link/>').attr($.extend({
+                    type: 'text/css',
+                    rel: 'stylesheet',
+                    media: 'screen',
+                    href: ''
+                }, attrs));
+            } else if (self.is('js')) {
+                return $('<script/>').attr($.extend({
+                    type: 'text/javascript',
+                    src: ''
+                }, attrs));
+            }
+            return $('');
+        }
     };
+    // }}}
 
-    // ## resources_js
-    //
-    // Utility which creates script element from resources_js passed as
-    // argument.
-    //
-    // Code was taken from Products.ResourceRegistries and converted into
-    // javascript.
-    //
-    // Example:
-    //
-    //     $.plone.utils.resources_js([
-    //         {src: 'main.js'},
-    //         {inline: true, content: 'console.log("test"); '},
-    //         {conditionalcomment: 'lte IE 6', src: 'main.js'}
-    //     ]);
-    //     
-    // Which will output...
-    //
-    //     <script type="text/javascript" src="main.js"></script>
-    //
-    //     <script type="text/javascript">
-    //         console.log("test");
-    //     </script>
-    //
-    //     <!--[if lte IE 6]>
-    //     <script type="text/javascript" src="main.js"></script>
-    //     <![endif]-->
-    //
-    $.plone.utils.resources_js = function (resources) {
+    // # Models definitions {{{
+    var Button = function(o, t) { this.init(o, t); return this; },
+        Groups = function(o, t) { this.init(o, t); return this; },
+        Toolbar = function(o) { this.init(o); return this; };
+    // }}}
 
-        // here we will collect all resources as list of strings
-        var scripts = [];
+    // # Button {{{
+    Button.prototype = {
+        init: function(options, toolbar_options) {
+            var self = this;
 
-        // processing every resource in resources list
-        $.each(resources, function (index, item) {
+            self.toolbar_options = $.extend({},
+                    $.toolbar.defaults, toolbar_options || {});
+            self.options = $.extend({},
+                    self.toolbar_options.button_options, options || {});
+            self.el = $('<li/>');
+            self.el_button = $('<a/>');
+            self.el_groups = self.render_groups(self.options.buttons);
+            self.rendered = false;
 
-            // include javascript as script element
-            var script = '<scr' + 'ipt type="text/javascript"';
+            // group button should open/close group of buttons
+            self.el_button.bind('click', { self: self }, function (e) {
+                var self = e.data.self, el = self.el,
+                    groups_klass = self.toolbar_options.groups_klass,
+                    group_open_klass = self.toolbar_options.group_open_klass,
+                    iframe_id = self.toolbar_options.iframe_id,
+                    toolbar = $('iframe#' + iframe_id).toolbar();
 
-            // as javascript code inside element
-            if (item.inline) {
-                script += '>' + item.content;
+                if ($('> div.' + groups_klass, el).size() === 0) {
+                    return;
+                }
 
-            // as pointing to javascript file
-            } else {
-                script += ' src="' + item.src + '">';
+                // closing submenu
+                if (el.hasClass(group_open_klass)) {
+
+                    // removing marker class which was marking button as
+                    // activated / open
+                    el.removeClass(group_open_klass);
+
+                    // hiding group
+                    $('> div.' + groups_klass, el).hide();
+
+                    // shrinking iframe to its initial height
+                    toolbar.shrink();
+
+                // opening submenu
+                } else {
+
+                    // we make sure all submenus are hidden and deactivated
+                    $('.' + groups_klass, toolbar.document).hide();
+                    $('.' + group_open_klass, toolbar.document)
+                            .removeClass(group_open_klass);
+
+                    // we provide helper class object so themes can style when
+                    // dropdown of submenu is activated / open
+                    el.addClass(group_open_klass);
+
+                    // we show submenu, was initialy hidden
+                    $('> div.' + groups_klass, el).show();
+
+                    // we stretch iframe over whole top frame which should
+                    // be marked as transparent so user wont see it
+                    toolbar.stretch();
+
+                }
+
+                return false;
+            });
+        },
+        render_groups: function(buttons) {
+            if (buttons === undefined || $(buttons).size() === 0) {
+                return;
             }
 
-            // closing script element
-            script += '</scr' + 'ipt>';
+            var self = this,
+                el = $('<div/>')
+                    .addClass(self.toolbar_options.groups_klass)
+                    .hide(),
+                groups_labels = self.toolbar_options.groups_labels,
+                groups = new Groups(buttons, self.toolbar_options);
 
-            // wrap around with conditional comment
-            if (item.conditionalcomment) {
-                script = '<!--[if ' + item.conditionalcomment + ']>' +
-                    script + '<![endif]-->';
+            $.each(groups.buttons, function (group_name) {
+                // default group should always be first and without title
+                if (group_name === 'default') {
+                    el.prepend(groups.render_group(group_name));
+                } else {
+                    var group_title = groups_labels[group_name];
+                    if (group_title !== undefined) {
+                        el.append($('<h3/>').append(group_title));
+                    }
+                    el.append(groups.render_group(group_name));
+                }
+            });
+
+            return el;
+        },
+        render: function(options) {
+            var self = this,
+                button_options = options ? $.extend({},
+                    self.toolbar_options.button_options, options || {}) :
+                    self.options;
+
+            // a bit of optimization
+            if (options === undefined && self.rendered === true) {
+                return self.el;
             }
 
-            // add script string to styles list
-            scripts.push(script);
+            self.el.attr({
+                'id': button_options.id,
+                'class': self.toolbar_options.button_klass
+                }).html('');
 
-        });
-
-        // join and return as string
-        return scripts.join('');
-
-    };
-
-    // # Buttons
-    //
-    // Here we cover logic of how buttons and categories are render, but not
-    // where they are placed, except in the case of submenus.
-    var Buttons = function (buttons, global_options) {
-
-        // registry of categories inside which buttons are listed
-        var categories = {};
-
-        // we group buttons into categories
-        $.each(buttons, function (index, options) {
-
-            // default options of a button
-            var item = $.extend({
-                title: '',
-                url: '#',
-                id: '',
-                klass: '',
-                category: 'default'
-            }, options);
-
-            // we represent button as "a" element
-            var button = $('<a/>').attr({
-                'href': item.url,
-                'class': item.klass
-            }).html(item.title);
+            self.el_button
+                .attr({
+                    'href': button_options.url,
+                    'class': button_options.klass
+                    })
+                .html(button_options.title)
+                .appendTo(self.el);
 
             // if icon was defined we create img element and insert it into
             // button element
-            if (item.icon !== undefined && item.icon !== null) {
-                button.prepend($('<img src="' + item.icon + '" />'));
+            if (button_options.icon) {
+                self.el_button.prepend(
+                    $('<img/>').attr({src: button_options.icon})
+                );
             }
 
-            // we wrap button ("a" element) with "li" element
-            var button_wrapper = $('<li/>').attr({
-                'id': item.id,
-                'class': 'toolbar-button',
-                'category_label': ''
+            var el_groups = self.el_groups;
+            if (options !== undefined) {
+                el_groups = self.render_groups(button_options.buttons);
+            }
+
+            if (el_groups) {
+                self.el_button.after(el_groups);
+            }
+
+            // if some custom code is needed we use ``exec`` option
+            if (button_options.exec !== undefined) {
+                button_options.exec.call(self.el, self, button_options);
+            }
+
+            // mark as rendered 
+            self.rendered = false;
+
+            return self.el;
+        }
+    };
+    // }}}
+
+    // # Groups {{{
+    Groups.prototype = {
+        init: function(buttons, toolbar_options) {
+            var self = this;
+            self.buttons = {};
+            self.toolbar_options = $.extend({},
+                    $.toolbar.defaults, toolbar_options || {});
+            $.each(buttons || [], function(i, button_options) {
+                button_options.group = button_options.group || 'default';
+                if (self.buttons[button_options.group] === undefined) {
+                    self.buttons[button_options.group] = [];
+                }
+                self.buttons[button_options.group].push(
+                    new Button(button_options, self.toolbar_options));
             });
+        },
+        render: function() {
+            var self = this, el = $('<div/>');
+            $.each(self.buttons, function(name) {
+                el.append(self.render_group(name));
+            });
+            return el.children();
+        },
+        render_group: function(name) {
+            var self = this,
+                group_klass_prefix = self.toolbar_options.group_klass_prefix,
+                el = $('<ul/>').addClass(group_klass_prefix + name);
+            name = name || 'default';
+            $.each(self.buttons[name], function(i, button) {
+                el.append(button.render());
+            });
+            return el;
+        }
+    };
+    // }}}
 
-            // we now append button to button wrapper element
-            button_wrapper.append(button);
+    // # Toolbar {{{
+    Toolbar.prototype = {
+        init: function(buttons, options) {
+            var self = this;
 
-            // if submenu is defined here is how we create it
-            if (item.buttons !== undefined) {
+            self.buttons = buttons || [];
+            self.options = $.extend({}, $.toolbar.defaults, options || {});
+            self.groups = new Groups(self.buttons, self.options);
 
-                // we instantiate Buttons as they were before just now we pass
-                // submenu since this is now our sub list of buttons
-                var submenu = new Buttons(item.buttons, global_options),
-                    submenu_wrapper = $('<div class="toolbar-submenu" />').hide(),
-                    submenu_category_label = $('<h3/>');
+            self.el_iframe = $('<iframe/>').attr({
+                id: self.options.iframe_id,
+                name: self.options.iframe_name,
+                allowtransparency: self.options.iframe_allowtransparency
+                }).hide();
 
-                // for each category we append buttons
-                $.each(submenu.categories, function (category, items) {
+            // TODO: resources
+            self.resources = '';
 
-                    if (submenu.category !== 'default') {
+        },
+        render: function(buttons) {
+            var self = this,
+                groups = new Groups(buttons, self.options);
 
-                        if (global_options.categories_labels[category] !== undefined) {
-                            submenu_wrapper.append($('<h3/>').append(
-                                global_options.categories_labels[category]));
+            buttons = buttons ? buttons || [] : self.buttons;
+            groups = buttons ? groups : self.groups;
+
+            var el = template(
+                    self.options.template,
+                    self.options.template_options(groups));
+
+
+            $(document).ready(function() {
+
+                // TODO: position of iframe should be configurable somehow
+                self.el_iframe.prependTo($('body'));
+
+                self.el_iframe.load(function() {
+                    var iframe_doc = self.el_iframe.contents()[0];
+
+                    // append css and javascript resorces
+                    iframe_doc.open();
+                    iframe_doc.write(self.resources);
+                    iframe_doc.close();
+
+                    $('body', iframe_doc).append(el);
+                    self.initial_height = el.height();
+
+                    // capture all clicks on iframe
+                    $(iframe_doc).bind('click', {
+                        toolbar: self,
+                        iframe_doc: iframe_doc,
+                        options: self.options
+                    }, function(e) {
+                        var options = e.data.options,
+                            toolbar = e.data.toolbar,
+                            el = $(e.target);
+
+                        if (!toolbar.el.hasClass(
+                                options.iframe_overlay_open_klass)) {
+
+                            if ($.nodeName(e.target, 'a')) {
+                                el = el.parents('a');
+                            }
+
+                            // if click on button was made then we redirect main
+                            // frame to new location
+                            if (el.parent().hasClass(options.button_klass)) {
+                                window.parent.location.href = el.attr('href');
+                            }
+
                         }
 
-                        submenu_wrapper.append(submenu.render_category(items, category));
+                        return e.preventDefault();
 
-                    } else {
 
-                        submenu_wrapper.prepend(submenu.render_category(items, category));
+                        // TODO: do check for overlay to not shrink toolbar if
+                        // overlay is opened
 
-                    }
 
+
+                    });
                 });
+            });
 
-                button_wrapper.append(submenu_wrapper);
-
-                // on click we should 
-                button.click(function (e) {
-
-                    var el = $(this).parent(),  // current button
-                        iframe = global_options.iframe,  // iframe element 
-                        iframe_doc = global_options.iframe.contents();  // iframe document 
-
+            return el;
+        },
+        shrink: function() {
+        },
+        stretch: function() {
                     // closing submenu
                     if (el.hasClass('activated')) {
 
@@ -296,207 +478,45 @@
 
                     }
 
-                    // if submenu is define we defer click on button
-                    return false;
-
-                });
-
-            }
-
-            // if some custom code is needed we use ``exec`` option
-            if (item.exec !== undefined) {
-                item.exec.call(this, button_wrapper);
-            }
-
-            // if category does not yet exists we create it
-            if (categories[item.category] === undefined) {
-                categories[item.category] = [];
-            }
-
-            // appending button to category
-            categories[item.category].push(button_wrapper);
-
-        });
-
-        // this is helper function to render category
-        function render_category(buttons, custom_category) {
-
-            // we can provide custom options for rendering (custom_category,
-            // custom_klass)
-            var category = custom_category || 'default',
-                klass = 'toolbar-category toolbar-category-' + category,
-                el = $('<ul/>').attr('class', klass);
-
-            // appending buttong to category element
-            $.each(buttons, function (index, button) {
-                el.append(button);
-            });
-
-            // return category element
-            return el;
         }
-
-        // Buttons API
-        return {
-            categories: categories,
-            render_category: render_category
-        };
-
     };
+    // }}}
 
-
-    // # Toolbar
-    //
-    // Here we create iframe and initialize buttons and map them to categories
-    // which were predefined in template or we simple append them
-    var Toolbar = function (options) {
-
-        var el = $('<iframe/>', options.attributes),  // iframe element
-            buttons = new Buttons(options.buttons, options),  // buttons instance
-            toolbar = $(options.toolbar_template),  // toolbar default structure
-            css = $.plone.utils.resources_css(options.resources_css),  // css resources string
-            js = $.plone.utils.resources_js(options.resources_js);  // javascript resources string
-
-        // render categories and append them iframe
-        $.each(buttons.categories, function (category, items) {
-
-            // toolbar category which we are searching in template
-            var category_el = $('.toolbar-category-' + category, toolbar);
-
-            // if no category found in template then we append it
-            if (category_el.length === 0) {
-                $('.toolbar', toolbar).append(buttons.render_category(items, category));
-
-            // replace category element with generated category with buttons
-            } else {
-                category_el.replaceWith(function () {
-                    return buttons.render_category(items, category);
-                });
-            }
-
-        });
-
-        // when document is ready we prepend iframe to body
-        $(document).ready(function () {
-            $('body').prepend(el);
-
-            // when iframe is loaded
-            el.load(function () {
-
-                // append css and javascript resorces
-                el[0].contentWindow.document.open();
-                el[0].contentWindow.document.write(css + js);
-                el[0].contentWindow.document.close();
-
-                // iframe body element
-                var el_body = $('body', el.contents());
-
-                // we pass iframe as element in options later on we access it in
-                // Buttons as global_options.iframe 
-                options.iframe = el;
-
-                // we also remember initial height since we will later use it when
-                // creating overlay
-                options.initial_height = el.height();
-
-                // we need to check any click on iframe
-                el.contents().bind('click', { options: options }, function (e) {
-
-                    var iframe = e.data.options.iframe,
-                        el = e.data.options.iframe.contents(),
-                        initial_height = e.data.options.initial_height;
-
-                    // if iframe is stretched then we shrink it
-                    if (iframe.hasClass('toolbar-dropdown-activated')) {
-                        $('.activated', el).removeClass('activated');
-                        $('.toolbar-submenu', el).hide();
-                        iframe.height(initial_height);
-                        iframe.removeClass('toolbar-dropdown-activated');
-                    }
-
-                    // if click on button was made then we redirect main frame to
-                    // new location
-                    if ($(e.target).closest('a').parent().hasClass('toolbar-button')) {
-                        window.parent.location.href = $(e.target).closest('a').attr('href');
-                    }
-
-                    // we ignore any other click
-                    return e.preventDefault();
-
-                });
-
-                // append toolbar element to iframe body 
-                el_body.append(toolbar);
-
-            });
-
-        });
-
-
-        // toolbar api
-        return {
-            'el': el,
-            'options': options,
-            'buttons': buttons,
-            'create_buttons': function(buttons, global_options) {
-                return new Buttons(buttons, global_options);
-            }
-        };
-
-    };
-
-
-    // # Initialization
-    //
-    // Initialization of toolbar, as well as retriving, destroying and
-    // manipulation already created toolbar.
-
-    // Method for retriving already created toolbar
-    $.fn.toolbar = function () {
+    // # jQuery integration {{{
+    $.fn.toolbar = function (buttons, options) {
+        var self = this;
 
         // Check if we are dealing with iframe
-        if (this.tagName === 'IFRAME') {
-            console.log('This is not iframe!');
-            return {};
+        if ($.nodeName(self[0], 'iframe')) {
+            alert('This is not iframe!');
         }
 
         // Was toolbar initialized already?
-        if (!this.data('toolbar')) {
-            console.log('Toolbar was not initialized on this iframe!');
-            return {};
+        if (!self.data('toolbar')) {
+            var toolbar = new Toolbar(buttons, options);
+            self.data('toolbar', toolbar);
+            toolbar.render();
         }
 
         // return Toolbar instance
-        return this.data('toolbar');
+        return self.data('toolbar');
 
     };
+    // }}}
 
-    // Initialization method
-    $.plone.toolbar = function (custom_options) {
-
-        // Merge custom provided option with default ones
-        var options = $.extend({
-            attributes: {
-                id: 'plone-toolbar',
-                name: 'plone-toolbar',
-                allowtransparency: 'true'
-            },
-            categories_labels: {},
-            toolbar_template: '<div class="toolbar-wrapper">' +
-                              ' <div class="toolbar"></div>' +
-                              '</div>',
-            buttons: []
-        }, custom_options);
-
-        // Initialize Toolbar
-        var toolbar = new Toolbar(options);
-
-        // Save Toolbar instance to iframe element data
-        $(toolbar.el).data('toolbar', toolbar);
-
-        // Return toolbar as we would with $.fn.toolbar
-        return toolbar;
-
-    };
+    // # Testing {{{
+    //
+    // expose toolbar internals for testing purposes
+    if ($.toolbar.testing === true) {
+        $.toolbar._ = {
+            outerHtml: outerHtml,
+            template: template,
+            Resource: Resource,
+            Button: Button,
+            Groups: Groups,
+            Toolbar: Toolbar
+        };
+    }
+    // }}}
 
 }(jQuery));
