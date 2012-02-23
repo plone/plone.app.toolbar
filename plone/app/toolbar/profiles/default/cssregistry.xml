@@ -8,17 +8,24 @@
         id="++resource++plone.app.toolbar/toolbar_bbb.css"
         />
 
-    <!-- toolbar styles -->
-    <stylesheet
-        cacheable="False" compression="safe" cookable="True"
-        enabled="True" bundle="toolbar"
-        id="++resource++plone.app.toolbar/bootstrap.css"
-        />
-
+    <!-- Toolbar Swirl Theme -->
     <stylesheet
         cacheable="False" compression="safe" cookable="True"
         enabled="True" bundle="toolbar"
         id="++resource++plone.app.toolbar/toolbar/src/plone.toolbar.swirl.css"
         />
+
+    <!-- Twitter Bootstrap -->
+    <stylesheet
+        cacheable="False" compression="safe" cookable="True"
+        enabled="True" bundle="toolbar"
+        id="++resource++plone.app.toolbar/bootstrap/docs/assets/css/bootstrap.css"
+        />
+    <stylesheet
+        cacheable="False" compression="safe" cookable="True"
+        enabled="True" bundle="toolbar"
+        id="++resource++plone.app.toolbar/bootstrap/docs/assets/css/bootstrap-responsive.css"
+        />
+
 
 </object>
