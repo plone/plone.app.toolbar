@@ -5,7 +5,7 @@ module('toolbar.js', {
         $.toolbar = toolbar_original;
     },
     teardown: function() {
-        $('#' + $.toolbar.defaults.iframe_id);
+        $('#' + $.toolbar.defaults.iframe_id).remove();
     }
 });
 
@@ -43,38 +43,37 @@ test('Options', function() {
 });
 
 test('Resource', function() {
-    var outerHtml = $.toolbar._.outerHtml,
-        Resource = $.toolbar._.Resource, resource;
+    var Resource = $.toolbar._.Resource, resource;
 
 
     resource = new Resource('example.css');
-    equal(outerHtml(resource.render()), '<link href="example.css" ' +
+    equal(resource.render_as_string(), '<link href="example.css" ' +
             'media="screen" rel="stylesheet" type="text/css">',
         'check if css resources passed as string renders correctly');
 
     resource = new Resource('example.js');
-    equal(outerHtml(resource.render()), '<script type="text/javascript" ' +
+    equal(resource.render_as_string(), '<script type="text/javascript" ' +
             'src="example.js"></script>',
         'check if javascript resources passed as string renders correctly');
 
     resource = new Resource('css!example');
-    equal(outerHtml(resource.render()), '<link href="example" ' +
+    equal(resource.render_as_string(), '<link href="example" ' +
             'media="screen" rel="stylesheet" type="text/css">',
         'check if css resource passed is passed with bang syntax');
 
     resource = new Resource('js!example');
-    equal(outerHtml(resource.render()), '<script type="text/javascript" ' +
+    equal(resource.render_as_string(), '<script type="text/javascript" ' +
             'src="example"></script>',
         'check if javascript resource passed is passed with bang syntax');
 
     resource = new Resource('example.css', {media:"example"});
-    equal(outerHtml(resource.render()), '<link href="example.css" ' +
+    equal(resource.render_as_string(), '<link href="example.css" ' +
             'media="example" rel="stylesheet" type="text/css">',
         'check if css resources passed as object renders correctly and sets ' +
             'additional attribute on element');
 
     resource = new Resource('example.js', {id:"example"});
-    equal(outerHtml(resource.render()), '<script type="text/javascript" ' +
+    equal(resource.render_as_string(), '<script type="text/javascript" ' +
             'src="example.js" id="example"></script>',
         'check if javascript resources passed as object renders correctly ' +
             'and sets additional attribute on element');
@@ -185,17 +184,18 @@ test('Buttons and Groups', function() {
 
 test('Toolbar and jQuery integration', function() {
     var outerHtml = $.toolbar._.outerHtml,
+        toolbar_el = $('<iframe/>').prependTo($('body')),
         Toolbar = $.toolbar._.Toolbar,
-        toolbar = new Toolbar();
+        toolbar = new Toolbar(toolbar_el);
 
-    equal(outerHtml(toolbar.render()), '<div class="toolbar-wrapper">' +
-            '<div id="toolbar"></div></div>',
+    equal(outerHtml(toolbar.render()), '<div ' +
+            'class="toolbar-wrapper"><div id="toolbar"></div></div>',
         'check if toolbar can be created with no buttons.');
 
     equal(outerHtml(toolbar.render([{ title: 'Example' }])), '<div ' +
             'class="toolbar-wrapper"><div id="toolbar"><ul ' +
-            'class="toolbar-group-default"><li class="toolbar-button" ' +
-            'id=""><a class="" href="#">Example</a></li></ul></div></div>',
+            'class="toolbar-group-default"><li class="toolbar-button" id="">' +
+            '<a class="" href="#">Example</a></li></ul></div></div>',
         'check if buttons can be passed to toolbar.');
 
 //    equal(toolbar.el.toolbar(), toolbar,

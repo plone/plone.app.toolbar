@@ -16,7 +16,6 @@ iframe#plone-toolbar {
     height: 45px;
     z-index: 500;
 
-
     position: fixed;
     _position: absolute;
     _top: expression(eval((document.body.scrollTop)?document.body.scrollTop:document.documentElement.scrollTop));

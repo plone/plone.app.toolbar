@@ -159,6 +159,9 @@
                 }, attrs));
             }
             return $('');
+        },
+        render_as_string: function() {
+            return outerHtml(this.render());
         }
     };
     // }}}
@@ -166,7 +169,7 @@
     // # Models definitions {{{
     var Button = function(o, t) { this.init(o, t); return this; },
         Groups = function(o, t) { this.init(o, t); return this; },
-        Toolbar = function(o) { this.init(o); return this; };
+        Toolbar = function(e, b, o) { this.init(e, b, o); return this; };
     // }}}
 
     // # Button {{{
@@ -351,86 +354,79 @@
 
     // # Toolbar {{{
     Toolbar.prototype = {
-        init: function(buttons, options) {
+        init: function(el, buttons, options) {
             var self = this;
 
             self.buttons = buttons || [];
             self.options = $.extend({}, $.toolbar.defaults, options || {});
             self.groups = new Groups(self.buttons, self.options);
 
-            self.el_iframe = $('<iframe/>').attr({
+            self.el = el.attr({
                 id: self.options.iframe_id,
                 name: self.options.iframe_name,
                 allowtransparency: self.options.iframe_allowtransparency
-                }).hide();
+                });
 
-            // TODO: resources
             self.resources = '';
+            $.each(self.options.resources, function(i, resource) {
+                self.resources += new Resource(resource).render_as_string();
+            });
+
 
         },
         render: function(buttons) {
             var self = this,
-                groups = new Groups(buttons, self.options);
+                groups = buttons ? new Groups(buttons, self.options) : self.groups;
 
             buttons = buttons ? buttons || [] : self.buttons;
-            groups = buttons ? groups : self.groups;
 
             var el = template(
                     self.options.template,
-                    self.options.template_options(groups));
+                    self.options.template_options(groups)),
+                iframe_document = self.el.contents()[0];
 
+            // append css and javascript resources
+            iframe_document.open();
+            iframe_document.write(self.resources);
+            iframe_document.close();
 
-            $(document).ready(function() {
+            self.el.load(function() {
 
-                // TODO: position of iframe should be configurable somehow
-                self.el_iframe.prependTo($('body'));
+                $('body', iframe_document).append(el);
+                self.initial_height = el.height();
 
-                self.el_iframe.load(function() {
-                    var iframe_doc = self.el_iframe.contents()[0];
+                // capture all clicks on iframe
+                $(iframe_document).bind('click', {
+                    toolbar: self,
+                    iframe_doc: iframe_document,
+                    options: self.options
+                }, function(e) {
+                    var options = e.data.options,
+                        toolbar = e.data.toolbar,
+                        el = $(e.target);
 
-                    // append css and javascript resorces
-                    iframe_doc.open();
-                    iframe_doc.write(self.resources);
-                    iframe_doc.close();
+                    if (!toolbar.el.hasClass(
+                            options.iframe_overlay_open_klass)) {
 
-                    $('body', iframe_doc).append(el);
-                    self.initial_height = el.height();
-
-                    // capture all clicks on iframe
-                    $(iframe_doc).bind('click', {
-                        toolbar: self,
-                        iframe_doc: iframe_doc,
-                        options: self.options
-                    }, function(e) {
-                        var options = e.data.options,
-                            toolbar = e.data.toolbar,
-                            el = $(e.target);
-
-                        if (!toolbar.el.hasClass(
-                                options.iframe_overlay_open_klass)) {
-
-                            if ($.nodeName(e.target, 'a')) {
-                                el = el.parents('a');
-                            }
-
-                            // if click on button was made then we redirect main
-                            // frame to new location
-                            if (el.parent().hasClass(options.button_klass)) {
-                                window.parent.location.href = el.attr('href');
-                            }
-
+                        if ($.nodeName(e.target, 'a')) {
+                            el = el.parents('a');
                         }
 
-                        return e.preventDefault();
+                        // if click on button was made then we redirect main
+                        // frame to new location
+                        if (el.parent().hasClass(options.button_klass)) {
+                            window.parent.location.href = el.attr('href');
+                        }
+
+                    }
+
+                    return e.preventDefault();
 
 
-                        // TODO: do check for overlay to not shrink toolbar if
-                        // overlay is opened
-
-
-
-                    });
+                    // TODO: do check for overlay to not shrink toolbar if
+                    // overlay is opened
                 });
+
             });
 
             return el;
@@ -487,15 +483,14 @@
         var self = this;
 
         // Check if we are dealing with iframe
-        if ($.nodeName(self[0], 'iframe')) {
+        if (!$.nodeName(self[0], 'iframe')) {
             alert('This is not iframe!');
         }
 
         // Was toolbar initialized already?
         if (!self.data('toolbar')) {
-            var toolbar = new Toolbar(buttons, options);
+            var toolbar = new Toolbar(self, buttons, options);
             self.data('toolbar', toolbar);
-            toolbar.render();
         }
 
         // return Toolbar instance
