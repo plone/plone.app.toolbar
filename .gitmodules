@@ -1,3 +1,0 @@
-[submodule "plone/app/toolbar/resources/bootstrap"]
-	path = plone/app/toolbar/resources/bootstrap
-	url = git://github.com/twitter/bootstrap.git

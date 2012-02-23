@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 <object name="portal_css">
 
-    <!-- hiding portal messages and edit bar -->
+    <!-- Hiding portal messages and edit bar -->
     <stylesheet
         cacheable="False" compression="safe" cookable="True"
         enabled="True" bundle="default"
         id="++resource++plone.app.toolbar/toolbar_bbb.css"
         />
+
 
     <!-- Toolbar Swirl Theme -->
     <stylesheet
@@ -15,16 +16,18 @@
         id="++resource++plone.app.toolbar/toolbar/src/plone.toolbar.swirl.css"
         />
 
+
     <!-- Twitter Bootstrap -->
     <stylesheet
-        cacheable="False" compression="safe" cookable="True"
+        cacheable="False" compression="none" cookable="True"
         enabled="True" bundle="toolbar"
-        id="++resource++plone.app.toolbar/bootstrap/docs/assets/css/bootstrap.css"
+        id="++resource++plone.app.toolbar/bootstrap/css/bootstrap-responsive.min.css"
         />
+
     <stylesheet
-        cacheable="False" compression="safe" cookable="True"
+        cacheable="False" compression="none" cookable="True"
         enabled="True" bundle="toolbar"
-        id="++resource++plone.app.toolbar/bootstrap/docs/assets/css/bootstrap-responsive.css"
+        id="++resource++plone.app.toolbar/bootstrap/css/bootstrap-responsive.min.css"
         />
 
 

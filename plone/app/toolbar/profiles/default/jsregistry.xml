@@ -3,36 +3,41 @@
 
     <!-- BBB: Create bundles for jQuery, jQueryTools and TinyMCE - see
          registry.xml -->
-    <javascript bundle="jquery" id="jquery.js" />
-    <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.js"  />
-    <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.form.js"  />
-    <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.overlayhelpers.js"  />
-    <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.plugins.js"  />
-    <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.dateinput.js"  />
-    <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.rangeinput.js"  />
-    <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.validator.js"  />
-    <javascript bundle="tinymce" id="tiny_mce.js" />
-    <javascript bundle="tinymce" id="tiny_mce_init.js" />
+    <javascript bundle="jquery"
+        id="jquery.js" />
+    <javascript bundle="jquerytools"
+        id="++resource++plone.app.jquerytools.js"  />
+    <javascript bundle="jquerytools"
+        id="++resource++plone.app.jquerytools.form.js"  />
+    <javascript bundle="jquerytools"
+        id="++resource++plone.app.jquerytools.overlayhelpers.js"  />
+    <javascript bundle="jquerytools"
+        id="++resource++plone.app.jquerytools.plugins.js"  />
+    <javascript bundle="jquerytools"
+        id="++resource++plone.app.jquerytools.dateinput.js"  />
+    <javascript bundle="jquerytools"
+        id="++resource++plone.app.jquerytools.rangeinput.js"  />
+    <javascript bundle="jquerytools"
+        id="++resource++plone.app.jquerytools.validator.js"  />
+    <javascript bundle="tinymce"
+        id="tiny_mce.js" />
+    <javascript bundle="tinymce"
+        id="tiny_mce_init.js" />
 
-    <!-- TODO: we need to add condition that this applies only if you're
-         logged in -->
+    <!-- Toolabar -->
     <javascript 
-        cacheable="False" compression="none" cookable="False"
-        enabled="True" inline="False" bundle="toolbar"
-        id="++resource++plone.app.toolbar/js/plone.toolbar.overlays.js"
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="default"
+        id="++resource++plone.app.toolbar/toolbar/src/toolbar.js"
         />
+    <!-- TODO: toolbar_overlays.js -->
+    <!-- TODO: notify -->
+
+    <!-- Twitter Bootstrap -->
     <javascript 
         cacheable="False" compression="none" cookable="False"
         enabled="True" inline="False" bundle="default"
-        id="++resource++plone.app.toolbar/js/plone.toolbar.js"
+        id="++resource++plone.app.toolbar/bootstrap/js/bootstrap.min.js"
         />
-
-    <javascript cacheable="False"
-              compression="none"
-              cookable="False"
-              enabled="True"
-              id="++resource++plone.app.toolbar/js/plone.notify.js"
-              bundle="toolbar"
-              inline="False" />
 
 </object>
