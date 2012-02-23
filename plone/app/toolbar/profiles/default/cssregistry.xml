@@ -1,28 +1,24 @@
 <?xml version="1.0"?>
 <object name="portal_css">
 
-
-    <stylesheet
-        cacheable="False" compression="safe" cookable="True"
-        enabled="True" bundle="toolbar"
-        id="++resource++plone.app.toolbar/css/bootstrap.css"
-        />
-
-    <stylesheet
-        cacheable="False" compression="safe" cookable="True"
-        enabled="True" bundle="toolbar"
-        id="++resource++plone.app.toolbar/css/plone.toolbar.swirl.css"
-        />
-    <stylesheet
-        cacheable="False" compression="safe" cookable="True"
-        enabled="True" bundle="toolbar"
-        id="++resource++plone.app.toolbar/css/toolbar.css"
-        />
+    <!-- hiding portal messages and edit bar -->
     <stylesheet
         cacheable="False" compression="safe" cookable="True"
         enabled="True" bundle="default"
-        id="++resource++plone.app.toolbar/css/toolbar_default.css"
+        id="++resource++plone.app.toolbar/toolbar_bbb.css"
         />
 
+    <!-- toolbar styles -->
+    <stylesheet
+        cacheable="False" compression="safe" cookable="True"
+        enabled="True" bundle="toolbar"
+        id="++resource++plone.app.toolbar/bootstrap.css"
+        />
+
+    <stylesheet
+        cacheable="False" compression="safe" cookable="True"
+        enabled="True" bundle="toolbar"
+        id="++resource++plone.app.toolbar/toolbar/src/plone.toolbar.swirl.css"
+        />
 
 </object>
