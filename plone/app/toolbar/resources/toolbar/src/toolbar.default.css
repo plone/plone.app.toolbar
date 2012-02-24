@@ -46,9 +46,10 @@ body {
     font-family: Helvetica,Arial,sans-serif;
     text-decoration: none;
 
-    padding: 0.5em;
-    margin: 0 0.5em;
-    line-height: 3.5em;
+    padding: 0.5em 1em;
+    margin: 0.7em 0.5em;
+    display: block;
+    float: right;
 
     text-shadow: 1px 1px 2px black;
     -moz-text-shadow: 1px 1px 2px black;
@@ -61,7 +62,7 @@ body {
     -o-border-radius: 0.1em;
 }
 
-.toolbar-button.activated a,
+.toolbar-button.toolbar-group-open a,
 .toolbar-button a:hover {
     color: #444;
     background: #FFFFFF;
@@ -73,25 +74,36 @@ body {
 
 .toolbar-groups {
     background: #FFF;
-    position: relative;
-    top: -9px;
-    right: 6px;
-    border-radius: 0.3em;
-    -moz-border-radius: 0.3em;
-    -webkit-border-radius: 0.3em;
-    -o-border-radius: 0.3em;
+    float: right;
+    clear: right;
+    min-width: 8em;
     padding: 1em 0.5em;
+    position: relative;
+    top: -12px;
+    right: 7px;
+    border-radius: 0.1em;
+    -moz-border-radius: 0.1em;
+    -webkit-border-radius: 0.1em;
+    -o-border-radius: 0.1em;
+    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.4);
+    -moz-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.4);
+    -webkit-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.4);
 }
 
 .toolbar-groups .toolbar-button {
     display: block;
-    float: none;
+    float: left;
+    clear: left;
+    width: 100%;
 }
 
 .toolbar-groups .toolbar-button a {
     display: block;
     color: #333;
     text-shadow: none;
+    float: left;
+    width: 80%;
+    margin: 0.3em;
     -moz-text-shadow: none;
     -webkit-text-shadow: none;
     -o-text-shadow: none;

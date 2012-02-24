@@ -77,11 +77,12 @@
         iframe_id: 'toolbar',
         iframe_name: 'toolbar',
         iframe_allowtransparency: 'true',
-        iframe_overlay_open_klass: 'toolbar-overlay-open',
+        iframe_streched_klass: 'toolbar-streched',
 
         groups_labels: {},
         groups_klass: 'toolbar-groups',
         group_open_klass: 'toolbar-group-open',
+        group_klass: 'toolbar-group',
         group_klass_prefix: 'toolbar-group-',
 
         button_klass: 'toolbar-button',
@@ -214,11 +215,6 @@
                 // opening submenu
                 } else {
 
-                    // we make sure all submenus are hidden and deactivated
-                    $('.' + groups_klass, toolbar.document).hide();
-                    $('.' + group_open_klass, toolbar.document)
-                            .removeClass(group_open_klass);
-
                     // we provide helper class object so themes can style when
                     // dropdown of submenu is activated / open
                     el.addClass(group_open_klass);
@@ -341,8 +337,11 @@
         },
         render_group: function(name) {
             var self = this,
+                group_klass = self.toolbar_options.group_klass,
                 group_klass_prefix = self.toolbar_options.group_klass_prefix,
-                el = $('<ul/>').addClass(group_klass_prefix + name);
+                el = $('<ul/>')
+                    .addClass(group_klass)
+                    .addClass(group_klass_prefix + name);
             name = name || 'default';
             $.each(self.buttons[name], function(i, button) {
                 el.append(button.render());
@@ -393,35 +392,34 @@
             self.el.load(function() {
 
                 $('body', iframe_document).append(el);
-                self.initial_height = el.height();
+
+                if (self.options.iframe_height === undefined) {
+                    self.options.iframe_height = el.height();
+                }
 
                 // capture all clicks on iframe
                 $(iframe_document).bind('click', {
-                    toolbar: self,
-                    iframe_doc: iframe_document,
-                    options: self.options
+                    self: self, iframe_document: iframe_document
                 }, function(e) {
-                    var options = e.data.options,
-                        toolbar = e.data.toolbar,
+                    var self = e.data.self,
+                        streched_klass = self.options.iframe_streched_klass,
                         el = $(e.target);
 
-                    if (!toolbar.el.hasClass(
-                            options.iframe_overlay_open_klass)) {
+                    if (self.el.hasClass(streched_klass)) {
+                        self.shrink();
+                    }
 
-                        if (!$.nodeName(e.target, 'a')) {
-                            el = el.parents('a');
-                        }
+                    if (!$.nodeName(e.target, 'a')) {
+                        el = el.parents('a');
+                    }
 
-                        // if click on button was made then we redirect main
-                        // frame to new location
-                        if (el.parent().hasClass(options.button_klass)) {
-                            window.parent.location.href = el.attr('href');
-                        }
-
+                    // if click on button was made then we redirect main
+                    // frame to new location
+                    if (el.parent().hasClass(self.options.button_klass)) {
+                        window.parent.location.href = el.attr('href');
                     }
 
                     return e.preventDefault();
-
 
                     // TODO: do check for overlay to not shrink toolbar if
                     // overlay is opened
@@ -432,47 +430,26 @@
             return el;
         },
         shrink: function() {
+            var self = this,
+                groups_klass = self.options.groups_klass,
+                group_open_klass = self.options.group_open_klass,
+                iframe_document = self.el.contents();
+            // we make sure all submenus are hidden and deactivated
+            $('.' + groups_klass, iframe_document).hide();
+            $('.' + group_open_klass, iframe_document).removeClass(group_open_klass);
+            // shrinking iframe to its initial height
+            self.el.height(self.options.iframe_height);
+            // removing marker class which set iframe as stretched
+            self.el.removeClass(self.options.iframe_streched_klass);
         },
         stretch: function() {
-                    // closing submenu
-                    if (el.hasClass('activated')) {
-
-                        // removing marker class which was marking button as
-                        // activated / open
-                        el.removeClass('activated');
-
-                        // hiding submenu
-                        $('> div.toolbar-submenu', el).hide();
-
-                        // shrinking iframe to its initial height
-                        iframe.height(global_options.initial_height);
-
-                        // removing marker class which set iframe as stretched
-                        iframe.removeClass('toolbar-dropdown-activated');
-
-                    // opening submenu
-                    } else {
-
-                        // we make sure all submenus are hidden and deactivated
-                        $('.activated', iframe_doc).removeClass('activated');
-                        $('.toolbar-submenu', iframe_doc).hide();
-
-                        // we provide helper class object so themes can style when
-                        // dropdown of submenu is activated / open
-                        el.addClass('activated');
-
-                        // we show submenu, was initialy hidden
-                        $('> div.toolbar-submenu', el).show();
-
-                        // we stretch iframe over whole top frame which should
-                        // be marked as transparent so user wont see it
-                        global_options.iframe.height($(document).height());
-
-                        // we also mark iframe as activates which means its
-                        // being stretched
-                        global_options.iframe.addClass('toolbar-dropdown-activated');
-
-                    }
+            var self = this;
+            // we stretch iframe over whole top frame which should
+            // be marked as transparent so user wont see it
+            self.el.height($(document).height());
+            // we also mark iframe as activates which means its
+            // being stretched
+            self.el.addClass(self.options.iframe_streched_klass);
 
         }
     };

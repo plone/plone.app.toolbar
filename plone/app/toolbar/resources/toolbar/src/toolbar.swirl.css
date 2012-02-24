@@ -66,28 +66,29 @@ body {
     background-image: -webkit-linear-gradient(top, #3d8cd5, #347ebf);
     float: right;
     height: 34px;
+    min-width: 100px;
     box-shadow: inset 0 -1px rgba(255,255,255,0.3);
     -moz-box-shadow: inset 0 -1px rgba(255,255,255,0.3);
     -webkit-box-shadow: inset 0 -1px rgba(255,255,255,0.3);
 }
 
-.toolbar-category {
+.toolbar-group {
     display: inline-block;
     padding-left: 8px;
 }
 
-.toolbar-category-leftactions {
+.toolbar-group-leftactions {
     margin: 0;
 }
 
-.toolbar-category-rightactions {
+.toolbar-group-rightactions {
     float: right;
     padding: 0 30px 0 0;
     margin: 0;
 }
 
 
-.toolbar-category-personalactions {
+.toolbar-group-personalactions {
     min-width: 25px;
     margin: 0 0.5em 0 1em;
 }
@@ -121,8 +122,8 @@ body {
     vertical-align: middle;
 }
 
-.toolbar-left .toolbar-button.activated a,
-.toolbar-right .toolbar-button.activated a {
+.toolbar-left .toolbar-button.toolbar-group-open a,
+.toolbar-right .toolbar-button.toolbar-group-open a {
     color: #000000;
     background: #FFFFFF;
     border-color: #FFFFFF;
@@ -133,8 +134,8 @@ body {
     -moz-border-radius: 4px 4px 0px 0px;
     -webkit-border-radius: 4px 4px 0px 0px;
 }
-.toolbar-left .toolbar-button.activated a:hover,
-.toolbar-right .toolbar-button.activated a:hover {
+.toolbar-left .toolbar-button.toolbar-group-open a:hover,
+.toolbar-right .toolbar-button.toolbar-group-open a:hover {
     color: #000000;
 }
 
@@ -172,7 +173,7 @@ body {
     margin: 0 4px;
 }
 
-.toolbar-submenu {
+.toolbar-groups {
     display: block;
     color: #000000;
     background: #FFFFFF;
@@ -186,26 +187,26 @@ body {
     -webkit-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.4);
 }
 
-.toolbar-submenu ul {
+.toolbar-groups ul {
     margin: 0;
     padding: 0;
     width: 100%;
 }
 
-.toolbar-category-personalactions .toolbar-submenu,
-.toolbar-category-rightactions .toolbar-submenu {
+.toolbar-group-personalactions .toolbar-groups,
+.toolbar-group-rightactions .toolbar-groups {
     right: 4px;
     border-radius: 4px 0px 4px 4px;
     -moz-border-radius: 4px 0px 4px 4px;
     -webkit-border-radius: 4px 0px 4px 4px;
 }
 
-.toolbar-submenu .toolbar-button {
+.toolbar-groups .toolbar-button {
     display: block;
     float: none;
 }
 
-.activated .toolbar-submenu .toolbar-button a {
+.toolbar-group-open .toolbar-groups .toolbar-button a {
     margin: 0.3em;
     padding: 0.5em;
     display: block;
@@ -214,7 +215,7 @@ body {
     -webkit-border-radius: 0;
 }
 
-.activated .toolbar-submenu .toolbar-button a.selected,
-.activated .toolbar-submenu .toolbar-button a:hover {
+.toolbar-group-open .toolbar-groups .toolbar-button a.selected,
+.toolbar-group-open .toolbar-groups .toolbar-button a:hover {
     background-color: #E6E6E6;
 }

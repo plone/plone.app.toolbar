@@ -82,7 +82,6 @@
                 ]
         },
         'swirl': { 
-            iframe_id: 'swirl-toolbar',
             template: '' +
                 '<div class="toolbar-wrapper">' +
                 ' <div class="toolbar">' +
@@ -99,8 +98,8 @@
                 '<\/div>',
             template_options: function(groups) {
                 return {
-                    'toolbar-personalactions': groups.render_group('right'),
-                    'toolbar-leftactions': groups.render_group('left')
+                    '.toolbar-personalactions': groups.render_group('right'),
+                    '.toolbar-leftactions': groups.render_group('left')
                     }
                 },
             resources: [
@@ -109,9 +108,9 @@
                 ]
         }
     };
-    buttons[buttons.length-1].submenu = [];
+    buttons[buttons.length-1].buttons = [];
     for (var theme in themes) {
-        buttons[buttons.length-1].submenu.push({
+        buttons[buttons.length-1].buttons.push({
             title: theme,
             url: '?theme='+theme
         });

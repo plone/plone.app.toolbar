@@ -125,8 +125,9 @@ test('Buttons and Groups', function() {
     });
     equal(outerHtml(el_button), '<li class="toolbar-button" id=""><a ' +
             'class="" href="#"></a><div style="display: none;" ' +
-            'class="toolbar-groups"><ul class="toolbar-group-default"><li ' +
-            'class="toolbar-button" id="example"><a class="example" ' + 
+            'class="toolbar-groups"><ul class="toolbar-group ' +
+            'toolbar-group-default"><li class="toolbar-button" ' +
+            'id="example"><a class="example" ' + 
             'href="http://example.com/example-link.html"><img ' +
             'src="http://example.com/example-image.jpg">Example</a></li>' +
             '</ul></div></li>',
@@ -151,12 +152,14 @@ test('Buttons and Groups', function() {
     });
     equal(outerHtml(el_button), '<li class="toolbar-button" id=""><a ' +
             'class="" href="#"></a><div style="display: none;" ' +
-            'class="toolbar-groups"><ul class="toolbar-group-default"><li ' +
-            'class="toolbar-button" id="example1"><a class="example1" ' +
+            'class="toolbar-groups"><ul class="toolbar-group ' +
+            'toolbar-group-default"><li class="toolbar-button" ' +
+            'id="example1"><a class="example1" ' +
             'href="http://example.com/example-link.html"><img ' +
             'src="http://example.com/example-image.jpg">Example1</a></li>' +
-            '</ul><h3>Example group</h3><ul class="toolbar-group-example">' +
-            '<li class="toolbar-button" id="example2"><a class="example2" ' +
+            '</ul><h3>Example group</h3><ul class="toolbar-group ' +
+            'toolbar-group-example"><li class="toolbar-button" ' +
+            'id="example2"><a class="example2" ' +
             'href="http://example.com/example-link.html"><img ' +
             'src="http://example.com/example-image.jpg">Example2</a></li>' +
             '</ul></div></li>',
@@ -189,13 +192,14 @@ test('Toolbar and jQuery integration', function() {
         toolbar = new Toolbar(toolbar_el);
 
     equal(outerHtml(toolbar.render()), '<div ' +
-            'class="toolbar-wrapper"><div id="toolbar"></div></div>',
+            'class="toolbar-wrapper"><div class="toolbar"></div></div>',
         'check if toolbar can be created with no buttons.');
 
     equal(outerHtml(toolbar.render([{ title: 'Example' }])), '<div ' +
-            'class="toolbar-wrapper"><div id="toolbar"><ul ' +
-            'class="toolbar-group-default"><li class="toolbar-button" id="">' +
-            '<a class="" href="#">Example</a></li></ul></div></div>',
+            'class="toolbar-wrapper"><div class="toolbar"><ul ' +
+            'class="toolbar-group toolbar-group-default"><li ' +
+            'class="toolbar-button" id=""><a class="" href="#">Example</a>' +
+            '</li></ul></div></div>',
         'check if buttons can be passed to toolbar.');
 
 //    equal(toolbar.el.toolbar(), toolbar,
