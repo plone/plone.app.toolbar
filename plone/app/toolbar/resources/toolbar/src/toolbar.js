@@ -408,7 +408,7 @@
                     if (!toolbar.el.hasClass(
                             options.iframe_overlay_open_klass)) {
 
-                        if ($.nodeName(e.target, 'a')) {
+                        if (!$.nodeName(e.target, 'a')) {
                             el = el.parents('a');
                         }
 
