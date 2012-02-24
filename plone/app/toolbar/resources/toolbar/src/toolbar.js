@@ -94,9 +94,9 @@
             },
 
         template: '<div class="toolbar-wrapper">' +
-            '<div id="toolbar"></div></div>',
+            '<div class="toolbar"></div></div>',
         template_options: function(groups) {
-            return { '#toolbar': groups.render() };
+            return { '.toolbar': groups.render() };
             }
     }, $.toolbar.defaults);
     // }}}

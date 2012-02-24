@@ -41,42 +41,72 @@
 
     var buttons = [
         {title: 'Home',
-         url: '#home'
+         url: '#home',
+         group: 'left'
          },
         {title: 'Features',
-         url: '#features'
+         url: '#features',
+         group: 'left'
          },
         {title: 'Example',
-         url: '#example'
+         url: '#example',
+         group: 'left'
          },
         {title: 'Documentation',
-         url: '#docs'
+         url: '#docs',
+         group: 'left'
          },
         {title: 'Themes &#9660;',
-         url: '#theme'
+         url: '#theme',
+         group: 'right'
          }]
 
     var themes = {
-        'blues': {
-            resources_css: [{ src: 'src/toolbar.blues.css' }]
-        },
-        'swirl': { 
-            attributes: { id: 'swirl-toolbar' },
+        'default': {
             template: '' +
                 '<div class="toolbar-wrapper">' +
                 ' <div class="toolbar">' +
-                '  <div class="toolbar-top"></div>' +
+                '  <div class="toolbar-left"><\/div>' +
+                '  <div class="toolbar-right"><\/div>' +
+                ' <\/div>' +
+                '<\/div>',
+            template_options: function(groups) {
+                return {
+                    '.toolbar-left': groups.render_group('left'),
+                    '.toolbar-right': groups.render_group('right')
+                    }
+                },
+            resources: [
+                '../src/toolbar.default.css',
+                '../lib/jquery-1.6.4.js'
+                ]
+        },
+        'swirl': { 
+            iframe_id: 'swirl-toolbar',
+            template: '' +
+                '<div class="toolbar-wrapper">' +
+                ' <div class="toolbar">' +
+                '  <div class="toolbar-top"><\/div>' +
                 '  <div class="toolbar-right">' +
-                '   <div class="toolbar-swirl"><div></div></div>' +
-                '   <div class="toolbar-category-personalactions"></div>' +
-                '  </div>' +
+                '   <div class="toolbar-swirl"><div><\/div><\/div>' +
+                '   <div class="toolbar-personalactions"><\/div>' +
+                '  <\/div>' +
                 '  <div class="toolbar-left">' +
-                '   <div class="toolbar-category-rightactions"></div>' +
-                '   <div class="toolbar-category-leftactions"></div>' +
-                '  </div>' +
-                ' </div>' +
-                '</div>',
-            resources_css: [{ src: 'src/toolbar.swirl.css' }]
+                '   <div class="toolbar-rightactions"><\/div>' +
+                '   <div class="toolbar-leftactions"><\/div>' +
+                '  <\/div>' +
+                ' <\/div>' +
+                '<\/div>',
+            template_options: function(groups) {
+                return {
+                    'toolbar-personalactions': groups.render_group('right'),
+                    'toolbar-leftactions': groups.render_group('left')
+                    }
+                },
+            resources: [
+                '../src/toolbar.swirl.css',
+                '../lib/jquery-1.6.4.js'
+                ]
         }
     };
     buttons[buttons.length-1].submenu = [];
@@ -87,15 +117,8 @@
         });
     }
 
-    var theme = getURLParam('theme', 'blues');
-
-    var options = {
-        resources: [ 
-            '../src/toolbar.blues.css',
-            'toolbar.css',
-            '../lib/jquery-1.6.4.js'
-        ]
-    };
+    var theme = getURLParam('theme', 'default');
+        options = themes[theme];
 
     var toolbar = $('<iframe/>').toolbar(buttons, options);
 

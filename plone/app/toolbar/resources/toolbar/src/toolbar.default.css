@@ -16,13 +16,15 @@ body {
 
 
 .toolbar-wrapper {
+    position: relative;
+    width: 100%;
+    height: 46px;
+    background: #333;
 }
 
 .toolbar {
-    width: 100%;
-    height: 46px;
-
-    background: #0191C8;
+    width: 960px;
+    margin: 0 auto;
 
     box-shadow: 0 1px 3px #444444;
     -moz-box-shadow: 0 1px 3px #444444;
@@ -30,7 +32,7 @@ body {
     -o-box-shadow: 0 1px 3px #444444;
 }
 
-.toolbar-category {
+.toolbar-group {
     list-style: none;
 }
 
@@ -44,7 +46,7 @@ body {
     font-family: Helvetica,Arial,sans-serif;
     text-decoration: none;
 
-    padding: 0.3em 0.5em;
+    padding: 0.5em;
     margin: 0 0.5em;
     line-height: 3.5em;
 
@@ -53,10 +55,10 @@ body {
     -webkit-text-shadow: 1px 1px 2px black;
     -o-text-shadow: 1px 1px 2px black;
 
-    border-radius: 0.3em;
-    -moz-border-radius: 0.3em;
-    -webkit-border-radius: 0.3em;
-    -o-border-radius: 0.3em;
+    border-radius: 0.1em;
+    -moz-border-radius: 0.1em;
+    -webkit-border-radius: 0.1em;
+    -o-border-radius: 0.1em;
 }
 
 .toolbar-button.activated a,
@@ -69,7 +71,7 @@ body {
     -o-text-shadow: none;
 }
 
-.toolbar-submenu {
+.toolbar-groups {
     background: #FFF;
     position: relative;
     top: -9px;
@@ -81,12 +83,12 @@ body {
     padding: 1em 0.5em;
 }
 
-.toolbar-submenu .toolbar-button {
+.toolbar-groups .toolbar-button {
     display: block;
     float: none;
 }
 
-.toolbar-submenu .toolbar-button a {
+.toolbar-groups .toolbar-button a {
     display: block;
     color: #333;
     text-shadow: none;
@@ -101,14 +103,14 @@ body {
     -o-border-radius: 0;
 }
 
-.toolbar-submenu .toolbar-button a:hover {
+.toolbar-groups .toolbar-button a:hover {
     background-color: #AAAAAA;
 }
 
-.toolbar-category-leftactions {
+.toolbar-left {
     float: left;
 }
 
-.toolbar-category-rightactions {
+.toolbar-right {
     float: right;
 }
