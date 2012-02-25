@@ -16,16 +16,18 @@ iframe#plone-toolbar {
     height: 45px;
     z-index: 500;
 
+    background-color: transparent;
     position: fixed;
-    _position: absolute;
-    _top: expression(eval((document.body.scrollTop)?document.body.scrollTop:document.documentElement.scrollTop));
     left: 0;
     top: 0;
 
-    background-color: transparent;
+    /*
+    position: absolute;
+    top: expression(eval((document.body.scrollTop)?document.body.scrollTop:document.documentElement.scrollTop));
     -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     -moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    (/
 }
 
 </style>

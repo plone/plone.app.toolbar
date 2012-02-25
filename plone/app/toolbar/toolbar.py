@@ -18,15 +18,15 @@ from Acquisition import aq_inner
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 
-CATEGORIES_LABELS = {
-    'tile-category-structure':
-        _(u'tile-category-structure-label', default=u"Structure"),
-    'tile-category-media':
-        _(u'tile-category-media-label', default=u"Media"),
-    'tile-category-fields':
-        _(u'tile-category-fields-label', default=u"Fields"),
-    'tile-category-other':
-        _(u'tile-category-other-label', default=u"Other"),
+GROUPS_LABELS = {
+    'tile-group-structure':
+        _(u'tile-group-structure-label', default=u"Structure"),
+    'tile-group-media':
+        _(u'tile-group-media-label', default=u"Media"),
+    'tile-group-fields':
+        _(u'tile-group-fields-label', default=u"Fields"),
+    'tile-group-other':
+        _(u'tile-group-other-label', default=u"Other"),
     }
 
 
@@ -148,7 +148,7 @@ class Toolbar(BrowserView):
             item = {
                 'title': action['title'],
                 'id': 'toolbar-button-' + action['id'],
-                'category': 'leftactions',
+                'group': 'leftactions',
                 }
 
             # button url
@@ -183,7 +183,7 @@ class Toolbar(BrowserView):
             selected_button['klass'] = 'selected'
 
         # contentmenu (eg: Display, Add new..., State)
-        def contentmenu_buttons(items, category='default'):
+        def contentmenu_buttons(items, group='default'):
             buttons = []
             for item in items:
                 button = {
@@ -197,7 +197,7 @@ class Toolbar(BrowserView):
                             ),
                     'url': item['action'] and item['action'] or '#',
                     'icon': item['icon'],
-                    'category': category,
+                    'group': group,
                     }
 
                 if 'extra' in item:
@@ -227,7 +227,7 @@ class Toolbar(BrowserView):
             return buttons
 
         buttons += contentmenu_buttons(
-                self.contentmenu(), category='rightactions')
+                self.contentmenu(), group='rightactions')
 
         # personal actions (Dashboard, Personal Properties, Site Setup)
         buttons.append({
@@ -235,7 +235,7 @@ class Toolbar(BrowserView):
             'icon': self.userPortrait(),
             'url': self.userHomeLinkURL(),
             'klass': 'personalactions-user',
-            'category': 'personalactions',
+            'group': 'personalactions',
             'buttons': [{
                     'title': item['title'],
                     'url': item['url'],
@@ -247,42 +247,56 @@ class Toolbar(BrowserView):
 
         return buttons
 
-    def categories_labels(self):
+    def groups_labels(self):
         # TODO: this needs to be pluggable
         labels = {}
-        for item_id in CATEGORIES_LABELS:
+        for item_id in GROUPS_LABELS:
             labels[item_id] = translate(
-                    CATEGORIES_LABELS[item_id],
+                    GROUPS_LABELS[item_id],
                     context=self.request,
                     )
         return labels
 
-    def toolbar_initialize_js(self):
-        buttons = self.buttons()
+    def resources(self):
+        resources = []
+        for item in self.resource_styles.styles() + \
+                    self.resource_scripts.scripts():
+            if item['src']:
+                resources.append(item['src'])
+        return resources
 
-        return '$.plone.toolbar(%s);' % json.dumps({
-            'id': 'plone-toolbar',
-            'name': 'plone-toolbar',
-            'klass': 'plone-toolbar',
-            'toolbar_template':
-                '<div class="toolbar-wrapper">' + \
-                ' <div class="toolbar">' + \
-                '  <div class="toolbar-top"></div>' + \
-                '  <div class="toolbar-right">' + \
-                '   <div class="toolbar-swirl"><div></div></div>' + \
-                '   <div class="toolbar-category-personalactions"></div>' + \
-                '  </div>' + \
-                '  <div class="toolbar-left">' + \
-                '   <div class="toolbar-category-rightactions"></div>' + \
-                '   <div class="toolbar-category-leftactions"></div>' + \
-                '  </div>' + \
-                ' </div>' + \
-                '</div>',
-            'resources_css': self.resource_styles.styles(),
-            'resources_js': self.resource_scripts.scripts(),
-            'categories_labels': self.categories_labels(),
-            'buttons': buttons,
-            }, sort_keys=True, indent=4)
+    def toolbar_initialize_js(self):
+        return '''
+            var toolbar = $('<iframe/>').toolbar(%(buttons)s,  {
+                iframe_id: 'plone-toolbar',
+                iframe_name: 'plone-toolbar',
+                iframe_klass: 'plone-toolbar',
+                groups_labels: %(groups_labels)s,
+                template: '' +
+                    '<div class="toolbar-wrapper">' +
+                    ' <div class="toolbar">' +
+                    '  <div class="toolbar-left"><\/div>' +
+                    '  <div class="toolbar-personal"><\/div>' +
+                    '  <div class="toolbar-right"><\/div>' +
+                    ' <\/div>' +
+                    '<\/div>',
+                template_options: function(groups) {
+                    return {
+                        '.toolbar-right': groups.render_group('rightactions'),
+                        '.toolbar-personal': groups.render_group('personalactions'),
+                        '.toolbar-left': groups.render_group('leftactions')
+                        }
+                    },
+                resources: %(resources)s
+                });
+            $(document).ready(function() {
+                $('body').prepend(toolbar.el);
+                toolbar.render();
+            });''' % {
+                'buttons': json.dumps(self.buttons()),
+                'resources': json.dumps(self.resources()),
+                'groups_labels': json.dumps(self.groups_labels()),
+                }
 
 
 class ToolbarFallback(BrowserView):

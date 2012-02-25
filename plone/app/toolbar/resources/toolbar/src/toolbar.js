@@ -343,7 +343,7 @@
                     .addClass(group_klass)
                     .addClass(group_klass_prefix + name);
             name = name || 'default';
-            $.each(self.buttons[name], function(i, button) {
+            $.each(self.buttons[name] || [], function(i, button) {
                 el.append(button.render());
             });
             return el;

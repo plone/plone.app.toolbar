@@ -36,7 +36,7 @@
     <!-- Twitter Bootstrap -->
     <javascript 
         cacheable="False" compression="none" cookable="False"
-        enabled="True" inline="False" bundle="default"
+        enabled="True" inline="False" bundle="bootstrap"
         id="++resource++plone.app.toolbar/bootstrap/js/bootstrap.min.js"
         />
 
