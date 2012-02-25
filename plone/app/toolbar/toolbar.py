@@ -275,9 +275,9 @@ class Toolbar(BrowserView):
                 template: '' +
                     '<div class="toolbar-wrapper">' +
                     ' <div class="toolbar">' +
-                    '  <div class="toolbar-left"><\/div>' +
                     '  <div class="toolbar-personal"><\/div>' +
                     '  <div class="toolbar-right"><\/div>' +
+                    '  <div class="toolbar-left"><\/div>' +
                     ' <\/div>' +
                     '<\/div>',
                 template_options: function(groups) {

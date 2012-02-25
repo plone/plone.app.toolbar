@@ -23,6 +23,7 @@ body {
 }
 
 .toolbar {
+    margin: 0 1em;
     box-shadow: 0 1px 3px #444444;
     -moz-box-shadow: 0 1px 3px #444444;
     -webkit-box-shadow: 0 1px 3px #444444;
