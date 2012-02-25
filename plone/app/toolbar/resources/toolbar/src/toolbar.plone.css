@@ -127,6 +127,9 @@ body {
     float: right;
 }
 
+.toolbar-personal {
+    float: right;
+}
 .personalactions-user {
     padding-left: 30px !important;
     position: relative;
