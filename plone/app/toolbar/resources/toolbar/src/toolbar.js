@@ -193,11 +193,17 @@
                     groups_klass = self.toolbar_options.groups_klass,
                     group_open_klass = self.toolbar_options.group_open_klass,
                     iframe_id = self.toolbar_options.iframe_id,
-                    toolbar = $('iframe#' + iframe_id).toolbar();
+                    toolbar = $('iframe#' + iframe_id).toolbar(),
+                    toolbar_document = toolbar.el.contents();
 
                 if ($('> div.' + groups_klass, el).size() === 0) {
                     return;
                 }
+
+                // we make sure all submenus are hidden and deactivated
+                $('.' + groups_klass, toolbar_document).hide();
+                $('.' + group_open_klass, toolbar_document)
+                        .removeClass(group_open_klass);
 
                 // closing submenu
                 if (el.hasClass(group_open_klass)) {
@@ -433,10 +439,11 @@
             var self = this,
                 groups_klass = self.options.groups_klass,
                 group_open_klass = self.options.group_open_klass,
-                iframe_document = self.el.contents();
+                toolbar_document = self.el.contents();
             // we make sure all submenus are hidden and deactivated
-            $('.' + groups_klass, iframe_document).hide();
-            $('.' + group_open_klass, iframe_document).removeClass(group_open_klass);
+            $('.' + groups_klass, toolbar_document).hide();
+            $('.' + group_open_klass, toolbar_document)
+                    .removeClass(group_open_klass);
             // shrinking iframe to its initial height
             self.el.height(self.options.iframe_height);
             // removing marker class which set iframe as stretched
