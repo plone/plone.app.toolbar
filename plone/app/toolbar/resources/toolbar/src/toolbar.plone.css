@@ -159,6 +159,10 @@ body {
     margin: 0.3em;
     padding: 0.1em 0.4em;
     color: #FFFFFF;
+    text-shadow: 1px 1px 2px black;
+    -moz-text-shadow: 1px 1px 2px black;
+    -webkit-text-shadow: 1px 1px 2px black;
+    -o-text-shadow: 1px 1px 2px black;
 }
 
 .state-private {
