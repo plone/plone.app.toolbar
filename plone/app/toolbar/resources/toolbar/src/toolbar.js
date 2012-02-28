@@ -189,49 +189,51 @@
 
             // group button should open/close group of buttons
             self.el_button.bind('click', { self: self }, function (e) {
-                var self = e.data.self, el = self.el,
-                    groups_klass = self.toolbar_options.groups_klass,
-                    group_open_klass = self.toolbar_options.group_open_klass,
-                    iframe_id = self.toolbar_options.iframe_id,
-                    toolbar = $('iframe#' + iframe_id).toolbar(),
-                    toolbar_document = toolbar.el.contents();
+                if (e.which == 1){
+                    var self = e.data.self, el = self.el,
+                        groups_klass = self.toolbar_options.groups_klass,
+                        group_open_klass = self.toolbar_options.group_open_klass,
+                        iframe_id = self.toolbar_options.iframe_id,
+                        toolbar = $('iframe#' + iframe_id).toolbar(),
+                        toolbar_document = toolbar.el.contents();
 
-                if ($('> div.' + groups_klass, el).size() === 0) {
-                    return;
-                }
+                    if ($('> div.' + groups_klass, el).size() === 0) {
+                        return;
+                    }
 
-                // we make sure all submenus are hidden and deactivated
-                $('.' + groups_klass, toolbar_document).hide();
-                $('.' + group_open_klass, toolbar_document)
-                        .removeClass(group_open_klass);
+                    // we make sure all submenus are hidden and deactivated
+                    $('.' + groups_klass, toolbar_document).hide();
+                    $('.' + group_open_klass, toolbar_document)
+                            .removeClass(group_open_klass);
 
-                // closing submenu
-                if (el.hasClass(group_open_klass)) {
+                    // closing submenu
+                    if (el.hasClass(group_open_klass)) {
 
-                    // removing marker class which was marking button as
-                    // activated / open
-                    el.removeClass(group_open_klass);
+                        // removing marker class which was marking button as
+                        // activated / open
+                        el.removeClass(group_open_klass);
 
-                    // hiding group
-                    $('> div.' + groups_klass, el).hide();
+                        // hiding group
+                        $('> div.' + groups_klass, el).hide();
 
-                    // shrinking iframe to its initial height
-                    toolbar.shrink();
+                        // shrinking iframe to its initial height
+                        toolbar.shrink();
 
-                // opening submenu
-                } else {
+                    // opening submenu
+                    } else {
 
-                    // we provide helper class object so themes can style when
-                    // dropdown of submenu is activated / open
-                    el.addClass(group_open_klass);
+                        // we provide helper class object so themes can style when
+                        // dropdown of submenu is activated / open
+                        el.addClass(group_open_klass);
 
-                    // we show submenu, was initialy hidden
-                    $('> div.' + groups_klass, el).show();
+                        // we show submenu, was initialy hidden
+                        $('> div.' + groups_klass, el).show();
 
-                    // we stretch iframe over whole top frame which should
-                    // be marked as transparent so user wont see it
-                    toolbar.stretch();
+                        // we stretch iframe over whole top frame which should
+                        // be marked as transparent so user wont see it
+                        toolbar.stretch();
 
+                    }
                 }
 
                 return false;
@@ -407,28 +409,30 @@
                 $(iframe_document).bind('click', {
                     self: self, iframe_document: iframe_document
                 }, function(e) {
-                    var self = e.data.self,
-                        streched_klass = self.options.iframe_streched_klass,
-                        el = $(e.target);
+                    if (e.which == 1) {
+                        var self = e.data.self,
+                            streched_klass = self.options.iframe_streched_klass,
+                            el = $(e.target);
 
-                    if (self.el.hasClass(streched_klass)) {
-                        self.shrink();
+                        if (self.el.hasClass(streched_klass)) {
+                            self.shrink();
+                        }
+
+                        if (!$.nodeName(e.target, 'a')) {
+                            el = el.parents('a');
+                        }
+
+                        // if click on button was made then we redirect main
+                        // frame to new location
+                        if (el.parent().hasClass(self.options.button_klass)) {
+                            window.parent.location.href = el.attr('href');
+                        }
+
+                        return e.preventDefault();
+
+                        // TODO: do check for overlay to not shrink toolbar if
+                        // overlay is opened
                     }
-
-                    if (!$.nodeName(e.target, 'a')) {
-                        el = el.parents('a');
-                    }
-
-                    // if click on button was made then we redirect main
-                    // frame to new location
-                    if (el.parent().hasClass(self.options.button_klass)) {
-                        window.parent.location.href = el.attr('href');
-                    }
-
-                    return e.preventDefault();
-
-                    // TODO: do check for overlay to not shrink toolbar if
-                    // overlay is opened
                 });
 
             });
