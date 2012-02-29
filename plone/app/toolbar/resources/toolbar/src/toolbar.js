@@ -168,13 +168,13 @@
     // }}}
 
     // # Models definitions {{{
-    var Button = function(o, t) { this.init(o, t); return this; },
-        Groups = function(o, t) { this.init(o, t); return this; },
-        Toolbar = function(e, b, o) { this.init(e, b, o); return this; };
+    $.toolbar.Button = function(o, t) { this.init(o, t); return this; };
+    $.toolbar.Groups = function(o, t) { this.init(o, t); return this; };
+    $.toolbar.Toolbar = function(e, b, o) { this.init(e, b, o); return this; };
     // }}}
 
     // # Button {{{
-    Button.prototype = {
+    $.toolbar.Button.prototype = {
         init: function(options, toolbar_options) {
             var self = this;
 
@@ -189,7 +189,7 @@
 
             // group button should open/close group of buttons
             self.el_button.bind('click', { self: self }, function (e) {
-                if (e.which == 1){
+                if (e.which === 1) {
                     var self = e.data.self, el = self.el,
                         groups_klass = self.toolbar_options.groups_klass,
                         group_open_klass = self.toolbar_options.group_open_klass,
@@ -235,7 +235,6 @@
 
                     }
                 }
-
                 return false;
             });
         },
@@ -249,7 +248,7 @@
                     .addClass(self.toolbar_options.groups_klass)
                     .hide(),
                 groups_labels = self.toolbar_options.groups_labels,
-                groups = new Groups(buttons, self.toolbar_options);
+                groups = new $.toolbar.Groups(buttons, self.toolbar_options);
 
             $.each(groups.buttons, function (group_name) {
                 // default group should always be first and without title
@@ -321,7 +320,7 @@
     // }}}
 
     // # Groups {{{
-    Groups.prototype = {
+    $.toolbar.Groups.prototype = {
         init: function(buttons, toolbar_options) {
             var self = this;
             self.buttons = {};
@@ -333,7 +332,7 @@
                     self.buttons[button_options.group] = [];
                 }
                 self.buttons[button_options.group].push(
-                    new Button(button_options, self.toolbar_options));
+                    new $.toolbar.Button(button_options, self.toolbar_options));
             });
         },
         render: function() {
@@ -360,13 +359,13 @@
     // }}}
 
     // # Toolbar {{{
-    Toolbar.prototype = {
+    $.toolbar.Toolbar.prototype = {
         init: function(el, buttons, options) {
             var self = this;
 
             self.buttons = buttons || [];
             self.options = $.extend({}, $.toolbar.defaults, options || {});
-            self.groups = new Groups(self.buttons, self.options);
+            self.groups = new $.toolbar.Groups(self.buttons, self.options);
 
             self.el = el.attr({
                 id: self.options.iframe_id,
@@ -383,7 +382,8 @@
         },
         render: function(buttons) {
             var self = this,
-                groups = buttons ? new Groups(buttons, self.options) : self.groups;
+                groups = buttons ? new $.toolbar.Groups(
+                            buttons, self.options) : self.groups;
 
             buttons = buttons ? buttons || [] : self.buttons;
 
@@ -409,7 +409,7 @@
                 $(iframe_document).bind('click', {
                     self: self, iframe_document: iframe_document
                 }, function(e) {
-                    if (e.which == 1) {
+                    if (e.which === 1) {
                         var self = e.data.self,
                             streched_klass = self.options.iframe_streched_klass,
                             el = $(e.target);
@@ -435,7 +435,10 @@
                     }
                 });
 
+                $(document).trigger('toolbar_loaded');
+
             });
+
 
             return el;
         },
@@ -477,7 +480,7 @@
 
         // Was toolbar initialized already?
         if (!self.data('toolbar')) {
-            var toolbar = new Toolbar(self, buttons, options);
+            var toolbar = new $.toolbar.Toolbar(self, buttons, options);
             self.data('toolbar', toolbar);
         }
 
@@ -485,21 +488,6 @@
         return self.data('toolbar');
 
     };
-    // }}}
-
-    // # Testing {{{
-    //
-    // expose toolbar internals for testing purposes
-    if ($.toolbar.testing === true) {
-        $.toolbar._ = {
-            outerHtml: outerHtml,
-            template: template,
-            Resource: Resource,
-            Button: Button,
-            Groups: Groups,
-            Toolbar: Toolbar
-        };
-    }
     // }}}
 
 }(jQuery));

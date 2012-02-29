@@ -292,6 +292,15 @@ class Toolbar(BrowserView):
             $(document).ready(function() {
                 $('body').prepend(toolbar.el);
                 toolbar.render();
+                if ($('body').hasClass('template-view') &&
+                    $('body').hasClass('portaltype-page')) {
+                    $('#toolbar-button-edit', $('#plone-toolbar').contents())
+                        .click(function() {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            $.deco.panels('*').activate();
+                        });
+                }
             });''' % {
                 'buttons': json.dumps(self.buttons()),
                 'resources': json.dumps(self.resources()),
