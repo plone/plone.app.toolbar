@@ -55,7 +55,7 @@
     // # overlay {{{
     function overlay(e) {
         var el = $(e.target);
-        var href = el.attr('href');
+        var href = el.closest('a').attr('href');
         var modal = $('#toolbar-overlay');
         var body = $('.modal-body', modal);
 
@@ -65,22 +65,37 @@
         body.empty().load(href + ' #portal-column-content',
             function(response, error){
                 //alert(error);
-                // Keep all links inside the overlay
-                $('a', body).on('click', overlay);
 
-                // Keep all forms inside the overlay
                 function formSuccess(){
+                    // Keep all links inside the overlay
                     $('a', body).on('click', overlay);
+
+                    // Keep all forms inside the overlay
                     $('form', body).ajaxForm({
                         target: body,
                         success: formSuccess
                     });
-                }
-                $('form', body).ajaxForm({
-                    target: body,
-                    success: formSuccess
-                });
 
+                    // Cancel should close the overlay
+                    var cancelbuttons = [
+                        'form.button.Cancel',
+                        'form.button.cancel',
+                        'form.actions.cancel'];
+                    for (idx in cancelbuttons){
+                        $('input[name="' + cancelbuttons[idx] + '"]', body)
+                        .on('click', function(ev){
+                            modal.modal('hide');
+                            body.empty();
+                            ev.preventDefault();
+                        });
+                    }
+
+                    // FIXME For some reason this no workee
+                    if ($.fn.ploneTabInit) {
+                        $('form', body).ploneTabInit();
+                    }
+                }
+                formSuccess();
                 modal.modal('show');
             }
         );
