@@ -240,7 +240,7 @@
 
             // group button should open/close group of buttons
             self.el_button.bind('click', { self: self }, function (e) {
-                if (e.which == 1){
+                if (e.which === 1){
                     var self = e.data.self, el = self.el,
                         groups_klass = self.toolbar_options.groups_klass,
                         group_open_klass = self.toolbar_options.group_open_klass,
@@ -460,7 +460,7 @@
                 $(iframe_document).bind('click', {
                     self: self, iframe_document: iframe_document
                 }, function(e) {
-                    if (e.which == 1) {
+                    if (e.which === 1) {
                         var self = e.data.self,
                             streched_klass = self.options.iframe_streched_klass,
                             el = $(e.target);
