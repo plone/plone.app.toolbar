@@ -20,6 +20,18 @@
         cacheable="False" compression="safe" cookable="True"
         enabled="True" bundle="default"
         id="++resource++plone.app.toolbar/overlay.css"
+
+    <!-- Twitter Bootstrap -->
+    <stylesheet
+        cacheable="False" compression="none" cookable="True"
+        enabled="False" bundle="bootstrap"
+        id="++resource++plone.app.toolbar/bootstrap/css/bootstrap.min.css"
+        />
+
+    <stylesheet
+        cacheable="False" compression="none" cookable="True"
+        enabled="False" bundle="bootstrap"
+        id="++resource++plone.app.toolbar/bootstrap/css/bootstrap-responsive.min.css"
         />
 
 </object>
