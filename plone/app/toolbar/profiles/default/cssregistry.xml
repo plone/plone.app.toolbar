@@ -16,4 +16,10 @@
         id="++resource++plone.app.toolbar/toolbar/src/toolbar.plone.css"
         />
 
+    <stylesheet
+        cacheable="False" compression="safe" cookable="True"
+        enabled="True" bundle="default"
+        id="++resource++plone.app.toolbar/overlay.css"
+        />
+
 </object>

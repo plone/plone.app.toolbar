@@ -13,6 +13,7 @@ from zope.browsermenu.interfaces import IBrowserMenu
 
 from plone.memoize.instance import memoize
 from plone.app.toolbar import PloneMessageFactory as _
+from plone.app.layout.viewlets.common import ViewletBase
 
 from Acquisition import aq_inner
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -313,3 +314,6 @@ class ToolbarFallback(BrowserView):
     @property
     def buttons(self):
         return self.toolbar.buttons
+
+class OverlayViewlet(ViewletBase):
+    index = ViewPageTemplateFile('templates/overlay.pt')
