@@ -52,6 +52,42 @@
     }
     // }}}
 
+    // # overlay {{{
+    function overlay(e) {
+        var el = $(e.target);
+        var href = el.attr('href');
+        var modal = $('#toolbar-overlay');
+        var body = $('.modal-body', modal);
+
+        // Clean up the url
+        href = (href.match(/^([^#]+)/)||[])[1];
+
+        body.empty().load(href + ' #portal-column-content',
+            function(response, error){
+                //alert(error);
+                // Keep all links inside the overlay
+                $('a', body).on('click', overlay);
+
+                // Keep all forms inside the overlay
+                function formSuccess(){
+                    $('a', body).on('click', overlay);
+                    $('form', body).ajaxForm({
+                        target: body,
+                        success: formSuccess
+                    });
+                }
+                $('form', body).ajaxForm({
+                    target: body,
+                    success: formSuccess
+                });
+
+                modal.modal('show');
+            }
+        );
+        e.preventDefault();
+    }
+    // }}}
+
     // # Micro Templating {{{
     function template(tmpl, data) {
         tmpl = $(tmpl);
@@ -425,13 +461,10 @@
                         // if click on button was made then we redirect main
                         // frame to new location
                         if (el.parent().hasClass(self.options.button_klass)) {
-                            self.overlay(el.attr('href'));
+                            overlay(e);
                         }
 
                         return e.preventDefault();
-
-                        // TODO: do check for overlay to not shrink toolbar if
-                        // overlay is opened
                     }
                 });
 
@@ -462,9 +495,6 @@
             // being stretched
             self.el.addClass(self.options.iframe_streched_klass);
 
-        },
-        overlay: function(href) {
-           window.parent.location.href = href;
         }
     };
     // }}}
@@ -488,6 +518,10 @@
         return self.data('toolbar');
 
     };
+    // }}}
+
+    // # Set up modal for the overlay {{{
+    $('#toolbar-overlay').modal({show: false});
     // }}}
 
     // # Testing {{{
