@@ -20,6 +20,7 @@
         cacheable="False" compression="safe" cookable="True"
         enabled="True" bundle="default"
         id="++resource++plone.app.toolbar/overlay.css"
+        />
 
     <!-- Twitter Bootstrap -->
     <stylesheet
