@@ -425,7 +425,7 @@
                         // if click on button was made then we redirect main
                         // frame to new location
                         if (el.parent().hasClass(self.options.button_klass)) {
-                            window.parent.location.href = el.attr('href');
+                            self.overlay(el.attr('href'));
                         }
 
                         return e.preventDefault();
@@ -462,6 +462,9 @@
             // being stretched
             self.el.addClass(self.options.iframe_streched_klass);
 
+        },
+        overlay: function(href) {
+           window.parent.location.href = href;
         }
     };
     // }}}
