@@ -25,6 +25,7 @@ setup(name='plone.app.toolbar',
       install_requires=[
           'setuptools',
           'Products.ResourceRegistries',
+          'plone.app.jquery',
       ],
       extras_require={
         'test': ['plone.app.testing'],
