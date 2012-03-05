@@ -476,6 +476,29 @@
                         // if click on button was made then we redirect main
                         // frame to new location
                         if (el.parent().hasClass(self.options.button_klass)) {
+                            // TODO
+                            // This probably needs to be more configurable and
+                            // less hardcoded, the idea is that there is a
+                            // configurable list of menu items that will not
+                            // open in an overlay. Presently I know of only a
+                            // few, but there should be a way to configure
+                            // others without changing this here source code.
+                            // parents() ito parent() is used because submenus
+                            // means the link might be deeper than you expect.
+                            var no_overlay_items = [
+                                '#toolbar-button-plone-contentmenu-display',
+                                '#toolbar-button-plone-contentmenu-workflow',
+                                '#toolbar-button-view',
+                                '#toolbar-button-cut',
+                                '#toolbar-button-copy'
+                            ];
+                            for(var idx in no_overlay_items){
+                                var selector = no_overlay_items[idx];
+                                if(el.parents().filter(selector).length > 0){
+                                    window.parent.location.href = el.attr('href');
+                                    return e.preventDefault();
+                                }
+                            }
                             overlay(e);
                         }
 
