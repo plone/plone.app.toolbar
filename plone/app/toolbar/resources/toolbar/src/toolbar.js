@@ -81,7 +81,7 @@
                         'form.button.Cancel',
                         'form.button.cancel',
                         'form.actions.cancel'];
-                    for (idx in cancelbuttons){
+                    for (var idx in cancelbuttons){
                         $('input[name="' + cancelbuttons[idx] + '"]', body)
                         .on('click', function(ev){
                             modal.modal('hide');
