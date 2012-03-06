@@ -566,9 +566,9 @@
     // 3rd party apps kan register their own
     $(document).bind('setupOverlay', function() {
 
-        // FIXME For some reason this no workee
+        // Init plone forms if they exist
         if ($.fn.ploneTabInit) {
-            $('form', this).ploneTabInit();
+            $(this).ploneTabInit();
         }
 
         // Tinymce editable areas inside overlay
