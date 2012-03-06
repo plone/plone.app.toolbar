@@ -66,14 +66,14 @@
             function(response, error){
                 //alert(error);
 
-                function formSuccess(){
+                function setupOverlay(){
                     // Keep all links inside the overlay
                     $('a', body).on('click', overlay);
 
                     // Keep all forms inside the overlay
                     $('form', body).ajaxForm({
                         target: body,
-                        success: formSuccess
+                        success: setupOverlay
                     });
 
                     // Cancel should close the overlay
@@ -90,12 +90,10 @@
                         });
                     }
 
-                    // FIXME For some reason this no workee
-                    if ($.fn.ploneTabInit) {
-                        $('form', body).ploneTabInit();
-                    }
+                    $(document).trigger('setupOverlay',
+                        [modal, response, error]);
                 }
-                formSuccess();
+                setupOverlay();
                 modal.modal('show');
             }
         );
@@ -563,6 +561,23 @@
 
     // # Set up modal for the overlay {{{
     $('#toolbar-overlay').modal({show: false});
+
+    // Plug in some things that needs to happen after loading an overlay.
+    // 3rd party apps kan register their own
+    $(document).bind('setupOverlay', function() {
+
+        // FIXME For some reason this no workee
+        if ($.fn.ploneTabInit) {
+            $('form', this).ploneTabInit();
+        }
+
+        // Tinymce editable areas inside overlay
+        $('textarea.mce_editable').each(function() {
+            var config = new TinyMCEConfig($(this).attr('id'));
+            config.init();
+        });
+    });
+
     // }}}
 
     // # Testing {{{
