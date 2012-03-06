@@ -54,17 +54,32 @@
 
     // # overlay {{{
     function overlay(e) {
-        var el = $(e.target);
-        var href = el.closest('a').attr('href');
-        var modal = $('#toolbar-overlay');
-        var body = $('.modal-body', modal);
+        var headers = {},
+            selector = "#portal-column-content",
+            el = $(e.target),
+            href = el.closest('a').attr('href'),
+            modal = $('#toolbar-overlay'),
+            body = $('.modal-body', modal),
+            rscript = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
 
         // Clean up the url
         href = (href.match(/^([^#]+)/)||[])[1];
-
-        body.empty().load(href + ' #portal-column-content',
-            function(response, error){
-                //alert(error);
+        headers['X-Theme-Disabled'] = "True";
+        $.ajax({
+            url: href,
+            headers: headers,
+            complete: function(jqXHR, status, response) {
+                // Store the response as specified by the jqXHR object
+                response = jqXHR.responseText;
+                // If successful, inject the HTML into all the matched elements
+                if (jqXHR.isResolved()) {
+                    jqXHR.done(function( r ) {
+                        response = r;
+                    });
+                    body.empty().html(jQuery("<div>").append(
+                        response.replace(rscript, "")).find(
+                        selector));
+                }
 
                 function setupOverlay(){
                     // Keep all links inside the overlay
@@ -91,12 +106,12 @@
                     }
 
                     $(document).trigger('setupOverlay',
-                        [modal, response, error]);
+                        [modal, response, status]);
                 }
                 setupOverlay();
                 modal.modal('show');
             }
-        );
+        });
         e.preventDefault();
     }
     // }}}
