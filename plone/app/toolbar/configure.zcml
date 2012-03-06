@@ -62,6 +62,13 @@
         layer=".interfaces.IToolbarLayer"
         /> 
 
+    <browser:viewlet
+        name="plone.app.toolbar.unthemedrequest"
+        manager="plone.app.layout.viewlets.interfaces.IHtmlHead"
+        class=".toolbar.UnthemeRequestViewlet"
+        permission="zope2.Public" 
+        layer=".interfaces.IToolbarLayer"
+        />
 
     <!-- BBB: Used to override/disable parts of Plone 4.x that
          should not be in place when using plone.app.Toolbar

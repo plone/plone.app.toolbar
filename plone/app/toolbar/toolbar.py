@@ -326,3 +326,15 @@ class ToolbarFallback(BrowserView):
 
 class OverlayViewlet(ViewletBase):
     index = ViewPageTemplateFile('templates/overlay.pt')
+
+class UnthemeRequestViewlet(ViewletBase):
+    """ Allow the theme to be turned off using an http header. """
+    def update(self):
+        """ If X-Theme-Disabled is set on the request, also set it on the
+            response to generate an unthemed response. """
+        if bool(self.request.getHeader('X-Theme-Disabled', None)):
+            self.request.response.setHeader('X-Theme-Disabled', 'True')
+    
+    def index(self):
+        """ Do nothing, everything happens in update(). """
+        return ''
