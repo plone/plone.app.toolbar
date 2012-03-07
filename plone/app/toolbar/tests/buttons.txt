@@ -26,5 +26,19 @@ used by the viewlet.
 
 The folder contents action is first.
 
-    >>> buttons[0]['url']
+    >>> contents = buttons[0]
+    >>> contents['url']
     'http://nohost/plone/folder_contents'
+
+The view action does not open in an overlay as ic controlled by a
+special `link_target` for the aciton.
+
+    >>> from Products.CMFCore.utils import getToolByName
+    >>> portal_fti = getToolByName(portal, 'portal_types').getTypeInfo(
+    ...     'Plone Site')
+    >>> portal_fti.listActions()[0].link_target
+    'plone.app.toolbar:load'
+
+    >>> view, = [b for b in buttons if b['id'] == 'toolbar-button-view']
+    >>> view['link_target']
+    'plone.app.toolbar:load'

@@ -122,15 +122,14 @@ class Toolbar(common.ContentViewsViewlet):
         # content actions (eg. Contents, Edit, View, Sharing...)
         selected_button = None
         selected_button_found = False
-        for action in self.prepareObjectTabs():
-            item = {
-                'title': action['title'],
-                'id': 'toolbar-button-' + action['id'],
+        for item in self.prepareObjectTabs():
+            item.update({
+                'id': 'toolbar-button-' + item['id'],
                 'group': 'leftactions',
-                }
+                })
 
             # button url
-            button_url = action['url'].strip()
+            button_url = item['url'].strip()
             if button_url.startswith('http') or \
                button_url.startswith('javascript'):
                 item['url'] = button_url
@@ -152,7 +151,7 @@ class Toolbar(common.ContentViewsViewlet):
                     item['klass'] = 'selected'
                     selected_button_found = True
 
-            if action['id'] == self.default_action:
+            if item['id'] == self.default_action:
                 selected_button = item
 
             buttons.append(item)
@@ -163,42 +162,41 @@ class Toolbar(common.ContentViewsViewlet):
         # contentmenu (eg: Display, Add new..., State)
         def contentmenu_buttons(items, group='default'):
             buttons = []
-            for item in items:
-                button = {
+            for button in items:
+                button.update({
                     'title': '<span>' + translate(
-                            item['title'],
+                            button['title'],
                             context=self.request,
                             ) + '</span>',
                     'description': translate(
-                            item['description'],
+                            button['description'],
                             context=self.request,
                             ),
-                    'url': item['action'] and item['action'] or '#',
-                    'icon': item['icon'],
+                    'url': button['action'] and button['action'] or '#',
                     'group': group,
-                    }
+                    })
 
-                if 'extra' in item:
+                if 'extra' in button:
 
-                    if 'id'  in item['extra'] and item['extra']['id']:
-                        button['id'] = 'toolbar-button-' + item['extra']['id']
+                    if 'id'  in button['extra'] and button['extra']['id']:
+                        button['id'] = 'toolbar-button-' + button['extra']['id']
 
-                    if 'class' in item['extra'] and item['extra']['class']:
-                        if item['extra']['class'] == 'actionMenuSelected':
+                    if 'class' in button['extra'] and button['extra']['class']:
+                        if button['extra']['class'] == 'actionMenuSelected':
                             button['klass'] = 'selected'
                         else:
-                            button['klass'] = 'label-' + item['extra']['class']
+                            button['klass'] = 'label-' + button['extra']['class']
 
-                    if 'stateTitle' in item['extra'] and \
-                            item['extra']['stateTitle']:
+                    if 'stateTitle' in button['extra'] and \
+                            button['extra']['stateTitle']:
                         button['title'] += '<span class="%s">%s</span>' % (
-                            item['extra'].get('class', ''),
-                            item['extra']['stateTitle'],
+                            button['extra'].get('class', ''),
+                            button['extra']['stateTitle'],
                             )
 
-                if item['submenu']:
+                if button['submenu']:
                     button['title'] += '<span> &#9660;</span>'
-                    button['buttons'] = contentmenu_buttons(item['submenu'])
+                    button['buttons'] = contentmenu_buttons(button['submenu'])
 
                 buttons.append(button)
 
