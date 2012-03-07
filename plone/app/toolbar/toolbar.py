@@ -262,48 +262,6 @@ class ToolbarViewlet(common.ContentViewsViewlet):
                 resources.append(item['src'])
         return resources
 
-    def toolbar_initialize_js(self):
-        return '''
-            var toolbar = $('<iframe/>').toolbar(%(buttons)s,  {
-                iframe_id: 'plone-toolbar',
-                iframe_name: 'plone-toolbar',
-                iframe_klass: 'plone-toolbar',
-                groups_labels: %(groups_labels)s,
-                template: '' +
-                    '<div class="toolbar-wrapper">' +
-                    ' <div class="toolbar">' +
-                    '  <div class="toolbar-personal"><\/div>' +
-                    '  <div class="toolbar-right"><\/div>' +
-                    '  <div class="toolbar-left"><\/div>' +
-                    ' <\/div>' +
-                    '<\/div>',
-                template_options: function(groups) {
-                    return {
-                        '.toolbar-right': groups.render_group('rightactions'),
-                        '.toolbar-personal': groups.render_group('personalactions'),
-                        '.toolbar-left': groups.render_group('leftactions')
-                        }
-                    },
-                resources: %(resources)s
-                });
-            $(document).ready(function() {
-                $('body').prepend(toolbar.el);
-                toolbar.render();
-                if ($('body').hasClass('template-view') &&
-                    $('body').hasClass('portaltype-page')) {
-                    $('#toolbar-button-edit', $('#plone-toolbar').contents())
-                        .click(function() {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            $.deco.panels('*').activate();
-                        });
-                }
-            });''' % {
-                'buttons': json.dumps(self.buttons()),
-                'resources': json.dumps(self.resources()),
-                'groups_labels': json.dumps(self.groups_labels()),
-                }
-
 
 class ToolbarFallback(BrowserView):
     """ View which is going to be shown when javascript is not available.

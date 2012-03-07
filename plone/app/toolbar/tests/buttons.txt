@@ -45,8 +45,3 @@ special `link_target` for the aciton.
     'plone.app.toolbar:load'
     >>> view['klass']
     'load'
-
-The buttons can be rendered to JS initialization.
-
-    >>> print tb.toolbar_initialize_js()
-    var toolbar...

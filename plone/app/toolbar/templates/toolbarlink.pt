@@ -1,18 +1,17 @@
 <!-- Fallback link to the menu, replaced on page load with an iframe version
      -->
-<div id="plone-toolbar-trigger" style="display: none;">
+<div id="plone-toolbar-trigger">
 
     <script type="text/javascript">
-        (function ($) {
-            $('plone-toolbar-trigger').show();
-        }(jQuery));
+        $(document).ready(function() {
+            if ($('body').hasClass('template-view') &&
+                $('body').hasClass('portaltype-page')) {
+                $('#toolbar-button-edit', $('#plone-toolbar').contents())
+                    .click(function() {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        $.deco.panels('*').activate();});}});
     </script>
-
-    <a id="plone-toolbar-link" href=""
-       tal:attributes="href python:context.absolute_url()+'/@@plone_toolbar_fallback'"
-       i18n:translate="">
-        Manage page
-    </a>
 
     <style type="text/css">
     /*
@@ -47,9 +46,18 @@
     }
     
     </style>
-    <script type="text/javascript"
-        tal:content="structure view/toolbar_initialize_js">
-        toolbar initialization code
-    </script>
+
+    <iframe
+       src="@@plone_toolbar"
+       id="plone-toolbar"
+       name="plone-toolbar"
+       klass="plone-toolbar"
+       tal:attributes="src string:${context/absolute_url}/@@plone_toolbar">
+      <a id="plone-toolbar-link" href="@@plone_toolbar" target="_blank"
+         tal:attributes="href string:${context/absolute_url}/@@plone_toolbar"
+         i18n:translate="">
+        Manage page
+      </a>
+    </iframe>
 
 </div>
