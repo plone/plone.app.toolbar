@@ -1,3 +1,4 @@
+import re
 
 try:
     import json
@@ -32,6 +33,8 @@ GROUPS_LABELS = {
 
 
 class Toolbar(common.ContentViewsViewlet):
+
+    link_target_re = re.compile(r'plone\.app\.toolbar:(.*)')
 
     render = ViewPageTemplateFile('templates/toolbar.pt')
 
@@ -122,7 +125,8 @@ class Toolbar(common.ContentViewsViewlet):
         # content actions (eg. Contents, Edit, View, Sharing...)
         selected_button = None
         selected_button_found = False
-        for item in self.prepareObjectTabs():
+        for action in self.prepareObjectTabs():
+            item = dict(action)
             item.update({
                 'id': 'toolbar-button-' + item['id'],
                 'group': 'leftactions',
@@ -221,6 +225,13 @@ class Toolbar(common.ContentViewsViewlet):
                 } for item in self.context_state.actions('user')
                     if item['available']],
             })
+
+        for button in buttons:
+            match = self.link_target_re.match(
+                button.get('link_target') or '')
+            if match is not None:
+                button['klass'] = (
+                    button.get('klass', '') + ' ' + match.group(1)).strip()
 
         return buttons
 

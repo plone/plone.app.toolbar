@@ -34,11 +34,19 @@ The view action does not open in an overlay as ic controlled by a
 special `link_target` for the aciton.
 
     >>> from Products.CMFCore.utils import getToolByName
-    >>> portal_fti = getToolByName(portal, 'portal_types').getTypeInfo(
-    ...     'Plone Site')
-    >>> portal_fti.listActions()[0].link_target
-    'plone.app.toolbar:load'
+    >>> types = getToolByName(portal, 'portal_types')
+    >>> for fti in portal.allowedContentTypes():
+    ...     actions = fti.listActions()
+    ...     if actions:
+    ...         assert actions[0].link_target == 'plone.app.toolbar:load'
 
     >>> view, = [b for b in buttons if b['id'] == 'toolbar-button-view']
     >>> view['link_target']
     'plone.app.toolbar:load'
+    >>> view['klass']
+    'load'
+
+The buttons can be rendered to JS initialization.
+
+    >>> print tb.toolbar_initialize_js()
+    var toolbar...
