@@ -17,8 +17,11 @@ Login as a user that would see the toolbar.
 Retrieve the list of buttons from an instance of the Toolbar class
 used by the viewlet.
 
+    >>> request = portal.REQUEST
+    >>> request['ACTUAL_URL'] = portal.absolute_url()
+
     >>> from plone.app.toolbar import toolbar
-    >>> tb = toolbar.Toolbar(portal, portal.REQUEST)
+    >>> tb = toolbar.Toolbar(portal, request)
     >>> buttons = tb.buttons()
 
 The folder contents action is first.

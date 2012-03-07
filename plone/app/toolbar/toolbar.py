@@ -13,7 +13,7 @@ from zope.browsermenu.interfaces import IBrowserMenu
 
 from plone.memoize.instance import memoize
 from plone.app.toolbar import PloneMessageFactory as _
-from plone.app.layout.viewlets.common import ViewletBase
+from plone.app.layout.viewlets import common
 
 from Acquisition import aq_inner
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -31,12 +31,12 @@ GROUPS_LABELS = {
     }
 
 
-class Toolbar(BrowserView):
+class Toolbar(common.ContentViewsViewlet):
 
     render = ViewPageTemplateFile('templates/toolbar.pt')
 
-    def __init__(self, context, request, view=None):
-        super(Toolbar, self).__init__(context, request)
+    def __init__(self, context, request, view=None, manager=None):
+        super(Toolbar, self).__init__(context, request, view, manager)
         self.__parent__ = view
 
         self.context = aq_inner(self.context)
@@ -68,29 +68,6 @@ class Toolbar(BrowserView):
 
     def update(self):
         pass
-
-    def action_list(self):
-        """ actions registered for
-        """
-        action_list = []
-        actions = self.context_state.actions
-
-        # 'folder' actions
-        if self.context_state.is_structural_folder():
-            action_list = actions('folder')
-
-        # 'object' actions
-        action_list.extend(actions('object'))
-
-        # sort actions
-        def sort_buttons(action):
-            try:
-                return self.sort_order.index(action['id'])
-            except ValueError:
-                return 255
-        action_list.sort(key=sort_buttons)
-
-        return action_list
 
     def contentmenu(self):
         menu = getUtility(IBrowserMenu, name='plone_contentmenu')
@@ -145,7 +122,7 @@ class Toolbar(BrowserView):
         # content actions (eg. Contents, Edit, View, Sharing...)
         selected_button = None
         selected_button_found = False
-        for action in self.action_list():
+        for action in self.prepareObjectTabs():
             item = {
                 'title': action['title'],
                 'id': 'toolbar-button-' + action['id'],
@@ -324,12 +301,12 @@ class ToolbarFallback(BrowserView):
     def buttons(self):
         return self.toolbar.buttons
 
-class OverlayViewlet(ViewletBase):
+class OverlayViewlet(common.ViewletBase):
     """ Adds the hidden structure that will become the bootstrap overlay to
         the plone footer. """
     index = ViewPageTemplateFile('templates/overlay.pt')
 
-class UnthemeRequestViewlet(ViewletBase):
+class UnthemeRequestViewlet(common.ViewletBase):
     """ Allow the theme to be turned off using an http header. """
     def update(self):
         """ If X-Theme-Disabled is set on the request, also set it on the
