@@ -1,0 +1,15 @@
+.. -*-doctest-*-
+
+===============
+Toolbar Buttons
+===============
+
+Start with a Plone portal with collective.myrecentcontent installed.
+
+    >>> app = layer['app']
+    >>> portal = layer['portal']
+
+Instantiate the Toolbar class used by the viewlet.
+
+    >>> from plone.app.toolbar import toolbar
+    >>> tb = toolbar.Toolbar(portal, portal.REQUEST)

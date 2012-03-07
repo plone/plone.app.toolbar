@@ -42,7 +42,7 @@ class Toolbar(BrowserView):
         self.context = aq_inner(self.context)
         self.context_url = self.context.absolute_url()
         self.context_fti = self.context.getTypeInfo()
-        self.request_url = self.request.get('ACTUAL_URL')
+        self.request_url = self.request.get('ACTUAL_URL', '')
         request_url_path = self.request_url[len(self.context_url):]
         if request_url_path.startswith('/'):
             request_url_path = request_url_path[1:]
