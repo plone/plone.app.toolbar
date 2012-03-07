@@ -30,7 +30,7 @@ body {
     -o-box-shadow: 0 1px 3px #444444;
 }
 
-#toolbar-right > ul {
+#toolbar-right li {
     list-style: none;
     margin: 0;
 }
