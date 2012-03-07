@@ -54,13 +54,6 @@
         permission="plone.ViewToolbar"
         />
 
-    <adapter
-        name="plone_toolbar"
-        for="* .interfaces.IToolbarLayer *"
-        provides="zope.contentprovider.interfaces.IContentProvider"
-        factory=".toolbar.ToolbarViewlet"
-        />
-
     <!-- Viewlets -->
     <browser:viewlet
         name="plone.app.toolbar.overlay"

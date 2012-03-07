@@ -12,7 +12,7 @@
         name="plone.toolbar.toolbarlink"
         for="*"
         manager="plone.app.layout.viewlets.interfaces.IPortalTop"
-        class="plone.app.layout.viewlets.common.ViewletBase"
+        class=".toolbar.ToolbarViewlet"
         template="templates/toolbarlink.pt"
         permission="plone.ViewToolbar"
         layer=".interfaces.IToolbarLayer"

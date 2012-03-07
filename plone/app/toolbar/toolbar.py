@@ -50,8 +50,6 @@ class ToolbarViewlet(common.ContentViewsViewlet):
 
     link_target_re = re.compile(r'plone\.app\.toolbar:(.*)')
 
-    render = ViewPageTemplateFile('templates/toolbar.pt')
-
     def __init__(self, context, request, view=None, manager=None):
         super(ToolbarViewlet, self).__init__(context, request, view, manager)
         self.__parent__ = view
