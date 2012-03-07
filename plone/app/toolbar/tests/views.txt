@@ -1,0 +1,55 @@
+.. -*-doctest-*-
+
+=============
+Toolbar Views
+=============
+
+Start with a Plone portal with collective.myrecentcontent installed.
+
+    >>> app = layer['app']
+    >>> portal = layer['portal']
+
+Login as a user that would see the toolbar.
+
+    >>> from plone.app import testing
+    >>> testing.login(app, testing.SITE_OWNER_NAME)
+
+Instantiate and render the view used for the contents of the toolbar
+<iframe>.
+
+    >>> request = portal.REQUEST
+    >>> request['ACTUAL_URL'] = portal.absolute_url()
+
+    >>> from plone.app.toolbar import toolbar
+    >>> tb = toolbar.Toolbar(portal, request)
+    >>> contents = tb()
+
+The rendered view includes <head> resources.
+
+    >>> print contents
+    <html...
+    <head>...
+    <link rel="stylesheet" type="text/css" media="screen"
+    href="...toolbar.plone.css"...
+    <script type="text/javascript" src="...jquery.js">...
+    </head>...
+
+Plone's theme CSS and JS are not included.
+
+    >>> 'public.css' in contents
+    False
+    >>> 'dropdown.js' in contents
+    False
+
+The rendered view also contains the toolbar structure.
+
+    >>> print contents
+    <html...
+    <body>
+      <div id="toolbar-wrapper">
+        <div id="toolbar">
+          <div id="toolbar-right">...</div>
+          <div id="toolbar-left">...</div>
+        </div>
+      </div>
+    </body>...

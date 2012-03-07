@@ -18,6 +18,20 @@ from plone.app.layout.viewlets import common
 
 from Acquisition import aq_inner
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.Five.browser import metaconfigure
+
+
+class Toolbar(metaconfigure.ViewMixinForTemplates):
+
+    index = ViewPageTemplateFile('toolbar.pt')
+
+    def __call__(self):
+        self.update()
+        return super(Toolbar, self).__call__()
+
+    def update(self):
+        # Set the 'toolbar' skin so that we get the correct resources
+        self.context.changeSkin('toolbar', self.request)
 
 
 GROUPS_LABELS = {
@@ -32,14 +46,14 @@ GROUPS_LABELS = {
     }
 
 
-class Toolbar(common.ContentViewsViewlet):
+class ToolbarViewlet(common.ContentViewsViewlet):
 
     link_target_re = re.compile(r'plone\.app\.toolbar:(.*)')
 
     render = ViewPageTemplateFile('templates/toolbar.pt')
 
     def __init__(self, context, request, view=None, manager=None):
-        super(Toolbar, self).__init__(context, request, view, manager)
+        super(ToolbarViewlet, self).__init__(context, request, view, manager)
         self.__parent__ = view
 
         self.context = aq_inner(self.context)
@@ -65,9 +79,6 @@ class Toolbar(common.ContentViewsViewlet):
         self.tools = getMultiAdapter((self.context, self.request),
                 name=u'plone_tools')
         self.anonymous = self.portal_state.anonymous()
-
-        # Set the 'toolbar' skin so that we get the correct resources
-        self.context.changeSkin('toolbar', self.request)
 
     def update(self):
         pass

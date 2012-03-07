@@ -21,7 +21,7 @@ used by the viewlet.
     >>> request['ACTUAL_URL'] = portal.absolute_url()
 
     >>> from plone.app.toolbar import toolbar
-    >>> tb = toolbar.Toolbar(portal, request)
+    >>> tb = toolbar.ToolbarViewlet(portal, request)
     >>> buttons = tb.buttons()
 
 The folder contents action is first.
