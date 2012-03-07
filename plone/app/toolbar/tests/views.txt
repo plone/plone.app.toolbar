@@ -41,6 +41,12 @@ Plone's theme CSS and JS are not included.
     >>> 'dropdown.js' in contents
     False
 
+Neither is the toolbar <iframe> which includes viewlet which would
+result in recursion.
+
+    >>> 'plone-toolbar-trigger' in contents
+    False
+
 The rendered view also contains the toolbar structure.
 
     >>> print contents
@@ -53,3 +59,14 @@ The rendered view also contains the toolbar structure.
         </div>
       </div>
     </body>...
+
+Opening a default page includes an <iframe> in a viewlet which uses
+the the toolbar view for it's contents.
+
+    >>> from zope import interface
+    >>> from plone.app.toolbar import interfaces
+    >>> interface.alsoProvides(request, interfaces.IToolbarLayer)
+    >>> portal.changeSkin('Plone Default', request)
+    >>> contents = portal.restrictedTraverse('view')()
+    >>> print contents
+    <...<div id="plone-toolbar-trigger"...
