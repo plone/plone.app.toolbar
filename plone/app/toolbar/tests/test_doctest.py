@@ -10,5 +10,8 @@ optionflags = (doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE |
 
 def test_suite():
     return layered(
-        doctest.DocFileSuite('buttons.txt', optionflags=optionflags),
+        doctest.DocFileSuite(
+            'views.txt',
+            'buttons.txt',
+            optionflags=optionflags),
         layer=testing.TOOLBAR_INTEGRATION_TESTING)

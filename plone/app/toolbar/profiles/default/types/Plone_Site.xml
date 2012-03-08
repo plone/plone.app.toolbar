@@ -4,7 +4,7 @@
    i18n:domain="plone" xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <action title="View" action_id="view" category="object" condition_expr=""
     url_expr="string:${object_url}" visible="True" i18n:attributes="title"
-    link_target="plone.app.toolbar:load">
+    link_target="_parent">
   <permission value="View"/>
  </action>
 </object>

@@ -5,6 +5,8 @@
          registry.xml -->
     <javascript bundle="jquery"
         id="jquery.js" />
+    <javascript bundle="jquery"
+        id="dropdown.js" />
     <javascript bundle="jquerytools"
         id="++resource++plone.app.jquerytools.js"  />
     <javascript bundle="jquerytools"
@@ -26,15 +28,13 @@
 
     <!-- Twitter Bootstrap -->
     <javascript 
-        cacheable="False" compression="none" cookable="False"
-        enabled="True" inline="False" bundle="bootstrap"
+        bundle="bootstrap"
         id="++resource++plone.app.toolbar/bootstrap/js/bootstrap.min.js"
         />
 
     <!-- Toolabar -->
     <javascript 
-        cacheable="False" compression="safe" cookable="False"
-        enabled="True" inline="False" bundle="default"
+        bundle="toolbar"
         id="++resource++plone.app.toolbar/toolbar/src/toolbar.js"
         />
     <!-- TODO: toolbar_overlays.js -->

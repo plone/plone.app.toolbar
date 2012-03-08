@@ -18,6 +18,20 @@ from plone.app.layout.viewlets import common
 
 from Acquisition import aq_inner
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.Five.browser import metaconfigure
+
+
+class Toolbar(metaconfigure.ViewMixinForTemplates):
+
+    index = ViewPageTemplateFile('toolbar.pt')
+
+    def __call__(self):
+        self.update()
+        return super(Toolbar, self).__call__()
+
+    def update(self):
+        # Set the 'toolbar' skin so that we get the correct resources
+        self.context.changeSkin('toolbar', self.request)
 
 
 GROUPS_LABELS = {
@@ -32,14 +46,12 @@ GROUPS_LABELS = {
     }
 
 
-class Toolbar(common.ContentViewsViewlet):
+class ToolbarViewlet(common.ContentViewsViewlet):
 
     link_target_re = re.compile(r'plone\.app\.toolbar:(.*)')
 
-    render = ViewPageTemplateFile('templates/toolbar.pt')
-
     def __init__(self, context, request, view=None, manager=None):
-        super(Toolbar, self).__init__(context, request, view, manager)
+        super(ToolbarViewlet, self).__init__(context, request, view, manager)
         self.__parent__ = view
 
         self.context = aq_inner(self.context)
@@ -65,9 +77,6 @@ class Toolbar(common.ContentViewsViewlet):
         self.tools = getMultiAdapter((self.context, self.request),
                 name=u'plone_tools')
         self.anonymous = self.portal_state.anonymous()
-
-        # Set the 'toolbar' skin so that we get the correct resources
-        self.context.changeSkin('toolbar', self.request)
 
     def update(self):
         pass
@@ -252,48 +261,6 @@ class Toolbar(common.ContentViewsViewlet):
             if item['src']:
                 resources.append(item['src'])
         return resources
-
-    def toolbar_initialize_js(self):
-        return '''
-            var toolbar = $('<iframe/>').toolbar(%(buttons)s,  {
-                iframe_id: 'plone-toolbar',
-                iframe_name: 'plone-toolbar',
-                iframe_klass: 'plone-toolbar',
-                groups_labels: %(groups_labels)s,
-                template: '' +
-                    '<div class="toolbar-wrapper">' +
-                    ' <div class="toolbar">' +
-                    '  <div class="toolbar-personal"><\/div>' +
-                    '  <div class="toolbar-right"><\/div>' +
-                    '  <div class="toolbar-left"><\/div>' +
-                    ' <\/div>' +
-                    '<\/div>',
-                template_options: function(groups) {
-                    return {
-                        '.toolbar-right': groups.render_group('rightactions'),
-                        '.toolbar-personal': groups.render_group('personalactions'),
-                        '.toolbar-left': groups.render_group('leftactions')
-                        }
-                    },
-                resources: %(resources)s
-                });
-            $(document).ready(function() {
-                $('body').prepend(toolbar.el);
-                toolbar.render();
-                if ($('body').hasClass('template-view') &&
-                    $('body').hasClass('portaltype-page')) {
-                    $('#toolbar-button-edit', $('#plone-toolbar').contents())
-                        .click(function() {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            $.deco.panels('*').activate();
-                        });
-                }
-            });''' % {
-                'buttons': json.dumps(self.buttons()),
-                'resources': json.dumps(self.resources()),
-                'groups_labels': json.dumps(self.groups_labels()),
-                }
 
 
 class ToolbarFallback(BrowserView):
