@@ -54,32 +54,17 @@
 
     // # overlay {{{
     function overlay(e) {
-        var headers = {},
-            selector = "#portal-column-content",
-            el = $(e.target),
+        var el = $(e.target),
             href = el.closest('a').attr('href'),
             modal = $('#toolbar-overlay'),
-            body = $('.modal-body', modal),
-            rscript = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
+            body = $('.modal-body', modal);
 
-        // Clean up the url
+        // Clean up the url, set toolbar skin
         href = (href.match(/^([^#]+)/)||[])[1];
-        headers['X-Theme-Disabled'] = "True";
-        $.ajax({
-            url: href,
-            headers: headers,
-            complete: function(jqXHR, status, response) {
-                // Store the response as specified by the jqXHR object
-                response = jqXHR.responseText;
-                // If successful, inject the HTML into all the matched elements
-                if (jqXHR.isResolved()) {
-                    jqXHR.done(function( r ) {
-                        response = r;
-                    });
-                    body.empty().html(jQuery("<div>").append(
-                        response.replace(rscript, "")).find(
-                        selector));
-                }
+
+        body.empty().load(href + ' #portal-column-content',
+            function(response, error){
+                //alert(error);
 
                 function setupOverlay(){
                     // Keep all links inside the overlay
@@ -106,12 +91,12 @@
                     }
 
                     $(document).trigger('setupOverlay',
-                        [modal, response, status]);
+                        [modal, response, error]);
                 }
                 setupOverlay();
                 modal.modal('show');
             }
-        });
+        );
         e.preventDefault();
     }
     // }}}
