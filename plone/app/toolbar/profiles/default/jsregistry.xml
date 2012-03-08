@@ -21,10 +21,6 @@
         id="++resource++plone.app.jquerytools.rangeinput.js"  />
     <javascript bundle="jquerytools"
         id="++resource++plone.app.jquerytools.validator.js"  />
-    <javascript bundle="tinymce"
-        id="tiny_mce.js" />
-    <javascript bundle="tinymce"
-        id="tiny_mce_init.js" />
 
     <!-- Twitter Bootstrap -->
     <javascript 
