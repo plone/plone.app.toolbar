@@ -34,6 +34,10 @@
 (function ($) {
     "use strict";
 
+    // # Namespace {{{
+    $.toolbar = $.toolbar || {};
+    // }}}
+
     // # outerHtml {{{
     $.toolbar._outerHtml = function(el) {
         el = el[0];
@@ -64,10 +68,6 @@
         });
         return tmpl;
     };
-    // }}}
-
-    // # Namespace {{{
-    $.toolbar = $.toolbar || {};
     // }}}
 
     // # Options {{{
