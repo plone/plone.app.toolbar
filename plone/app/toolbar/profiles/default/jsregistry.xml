@@ -5,6 +5,8 @@
          registry.xml -->
     <javascript bundle="jquery"
         id="jquery.js" />
+    <javascript bundle="jquery"
+        id="dropdown.js" />
     <javascript bundle="jquerytools"
         id="++resource++plone.app.jquerytools.js"  />
     <javascript bundle="jquerytools"
