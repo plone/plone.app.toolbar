@@ -68,6 +68,7 @@ body {
 }
 
 #toolbar .activated li a,
+#toolbar .activated dt a,
 #toolbar dt a:hover,
 #toolbar li a:hover {
     color: #444;
