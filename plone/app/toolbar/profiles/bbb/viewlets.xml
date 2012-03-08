@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
 <object>
-    <order manager="plone.portaltop" skinname="*">
-        <viewlet name="plone.toolbar.toolbarlink" insert-before="*" />
-    </order>
-    <order manager="plone.portaltop" skinname="toolbar">
-        <viewlet name="plone.toolbar.toolbarlink" remove="True" />
-    </order>
+  <!-- add the toolbar <iframe> to all skins, then remove it from the
+       toolbar skin -->
+  <order manager="plone.portaltop" skinname="*">
+    <viewlet name="plone.toolbar.toolbarlink" insert-before="*" />
+  </order>
+  <order manager="plone.portaltop" skinname="toolbar">
+    <viewlet name="plone.toolbar.toolbarlink" remove="True" />
+  </order>
 </object>
