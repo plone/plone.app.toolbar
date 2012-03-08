@@ -26,6 +26,11 @@
     <javascript bundle="tinymce"
         id="tiny_mce_init.js" />
 
+    <!-- Disable kukit -->
+    <javascript
+        id="++resource++kukit.js"
+        enabled="False" />
+
     <!-- Twitter Bootstrap -->
     <javascript 
         bundle="bootstrap"
