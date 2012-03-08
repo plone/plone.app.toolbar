@@ -35,7 +35,11 @@ $(document).ready(function() {
         var el = $(e.target),
             href = el.closest('a').attr('href'),
             modal = $('#toolbar-overlay'),
-            body = $('.modal-body', modal),
+            body = $('.modal-body', modal);
+
+        if(href === undefined){
+            return;
+        }
 
         // Clean up the url, set toolbar skin
         href = (href.match(/^([^#]+)/)||[])[1];
@@ -53,6 +57,13 @@ $(document).ready(function() {
                     if ($.fn.ploneTabInit) {
                         body.ploneTabInit();
                     }
+
+                    // Tinymce editable areas inside overlay
+                    $('textarea.mce_editable', body).each(function() {
+                        var config = new TinyMCEConfig($(this).attr('id'));
+                        config.init();
+                    });
+
                 }
                 setupOverlay();
                 stretch();
