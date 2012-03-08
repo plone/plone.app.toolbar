@@ -190,57 +190,57 @@ body {
 /* 
  * below part was added by davisagli
  */
-#toolbar .activated li a.label-contenttype-image,
-#toolbar .activated li a.label-contenttype-file,
-#toolbar .activated li a.label-contenttype-document,
-#toolbar .activated li a.label-contenttype-event,
-#toolbar .activated li a.label-contenttype-folder,
-#toolbar .activated li a.label-contenttype-link,
-#toolbar .activated li a.label-contenttype-news-item,
-#toolbar .activated li a.label-contenttype-plone-site,
-#toolbar .activated li a.label-contenttype-collection,
-#toolbar .activated li a.label-contenttype-topic {
+#toolbar .activated li a.contenttype-image,
+#toolbar .activated li a.contenttype-file,
+#toolbar .activated li a.contenttype-document,
+#toolbar .activated li a.contenttype-event,
+#toolbar .activated li a.contenttype-folder,
+#toolbar .activated li a.contenttype-link,
+#toolbar .activated li a.contenttype-news-item,
+#toolbar .activated li a.contenttype-plone-site,
+#toolbar .activated li a.contenttype-collection,
+#toolbar .activated li a.contenttype-topic {
     padding-left: 20px;
     margin-left: 9px;
     background-repeat: no-repeat;
 }
-#toolbar .activated li a.label-contenttype-image {
+#toolbar .activated li a.contenttype-image {
     background-position: 0px -858px;
     background-image: url(++resource++plone.app.toolbar/contenttypes-sprite.png);
 }
-#toolbar .activated li a.label-contenttype-file {
+#toolbar .activated li a.contenttype-file {
     background-position: 0px -426px;
     background-image: url(++resource++plone.app.toolbar/contenttypes-sprite.png);
 }
-#toolbar .activated li a.label-contenttype-document {
+#toolbar .activated li a.contenttype-document {
     background-position: 0px 5px;
     background-image: url(++resource++plone.app.toolbar/contenttypes-sprite.png);
 }
-#toolbar .activated li a.label-contenttype-event {
+#toolbar .activated li a.contenttype-event {
     background-position: 0px -211px;
     background-image: url(++resource++plone.app.toolbar/contenttypes-sprite.png);
 }
-#toolbar .activated li a.label-contenttype-folder {
+#toolbar .activated li a.contenttype-folder {
     background-position: 0px -643px;
     background-image: url(++resource++plone.app.toolbar/contenttypes-sprite.png);
 }
-#toolbar .activated li a.label-contenttype-link {
+#toolbar .activated li a.contenttype-link {
     background-position: 0px -1075px;
     background-image: url(++resource++plone.app.toolbar/contenttypes-sprite.png);
 }
-#toolbar .activated li a.label-contenttype-news-item {
+#toolbar .activated li a.contenttype-news-item {
     background-position: 0px -1291px;
     background-image: url(++resource++plone.app.toolbar/contenttypes-sprite.png);
 }
-#toolbar .activated li a.label-contenttype-plone-site {
+#toolbar .activated li a.contenttype-plone-site {
     background-position: 0px -1503px;
     background-image: url(++resource++plone.app.toolbar/contenttypes-sprite.png);
 }
-#toolbar .activated li a.label-contenttype-collection {
+#toolbar .activated li a.contenttype-collection {
     background-position: 0px -1721px;
     background-image: url(++resource++plone.app.toolbar/contenttypes-sprite.png);
 }
-#toolbar .activated li a.label-contenttype-topic {
+#toolbar .activated li a.contenttype-topic {
     background-position: 0px -1721px;
     background-image: url(++resource++plone.app.toolbar/contenttypes-sprite.png);
 }
