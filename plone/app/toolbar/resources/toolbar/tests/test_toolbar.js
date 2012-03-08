@@ -10,8 +10,8 @@ module('toolbar.js', {
 });
 
 test('Utilities: outerHtml and Micro Templating', function() {
-    var outerHtml = $.toolbar._.outerHtml,
-        template = $.toolbar._.template;
+    var outerHtml = $.toolbar._outerHtml,
+        template = $.toolbar._template;
 
     equal(outerHtml(template('<li><a href="#" class="link"/><li>',
             {'.link': 'Link'})), '<li><a href="#" class="link">Link</a></li>',
@@ -43,7 +43,7 @@ test('Options', function() {
 });
 
 test('Resource', function() {
-    var Resource = $.toolbar._.Resource, resource;
+    var Resource = $.toolbar.Resource, resource;
 
 
     resource = new Resource('example.css');
@@ -81,8 +81,8 @@ test('Resource', function() {
 });
 
 test('Buttons and Groups', function() {
-    var outerHtml = $.toolbar._.outerHtml,
-        Button = $.toolbar._.Button,
+    var outerHtml = $.toolbar._outerHtml,
+        Button = $.toolbar.Button,
         button = new Button([], {
             groups_labels: { 'example': 'Example group' }
             }),
@@ -186,9 +186,9 @@ test('Buttons and Groups', function() {
 });
 
 test('Toolbar and jQuery integration', function() {
-    var outerHtml = $.toolbar._.outerHtml,
+    var outerHtml = $.toolbar._outerHtml,
         toolbar_el = $('<iframe/>').prependTo($('body')),
-        Toolbar = $.toolbar._.Toolbar,
+        Toolbar = $.toolbar.Toolbar,
         toolbar = new Toolbar(toolbar_el);
 
     equal(outerHtml(toolbar.render()), '<div ' +

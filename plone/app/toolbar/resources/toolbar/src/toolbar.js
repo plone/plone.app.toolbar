@@ -35,7 +35,7 @@
     "use strict";
 
     // # outerHtml {{{
-    function outerHtml(el) {
+    $.toolbar._outerHtml = function(el) {
         el = el[0];
         if ($.nodeName(el, 'script')) {
             var attrs;
@@ -49,11 +49,11 @@
         } else {
             return $('<div>').append(el).remove().html();
         }
-    }
+    };
     // }}}
 
     // # Micro Templating {{{
-    function template(tmpl, data) {
+    $.toolbar._template = function(tmpl, data) {
         tmpl = $(tmpl);
         $.each(data, function(key, el) {
             if (typeof(el) === 'string') {
@@ -63,7 +63,7 @@
             }
         });
         return tmpl;
-    }
+    };
     // }}}
 
     // # Namespace {{{
@@ -112,8 +112,8 @@
     //
     //      <script type="text/javascript" src="main.js"></script>
     //
-    var Resource = function(r, a) { this.init(r, a); return this; };
-    Resource.prototype = {
+    $.toolbar.Resource = function(r, a) { this.init(r, a); return this; };
+    $.toolbar.Resource.prototype = {
         init: function(res, attrs) {
             var self = this,
                 tmp = $(res.split('!'));
@@ -162,7 +162,7 @@
             return $('');
         },
         render_as_string: function() {
-            return outerHtml(this.render());
+            return $.toolbar._outerHtml(this.render());
         }
     };
     // }}}
@@ -375,7 +375,8 @@
 
             self.resources = '';
             $.each(self.options.resources, function(i, resource) {
-                self.resources += new Resource(resource).render_as_string();
+                self.resources += new $.toolbar.Resource(resource)
+                        .render_as_string();
             });
 
 
@@ -387,28 +388,27 @@
 
             buttons = buttons ? buttons || [] : self.buttons;
 
-            var el = template(
+            var el = $.toolbar._template(
                     self.options.template,
-                    self.options.template_options(groups)),
-                iframe_document = self.el.contents()[0];
+                    self.options.template_options(groups));
+
 
             // append css and javascript resources
-            iframe_document.open();
-            iframe_document.write(self.resources);
-            iframe_document.close();
+            self.document = self.el.contents()[0];
+            self.document.open();
+            self.document.write(self.resources);
+            self.document.close();
 
             self.el.load(function() {
 
-                $('body', iframe_document).append(el);
+                $('body', self.document).append(el);
 
                 if (self.options.iframe_height === undefined) {
                     self.options.iframe_height = el.height();
                 }
 
                 // capture all clicks on iframe
-                $(iframe_document).bind('click', {
-                    self: self, iframe_document: iframe_document
-                }, function(e) {
+                $(self.document).bind('click', { self: self }, function(e) {
                     if (e.which === 1) {
                         var self = e.data.self,
                             streched_klass = self.options.iframe_streched_klass,
@@ -435,7 +435,7 @@
                     }
                 });
 
-                $(document).trigger('toolbar_loaded');
+                $(self.el).trigger('toolbar_loaded');
 
             });
 
