@@ -48,6 +48,11 @@ $(document).ready(function() {
 
                     $(document).trigger('setupOverlay',
                         [modal, response, error]);
+
+                    // Init plone forms if they exist
+                    if ($.fn.ploneTabInit) {
+                        body.ploneTabInit();
+                    }
                 }
                 setupOverlay();
                 stretch();
