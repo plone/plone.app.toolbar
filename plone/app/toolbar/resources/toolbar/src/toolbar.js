@@ -46,6 +46,7 @@ $(document).ready(function() {
                 }
 
                 function setupOverlay(){
+                    var $ = window.parent.$
                     // Keep all links inside the overlay
                     $('a', body).on('click', overlay);
 
@@ -55,6 +56,13 @@ $(document).ready(function() {
                     // Init plone forms if they exist
                     if ($.fn.ploneTabInit) {
                         body.ploneTabInit();
+
+                    // Tinymce editable areas inside overlay
+                    $('textarea.mce_editable', body).each(function() {
+                        var config = new window.parent.TinyMCEConfig(
+                            $(this).attr('id'));
+                        config.init();
+                    });
                     }
                 }
                 setupOverlay();
