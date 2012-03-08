@@ -1,26 +1,40 @@
 $(document).ready(function() {
+    // Stretch iframe to height of parent doc
+    function stretch(){
+        var parent_doc = window.parent.document;
+        $('#plone-toolbar', parent_doc).height(
+            $(parent_doc).height());
+    }
+
+    // Shrink iframe back to css determined size.
+    function shrink(){
+        $('#plone-toolbar', window.parent.document).css({'height': ''});
+    }
+
     // Shrink the iframe back down after closing a menu
     $(document).mousedown(function (event) {
         if (jQuery(event.target).parents('.actionMenu:first').length) {
             // target is part of the menu, so just return and do the default
             return true;
         }
-        $('#plone-toolbar', window.parent.document).css({'height': ''});
+        if ($('#toolbar-overlay').hasClass('in')){
+            // Overlay is visible, don't shrink
+            return true;
+        }
+        shrink();
     });
+
     // we stretch iframe over whole top frame which should
     // be marked as transparent so user wont see it
     $('dl.actionMenu dt.actionMenuHeader a').click(function (event) {
-        var parent_doc = window.parent.document;
-        $('#plone-toolbar', parent_doc).height(
-            $(parent_doc).height());
+        stretch();
     });
 
     // # overlay {{{
     function overlay(e) {
         var el = $(e.target),
             href = el.closest('a').attr('href'),
-            parent_doc = window.parent.document;
-            modal = $('#toolbar-overlay', parent_doc),
+            modal = $('#toolbar-overlay'),
             body = $('.modal-body', modal),
 
         // Clean up the url, set toolbar skin
@@ -28,8 +42,6 @@ $(document).ready(function() {
 
         body.empty().load(href + ' #portal-column-content',
             function(response, error){
-                //alert(error);
-
                 function setupOverlay(){
                     // Keep all links inside the overlay
                     $('a', body).on('click', overlay);
@@ -38,6 +50,9 @@ $(document).ready(function() {
                         [modal, response, error]);
                 }
                 setupOverlay();
+                stretch();
+                // Shring iframe when the overlay is closed
+                modal.on('hidden', function(e){ shrink(); });
                 modal.modal('show');
             }
         );
@@ -46,7 +61,7 @@ $(document).ready(function() {
     // }}}
 
     // capture all clicks on iframe
-    $(document).bind('click', {
+    $(document).on('click', {
         self: self, document: document
     }, function(e) {
         if (e.which === 1) {

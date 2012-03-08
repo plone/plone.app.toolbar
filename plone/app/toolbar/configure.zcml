@@ -54,15 +54,6 @@
         permission="plone.ViewToolbar"
         />
 
-    <!-- Viewlets -->
-    <browser:viewlet
-        name="plone.app.toolbar.overlay"
-        manager="plone.app.layout.viewlets.interfaces.IPortalFooter"
-        class=".toolbar.OverlayViewlet"
-        permission="zope2.View" 
-        layer=".interfaces.IToolbarLayer"
-        /> 
-
     <!-- Event handlers -->
     <subscriber
         for="ZPublisher.interfaces.IPubAfterTraversal"

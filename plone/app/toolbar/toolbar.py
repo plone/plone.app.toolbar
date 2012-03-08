@@ -277,8 +277,3 @@ class ToolbarFallback(BrowserView):
     @property
     def buttons(self):
         return self.toolbar.buttons
-
-class OverlayViewlet(common.ViewletBase):
-    """ Adds the hidden structure that will become the bootstrap overlay to
-        the plone footer. """
-    index = ViewPageTemplateFile('templates/overlay.pt')

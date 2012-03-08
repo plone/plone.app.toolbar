@@ -10,5 +10,13 @@
            tal:content="structure provider:plone.toolbar">
       </div>
     </div>
+    <div class="modal hide" id="toolbar-overlay">
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal">&times;</a>
+        </div>
+        <div class="modal-body">
+            <p>One fine body</p>
+        </div>
+    </div>
   </body>
 </html>
