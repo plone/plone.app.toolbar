@@ -16,7 +16,6 @@
                 <element>default</element>
                 <element>jquery</element>
                 <element>jquerytools</element>
-                <element>bootstrap</element>
                 <element>tinymce</element>
             </element>
 
@@ -24,7 +23,6 @@
                 <element>default</element>
                 <element>jquery</element>
                 <element>jquerytools</element>
-                <element>bootstrap</element>
                 <element>tinymce</element>
             </element>
 
@@ -32,7 +30,6 @@
                 <element>default</element>
                 <element>jquery</element>
                 <element>jquerytools</element>
-                <element>bootstrap</element>
                 <element>tinymce</element>
             </element>
         </value>
