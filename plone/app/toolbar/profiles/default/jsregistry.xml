@@ -28,15 +28,13 @@
 
     <!-- Twitter Bootstrap -->
     <javascript 
-        cacheable="False" compression="none" cookable="False"
-        enabled="True" inline="False" bundle="bootstrap"
+        bundle="bootstrap"
         id="++resource++plone.app.toolbar/bootstrap/js/bootstrap.min.js"
         />
 
     <!-- Toolabar -->
     <javascript 
-        cacheable="False" compression="safe" cookable="False"
-        enabled="True" inline="False" bundle="toolbar"
+        bundle="toolbar"
         id="++resource++plone.app.toolbar/toolbar/src/toolbar.js"
         />
     <!-- TODO: toolbar_overlays.js -->
