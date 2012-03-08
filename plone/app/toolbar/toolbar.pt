@@ -6,13 +6,8 @@
   </head>
   <body>
     <div id="toolbar-wrapper">
-      <div id="toolbar">
-        <div id="toolbar-right"
-             tal:content="structure provider:plone.contentmenu">
-        </div>
-        <div id="toolbar-left"
-             tal:content="structure provider:plone.contentviews">
-        </div>
+      <div id="toolbar"
+           tal:content="structure provider:plone.toolbar">
       </div>
     </div>
   </body>

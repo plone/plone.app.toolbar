@@ -30,20 +30,23 @@ body {
     -o-box-shadow: 0 1px 3px #444444;
 }
 
-#toolbar-right li {
+.contentActions li,
+#portal-personaltools-wrapper li {
     list-style: none;
     margin: 0;
 }
 
-#toolbar-left li,
-#toolbar-right > ul > li {
+#content-views li,
+.contentActions > ul > li,
+#portal-personaltools-wrapper {
     display: inline-block;
     float: left;
     margin: 0.6em 0.3em;
     position: relative;
 }
 
-#toolbar li a {
+#toolbar li a,
+#toolbar dt a {
     color: #FFFFFF;
     font-family: Helvetica,Arial,sans-serif;
     text-decoration: none;
@@ -65,6 +68,7 @@ body {
 }
 
 #toolbar .activated li a,
+#toolbar dt a:hover,
 #toolbar li a:hover {
     color: #444;
     background: #FFFFFF;
@@ -94,7 +98,7 @@ body {
     display: none;
 }
 
-#toolbar dd #toolbar li {
+#toolbar dd li {
     display: block;
     float: left;
     clear: left;
@@ -102,7 +106,7 @@ body {
     margin: 0;
 }
 
-#toolbar dd #toolbar li a {
+#toolbar dd li a {
     display: block;
     color: #333;
     text-shadow: none;
@@ -120,26 +124,23 @@ body {
     -o-border-radius: 0;
 }
 
-#toolbar dd #toolbar li a:hover {
+#toolbar dd li a:hover {
     background-color: #AAAAAA;
 }
 
-#toolbar-left {
+#content-views {
     float: left;
 }
-
-#toolbar-right {
+.contentActions,
+#portal-personaltools-wrapper {
     float: right;
 }
 
-.toolbar-personal {
-    float: right;
-}
-.personalactions-user {
+#portal-personaltools {
     padding-left: 30px !important;
     position: relative;
 }
-.personalactions-user img {
+#portal-personaltools img {
     height: 25px;
     vertical-align: middle;   
     position: absolute;
@@ -241,4 +242,8 @@ body {
 #toolbar .activated li a.label-contenttype-topic {
     background-position: 0px -1721px;
     background-image: url(++resource++plone.app.toolbar/contenttypes-sprite.png);
+}
+
+.hiddenStructure {
+    display: none;
 }

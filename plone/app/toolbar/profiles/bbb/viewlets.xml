@@ -8,4 +8,24 @@
   <order manager="plone.portaltop" skinname="toolbar">
     <viewlet name="plone.toolbar.toolbarlink" remove="True" />
   </order>
+
+  <!-- Hide toolbar viewlets in their original locations -->
+  <hidden manager="plone.portaltop" skinname="*">
+    <viewlet name="plone.personal_bar" />
+  </hidden>
+  <hidden manager="plone.portalheader" skinname="*">
+    <viewlet name="plone.personal_bar" />
+  </hidden>
+  <hidden manager="plone.contentviews" skinname="*">
+    <viewlet name="plone.contentviews" />
+    <viewlet name="plone.contentactions" />
+  </hidden>
+
+  <!-- Add the toolbar viewlets to their new location -->
+  <order manager="plone.toolbar" skinname="toolbar">
+    <viewlet name="plone.contentviews" />
+    <viewlet name="plone.personal_bar"
+             insert-before="plone.contentactions" />
+    <viewlet name="plone.contentactions" />
+  </order>
 </object>
