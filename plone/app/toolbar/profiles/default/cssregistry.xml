@@ -20,11 +20,13 @@
     <!-- Twitter Bootstrap -->
     <stylesheet
         bundle="bootstrap"
+        enabled="False"
         id="++resource++plone.app.toolbar/bootstrap/css/bootstrap.min.css"
         />
 
     <stylesheet
         bundle="bootstrap"
+        enabled="False"
         id="++resource++plone.app.toolbar/bootstrap/css/bootstrap-responsive.min.css"
         />
 
