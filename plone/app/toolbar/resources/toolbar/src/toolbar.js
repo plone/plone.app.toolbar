@@ -49,12 +49,6 @@ $(document).ready(function() {
                     // Keep all links inside the overlay
                     $('a', body).on('click', overlay);
 
-                    // Keep all forms inside the overlay
-                    $('form', body).ajaxForm({
-                        target: body,
-                        success: setupOverlay
-                    });
-
                     $(document).trigger('setupOverlay',
                         [modal, response, status]);
                 }
