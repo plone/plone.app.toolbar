@@ -1,0 +1,14 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal">
+  <head>
+    <tal:htmlhead tal:replace="structure provider:plone.htmlhead" />
+  </head>
+  <body>
+    <div id="toolbar-wrapper">
+      <div id="toolbar"
+           tal:content="structure provider:plone.toolbar">
+      </div>
+    </div>
+  </body>
+</html>
