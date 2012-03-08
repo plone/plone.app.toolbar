@@ -46,7 +46,9 @@ $(document).ready(function() {
                 }
 
                 function setupOverlay(){
-                    var $ = window.parent.$
+                    var $ = window.parent.$,
+                        modal = $('#toolbar-overlay'),
+                        body = $('.modal-body', modal)
                     // Keep all links inside the overlay
                     $('a', body).on('click', overlay);
 
