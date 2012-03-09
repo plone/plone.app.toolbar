@@ -50,9 +50,6 @@ $(document).ready(function() {
                     // Keep all links inside the overlay
                     $('a', body).on('click', overlay);
 
-                    $(document).trigger('setupOverlay',
-                        [modal, response, error]);
-
                     // Init plone forms if they exist
                     if ($.fn.ploneTabInit) {
                         body.ploneTabInit();
@@ -68,6 +65,10 @@ $(document).ready(function() {
                         delete InitializedTinyMCEInstances[id];
                         config.init();
                     });
+
+                    // Call any other event handlers
+                    $(document).trigger('setupOverlay',
+                        [modal, response, error]);
 
                 }
                 setupOverlay();
