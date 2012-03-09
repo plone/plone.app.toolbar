@@ -18,7 +18,7 @@ body {
 .toolbar-wrapper {
     position: relative;
     width: 100%;
-    height: 46px;
+    height: 47px;
     background: #333;
 }
 
@@ -121,17 +121,21 @@ body {
     background-color: #AAAAAA;
 }
 
-.toolbar-left {
-    float: left;
-}
-
 .toolbar-right {
     float: right;
 }
 
-.toolbar-personal {
+.toolbar-left {
+
+}
+.toolbar-group-rightactions {
     float: right;
 }
+
+.toolbar-group-leftactions {
+    float: left;
+}
+
 .personalactions-user {
     padding-left: 30px !important;
     position: relative;
@@ -238,4 +242,18 @@ body {
 .toolbar-button.toolbar-group-open a.label-contenttype-topic {
     background-position: 0px -1721px;
     background-image: url(++resource++plone.app.toolbar/contenttypes-sprite.png);
+}
+
+/*
+ * deco related stuff, this should probably be moved to 
+ */
+.toolbar-left-deco,
+.toolbar-deco .toolbar-left {
+    display: none;
+}
+.toolbar-deco .toolbar-left-deco {
+    display: block;
+}
+.toolbar-deco .toolbar-group {
+    background: #888888;
 }

@@ -61,10 +61,11 @@
         tmpl = $(tmpl);
         $.each(data, function(key, el) {
             if (typeof(el) === 'string') {
-                $(key, tmpl).append(el);
-            } else if (el.size() !== 0) {
-                $(key, tmpl).append(el);
+                el = $(el);
             }
+            el.each(function(i, item) {
+                $(key, tmpl).append(item);
+            });
         });
         return tmpl;
     };
@@ -91,7 +92,7 @@
             url: '#',
             id: '',
             klass: '',
-            category: 'default'
+            group: 'default'
             },
 
         template: '<div class="toolbar-wrapper">' +
