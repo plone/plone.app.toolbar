@@ -42,7 +42,11 @@
         bundle="toolbar"
         id="++resource++plone.app.toolbar/toolbar/src/toolbar.js"
         />
-    <!-- TODO: toolbar_overlays.js -->
+
+    <javascript
+        bundle="toolbar"
+        id="++resource++plone.app.toolbar/toolbar_overlays.js"
+        />
     <!-- TODO: notify -->
 
 
