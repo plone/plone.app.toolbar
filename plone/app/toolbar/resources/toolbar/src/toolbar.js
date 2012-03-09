@@ -93,6 +93,9 @@ $(document).ready(function() {
             // the window
             if (el.attr('target') == '_parent') {
                 return true;
+            } else if (/^#/.test(el.attr('href'))){
+                // Plone tabs or an anchor in the page
+                return true;
             } else {
                 overlay(e);
             }
