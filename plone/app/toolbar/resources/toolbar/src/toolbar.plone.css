@@ -123,6 +123,7 @@ body {
 
 .toolbar-right {
     float: right;
+    background: #333;
 }
 
 .toolbar-left {
@@ -254,6 +255,6 @@ body {
 .toolbar-deco .toolbar-left-deco {
     display: block;
 }
-.toolbar-deco .toolbar-group {
-    background: #888888;
+.toolbar-deco .toolbar-wrapper {
+    background: #c90000;
 }
