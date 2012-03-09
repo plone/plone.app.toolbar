@@ -68,7 +68,7 @@ $(document).ready(function() {
 
                 // Call any other event handlers
                 $(document).trigger('setupOverlay',
-                    [modal, response, error]);
+                    [e, modal, response, error]);
 
                 // Shrink iframe when the overlay is closed
                 modal.on('hidden', function(e){ shrink(); });
