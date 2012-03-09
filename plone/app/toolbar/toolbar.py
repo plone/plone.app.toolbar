@@ -275,18 +275,19 @@ class Toolbar(BrowserView):
                 template: '' +
                     '<div class="toolbar-wrapper">' +
                     ' <div class="toolbar">' +
-                    '  <div class="toolbar-personal"><\/div>' +
                     '  <div class="toolbar-right"><\/div>' +
                     '  <div class="toolbar-left"><\/div>' +
                     ' <\/div>' +
                     '<\/div>',
                 template_options: function(groups) {
-                    return {
-                        '.toolbar-right': groups.render_group('rightactions'),
-                        '.toolbar-personal': groups.render_group('personalactions'),
-                        '.toolbar-left': groups.render_group('leftactions')
-                        }
-                    },
+                  return {
+                      '.toolbar-right': groups.render_group('personalactions'),
+                      '.toolbar-left': $([
+                         groups.render_group('rightactions'),
+                         groups.render_group('leftactions')
+                         ])
+                      }
+                  },
                 resources: %(resources)s
                 });
             $(document).ready(function() {
