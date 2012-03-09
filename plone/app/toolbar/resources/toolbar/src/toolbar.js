@@ -1,14 +1,15 @@
 $(document).ready(function() {
+    var toolbar = $('#plone-toolbar', window.parent.document);
+
     // Stretch iframe to height of parent doc
     function stretch(){
-        var parent_doc = window.parent.document;
-        $('#plone-toolbar', parent_doc).height(
-            $(parent_doc).height());
+        toolbar.height(
+            $(window.parent.document).height());
     }
 
     // Shrink iframe back to css determined size.
     function shrink(){
-        $('#plone-toolbar', window.parent.document).css({'height': ''});
+        toolbar.css({'height': ''});
     }
 
     // Shrink the iframe back down after closing a menu
@@ -82,13 +83,10 @@ $(document).ready(function() {
     }
     // }}}
 
-    // capture all clicks on iframe
-    $(document).on('click', {
-        self: self, document: document
-    }, function(e) {
+    // capture all clicks on toolbar
+    $(document).on('click', function(e) {
         if (e.which === 1) {
-            var self = e.data.self,
-                el = $(e.target);
+            var el = $(e.target);
 
             if (!$.nodeName(e.target, 'a')) {
                 el = el.closest('a');
