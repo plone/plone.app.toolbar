@@ -84,7 +84,7 @@ $(document).ready(function() {
     // }}}
 
     // capture all clicks on toolbar
-    $(document).on('click', function(e) {
+    $('#toolbar').on('click', function(e) {
         if (e.which === 1) {
             var el = $(e.target);
 
@@ -96,9 +96,6 @@ $(document).ready(function() {
             // have the '_parent' link target, just load them in
             // the window
             if (el.attr('target') == '_parent') {
-                return true;
-            } else if (/^#/.test(el.attr('href'))){
-                // Plone tabs or an anchor in the page
                 return true;
             } else {
                 overlay(e);
