@@ -121,6 +121,11 @@ body {
     background-color: #AAAAAA;
 }
 
+.toolbar-groups .toolbar-button > a > img {
+    vertical-align: middle;
+    margin-right: 1em;
+}
+
 .toolbar-right {
     float: right;
     background: #333;
