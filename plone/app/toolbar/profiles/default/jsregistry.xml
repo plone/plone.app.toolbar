@@ -37,7 +37,7 @@
         id="++resource++plone.app.toolbar/bootstrap/js/bootstrap.min.js"
         />
 
-    <!-- Toolabar -->
+    <!-- Toolbar -->
     <javascript 
         bundle="toolbar"
         id="++resource++plone.app.toolbar/toolbar/src/toolbar.js"
