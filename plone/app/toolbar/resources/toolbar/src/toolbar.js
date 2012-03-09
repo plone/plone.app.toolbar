@@ -60,7 +60,12 @@ $(document).ready(function() {
 
                     // Tinymce editable areas inside overlay
                     $('textarea.mce_editable', body).each(function() {
-                        var config = new TinyMCEConfig($(this).attr('id'));
+                        var id = $(this).attr('id'),
+                            config = new TinyMCEConfig(id);
+                        // Forgive me for I am about to sin. But it does mean
+                        // we can overlay it multiple times. If you know a
+                        // better way, please share.
+                        delete InitializedTinyMCEInstances[id];
                         config.init();
                     });
 
