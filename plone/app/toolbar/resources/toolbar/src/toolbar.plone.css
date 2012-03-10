@@ -30,6 +30,10 @@ body {
     -o-box-shadow: 0 1px 3px #444444;
 }
 
+#portal-personaltools {
+    font-size: 100%;
+}
+
 .contentActions li,
 #portal-personaltools-wrapper li {
     list-style: none;
