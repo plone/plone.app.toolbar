@@ -1,4 +1,4 @@
-* {
+#toolbar > * {
     font-family: Arial;
     font-size: 13px;
     margin: 0;
@@ -43,6 +43,14 @@ body {
     float: left;
     margin: 0.6em 0.3em;
     position: relative;
+}
+
+#content-views li.selected a,
+#content-views li a:hover,
+#content li.formTab a.selected,
+#content li.formTab a:hover {
+    border-top-left-radius: 0.1em;
+    border-top-right-radius: 0.1em;
 }
 
 #toolbar li a,
@@ -98,6 +106,9 @@ body {
 #toolbar dl.actionMenu.deactivated dd {
     display: none;
 }
+#toolbar dt.actionMenuHeader {
+    margin: 0;
+}
 
 #toolbar dd li {
     display: block;
@@ -125,20 +136,46 @@ body {
     -o-border-radius: 0;
 }
 
-#toolbar dd li a:hover {
-    background-color: #AAAAAA;
-}
-
 #content-views {
     float: left;
+    background-color: transparent;
 }
+
+#contentActionMenus {
+    background: transparent;
+    padding: 0;
+    right: 0;
+    top: auto;
+}
+#contentActionMenus dl.actionMenu {
+    margin: 0;
+}
+#contentActionMenus dl.actionMenu a {
+    background-color: transparent;
+}
+#contentActionMenus dl.actionMenu.activated a,
+#contentActionMenus dl.actionMenu.activated dd,
+#contentActionMenus dl.actionMenu.deactivated a:hover {
+    background-color: white;
+    border-bottom: none;
+    right: 0;
+}
+#contentActionMenus dl.actionMenu.activated li a:hover {
+    color: #444;
+    background-color: #AAA !important;
+}
+span.arrowDownAlternative {
+    font-size: 100%;
+}
+
 .contentActions,
 #portal-personaltools-wrapper {
     float: right;
 }
 
 #portal-personaltools {
-    padding-left: 30px !important;
+    background: transparent;
+    padding: 0 0 0 30px;
     position: relative;
 }
 #portal-personaltools img {
@@ -147,6 +184,9 @@ body {
     position: absolute;
     left: 5px;
     top: 2px;
+}
+#portal-personaltools dt.actionMenuHeader a:after {
+    content: none;
 }
 
 /* 
