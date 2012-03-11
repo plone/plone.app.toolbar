@@ -47,28 +47,36 @@ $(document).ready(function() {
 
         body.empty().load(href + ' #portal-column-content',
             function(response, error){
-                // Keep all links inside the overlay
-                $('a', body).on('click', overlay);
+                var ev = $.Event();
+                ev.type='beforeSetupOverlay';
+                ev.target = modal[0];
+                $(document).trigger(ev);
 
-                // Init plone forms if they exist
-                if ($.fn.ploneTabInit) {
-                    body.ploneTabInit();
+                // If beforeSetupOverlay says so, stop here.
+                if(!ev.isDefaultPrevented()){
+                    // Keep all links inside the overlay
+                    $('a', body).on('click', overlay);
+
+                    // Init plone forms if they exist
+                    if ($.fn.ploneTabInit) {
+                        body.ploneTabInit();
+                    }
+
+                    // Tinymce editable areas inside overlay
+                    $('textarea.mce_editable', body).each(function() {
+                        var id = $(this).attr('id'),
+                            config = new TinyMCEConfig(id);
+                        // Forgive me for I am about to sin. But it does mean
+                        // we can overlay it multiple times. If you know a
+                        // better way, please share.
+                        delete InitializedTinyMCEInstances[id];
+                        config.init();
+                    });
+
+                    // Call any other event handlers
+                    $(document).trigger('afterSetupOverlay',
+                        [e, modal, response, error]);
                 }
-
-                // Tinymce editable areas inside overlay
-                $('textarea.mce_editable', body).each(function() {
-                    var id = $(this).attr('id'),
-                        config = new TinyMCEConfig(id);
-                    // Forgive me for I am about to sin. But it does mean
-                    // we can overlay it multiple times. If you know a
-                    // better way, please share.
-                    delete InitializedTinyMCEInstances[id];
-                    config.init();
-                });
-
-                // Call any other event handlers
-                $(document).trigger('setupOverlay',
-                    [e, modal, response, error]);
 
                 // Shrink iframe when the overlay is closed
                 modal.on('hidden', function(e){ shrink(); });
@@ -99,8 +107,6 @@ $(document).ready(function() {
             } else {
                 overlay(e);
             }
-
-            return e.preventDefault();
         }
     });
 

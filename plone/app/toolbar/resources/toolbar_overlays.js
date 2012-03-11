@@ -4,8 +4,8 @@
 $(document).ready(function() {
 
     // Modify common plone views so that Cancel button dismisses the overlay
-    $(document).on('setupOverlay', function(e, modal, response, error){
-        var el = $(e.target),
+    $(document).on('afterSetupOverlay', function(e){
+        var modal = $(e.target),
             body = $('.modal-body', modal),
             cancelbuttons = ['form.button.Cancel',
                 'form.button.cancel',
@@ -17,7 +17,7 @@ $(document).ready(function() {
             .on('click', function(ev){
                 modal.modal('hide');
                 body.empty();
-                ev.preventDefault();
+                return ev.preventDefault();
             });
         }
     });
