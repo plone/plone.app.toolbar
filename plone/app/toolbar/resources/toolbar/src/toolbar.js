@@ -48,8 +48,9 @@ $(document).ready(function() {
         body.empty().load(href + ' #portal-column-content',
             function(response, error){
                 var ev = $.Event();
-                ev.type='beforeSetupOverlay';
-                ev.target = modal[0];
+                ev.type='beforeSetupOverlay',
+                    ev.target = e.target,
+                    e.modal = modal[0];
                 $(document).trigger(ev);
 
                 // If beforeSetupOverlay says so, stop here.
@@ -74,8 +75,11 @@ $(document).ready(function() {
                     });
 
                     // Call any other event handlers
-                    $(document).trigger('afterSetupOverlay',
-                        [e, modal, response, error]);
+                    ev = $.Event();
+                    ev.type='afterSetupOverlay',
+                        ev.target = e.target,
+                        ev.modal = modal[0];
+                    $(document).trigger(ev);
                 }
 
                 // Shrink iframe when the overlay is closed
