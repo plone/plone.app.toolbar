@@ -236,6 +236,7 @@ class Toolbar(BrowserView):
             'url': self.userHomeLinkURL(),
             'klass': 'personalactions-user',
             'group': 'personalactions',
+            'id': 'toolbar-button-plone-personalactions',
             'buttons': [{
                     'title': item['title'],
                     'url': item['url'],
