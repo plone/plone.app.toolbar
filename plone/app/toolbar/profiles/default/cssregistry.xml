@@ -16,6 +16,10 @@
         id="++resource++plone.app.toolbar/toolbar/src/toolbar.plone.css"
         />
 
+    <stylesheet
+        bundle="toolbar"
+        id="++resource++plone.app.toolbar/overlay.css"
+        />
 
     <!-- Twitter Bootstrap -->
     <stylesheet

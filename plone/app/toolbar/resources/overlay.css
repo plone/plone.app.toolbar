@@ -1,0 +1,66 @@
+.modal {
+    top: 20px;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    margin: 0;
+    overflow: hidden;
+    position: fixed;
+    width: auto;
+    z-index: 1050;
+    background-color: #ffffff;
+
+    border: 1px solid #999;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+   *border: 1px solid #999;
+
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding-box;
+    background-clip: padding-box;
+}
+
+.modal-body {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+}
+
+.modal-header {
+  padding: 9px 15px;
+}
+
+.modal-header .close {
+  margin-top: 2px;
+}
+
+.hide {
+  display: none;
+}
+
+.close {
+  float: right;
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 18px;
+  color: #000000;
+  text-shadow: 0 1px 0 #ffffff;
+  opacity: 0.2;
+  filter: alpha(opacity=20);
+}
+
+.close:hover {
+  color: #000000;
+  text-decoration: none;
+  opacity: 0.4;
+  filter: alpha(opacity=40);
+  cursor: pointer;
+}
