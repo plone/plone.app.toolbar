@@ -552,9 +552,9 @@
                         }
 
                         // Buttons default to an overlay but if they
-                        // have the 'load' class, just load them in
+                        // have the '_parent' link target, just load them in
                         // the window
-                        if (el.hasClass('load')) {
+                        if (el.attr('target') == '_parent') {
                             window.parent.location.href = el.attr('href');
                         } else {
                             overlay(e);
