@@ -24,7 +24,7 @@
     <javascript bundle="tinymce"
         id="tiny_mce_init.js" />
 
-    <!-- Toolabar -->
+    <!-- Toolbar -->
     <javascript 
         cacheable="False" compression="safe" cookable="False"
         enabled="True" inline="False" bundle="default"
