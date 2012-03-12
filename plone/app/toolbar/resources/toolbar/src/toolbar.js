@@ -62,7 +62,7 @@
             href = el.closest('a').attr('href'),
             modal = $('#toolbar-overlay'),
             body = $('.modal-body', modal),
-            toolbar = $('iframe#' + iframe_id).toolbar();
+            toolbar = e.data.self;
 
         if(href === undefined){
             return;
@@ -116,70 +116,6 @@
                 modal.modal('show');
             }
         );
-        e.preventDefault();
-    }
-    // }}}
-
-    // # overlay {{{
-    function overlay(e) {
-        var headers = {},
-            selector = "#portal-column-content",
-            el = $(e.target),
-            href = el.closest('a').attr('href'),
-            modal = $('#toolbar-overlay'),
-            body = $('.modal-body', modal),
-            rscript = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
-
-        // Clean up the url
-        href = (href.match(/^([^#]+)/)||[])[1];
-        headers['X-Theme-Disabled'] = "True";
-        $.ajax({
-            url: href,
-            headers: headers,
-            complete: function(jqXHR, status, response) {
-                // Store the response as specified by the jqXHR object
-                response = jqXHR.responseText;
-                // If successful, inject the HTML into all the matched elements
-                if (jqXHR.isResolved()) {
-                    jqXHR.done(function( r ) {
-                        response = r;
-                    });
-                    body.empty().html(jQuery("<div>").append(
-                        response.replace(rscript, "")).find(
-                        selector));
-                }
-
-                function setupOverlay(){
-                    // Keep all links inside the overlay
-                    $('a', body).on('click', overlay);
-
-                    // Keep all forms inside the overlay
-                    $('form', body).ajaxForm({
-                        target: body,
-                        success: setupOverlay
-                    });
-
-                    // Cancel should close the overlay
-                    var cancelbuttons = [
-                        'form.button.Cancel',
-                        'form.button.cancel',
-                        'form.actions.cancel'];
-                    for (var idx in cancelbuttons){
-                        $('input[name="' + cancelbuttons[idx] + '"]', body)
-                        .on('click', function(ev){
-                            modal.modal('hide');
-                            body.empty();
-                            ev.preventDefault();
-                        });
-                    }
-
-                    $(document).trigger('setupOverlay',
-                        [modal, response, status]);
-                }
-                setupOverlay();
-                modal.modal('show');
-            }
-        });
         e.preventDefault();
     }
     // }}}
