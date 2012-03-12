@@ -24,6 +24,13 @@
     <javascript bundle="tinymce"
         id="tiny_mce_init.js" />
 
+    <!-- Twitter Bootstrap -->
+    <javascript 
+        cacheable="False" compression="none" cookable="False"
+        enabled="True" inline="False" bundle="bootstrap"
+        id="++resource++plone.app.toolbar/bootstrap/js/bootstrap.min.js"
+        />
+
     <!-- Toolbar -->
     <javascript 
         cacheable="False" compression="safe" cookable="False"
@@ -33,11 +40,5 @@
     <!-- TODO: toolbar_overlays.js -->
     <!-- TODO: notify -->
 
-    <!-- Twitter Bootstrap -->
-    <javascript 
-        cacheable="False" compression="none" cookable="False"
-        enabled="True" inline="False" bundle="bootstrap"
-        id="++resource++plone.app.toolbar/bootstrap/js/bootstrap.min.js"
-        />
 
 </object>
