@@ -120,6 +120,70 @@
     }
     // }}}
 
+    // # overlay {{{
+    function overlay(e) {
+        var headers = {},
+            selector = "#portal-column-content",
+            el = $(e.target),
+            href = el.closest('a').attr('href'),
+            modal = $('#toolbar-overlay'),
+            body = $('.modal-body', modal),
+            rscript = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
+
+        // Clean up the url
+        href = (href.match(/^([^#]+)/)||[])[1];
+        headers['X-Theme-Disabled'] = "True";
+        $.ajax({
+            url: href,
+            headers: headers,
+            complete: function(jqXHR, status, response) {
+                // Store the response as specified by the jqXHR object
+                response = jqXHR.responseText;
+                // If successful, inject the HTML into all the matched elements
+                if (jqXHR.isResolved()) {
+                    jqXHR.done(function( r ) {
+                        response = r;
+                    });
+                    body.empty().html(jQuery("<div>").append(
+                        response.replace(rscript, "")).find(
+                        selector));
+                }
+
+                function setupOverlay(){
+                    // Keep all links inside the overlay
+                    $('a', body).on('click', overlay);
+
+                    // Keep all forms inside the overlay
+                    $('form', body).ajaxForm({
+                        target: body,
+                        success: setupOverlay
+                    });
+
+                    // Cancel should close the overlay
+                    var cancelbuttons = [
+                        'form.button.Cancel',
+                        'form.button.cancel',
+                        'form.actions.cancel'];
+                    for (var idx in cancelbuttons){
+                        $('input[name="' + cancelbuttons[idx] + '"]', body)
+                        .on('click', function(ev){
+                            modal.modal('hide');
+                            body.empty();
+                            ev.preventDefault();
+                        });
+                    }
+
+                    $(document).trigger('setupOverlay',
+                        [modal, response, status]);
+                }
+                setupOverlay();
+                modal.modal('show');
+            }
+        });
+        e.preventDefault();
+    }
+    // }}}
+
     // # Micro Templating {{{
     $.toolbar._template = function(tmpl, data) {
         tmpl = $(tmpl);
@@ -490,13 +554,33 @@
                         // if click on button was made then we redirect main
                         // frame to new location
                         if (el.parent().hasClass(self.options.button_klass)) {
-                            window.parent.location.href = el.attr('href');
+                            // TODO
+                            // This probably needs to be more configurable and
+                            // less hardcoded, the idea is that there is a
+                            // configurable list of menu items that will not
+                            // open in an overlay. Presently I know of only a
+                            // few, but there should be a way to configure
+                            // others without changing this here source code.
+                            // parents() ito parent() is used because submenus
+                            // means the link might be deeper than you expect.
+                            var no_overlay_items = [
+                                '#toolbar-button-plone-contentmenu-display',
+                                '#toolbar-button-plone-contentmenu-workflow',
+                                '#toolbar-button-view',
+                                '#toolbar-button-cut',
+                                '#toolbar-button-copy'
+                            ];
+                            for(var idx in no_overlay_items){
+                                var selector = no_overlay_items[idx];
+                                if(el.parents().filter(selector).length > 0){
+                                    window.parent.location.href = el.attr('href');
+                                    return e.preventDefault();
+                                }
+                            }
+                            overlay(e);
                         }
 
                         return e.preventDefault();
-
-                        // TODO: do check for overlay to not shrink toolbar if
-                        // overlay is opened
                     }
                 });
 
@@ -553,6 +637,42 @@
         return self.data('toolbar');
 
     };
+    // }}}
+
+    // # Set up modal for the overlay {{{
+    $('#toolbar-overlay').modal({show: false});
+
+    // Plug in some things that needs to happen after loading an overlay.
+    // 3rd party apps kan register their own
+    $(document).bind('setupOverlay', function() {
+
+        // Init plone forms if they exist
+        if ($.fn.ploneTabInit) {
+            $(this).ploneTabInit();
+        }
+
+        // Tinymce editable areas inside overlay
+        $('textarea.mce_editable').each(function() {
+            var config = new TinyMCEConfig($(this).attr('id'));
+            config.init();
+        });
+    });
+
+    // }}}
+
+    // # Testing {{{
+    //
+    // expose toolbar internals for testing purposes
+    if ($.toolbar.testing === true) {
+        $.toolbar._ = {
+            outerHtml: outerHtml,
+            template: template,
+            Resource: Resource,
+            Button: Button,
+            Groups: Groups,
+            Toolbar: Toolbar
+        };
+    }
     // }}}
 
 }(jQuery));
