@@ -9,6 +9,7 @@
     i18n_domain="plone">
 
     <include package="Products.ResourceRegistries" />
+    <include package="plone.app.jquery" />
 
     <!-- Permissions -->
 
