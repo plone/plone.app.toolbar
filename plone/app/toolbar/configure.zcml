@@ -53,6 +53,12 @@
         factory=".toolbar.Toolbar"
         />
 
+    <!-- Event handlers -->
+    <subscriber
+        for="ZPublisher.interfaces.IPubAfterTraversal"
+        handler=".eventhandlers.UnthemeUI"
+        />
+
 
     <!-- BBB: Used to override/disable parts of Plone 4.x that
          should not be in place when using plone.app.Toolbar
@@ -69,5 +75,15 @@
         template="templates/notifications.pt"
         permission="plone.ViewToolbar"
         /-->
+
+    <class class="plone.app.content.browser.foldercontents.FolderContentsView">
+        <implements interface="plone.app.toolbar.interfaces.IUIView"/>
+    </class>
+    <class class="plone.app.workflow.browser.sharing.SharingView">
+        <implements interface="plone.app.toolbar.interfaces.IUIView"/>
+    </class>
+    <class class="plone.app.contentrules.browser.assignments.ManageAssignments">
+        <implements interface="plone.app.toolbar.interfaces.IUIView"/>
+    </class>
 
 </configure>
