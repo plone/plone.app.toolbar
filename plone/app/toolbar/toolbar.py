@@ -1,3 +1,4 @@
+import re
 
 try:
     import json
@@ -17,6 +18,20 @@ from plone.app.layout.viewlets.common import ContentViewsViewlet
 
 from Acquisition import aq_inner
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.Five.browser import metaconfigure
+
+
+class Toolbar(metaconfigure.ViewMixinForTemplates):
+
+    index = ViewPageTemplateFile('toolbar.pt')
+
+    def __call__(self):
+        self.update()
+        return super(Toolbar, self).__call__()
+
+    def update(self):
+        # Set the 'toolbar' skin so that we get the correct resources
+        self.context.changeSkin('toolbar', self.request)
 
 
 GROUPS_LABELS = {
@@ -36,7 +51,7 @@ class Toolbar(ContentViewsViewlet):
     render = ViewPageTemplateFile('templates/toolbar.pt')
 
     def __init__(self, context, request, view=None, manager=None):
-        super(Toolbar, self).__init__(context, request, view, manager)
+        super(ToolbarViewlet, self).__init__(context, request, view, manager)
         self.__parent__ = view
 
         self.context = aq_inner(self.context)
@@ -62,9 +77,6 @@ class Toolbar(ContentViewsViewlet):
         self.tools = getMultiAdapter((self.context, self.request),
                 name=u'plone_tools')
         self.anonymous = self.portal_state.anonymous()
-
-        # Set the 'toolbar' skin so that we get the correct resources
-        self.context.changeSkin('toolbar', self.request)
 
     def update(self):
         pass
@@ -123,14 +135,14 @@ class Toolbar(ContentViewsViewlet):
         selected_button = None
         selected_button_found = False
         for action in self.prepareObjectTabs():
-            item = {
-                'title': action['title'],
-                'id': 'toolbar-button-' + action['id'],
+            item = dict(action)
+            item.update({
+                'id': 'toolbar-button-' + item['id'],
                 'group': 'leftactions',
-                }
+                })
 
             # button url
-            button_url = action['url'].strip()
+            button_url = item['url'].strip()
             if button_url.startswith('http') or \
                button_url.startswith('javascript'):
                 item['url'] = button_url
@@ -152,7 +164,7 @@ class Toolbar(ContentViewsViewlet):
                     item['klass'] = 'selected'
                     selected_button_found = True
 
-            if action['id'] == self.default_action:
+            if item['id'] == self.default_action:
                 selected_button = item
 
             buttons.append(item)
@@ -163,42 +175,41 @@ class Toolbar(ContentViewsViewlet):
         # contentmenu (eg: Display, Add new..., State)
         def contentmenu_buttons(items, group='default'):
             buttons = []
-            for item in items:
-                button = {
+            for button in items:
+                button.update({
                     'title': '<span>' + translate(
-                            item['title'],
+                            button['title'],
                             context=self.request,
                             ) + '</span>',
                     'description': translate(
-                            item['description'],
+                            button['description'],
                             context=self.request,
                             ),
-                    'url': item['action'] and item['action'] or '#',
-                    'icon': item['icon'],
+                    'url': button['action'] and button['action'] or '#',
                     'group': group,
-                    }
+                    })
 
-                if 'extra' in item:
+                if 'extra' in button:
 
-                    if 'id'  in item['extra'] and item['extra']['id']:
-                        button['id'] = 'toolbar-button-' + item['extra']['id']
+                    if 'id'  in button['extra'] and button['extra']['id']:
+                        button['id'] = 'toolbar-button-' + button['extra']['id']
 
-                    if 'class' in item['extra'] and item['extra']['class']:
-                        if item['extra']['class'] == 'actionMenuSelected':
+                    if 'class' in button['extra'] and button['extra']['class']:
+                        if button['extra']['class'] == 'actionMenuSelected':
                             button['klass'] = 'selected'
                         else:
-                            button['klass'] = 'label-' + item['extra']['class']
+                            button['klass'] = 'label-' + button['extra']['class']
 
-                    if 'stateTitle' in item['extra'] and \
-                            item['extra']['stateTitle']:
+                    if 'stateTitle' in button['extra'] and \
+                            button['extra']['stateTitle']:
                         button['title'] += '<span class="%s">%s</span>' % (
-                            item['extra'].get('class', ''),
-                            item['extra']['stateTitle'],
+                            button['extra'].get('class', ''),
+                            button['extra']['stateTitle'],
                             )
 
-                if item['submenu']:
+                if button['submenu']:
                     button['title'] += '<span> &#9660;</span>'
-                    button['buttons'] = contentmenu_buttons(item['submenu'])
+                    button['buttons'] = contentmenu_buttons(button['submenu'])
 
                 buttons.append(button)
 
@@ -223,6 +234,13 @@ class Toolbar(ContentViewsViewlet):
                 } for item in self.context_state.actions('user')
                     if item['available']],
             })
+
+        for button in buttons:
+            match = self.link_target_re.match(
+                button.get('link_target') or '')
+            if match is not None:
+                button['klass'] = (
+                    button.get('klass', '') + ' ' + match.group(1)).strip()
 
         return buttons
 

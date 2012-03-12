@@ -22,6 +22,21 @@ class Toolbar(PloneSandboxLayer):
         workflowTool = getToolByName(portal, 'portal_workflow')
         workflowTool.setDefaultChain('plone_workflow')
 
+        # Don't ignore exceptions so that problems don't hide behind
+        # Unauthorized or NotFound exceptions when doing functional
+        # testing.
+        error_log = getToolByName(portal, 'error_log')
+        error_props = error_log.getProperties()
+        error_props['ignored_exceptions'] = ('Redirect',)
+        error_props = error_log.setProperties(
+            **error_props)
+
+        # Put resource registries in debug mode to make it easier to
+        # inspect CSS, JavaScript, and KSS
+        getToolByName(portal, 'portal_css').setDebugMode(True)
+        getToolByName(portal, 'portal_javascripts').setDebugMode(True)
+        getToolByName(portal, 'portal_kss').setDebugMode(True)
+
 
 TOOLBAR_FIXTURE = Toolbar()
 TOOLBAR_INTEGRATION_TESTING = IntegrationTesting(bases=(TOOLBAR_FIXTURE,), name="TOOLBAR:Integration")
