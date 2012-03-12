@@ -56,6 +56,70 @@
     };
     // }}}
 
+    // # overlay {{{
+    function overlay(e) {
+        var el = $(e.target),
+            href = el.closest('a').attr('href'),
+            modal = $('#toolbar-overlay'),
+            body = $('.modal-body', modal),
+            toolbar = $('iframe#' + iframe_id).toolbar();
+
+        if(href === undefined){
+            return;
+        }
+
+        // Clean up the url, set toolbar skin
+        href = (href.match(/^([^#]+)/)||[])[1];
+
+        body.empty().load(href + ' #portal-column-content',
+            function(response, error){
+                var ev = $.Event();
+                ev.type='beforeSetupOverlay',
+                    ev.target = e.target,
+                    e.modal = modal[0];
+                $(document).trigger(ev);
+
+                // If beforeSetupOverlay says so, stop here.
+                if(!ev.isDefaultPrevented()){
+                    // Keep all links inside the overlay
+                    $('a', body).on('click', overlay);
+
+                    // Init plone forms if they exist
+                    if ($.fn.ploneTabInit) {
+                        body.ploneTabInit();
+                    }
+
+                    // Tinymce editable areas inside overlay
+                    $('textarea.mce_editable', body).each(function() {
+                        var id = $(this).attr('id'),
+                            config = new TinyMCEConfig(id);
+                        // Forgive me for I am about to sin. But it does mean
+                        // we can overlay it multiple times. If you know a
+                        // better way, please share.
+                        delete InitializedTinyMCEInstances[id];
+                        config.init();
+                    });
+
+                    // Call any other event handlers
+                    ev = $.Event();
+                    ev.type='afterSetupOverlay',
+                        ev.target = e.target,
+                        ev.modal = modal[0];
+                    $(document).trigger(ev);
+                }
+
+                // Shrink iframe when the overlay is closed
+                modal.on('hidden', function(e){ toolbar.shrink(); });
+
+                // Show overlay
+                toolbar.stretch();
+                modal.modal('show');
+            }
+        );
+        e.preventDefault();
+    }
+    // }}}
+
     // # Micro Templating {{{
     $.toolbar._template = function(tmpl, data) {
         tmpl = $(tmpl);
