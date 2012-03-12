@@ -25,14 +25,6 @@
         directory="resources"
         />
 
-    <!-- Views -->
-    <browser:page
-        name="plone_toolbar"
-        for="*"
-        class=".toolbar.Toolbar"
-        template="toolbar.pt"
-        permission="plone.ViewToolbar" />
-
     <!-- GS profile -->
 
     <genericsetup:registerProfile
@@ -58,7 +50,7 @@
         name="plone_toolbar"
         for="* .interfaces.IToolbarLayer *"
         provides="zope.contentprovider.interfaces.IContentProvider"
-        factory=".toolbar.ToolbarViewlet"
+        factory=".toolbar.Toolbar"
         />
 
     <!-- Event handlers -->
