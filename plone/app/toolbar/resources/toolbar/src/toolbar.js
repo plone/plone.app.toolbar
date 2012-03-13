@@ -77,35 +77,19 @@
                 ev.type='beforeSetupOverlay',
                     ev.target = e.target,
                     e.modal = modal[0];
-                $(document).trigger(ev);
+                toolbar.el.trigger(ev);
 
                 // If beforeSetupOverlay says so, stop here.
                 if(!ev.isDefaultPrevented()){
                     // Keep all links inside the overlay
                     $('a', body).on('click', overlay);
 
-                    // Init plone forms if they exist
-                    if ($.fn.ploneTabInit) {
-                        body.ploneTabInit();
-                    }
-
-                    // Tinymce editable areas inside overlay
-                    //$('textarea.mce_editable', body).each(function() {
-                    //    var id = $(this).attr('id'),
-                    //        config = new TinyMCEConfig(id);
-                    //    // Forgive me for I am about to sin. But it does mean
-                    //    // we can overlay it multiple times. If you know a
-                    //    // better way, please share.
-                    //    delete InitializedTinyMCEInstances[id];
-                    //    config.init();
-                    //});
-
                     // Call any other event handlers
                     ev = $.Event();
                     ev.type='afterSetupOverlay',
                         ev.target = e.target,
                         ev.modal = modal[0];
-                    $(document).trigger(ev);
+                    toolbar.el.trigger(ev);
                 }
 
                 // Shrink iframe when the overlay is closed

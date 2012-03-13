@@ -20,6 +20,7 @@
                 <element>jquerytools</element>
                 <element>bootstrap</element>
                 <element>tinymce</element>
+                <element>toolbar-init</element>
             </element>
 
             <element key="Plone Default">
@@ -28,6 +29,7 @@
                 <element>jquerytools</element>
                 <element>bootstrap</element>
                 <element>tinymce</element>
+                <element>toolbar-init</element>
             </element>
 
             <element key="Sunburst Theme">
@@ -36,6 +38,7 @@
                 <element>jquerytools</element>
                 <element>bootstrap</element>
                 <element>tinymce</element>
+                <element>toolbar-init</element>
             </element>
         </value>
     </record>
