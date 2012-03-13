@@ -6,8 +6,49 @@ window.parent.toolbar.el.on('toolbar_loaded',
 
     var toolbar = event.data.toolbar;
 
+    function overlay(href) {
+        var modal = $('#toolbar-overlay', toolbar.document),
+            body = $('.modal-body', modal);
+
+        if(href === undefined){
+            return;
+        }
+
+        // Clean up the url, set toolbar skin
+        href = (href.match(/^([^#]+)/)||[])[1];
+
+        body.empty().load(href + ' #portal-column-content',
+            function(response, error){
+
+                // Keep all links inside the overlay
+                $('a', body).on('click', function(e){
+                    overlay($(e.target).attr('href'));
+                    return e.preventDefault();
+                });
+
+                // Call any other event handlers
+                ev = $.Event();
+                ev.type='afterSetupOverlay';
+                toolbar.el.trigger(ev);
+
+                // Shrink iframe when the overlay is closed
+                modal.on('hidden', function(e){ toolbar.shrink(); });
+
+                // Show overlay
+                toolbar.stretch();
+                modal.modal('show');
+            }
+        );
+    }
+
+    // Overlay when event is passed
+    toolbar.el.on('setup_overlay', function(e, href){
+        overlay(href);
+        return e.preventDefault();
+    });
+
     toolbar.el.on('afterSetupOverlay', function(e){
-        var modal = $(e.modal),
+        var modal = $('#toolbar-overlay', toolbar.document),
             body = $('.modal-body', modal),
             cancelbuttons = ['form.button.Cancel',
                 'form.button.cancel',

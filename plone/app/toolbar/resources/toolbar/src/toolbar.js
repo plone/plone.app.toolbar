@@ -56,66 +56,6 @@
     };
     // }}}
 
-    // # overlay {{{
-    function overlay(e) {
-        var el = $(e.target),
-            toolbar = window.parent.toolbar,
-            href = el.closest('a').attr('href'),
-            modal = $('#toolbar-overlay', toolbar.document),
-            body = $('.modal-body', modal);
-
-        if(href === undefined){
-            return;
-        }
-
-        // Clean up the url, set toolbar skin
-        href = (href.match(/^([^#]+)/)||[])[1];
-
-        body.empty().load(href + ' #portal-column-content',
-            function(response, error){
-                var ev = $.Event();
-                ev.type='beforeSetupOverlay',
-                    ev.target = e.target,
-                    e.modal = modal[0];
-                toolbar.el.trigger(ev);
-
-                // If beforeSetupOverlay says so, stop here.
-                if(!ev.isDefaultPrevented()){
-                    // nested function, because we call ourselves
-                    // after a form submit
-                    function setup(){
-                        // Keep all links inside the overlay
-                        $('a', body).on('click', overlay);
-
-                        // Keep forms inside the overlay, uses the jquery form
-                        // plugin that ships with jquerytools (among others).
-                        $('form', body).ajaxForm({
-                            target: body,
-                            success: setup
-                        });
-                    }
-                    setup();
-
-                    // Call any other event handlers
-                    ev = $.Event();
-                    ev.type='afterSetupOverlay',
-                        ev.target = e.target,
-                        ev.modal = modal[0];
-                    toolbar.el.trigger(ev);
-                }
-
-                // Shrink iframe when the overlay is closed
-                modal.on('hidden', function(e){ toolbar.shrink(); });
-
-                // Show overlay
-                toolbar.stretch();
-                modal.modal('show');
-            }
-        );
-        e.preventDefault();
-    }
-    // }}}
-
     // # Micro Templating {{{
     $.toolbar._template = function(tmpl, data) {
         tmpl = $(tmpl);
@@ -491,7 +431,8 @@
                         if (el.attr('target') == '_parent') {
                             window.parent.location.href = el.attr('href');
                         } else {
-                            overlay(e);
+                            $(self.el).trigger('setup_overlay', el.attr('href'));
+                            e.preventDefault();
                         }
                     }
                 });
