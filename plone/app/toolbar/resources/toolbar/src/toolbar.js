@@ -156,7 +156,8 @@
             url: '#',
             id: '',
             klass: '',
-            group: 'default'
+            group: 'default',
+            link_target: null
             },
 
         template: '<div class="toolbar-wrapper">' +
@@ -349,7 +350,8 @@
             self.el_button
                 .attr({
                     'href': button_options.url,
-                    'class': button_options.klass
+                    'class': button_options.klass,
+                    'target': button_options.link_target
                     })
                 .html(button_options.title)
                 .appendTo(self.el);
