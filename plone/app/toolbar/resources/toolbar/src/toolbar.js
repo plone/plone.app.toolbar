@@ -551,10 +551,6 @@
     };
     // }}}
 
-    // # Set up modal for the overlay {{{
-    $('#toolbar-overlay').modal({show: false});
-    // }}}
-
     // # Testing {{{
     //
     // expose toolbar internals for testing purposes
