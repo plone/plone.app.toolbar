@@ -301,6 +301,7 @@ class Toolbar(BrowserView):
             $(document).ready(function() {
                 $('body').prepend(toolbar.el);
                 toolbar.render();
+                $('#toolbar-overlay', toolbar.el.contents()).modal({show: false});
                 if ($('body').hasClass('template-view') &&
                     $('body').hasClass('portaltype-page')) {
                     $('#toolbar-button-edit', $('#plone-toolbar').contents())
