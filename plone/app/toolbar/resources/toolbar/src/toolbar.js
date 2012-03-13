@@ -59,10 +59,10 @@
     // # overlay {{{
     function overlay(e) {
         var el = $(e.target),
+            toolbar = e.data.self,
             href = el.closest('a').attr('href'),
-            modal = $('#toolbar-overlay'),
-            body = $('.modal-body', modal),
-            toolbar = e.data.self;
+            modal = $('#toolbar-overlay', toolbar.document),
+            body = $('.modal-body', modal);
 
         if(href === undefined){
             return;
@@ -90,15 +90,15 @@
                     }
 
                     // Tinymce editable areas inside overlay
-                    $('textarea.mce_editable', body).each(function() {
-                        var id = $(this).attr('id'),
-                            config = new TinyMCEConfig(id);
-                        // Forgive me for I am about to sin. But it does mean
-                        // we can overlay it multiple times. If you know a
-                        // better way, please share.
-                        delete InitializedTinyMCEInstances[id];
-                        config.init();
-                    });
+                    //$('textarea.mce_editable', body).each(function() {
+                    //    var id = $(this).attr('id'),
+                    //        config = new TinyMCEConfig(id);
+                    //    // Forgive me for I am about to sin. But it does mean
+                    //    // we can overlay it multiple times. If you know a
+                    //    // better way, please share.
+                    //    delete InitializedTinyMCEInstances[id];
+                    //    config.init();
+                    //});
 
                     // Call any other event handlers
                     ev = $.Event();
@@ -472,8 +472,8 @@
                     self.options.iframe_height = el.height();
                 }
 
-                // capture all clicks on iframe
-                $(self.document).bind('click', { self: self }, function(e) {
+                // capture all clicks on toolbar
+                $('.toolbar', self.document).bind('click', { self: self }, function(e) {
                     if (e.which === 1) {
                         var self = e.data.self,
                             streched_klass = self.options.iframe_streched_klass,
