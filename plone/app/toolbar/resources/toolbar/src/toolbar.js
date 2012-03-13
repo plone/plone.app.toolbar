@@ -557,23 +557,6 @@
 
     // # Set up modal for the overlay {{{
     $('#toolbar-overlay').modal({show: false});
-
-    // Plug in some things that needs to happen after loading an overlay.
-    // 3rd party apps kan register their own
-    $(document).bind('setupOverlay', function() {
-
-        // Init plone forms if they exist
-        if ($.fn.ploneTabInit) {
-            $(this).ploneTabInit();
-        }
-
-        // Tinymce editable areas inside overlay
-        $('textarea.mce_editable').each(function() {
-            var config = new TinyMCEConfig($(this).attr('id'));
-            config.init();
-        });
-    });
-
     // }}}
 
     // # Testing {{{
