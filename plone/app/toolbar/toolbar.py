@@ -1,5 +1,3 @@
-import re
-
 try:
     import json
 except:
@@ -14,11 +12,9 @@ from zope.browsermenu.interfaces import IBrowserMenu
 
 from plone.memoize.instance import memoize
 from plone.app.toolbar import PloneMessageFactory as _
-from plone.app.layout.viewlets.common import ContentViewsViewlet
 
 from Acquisition import aq_inner
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from Products.Five.browser import metaconfigure
 
 
 GROUPS_LABELS = {
@@ -33,12 +29,12 @@ GROUPS_LABELS = {
     }
 
 
-class Toolbar(ContentViewsViewlet):
+class Toolbar(BrowserView):
 
     render = ViewPageTemplateFile('templates/toolbar.pt')
 
-    def __init__(self, context, request, view=None, manager=None):
-        super(Toolbar, self).__init__(context, request, view, manager)
+    def __init__(self, context, request, view=None):
+        super(Toolbar, self).__init__(context, request)
         self.__parent__ = view
 
         self.context = aq_inner(self.context)
@@ -70,6 +66,29 @@ class Toolbar(ContentViewsViewlet):
 
     def update(self):
         pass
+
+    def action_list(self):
+        """ actions registered for
+        """
+        action_list = []
+        actions = self.context_state.actions
+
+        # 'folder' actions
+        if self.context_state.is_structural_folder():
+            action_list = actions('folder')
+
+        # 'object' actions
+        action_list.extend(actions('object'))
+
+        # sort actions
+        def sort_buttons(action):
+            try:
+                return self.sort_order.index(action['id'])
+            except ValueError:
+                return 255
+        action_list.sort(key=sort_buttons)
+
+        return action_list
 
     def contentmenu(self):
         menu = getUtility(IBrowserMenu, name='plone_contentmenu')
@@ -124,15 +143,16 @@ class Toolbar(ContentViewsViewlet):
         # content actions (eg. Contents, Edit, View, Sharing...)
         selected_button = None
         selected_button_found = False
-        for action in self.prepareObjectTabs():
-            item = dict(action)
-            item.update({
-                'id': 'toolbar-button-' + item['id'],
+        for action in self.action_list():
+            item = {
+                'title': action['title'],
+                'id': 'toolbar-button-' + action['id'],
+                'link_target': action['link_target'],
                 'group': 'leftactions',
-                })
+                }
 
             # button url
-            button_url = item['url'].strip()
+            button_url = action['url'].strip()
             if button_url.startswith('http') or \
                button_url.startswith('javascript'):
                 item['url'] = button_url
@@ -154,7 +174,7 @@ class Toolbar(ContentViewsViewlet):
                     item['klass'] = 'selected'
                     selected_button_found = True
 
-            if item['id'] == self.default_action:
+            if action['id'] == self.default_action:
                 selected_button = item
 
             buttons.append(item)
@@ -165,41 +185,42 @@ class Toolbar(ContentViewsViewlet):
         # contentmenu (eg: Display, Add new..., State)
         def contentmenu_buttons(items, group='default'):
             buttons = []
-            for button in items:
-                button.update({
+            for item in items:
+                button = {
                     'title': '<span>' + translate(
-                            button['title'],
+                            item['title'],
                             context=self.request,
                             ) + '</span>',
                     'description': translate(
-                            button['description'],
+                            item['description'],
                             context=self.request,
                             ),
-                    'url': button['action'] and button['action'] or '#',
+                    'url': item['action'] and item['action'] or '#',
+                    'icon': item['icon'],
                     'group': group,
-                    })
+                    }
 
-                if 'extra' in button:
+                if 'extra' in item:
 
-                    if 'id'  in button['extra'] and button['extra']['id']:
-                        button['id'] = 'toolbar-button-' + button['extra']['id']
+                    if 'id'  in item['extra'] and item['extra']['id']:
+                        button['id'] = 'toolbar-button-' + item['extra']['id']
 
-                    if 'class' in button['extra'] and button['extra']['class']:
-                        if button['extra']['class'] == 'actionMenuSelected':
+                    if 'class' in item['extra'] and item['extra']['class']:
+                        if item['extra']['class'] == 'actionMenuSelected':
                             button['klass'] = 'selected'
                         else:
-                            button['klass'] = 'label-' + button['extra']['class']
+                            button['klass'] = 'label-' + item['extra']['class']
 
-                    if 'stateTitle' in button['extra'] and \
-                            button['extra']['stateTitle']:
+                    if 'stateTitle' in item['extra'] and \
+                            item['extra']['stateTitle']:
                         button['title'] += '<span class="%s">%s</span>' % (
-                            button['extra'].get('class', ''),
-                            button['extra']['stateTitle'],
+                            item['extra'].get('class', ''),
+                            item['extra']['stateTitle'],
                             )
 
-                if button['submenu']:
+                if item['submenu']:
                     button['title'] += '<span> &#9660;</span>'
-                    button['buttons'] = contentmenu_buttons(button['submenu'])
+                    button['buttons'] = contentmenu_buttons(item['submenu'])
 
                 buttons.append(button)
 
@@ -215,12 +236,12 @@ class Toolbar(ContentViewsViewlet):
             'url': self.userHomeLinkURL(),
             'klass': 'personalactions-user',
             'group': 'personalactions',
-            'id': 'toolbar-button-plone-personalactions',
             'buttons': [{
                     'title': item['title'],
                     'url': item['url'],
                     'class': item.get('class', ''),
                     'id': item.get('id', ''),
+                    'link_target': item.get('link_target', None),
                 } for item in self.context_state.actions('user')
                     if item['available']],
             })
@@ -255,6 +276,7 @@ class Toolbar(ContentViewsViewlet):
                 template: '' +
                     '<div class="toolbar-wrapper">' +
                     ' <div class="toolbar">' +
+                    '  <div class="toolbar-personal"><\/div>' +
                     '  <div class="toolbar-right"><\/div>' +
                     '  <div class="toolbar-left"><\/div>' +
                     ' <\/div>' +
@@ -268,14 +290,12 @@ class Toolbar(ContentViewsViewlet):
                     '    </div>' +
                     '</div>',
                 template_options: function(groups) {
-                  return {
-                      '.toolbar-right': groups.render_group('personalactions'),
-                      '.toolbar-left': $([
-                         groups.render_group('rightactions'),
-                         groups.render_group('leftactions')
-                         ])
-                      }
-                  },
+                    return {
+                        '.toolbar-right': groups.render_group('rightactions'),
+                        '.toolbar-personal': groups.render_group('personalactions'),
+                        '.toolbar-left': groups.render_group('leftactions')
+                        }
+                    },
                 resources: %(resources)s
                 });
             $(document).ready(function() {
