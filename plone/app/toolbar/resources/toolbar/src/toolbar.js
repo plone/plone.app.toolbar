@@ -59,7 +59,7 @@
     // # overlay {{{
     function overlay(e) {
         var el = $(e.target),
-            toolbar = e.data.self,
+            toolbar = window.parent.toolbar,
             href = el.closest('a').attr('href'),
             modal = $('#toolbar-overlay', toolbar.document),
             body = $('.modal-body', modal);
@@ -495,8 +495,6 @@
                         } else {
                             overlay(e);
                         }
-
-                        return e.preventDefault();
                     }
                 });
 
