@@ -1,12 +1,12 @@
 .modal {
     top: 20px;
-    bottom: 20px;
     left: 20px;
     right: 20px;
     margin: 0;
     overflow: hidden;
-    position: fixed;
+    position: absolute;
     width: auto;
+    min-height: 550px;
     z-index: 1050;
     background-color: #ffffff;
 
