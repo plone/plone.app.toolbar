@@ -81,8 +81,20 @@
 
                 // If beforeSetupOverlay says so, stop here.
                 if(!ev.isDefaultPrevented()){
-                    // Keep all links inside the overlay
-                    $('a', body).on('click', overlay);
+                    // nested function, because we call ourselves
+                    // after a form submit
+                    function setup(){
+                        // Keep all links inside the overlay
+                        $('a', body).on('click', overlay);
+
+                        // Keep forms inside the overlay, uses the jquery form
+                        // plugin that ships with jquerytools (among others).
+                        $('form', body).ajaxForm({
+                            target: body,
+                            success: setup
+                        });
+                    }
+                    setup();
 
                     // Call any other event handlers
                     ev = $.Event();
