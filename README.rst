@@ -1,4 +1,3 @@
-============
 Introduction
 ============
 
@@ -17,8 +16,7 @@ Plone 4.2a2 - update versions as applicable::
 
     [buildout]
     parts = instance
-    extends =
-        http://good-py.appspot.com/release/plone.app.toolbar/1.0a1?plone=4.2a2
+    extends = https://raw.github.com/plone/plone.app.toolbar/master/versions.cfg
     
     [instance]
     recipe = plone.recipe.zope2instance
