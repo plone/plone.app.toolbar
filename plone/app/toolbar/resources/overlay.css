@@ -2,11 +2,11 @@
     top: 20px;
     left: 20px;
     right: 20px;
-    margin: 0;
+    margin: auto;
     overflow: hidden;
     position: absolute;
-    width: auto;
-    min-height: 550px;
+    width: 960px;
+    height: 90%;
     z-index: 1050;
     background-color: #ffffff;
 
