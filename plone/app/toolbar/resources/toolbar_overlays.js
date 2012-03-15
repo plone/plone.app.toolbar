@@ -23,6 +23,7 @@ window.parent.toolbar.el.on('toolbar_loaded',
                 // Keep all links inside the overlay (except for
                 // the folder_contents overlay)
                 $('a', body).on('click', function(e){
+                    console.log($('#folderlisting-main-table', body).length);
                     if ($('#folderlisting-main-table', body).length) {
                         if ($(e.target).attr('href').slice(-16) == '/folder_contents') {
                             overlay($(e.target).attr('href'));
