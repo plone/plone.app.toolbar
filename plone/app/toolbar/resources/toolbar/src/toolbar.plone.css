@@ -126,6 +126,7 @@ body {
     margin-right: 1em;
 }
 
+.toolbar-personal,
 .toolbar-right {
     float: right;
     background: #333;
