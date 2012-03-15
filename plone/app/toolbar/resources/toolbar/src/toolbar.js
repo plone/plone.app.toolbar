@@ -205,8 +205,6 @@
 
                     // we make sure all submenus are hidden and deactivated
                     $('.' + groups_klass, toolbar_document).hide();
-                    $('.' + group_open_klass, toolbar_document)
-                            .removeClass(group_open_klass);
 
                     // closing submenu
                     if (el.hasClass(group_open_klass)) {
