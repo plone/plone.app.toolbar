@@ -1,163 +1,85 @@
-/******
-    Set up standard Plone popups
-    
-    Extends jQuery.tools.overlay.conf to set up common Plone effects and
-    visuals.
-******/
+// Define common overlay behaviour for common plone views, you can write
+// your own versions of these to get custom behaviour for your overlay.
 
+window.parent.toolbar.el.on('toolbar_loaded',
+        {toolbar: window.parent.toolbar}, function(event) {
 
+    var toolbar = event.data.toolbar;
 
-jQuery.extend(jQuery.tools.overlay.conf, {
-    fixed: false,
-    speed: 'fast',
-    mask: {
-        color:'#fff',
-        opacity: 0.4,
-        loadSpeed:0,
-        closeSpeed:0
-    }
-});
+    function overlay(href) {
+        var modal = $('#toolbar-overlay', toolbar.document),
+            body = $('.modal-body', modal);
 
-// Override p.a.jquerytool's create_content_div method (in overlayhelpers.js)
-// to create a bootstrap compatible overlay container
-pb.create_content_div = function (pbo, trigger) {
-
-    var pbw = pbo.width,
-        content = $('' +
-            '<div id="' + pbo.nt + '"' +
-            '     class="modal overlay-' + pbo.subtype +
-                    ' ' + (pbo.cssclass || '') + '">' +
-            ' <div class="modal-header">' +
-            '  <a href="#" class="close">' +
-            '   <span>Close</span>' +
-            '  </a>' +
-            '  <h3>Loading ...</h3>' +
-            ' </div>' +
-            ' <div class="modal-body pb-ajax">' +
-            ' </div>' +
-            '</div>');
-
-    content.data('pbo', pbo);
-
-    // if a width option is specified, set it on the overlay div,
-    // computing against the window width if a % was specified.
-    if (pbw) {
-        if (pbw.indexOf('%') > 0) {
-            content.width(parseInt(pbw, 10) / 100 * $(window).width());
-        } else {
-            content.width(pbw);
+        if(href === undefined){
+            return;
         }
-    }
 
-    // always place it at the end of the body
-    content.appendTo($("body"));
+        // Clean up the url, set toolbar skin
+        href = (href.match(/^([^#]+)/)||[])[1];
 
-    //
-    content.bind('click', {pbo: pbo}, function(event) {
-        event.stopPropagation();
-    });
+        body.empty().load(href + ' #portal-column-content > *',
+            function(response, error){
 
-    return content;
+                // Keep all links inside the overlay
+                $('a', body).on('click', function(e){
+                    overlay($(e.target).attr('href'));
+                    return e.preventDefault();
+                });
 
-};
+                // Call any other event handlers
+                ev = $.Event();
+                ev.type='afterSetupOverlay';
+                toolbar.el.trigger(ev);
 
+                // Shrink iframe when the overlay is closed
+                modal.on('hidden', function(e){ toolbar.shrink(); });
 
-(function($) {
-
-    // override overriding of jqt default effect to take account of position of
-    // parent elements
-    jQuery.tools.overlay.addEffect('default',
-        function(pos, onLoad) {
-            var conf = this.getConf(),
-                 w = $(window.parent),
-                 ovl = this.getOverlay(),
-                 op = ovl.parent().offsetParent().offset();
-
-            pos.position = conf.fixed ? 'fixed' : 'absolute';
-            ovl.fadeIn(conf.speed, onLoad);
-
-        }, function(onClose) {
-            this.getOverlay().fadeOut(this.getConf().closeSpeed, onClose);
-        }
-    );
-    if (jQuery.browser.msie && parseInt(jQuery.browser.version, 10) < 7) {
-        // it's not realistic to think we can deal with all the bugs
-        // of IE 6 and lower. Fortunately, all this is just progressive
-        // enhancement.
-        return;
-    }
-
-    var common_content_filter = '#content>*:not(div.configlet),dl.portalMessage.error,dl.portalMessage.info';
-
-    // method to show error message in a noform
-    // situation.
-    function noformerrorshow(el, noform) {
-        var o = $(el),
-            emsg = o.find('dl.portalMessage.error');
-        if (emsg.length) {
-            o.children().replaceWith(emsg);
-            return false;
-        } else {
-            return noform;
-        }
-    }
-
-    // After deletes we need to redirect to the target page.
-    function redirectbasehref(el, responseText) {
-        var mo = responseText.match(/<base href="(\S+?)"/i);
-        if (mo.length === 2) {
-            return mo[1];
-        }
-        return location;
-    }
-
-    // display: select content item / change content item
-    $('#toolbar-button-folderChangeDefaultPage > a').prepOverlay({
-        subtype: 'ajax',
-        filter: common_content_filter,
-        formselector: 'form[name="default_page_form"]',
-        noform: function(el) { return noformerrorshow(el, 'reload'); },
-        closeselector: '[name="form.button.Cancel"]',
-        width:'40%'
-    });
-
-    // TODO: Advanced state
-    // This form needs additional JS and CSS for the calendar widget.
-    // The AJAX form doesn't load it from the javascript_head_slot.
-    // $('#toolbar-button-advanced > a').prepOverlay({
-    //     subtype: 'ajax',
-    //     filter: common_content_filter,
-    //     formselector: 'form',
-    //     noform: function(el) { return noformerrorshow(el, 'reload'); },
-    //     closeselector: '[name=form.button.Cancel]'
-    // });
-
-    // Delete dialog
-    $('#toolbar-button-delete > a').prepOverlay({
-        subtype: 'ajax',
-        filter: common_content_filter,
-        formselector: '#delete_confirmation',
-        noform: function(el) { return noformerrorshow(el, 'redirect'); },
-        redirect: redirectbasehref,
-        closeselector: '[name=form.button.Cancel]',
-        width:'50%'
-    });
-
-    // Rename dialog
-    $('#toolbar-button-rename > a').prepOverlay({
-        subtype: 'ajax',
-        filter: common_content_filter,
-        closeselector: '[name="form.button.Cancel"], div.modal-header > a.close',
-        width:'40%',
-        config: {
-            onBeforeLoad: function(e) {
-                var modal = this.getOverlay(),
-                    title = $('.modal-body h1.documentFirstHeading', modal);
-                $('.modal-header > h3').html(title.html());
-                title.remove();
-                return true;
+                // Show overlay
+                toolbar.stretch();
+                modal.modal('show');
             }
+        );
+    }
+
+    // Overlay when event is passed
+    toolbar.el.on('setup_overlay', function(e, href){
+        overlay(href);
+        return e.preventDefault();
+    });
+
+    toolbar.el.on('afterSetupOverlay', function(e){
+        var modal = $('#toolbar-overlay', toolbar.document),
+            body = $('.modal-body', modal),
+            cancelbuttons = ['form.button.Cancel',
+                'form.button.cancel',
+                'form.actions.cancel'];
+
+        // Init plone forms if they exist
+        if ($.fn.ploneTabInit) {
+            body.ploneTabInit();
+        }
+
+        // Tinymce editable areas inside overlay
+        $('textarea.mce_editable', body).each(function() {
+            var id = $(this).attr('id'),
+                config = new TinyMCEConfig(id);
+            // Forgive me for I am about to sin. But it does mean
+            // we can overlay it multiple times. If you know a
+            // better way, please share.
+            delete InitializedTinyMCEInstances[id];
+            config.init();
+        });
+
+        // Modify common plone views so that Cancel button dismisses the
+        // overlay
+        for (var idx in cancelbuttons){
+            $('input[name="' + cancelbuttons[idx] + '"]', body)
+            .on('click', function(ev){
+                modal.modal('hide');
+                body.empty();
+                return ev.preventDefault();
+            });
         }
     });
 
-})(jQuery);
+});

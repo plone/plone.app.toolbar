@@ -92,7 +92,8 @@
             url: '#',
             id: '',
             klass: '',
-            group: 'default'
+            group: 'default',
+            link_target: null
             },
 
         template: '<div class="toolbar-wrapper">' +
@@ -204,8 +205,6 @@
 
                     // we make sure all submenus are hidden and deactivated
                     $('.' + groups_klass, toolbar_document).hide();
-                    $('.' + group_open_klass, toolbar_document)
-                            .removeClass(group_open_klass);
 
                     // closing submenu
                     if (el.hasClass(group_open_klass)) {
@@ -285,7 +284,8 @@
             self.el_button
                 .attr({
                     'href': button_options.url,
-                    'class': button_options.klass
+                    'class': button_options.klass,
+                    'target': button_options.link_target
                     })
                 .html(button_options.title)
                 .appendTo(self.el);
@@ -408,8 +408,8 @@
                     self.options.iframe_height = el.height();
                 }
 
-                // capture all clicks on iframe
-                $(self.document).bind('click', { self: self }, function(e) {
+                // capture all clicks on toolbar
+                $('.toolbar', self.document).bind('click', { self: self }, function(e) {
                     if (e.which === 1) {
                         var self = e.data.self,
                             streched_klass = self.options.iframe_streched_klass,
@@ -423,16 +423,15 @@
                             el = el.parents('a');
                         }
 
-                        // if click on button was made then we redirect main
-                        // frame to new location
-                        if (el.parent().hasClass(self.options.button_klass)) {
+                        // Buttons default to an overlay but if they
+                        // have the '_parent' link target, just load them in
+                        // the window
+                        if (el.attr('target') == '_parent') {
                             window.parent.location.href = el.attr('href');
+                        } else {
+                            $(self.el).trigger('setup_overlay', el.attr('href'));
+                            e.preventDefault();
                         }
-
-                        return e.preventDefault();
-
-                        // TODO: do check for overlay to not shrink toolbar if
-                        // overlay is opened
                     }
                 });
 
@@ -489,6 +488,21 @@
         return self.data('toolbar');
 
     };
+    // }}}
+
+    // # Testing {{{
+    //
+    // expose toolbar internals for testing purposes
+    if ($.toolbar.testing === true) {
+        $.toolbar._ = {
+            outerHtml: outerHtml,
+            template: template,
+            Resource: Resource,
+            Button: Button,
+            Groups: Groups,
+            Toolbar: Toolbar
+        };
+    }
     // }}}
 
 }(jQuery));

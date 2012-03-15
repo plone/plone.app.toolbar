@@ -1,4 +1,3 @@
-
 try:
     import json
 except:
@@ -41,7 +40,7 @@ class Toolbar(BrowserView):
         self.context = aq_inner(self.context)
         self.context_url = self.context.absolute_url()
         self.context_fti = self.context.getTypeInfo()
-        self.request_url = self.request.get('ACTUAL_URL')
+        self.request_url = self.request.get('ACTUAL_URL', '')
         request_url_path = self.request_url[len(self.context_url):]
         if request_url_path.startswith('/'):
             request_url_path = request_url_path[1:]
@@ -148,6 +147,7 @@ class Toolbar(BrowserView):
             item = {
                 'title': action['title'],
                 'id': 'toolbar-button-' + action['id'],
+                'link_target': action['link_target'],
                 'group': 'leftactions',
                 }
 
@@ -241,6 +241,7 @@ class Toolbar(BrowserView):
                     'url': item['url'],
                     'class': item.get('class', ''),
                     'id': item.get('id', ''),
+                    'link_target': item.get('link_target', None),
                 } for item in self.context_state.actions('user')
                     if item['available']],
             })
@@ -275,19 +276,26 @@ class Toolbar(BrowserView):
                 template: '' +
                     '<div class="toolbar-wrapper">' +
                     ' <div class="toolbar">' +
+                    '  <div class="toolbar-personal"><\/div>' +
                     '  <div class="toolbar-right"><\/div>' +
                     '  <div class="toolbar-left"><\/div>' +
                     ' <\/div>' +
-                    '<\/div>',
+                    '<\/div>' + 
+                    '<div class="modal hide" id="toolbar-overlay">' +
+                    '    <div class="modal-header">' +
+                    '        <a class="close" data-dismiss="modal">&times;</a>' +
+                    '    </div>' +
+                    '    <div class="modal-body">' +
+                    '        <p>One fine body</p>' +
+                    '    </div>' +
+                    '</div>',
                 template_options: function(groups) {
-                  return {
-                      '.toolbar-right': groups.render_group('personalactions'),
-                      '.toolbar-left': $([
-                         groups.render_group('rightactions'),
-                         groups.render_group('leftactions')
-                         ])
-                      }
-                  },
+                    return {
+                        '.toolbar-right': groups.render_group('rightactions'),
+                        '.toolbar-personal': groups.render_group('personalactions'),
+                        '.toolbar-left': groups.render_group('leftactions')
+                        }
+                    },
                 resources: %(resources)s
                 });
             $(document).ready(function() {

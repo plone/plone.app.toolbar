@@ -5,8 +5,11 @@
             field="resourceBundlesForThemes">
         <value purge="false">
             <element key="toolbar">
+                <element>default</element>
                 <element>jquery</element>
                 <element>jquerytools</element>
+                <element>bootstrap</element>
+                <element>tinymce</element>
                 <element>toolbar</element>
             </element>
 
@@ -16,6 +19,7 @@
                 <element>jquery</element>
                 <element>jquerytools</element>
                 <element>tinymce</element>
+                <element>toolbar-init</element>
             </element>
 
             <element key="Plone Default">
@@ -23,6 +27,7 @@
                 <element>jquery</element>
                 <element>jquerytools</element>
                 <element>tinymce</element>
+                <element>toolbar-init</element>
             </element>
 
             <element key="Sunburst Theme">
@@ -30,6 +35,7 @@
                 <element>jquery</element>
                 <element>jquerytools</element>
                 <element>tinymce</element>
+                <element>toolbar-init</element>
             </element>
         </value>
     </record>
