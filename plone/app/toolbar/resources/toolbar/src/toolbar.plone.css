@@ -1,10 +1,3 @@
-* {
-    font-family: Arial;
-    font-size: 13px;
-    margin: 0;
-    padding: 0;
-    border: 0;
-}
 html {
     overflow-y: visible;
 }
@@ -14,12 +7,19 @@ body {
     overflow: hidden !important;
 }
 
-
 .toolbar-wrapper {
     position: relative;
     width: 100%;
     height: 47px;
     background: #333;
+}
+
+.toolbar-wrapper > * {
+    font-family: Arial;
+    font-size: 13px;
+    margin: 0;
+    padding: 0;
+    border: 0;
 }
 
 .toolbar {
@@ -158,36 +158,36 @@ body {
  * taken from >> members.css << and changed a bit
  */
 
-.state-private,
-.state-visible,
-.state-published,
-.state-pending,
-.state-expired {
+.toolbar .state-private,
+.toolbar .state-visible,
+.toolbar .state-published,
+.toolbar .state-pending,
+.toolbar .state-expired {
     border-radius: 0.2em;
     -moz-border-radius: 0.2em;
     -webkit-border-radius: 0.2em;
     margin: 0.3em;
     padding: 0.1em 0.4em;
-    color: #FFFFFF;
+    color: #FFFFFF !important;
     text-shadow: 1px 1px 2px black;
     -moz-text-shadow: 1px 1px 2px black;
     -webkit-text-shadow: 1px 1px 2px black;
     -o-text-shadow: 1px 1px 2px black;
 }
 
-.state-private {
+.toolbar .state-private {
     background-color: Red !important;
 }
-.state-visible {
+.toolbar .state-visible {
     background-color: #74AE0B !important;
 }
-.state-published {
+.toolbar .state-published {
     background-color: #436976 !important;
 }
-.state-pending {
+.toolbar .state-pending {
     background-color: #FFA500 !important;
 }
-.state-expired {
+.toolbar .state-expired {
     background-color: Red !important;
 }
 
