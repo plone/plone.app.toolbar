@@ -17,7 +17,7 @@ window.parent.toolbar.el.on('toolbar_loaded',
         // Clean up the url, set toolbar skin
         href = (href.match(/^([^#]+)/)||[])[1];
 
-        body.empty().load(href + ' #portal-column-content',
+        body.empty().load(href + ' #portal-column-content > *',
             function(response, error){
 
                 // Keep all links inside the overlay
