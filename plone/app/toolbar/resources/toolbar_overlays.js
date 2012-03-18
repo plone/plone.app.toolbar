@@ -20,10 +20,20 @@ window.parent.toolbar.el.on('toolbar_loaded',
         body.empty().load(href + ' #portal-column-content > *',
             function(response, error){
 
-                // Keep all links inside the overlay
+                // Keep all links inside the overlay (except for
+                // the folder_contents overlay)
                 $('a', body).on('click', function(e){
-                    overlay($(e.target).attr('href'));
-                    return e.preventDefault();
+                    if ($('#folderlisting-main-table', body).length) {
+                        if ($(e.target).attr('href').slice(-16) == '/folder_contents') {
+                            overlay($(e.target).attr('href'));
+                            return e.preventDefault();
+                        } else {
+                            window.parent.location.href = $(e.target).attr('href');
+                        };
+                    } else {
+                        overlay($(e.target).attr('href'));
+                        return e.preventDefault();
+                    };
                 });
 
                 // Call any other event handlers
@@ -80,6 +90,7 @@ window.parent.toolbar.el.on('toolbar_loaded',
                 return ev.preventDefault();
             });
         }
+
     });
 
 });
