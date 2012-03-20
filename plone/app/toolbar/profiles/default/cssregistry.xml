@@ -24,7 +24,7 @@
     <!-- Twitter Bootstrap -->
     <stylesheet
         cacheable="False" compression="none" cookable="True"
-        enabled="False" bundle="bootstrap"
+        enabled="True" bundle="bootstrap"
         id="++resource++plone.app.toolbar/bootstrap/css/bootstrap.min.css"
         />
 

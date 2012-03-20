@@ -1,56 +1,121 @@
-try:
-    import json
-except:
-    import simplejson as json
-
 from urllib import unquote
-from zope.i18n import translate
-from zope.component import getUtility
 from zope.component import getMultiAdapter
-from zope.publisher.browser import BrowserView
+from zope.component import getUtility
 from zope.browsermenu.interfaces import IBrowserMenu
-
 from plone.memoize.instance import memoize
-from plone.app.toolbar import PloneMessageFactory as _
+from plone.tiles import Tile
 
 from Acquisition import aq_inner
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 
-GROUPS_LABELS = {
-    'tile-group-structure':
-        _(u'tile-group-structure-label', default=u"Structure"),
-    'tile-group-media':
-        _(u'tile-group-media-label', default=u"Media"),
-    'tile-group-fields':
-        _(u'tile-group-fields-label', default=u"Fields"),
-    'tile-group-other':
-        _(u'tile-group-other-label', default=u"Other"),
-    }
-
-
-class Toolbar(BrowserView):
+class ToolbarTile(Tile):
 
     render = ViewPageTemplateFile('templates/toolbar.pt')
 
-    def __init__(self, context, request, view=None):
-        super(Toolbar, self).__init__(context, request)
-        self.__parent__ = view
+    def get_multi_adapter(self, name):
+        return getMultiAdapter((self.context, self.request), name=name)
 
+
+    def __init__(self, context, request):
+        super(ToolbarTile, self).__init__(context, request)
         self.context = aq_inner(self.context)
+
+        # Set the 'toolbar' skin so that we get the correct resources
+        self.context.changeSkin('toolbar', self.request)
+
+        self.context_state = self.get_multi_adapter(u'plone_context_state')
+        self.scripts_view = self.get_multi_adapter(u'resourceregistries_scripts_view')
+        self.styles_view = self.get_multi_adapter(u'resourceregistries_styles_view')
+
         self.context_url = self.context.absolute_url()
         self.context_fti = self.context.getTypeInfo()
         self.request_url = self.request.get('ACTUAL_URL', '')
+
         request_url_path = self.request_url[len(self.context_url):]
         if request_url_path.startswith('/'):
             request_url_path = request_url_path[1:]
         self.request_url_path = request_url_path
 
-        self.default_action = 'view'
-        self.sort_order = ['folderContents']
+    @property
+    def resources(self):
+        resources = []
+        for item in self.styles_view.styles() + self.scripts_view.scripts():
+            if item['src']:
+                resources.append(item['src'])
+        return resources
 
-        self.context_state = getMultiAdapter((self.context, self.request),
-                name=u'plone_context_state')
+    @property
+    def position(self):
+        position = self.data.get('position', 'top')
+        if position == 'top':
+            return 'navbar-fixed-top'
+        elif position == 'bottom':
+            return 'navbar-fixed-bottom'
+        return ''
+
+
+
+
+    def actions(self):
+        actions = []
+
+        # 'folder' actions
+        if self.context_state.is_structural_folder():
+            actions.extend(self.context_state.actions('folder'))
+
+        # 'object' actions
+        actions.extend(self.context_state.actions('object'))
+
+        # sort actions
+        sort_order = ['folderContents']
+        def sort_actions(action):
+            try:
+                return sort_order.index(action['id'])
+            except ValueError:
+                return 255
+        actions.sort(key=sort_actions)
+
+        # content actions (eg. Contents, Edit, View, Sharing...)
+        result = []
+        active_action_found = False
+        for action in actions:
+            item = action
+
+            # make sure id is unique
+            item['id'] = 'plone-toolbar-action-' + item['id']
+
+            # button url
+            button_url = action['url'].strip()
+            if button_url.startswith('http') or \
+               button_url.startswith('javascript'):
+                item['url'] = button_url
+            else:
+                item['url'] = '%s/%s' % (self.context_url, button_url)
+
+            # Action method may be a method alias:
+            # Attempt to resolve to a template.
+            action_method = item['url'].split('/')[-1]
+            action_method = self.context_fti.queryMethodID(
+                    action_method, default=action_method)
+
+            # Determine if action is selected
+            if action_method:
+                request_action = unquote(self.request_url_path)
+                request_action = self.context_fti.queryMethodID(
+                    request_action, default=request_action)
+                if action_method == request_action:
+                    item['klass'] = 'selected'
+                    selected_button_found = True
+
+
+            result.append(item)
+
+        return result
+
+class tmp:
+
+    def test(self):
         self.portal_state = getMultiAdapter((self.context, self.request),
                 name=u'plone_portal_state')
         self.resource_scripts = getMultiAdapter((self.context, self.request),
@@ -67,28 +132,6 @@ class Toolbar(BrowserView):
     def update(self):
         pass
 
-    def action_list(self):
-        """ actions registered for
-        """
-        action_list = []
-        actions = self.context_state.actions
-
-        # 'folder' actions
-        if self.context_state.is_structural_folder():
-            action_list = actions('folder')
-
-        # 'object' actions
-        action_list.extend(actions('object'))
-
-        # sort actions
-        def sort_buttons(action):
-            try:
-                return self.sort_order.index(action['id'])
-            except ValueError:
-                return 255
-        action_list.sort(key=sort_buttons)
-
-        return action_list
 
     def contentmenu(self):
         menu = getUtility(IBrowserMenu, name='plone_contentmenu')
@@ -317,7 +360,7 @@ class Toolbar(BrowserView):
                 }
 
 
-class ToolbarFallback(BrowserView):
+class ToolbarFallback:
     """ View which is going to be shown when javascript is not available.
     """
 

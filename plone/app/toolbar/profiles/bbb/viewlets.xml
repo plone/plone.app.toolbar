@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <object>
     <order manager="plone.portaltop" skinname="*">
-        <viewlet name="plone.toolbar.toolbarlink" insert-before="*" />
+        <viewlet name="plone.toolbar" insert-before="*" />
     </order>
     <order manager="plone.portaltop" skinname="toolbar">
-        <viewlet name="plone.toolbar.toolbarlink" remove="True" />
+        <viewlet name="plone.toolbar" remove="True" />
     </order>
 </object>
