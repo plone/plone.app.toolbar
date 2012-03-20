@@ -5,7 +5,6 @@
             field="resourceBundlesForThemes">
         <value purge="false">
             <element key="toolbar">
-                <element>default</element>
                 <element>jquery</element>
                 <element>jquerytools</element>
                 <element>bootstrap</element>

@@ -1,0 +1,24 @@
+info it worked if it ends with ok
+verbose cli [ 'node', '/home/rok/.nix-profile/bin/npm', 'install', 'lessjs' ]
+info using npm@1.1.1
+info using node@v0.6.11
+verbose /home/rok/.nix-profile/bin/node node symlink
+verbose config file /home/rok/.npmrc
+verbose config file /home/rok/.nix-profile/etc/npmrc
+verbose config file /nix/store/6jgblbzazcxa8z24i50k0b1rjnyxhcaj-nodejs-0.6.11/lib/node_modules/npm/npmrc
+verbose mkdir done: /home/rok/.nix-profile 755
+ERR! could not create prefix directory /home/rok/.nix-profile
+ERR! Error: EPERM, operation not permitted '/home/rok/.nix-profile'
+ERR! 
+ERR! Please try running this command again as root/Administrator.
+ERR! 
+ERR! System Linux 3.2.7
+ERR! command "node" "/home/rok/.nix-profile/bin/npm" "install" "lessjs"
+ERR! cwd /home/rok/dev/plone/deco/src/plone.app.toolbar/plone/app/toolbar/resources/src
+ERR! node -v v0.6.11
+ERR! npm -v 1.1.1
+ERR! path /home/rok/.nix-profile
+ERR! code EPERM
+ERR! message EPERM, operation not permitted '/home/rok/.nix-profile'
+ERR! errno {}
+verbose exit [ 1, true ]

@@ -5,33 +5,13 @@
     <stylesheet
         cacheable="False" compression="safe" cookable="True"
         enabled="True" bundle="default"
-        id="++resource++plone.app.toolbar/toolbar_bbb.css"
+        id="++resource++plone.app.toolbar/src/bbb.css"
         />
 
-
-    <!-- Toolbar Swirl Theme -->
     <stylesheet
-        cacheable="False" compression="safe" cookable="True"
+        cacheable="False" compression="none" cookable="True"
         enabled="True" bundle="toolbar"
-        id="++resource++plone.app.toolbar/toolbar/src/toolbar.plone.css"
-        />
-
-    <stylesheet
-        bundle="toolbar"
-        id="++resource++plone.app.toolbar/overlay.css"
-        />
-
-    <!-- Twitter Bootstrap -->
-    <stylesheet
-        cacheable="False" compression="none" cookable="True"
-        enabled="True" bundle="bootstrap"
-        id="++resource++plone.app.toolbar/bootstrap/css/bootstrap.min.css"
-        />
-
-    <stylesheet
-        cacheable="False" compression="none" cookable="True"
-        enabled="False" bundle="bootstrap"
-        id="++resource++plone.app.toolbar/bootstrap/css/bootstrap-responsive.min.css"
+        id="++resource++plone.app.toolbar/src/bootstrap-plone.min.css"
         />
 
 </object>

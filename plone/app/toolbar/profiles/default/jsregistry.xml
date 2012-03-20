@@ -3,8 +3,6 @@
 
     <!-- BBB: Create bundles for jQuery, jQueryTools and TinyMCE - see
          registry.xml -->
-    <javascript bundle="jquery"
-        id="jquery.js" />
     <javascript bundle="jquerytools"
         id="++resource++plone.app.jquerytools.js"  />
     <javascript bundle="jquerytools"
@@ -24,24 +22,95 @@
     <javascript bundle="tinymce"
         id="tiny_mce_init.js" />
 
-    <!-- Twitter Bootstrap -->
+
     <javascript 
-        cacheable="False" compression="none" cookable="False"
+        cacheable="False" compression="safe" cookable="False"
         enabled="True" inline="False" bundle="bootstrap"
-        id="++resource++plone.app.toolbar/bootstrap/js/bootstrap.min.js"
+        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-alert.js"
         />
 
-    <!-- Toolbar -->
+    <javascript 
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="bootstrap"
+        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-button.js"
+        />
+
+    <javascript 
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="bootstrap"
+        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-carousel.js"
+        />
+
+    <javascript 
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="bootstrap"
+        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-collapse.js"
+        />
+
+    <javascript 
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="bootstrap"
+        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-dropdown.js"
+        />
+
+    <javascript 
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="bootstrap"
+        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap.min.js"
+        />
+
+    <javascript 
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="bootstrap"
+        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-modal.js"
+        />
+
+    <javascript 
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="bootstrap"
+        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-tooltip.js"
+        />
+
+    <javascript 
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="bootstrap"
+        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-popover.js"
+        />
+
+    <javascript 
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="bootstrap"
+        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-scrollspy.js"
+        />
+
+    <javascript 
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="bootstrap"
+        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-tab.js"
+        />
+
+    <javascript 
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="bootstrap"
+        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-transition.js"
+        />
+
+    <javascript 
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="bootstrap"
+        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-typeahead.js"
+        />
+
     <javascript 
         cacheable="False" compression="safe" cookable="False"
         enabled="True" inline="False" bundle="toolbar-init"
-        id="++resource++plone.app.toolbar/toolbar/src/iframe.js"
+        id="++resource++plone.app.toolbar/src/iframize.js"
         />
 
     <javascript
-        cacheable="False"
-        bundle="toolbar"
-        id="++resource++plone.app.toolbar/toolbar_overlays.js"
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="toolbar"
+        id="++resource++plone.app.toolbar/src/overlays.js"
         />
     <!-- TODO: notify -->
 
