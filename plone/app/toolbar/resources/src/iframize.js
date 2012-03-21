@@ -167,6 +167,7 @@
             });
 
             // append css and javascript resources
+            self.window = self.el_iframe[0].contentWindow;
             self.document = self.el_iframe.contents()[0];
             self.document.open();
             self.document.write(self.resources);
@@ -208,7 +209,7 @@
                             if (el.parent().hasClass('open')) {
                                 self.strech();
                             }
-                            $(self.el).trigger('iframize_link_clicked');
+                            self.window.$(self.document).trigger('iframize_link_clicked', [el, self]);
                             e.preventDefault();
                         }
                     }
