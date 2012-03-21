@@ -17,7 +17,7 @@ class ToolbarViewlet(ViewletBase):
         return u'<div style="display:none;" ' + \
                     u'data-iframe="true" ' + \
                     u'data-iframe-resources="%s">%s</div>' % (
-                        ';'.join(tile.resources), tile_body)
+                        ';'.join(tile.resources()), tile_body)
 
 
 class NullViewlet(ViewletBase):

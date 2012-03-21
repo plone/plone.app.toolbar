@@ -5,16 +5,65 @@
 </head>
 <body>
 
-  <div tal:attributes="class python:'navbar ' + view.position">
+  <div class="navbar">
     <div class="navbar-inner">
       <div class="container">
 
         <ul class="nav">
-          <li tal:repeat="item view/actions">
+          <li tal:repeat="item view/actions"
+              tal:attributes="class item/klass|nothing; id item/id|nothing;">
             <a href="#"
               tal:attributes="
-                id item/id; href item/url;"
-              tal:content="item/title"></a>
+                  href item/url|nothing;
+                  target item/link_target|nothing;"
+              tal:content="item/title">Link Title</a>
+          </li>
+        </ul>
+
+        <ul class="nav pull-right">
+          <li tal:repeat="item view/contentmenu"
+              tal:attributes="class string:dropdown ${item/klass|nothing}; id item/id|nothing;">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+               tal:attributes="
+                 href item/action|nothing;
+                 target item/link_target|nothing;">
+              <span tal:content="item/title">Link Title</span>
+              <span tal:condition="python:'extra' in item and 'stateTitle' in item['extra']"
+                    tal:attributes="class item/extra/class"
+                    tal:content="item/extra/stateTitle">Private</span>
+              <b class="caret">
+            </a>
+            <ul class="dropdown-menu" tal:condition="item/submenu">
+              <li tal:repeat="subitem item/submenu"
+                  tal:attributes="class subitem/klass|nothing; id subitem/id|nothing;">
+                <a href="#" tal:attributes="href subitem/action">
+                  <img src="#" alt="icon"
+                       tal:condition="subitem/icon|nothing"
+                       tal:attributes="src subitem/icon" />
+                  <span tal:content="subitem/title">Link Title</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <li class="divider-vertical"></li>
+
+          <li class="dropdown" id="plone-personal-actions">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+               tal:attributes="href view/user_homeurl">
+              <img src="#" alt="user portrait"
+                  tal:condition="view/user_portrait"
+                  tal:attributes="src view/user_portrait" />
+              <span tal:content="view/user_displayname">Fullname</span>
+              <b class="caret">
+            </a>
+            <ul class="dropdown-menu">
+              <li tal:repeat="subitem view/user_actions">
+                <a href="#"
+                   tal:attributes="href subitem/url"
+                   tal:content="subitem/title">Link Title</a>
+              </li>
+            </ul>
           </li>
         </ul>
 
