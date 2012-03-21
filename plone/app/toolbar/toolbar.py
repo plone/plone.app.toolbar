@@ -41,7 +41,7 @@ class ToolbarTile(Tile):
             request_url_path = request_url_path[1:]
         self.request_url_path = request_url_path
 
-    #@memoize
+    @memoize
     def resources(self):
         resources = []
         for item in self.styles_view.styles() + self.scripts_view.scripts():
@@ -56,7 +56,7 @@ class ToolbarTile(Tile):
                     resources.append(item['src'])
         return resources
 
-    #@memoize
+    @memoize
     def actions(self):
         actions = []
 
@@ -130,6 +130,9 @@ class ToolbarTile(Tile):
                     if 'class' in item['extra'] and item['extra']['class']:
                         if item['extra']['class'] == 'actionMenuSelected':
                             item['klass'] = 'active'
+                        else:
+                            if 'stateTitle' not in item['extra']:
+                                item['klass'] = item['extra']['class']
                     if 'submenu' in item and item['submenu']:
                         item['submenu'] = contentmenu_actions(item['submenu'])
                 buttons.append(item)

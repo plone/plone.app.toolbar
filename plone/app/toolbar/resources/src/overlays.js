@@ -111,7 +111,7 @@
             '    <a href="#" class="btn">Cancel</a>' +
             '    <a href="#" class="btn btn-primary">Save changes</a>' +
             '  </div>' +
-            '</div>'));
+            '</div>').hide());
         $(document).bind('iframize_link_clicked', function(e, el, iframe) {
             overlay(el.attr('href'), iframe, el.parent().attr('id'));
             e.preventDefault();

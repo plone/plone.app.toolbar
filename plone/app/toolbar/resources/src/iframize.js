@@ -198,20 +198,35 @@
                         // Buttons default to an overlay but if they
                         // have the '_parent' link target, just load them in
                         // the top window
-                        if (el.attr('target') === '_parent') {
+                        //if (el.attr('target') === '_parent') {
+                        //    if (e.which === 1) {
+                        //        window.parent.location.href = el.attr('href');
+                        //    } else {
+                        //        window.parent.open(el.attr('href'));
+                        //    }
+                        //} else {
+                        //    // FIXME: this is too bootstrap specific
+                        //    if (el.parent().hasClass('open')) {
+                        //        self.strech();
+                        //    }
+                        //    self.window.$(self.document).trigger('iframize_link_clicked', [el, self]);
+                        //    e.preventDefault();
+                        //}
+
+                        // XXX: only temporary solution
+                        if (!el.parent().hasClass('dropdown')) {
                             if (e.which === 1) {
                                 window.parent.location.href = el.attr('href');
                             } else {
                                 window.parent.open(el.attr('href'));
                             }
                         } else {
-                            // FIXME: this is too bootstrap specific
                             if (el.parent().hasClass('open')) {
                                 self.strech();
                             }
-                            self.window.$(self.document).trigger('iframize_link_clicked', [el, self]);
                             e.preventDefault();
                         }
+
                     }
 
                 });
