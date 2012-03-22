@@ -39,7 +39,7 @@
         for="*"
         manager="plone.app.layout.viewlets.interfaces.IPortalHeader"
         class="plone.app.layout.viewlets.common.PersonalBarViewlet"
-        template="templates/personal_bar.pt"
+        template="bbb_personal_bar.pt"
         permission="zope2.View"
         layer=".interfaces.IToolbarLayer"
         />
@@ -47,7 +47,7 @@
     <browser:viewletManager
         name="plone.resourceregistries.kineticstylesheets"
         provides="Products.ResourceRegistries.interfaces.IHtmlHeadStyles"
-        template="templates/nullviewlet.pt"
+        template="bbb_nullviewlet.pt"
         permission="zope2.View"
         layer=".interfaces.IToolbarLayer"
         />

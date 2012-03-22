@@ -28,12 +28,12 @@
         name="plone.app.toolbar"
         directory="resources" />
 
-    <!-- Tile -->
+    <!-- Toolbar Tile -->
     <plone:tile
         name="plone.toolbar"
         title="Plone toolbar"
         class=".toolbar.ToolbarTile"
-        template="templates/toolbar.pt"
+        template="toolbar.pt"
         for="*"
         add_permission="plone.AddToolbar"
         permission="plone.ViewToolbar" />

@@ -12,8 +12,6 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 class ToolbarTile(Tile):
 
-    render = ViewPageTemplateFile('templates/toolbar.pt')
-
     def get_multi_adapter(self, name):
         return getMultiAdapter((self.context, self.request), name=name)
 
@@ -117,7 +115,7 @@ class ToolbarTile(Tile):
 
         return result
 
-    #@memoize
+    @memoize
     def contentmenu(self):
         def contentmenu_actions(items):
             buttons = []
@@ -141,7 +139,7 @@ class ToolbarTile(Tile):
         contentmenu = getUtility(IBrowserMenu, name='plone_contentmenu').getMenuItems
         return contentmenu_actions(contentmenu(self.context, self.request))
 
-    #@memoize
+    @memoize
     def user_displayname(self):
         """Get the username of the currently logged in user
         """
@@ -164,7 +162,7 @@ class ToolbarTile(Tile):
 
         return fullname
 
-    #@memoize
+    @memoize
     def user_portrait(self):
         member = self.portal_state.member()
         membership = self.tools.membership()
@@ -172,14 +170,14 @@ class ToolbarTile(Tile):
         if portrait is not None:
             return portrait.absolute_url()
 
-    #@memoize
+    @memoize
     def user_homeurl(self):
         member = self.portal_state.member()
         userid = member.getId()
         return "%s/author/%s" % (
                 self.portal_state.navigation_root_url(), userid)
 
-    #@memoize
+    @memoize
     def user_actions(self):
         actions = self.context_state.actions('user')
         return [item for item in actions if item['available']]
