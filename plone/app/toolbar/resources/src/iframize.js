@@ -231,7 +231,7 @@
 
                 });
 
-                $(self.el).trigger('iframize_loaded');
+                $(self.el).trigger('iframe_loaded');
 
             });
         },
@@ -264,6 +264,10 @@
         if (self.data('iframize') === undefined) {
             var iframe = new $.iframize.IFrame(self, resources);
             self.data('iframize', iframe);
+
+            // we also store this on iframe element so we can later retrive it
+            // via $('iframe').iframize()
+            iframe.el_iframe.data('iframize', iframe);
         }
         return self.data('iframize');
     };
