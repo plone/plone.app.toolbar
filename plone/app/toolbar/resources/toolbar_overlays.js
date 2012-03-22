@@ -6,6 +6,18 @@ window.parent.toolbar.el.on('toolbar_loaded',
 
     var toolbar = event.data.toolbar;
 
+    // Links under "Display", "Workflow", etc should open directly in parent
+    no_overlay = [
+        "#toolbar-button-plone-contentmenu-workflow",
+        "#toolbar-button-plone-contentmenu-display",
+        "#toolbar-button-plone-contentmenu-actions"];
+    for(var idx in no_overlay){
+        $(no_overlay[idx] + " a").attr('target', '_parent');
+    }
+    // ... but rename goes in an overlay
+    $('#toolbar-button-plone-contentmenu-actions #toolbar-button-rename a')
+        .attr('target', null);
+
     function overlay(href) {
         var modal = $('#toolbar-overlay', toolbar.document),
             body = $('.modal-body', modal);
