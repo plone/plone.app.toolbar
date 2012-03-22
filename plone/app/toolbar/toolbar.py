@@ -7,7 +7,6 @@ from plone.memoize.instance import memoize
 from plone.tiles import Tile
 
 from Acquisition import aq_inner
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 
 class ToolbarTile(Tile):
@@ -181,19 +180,3 @@ class ToolbarTile(Tile):
     def user_actions(self):
         actions = self.context_state.actions('user')
         return [item for item in actions if item['available']]
-
-
-class ToolbarFallback:
-    """ View which is going to be shown when javascript is not available.
-    """
-
-    recurse = ViewPageTemplateFile('templates/toolbar_fallback_recurse.pt')
-
-    def __init__(self, context, request):
-        super(ToolbarFallback, self).__init__(context, request)
-        self.toolbar = getMultiAdapter(
-                (context, request, self), name=u'plone_toolbar')
-
-    @property
-    def buttons(self):
-        return self.toolbar.buttons
