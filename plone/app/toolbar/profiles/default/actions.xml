@@ -1,11 +1,22 @@
 <?xml version="1.0"?>
 <object name="portal_actions" xmlns:i18n="http://xml.zope.org/namespaces/i18n">
-   <object name="user" meta_type="CMF Action Category">
-       <object name="dashboard" meta_type="CMF Action" i18n:domain="plone">
-        <property name="link_target" i18n:translate="">_parent</property>
-       </object>
-       <object name="logout" meta_type="CMF Action" i18n:domain="plone">
-        <property name="link_target" i18n:translate="">_parent</property>
-       </object>
+  <object name="user" meta_type="CMF Action Category">
+    <object name="dashboard" meta_type="CMF Action" i18n:domain="plone">
+     <property name="link_target" i18n:translate="">_parent</property>
+    </object>
+    <object name="logout" meta_type="CMF Action" i18n:domain="plone">
+     <property name="link_target" i18n:translate="">_parent</property>
+    </object>
+    <object name="manage_portlets" meta_type="CMF Action" i18n:domain="plone"
+            insert-before="logout">
+     <property name="title" i18n:translate="">Manage Portlets</property>
+     <property name="description" i18n:translate=""></property>
+     <property
+        name="url_expr">string:${portal_url}/@@manage-portlets</property>
+     <property name="permissions">
+      <element value="Portlets: Manage portlets"/>
+     </property>
+     <property name="visible">True</property>
+    </object>
   </object>
 </object>
