@@ -65,3 +65,12 @@
   filter: alpha(opacity=40);
   cursor: pointer;
 }
+
+a.viewlink {
+    padding-left: 1em;
+    border-bottom: none !important;
+}
+
+td a.viewlink {
+    float: right;
+}

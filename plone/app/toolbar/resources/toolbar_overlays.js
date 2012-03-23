@@ -31,9 +31,9 @@ window.parent.toolbar.el.on('toolbar_loaded',
 
         // Insert ++untheme++ namespace to disable theming. This only works
         // for absolute urls.
-        href = href.replace(/^(https?:\/\/[^/]+)\/(.*)/, '$1/++untheme++d/$2')
+        var unthemed = href.replace(/^(https?:\/\/[^/]+)\/(.*)/, '$1/++untheme++d/$2')
 
-        body.empty().load(href + ' #portal-column-content > *',
+        body.empty().load(unthemed + ' #portal-column-content > *',
             function(response, error){
 
                 // Keep all links inside the overlay (except for
@@ -45,11 +45,27 @@ window.parent.toolbar.el.on('toolbar_loaded',
 
                 // Override default behaviour on folder_contents links
                 $('#folderlisting-main-table a', body).each(function(){
-                    if($(this).attr('href').slice(-16) != '/folder_contents') {
+                    if($(this).attr('href').slice(-16) == '/folder_contents') {
+                        var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
+                            .attr('href', $(this).attr('href'))
+                            .attr('class', 'viewlink')
+                            .attr('target', '_parent')
+                            .attr('title', 'Open here'); // Needs i18n!
+                        $(this).parent().append(viewlink);
+                    } else {
                         $(this).on('click', function(e){
                            window.parent.location.href = $(e.target).attr('href');
                         });
                     }
+                });
+
+                $('#folderlisting-main-table', body).parents('#content').each(function(){
+                    var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
+                        .attr('href', href)
+                        .attr('class', 'viewlink')
+                        .attr('target', '_parent')
+                        .attr('title', 'Open here'); // Needs i18n!
+                    $('h1.documentFirstHeading', this).append(viewlink);
                 });
 
                 // Call any other event handlers
