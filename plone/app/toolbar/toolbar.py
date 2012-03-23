@@ -4,11 +4,14 @@ except:
     import simplejson as json
 
 from urllib import unquote
+from Acquisition import aq_base
 from zope.i18n import translate
 from zope.component import getUtility
 from zope.component import getMultiAdapter
+from zope.interface import implements
 from zope.publisher.browser import BrowserView
 from zope.browsermenu.interfaces import IBrowserMenu
+from zope.traversing.interfaces import ITraversable
 
 from plone.memoize.instance import memoize
 from plone.app.toolbar import PloneMessageFactory as _
@@ -331,3 +334,16 @@ class ToolbarFallback(BrowserView):
     @property
     def buttons(self):
         return self.toolbar.buttons
+
+class UnthemeRequest(object):
+    implements(ITraversable)
+
+    def __init__(self, context, request=None):
+        self.context = context
+        self.request = request
+
+    def traverse(self, name, ignore):
+        if self.request is not None:
+            self.request.response.setHeader('X-Theme-Disabled', 'True')
+            self.request['HTTP_X_THEME_ENABLED'] = False
+        return self.context

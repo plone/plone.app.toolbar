@@ -26,8 +26,12 @@ window.parent.toolbar.el.on('toolbar_loaded',
             return;
         }
 
-        // Clean up the url, set toolbar skin
+        // Clean up the url
         href = (href.match(/^([^#]+)/)||[])[1];
+
+        // Insert ++untheme++ namespace to disable theming. This only works
+        // for absolute urls.
+        href = href.replace(/^(https?:\/\/[^/]+)\/(.*)/, '$1/++untheme++d/$2')
 
         body.empty().load(href + ' #portal-column-content > *',
             function(response, error){

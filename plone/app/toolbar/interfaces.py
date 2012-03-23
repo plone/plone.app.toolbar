@@ -7,6 +7,3 @@ _ = MessageFactory(u"plone")
 class IToolbarLayer(Interface):
     """Browser layer used to indicate that plone.app.toolbar is installed
     """
-
-class IUIView(Interface):
-    """ Browser layer to mark views used in the overlayed ui. """

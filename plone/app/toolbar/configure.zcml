@@ -53,19 +53,18 @@
         factory=".toolbar.Toolbar"
         />
 
-    <!-- Event handlers -->
-    <subscriber
-        for="ZPublisher.interfaces.IPubAfterTraversal"
-        handler=".eventhandlers.UnthemeUI"
+    <!-- Add /++untheme++d/ to your url to disable theming -->
+    <adapter
+        name="untheme"
+        for="* zope.publisher.interfaces.IRequest"
+        provides="zope.traversing.interfaces.ITraversable"
+        factory=".toolbar.UnthemeRequest"
         />
-
 
     <!-- BBB: Used to override/disable parts of Plone 4.x that
          should not be in place when using plone.app.Toolbar
          -->
     <include file="bbb.zcml" />
-
-
 
 
     <!-- TODO: commenting out until its working
@@ -75,15 +74,5 @@
         template="templates/notifications.pt"
         permission="plone.ViewToolbar"
         /-->
-
-    <class class="plone.app.content.browser.foldercontents.FolderContentsView">
-        <implements interface="plone.app.toolbar.interfaces.IUIView"/>
-    </class>
-    <class class="plone.app.workflow.browser.sharing.SharingView">
-        <implements interface="plone.app.toolbar.interfaces.IUIView"/>
-    </class>
-    <class class="plone.app.contentrules.browser.assignments.ManageAssignments">
-        <implements interface="plone.app.toolbar.interfaces.IUIView"/>
-    </class>
 
 </configure>
