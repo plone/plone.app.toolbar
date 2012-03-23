@@ -36,42 +36,13 @@ window.parent.toolbar.el.on('toolbar_loaded',
         body.empty().load(unthemed + ' #portal-column-content > *',
             function(response, error){
 
-                // Keep all links inside the overlay (except for
-                // the folder_contents overlay)
+                // Keep all links inside the overlay
                 $('a', body).on('click', function(e){
                     overlay($(e.target).attr('href'), menuid);
                     return e.preventDefault();
                 });
 
-                // TODO These things needs to be in some kind of add-on file
-                // that is loaded only for folder_contents.
-                // Override default behaviour on folder_contents links
-                $('#folderlisting-main-table a', body).each(function(){
-                    if($(this).attr('href').slice(-16) == '/folder_contents') {
-                        var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
-                            .attr('href', $(this).attr('href'))
-                            .attr('class', 'viewlink')
-                            .attr('target', '_parent')
-                            .attr('title', 'Open here'); // Needs i18n!
-                        $(this).parent().append(viewlink);
-                    } else {
-                        $(this).on('click', function(e){
-                           window.parent.location.href = $(e.target).attr('href');
-                        });
-                    }
-                });
-
-                // Add an "Open here" link at the top
-                $('#folderlisting-main-table', body).parents('#content').each(function(){
-                    var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
-                        .attr('href', href)
-                        .attr('class', 'viewlink')
-                        .attr('target', '_parent')
-                        .attr('title', 'Open here'); // Needs i18n!
-                    $('h1.documentFirstHeading', this).append(viewlink);
-                });
-
-                // Forms are posted to the parent window.
+                // All forms are posted to the parent window.
                 $('form', body).attr('target', '_parent');
 
                 // Shrink iframe when the overlay is closed
@@ -80,7 +51,8 @@ window.parent.toolbar.el.on('toolbar_loaded',
                 // Call any other event handlers
                 ev = $.Event();
                 ev.type='on_overlay_setup';
-                ev.button=menuid;
+                ev.button = menuid;
+                ev.href = href;
                 toolbar.el.trigger(ev);
 
                 // Show overlay
@@ -103,7 +75,38 @@ window.parent.toolbar.el.on('toolbar_loaded',
             body = $('.modal-body', modal),
             cancelbuttons = ['form.button.Cancel',
                 'form.button.cancel',
-                'form.actions.cancel'];
+                'form.actions.cancel'],
+                menuid = e.button,
+                href = e.href;
+
+        // Things restricted to folder_contents.
+        if (menuid == 'toolbar-button-folderContents'){
+            // Override default behaviour on folder_contents links
+            $('#folderlisting-main-table a', body).each(function(){
+                if($(this).attr('href').slice(-16) == '/folder_contents') {
+                    var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
+                        .attr('href', $(this).attr('href'))
+                        .attr('class', 'viewlink')
+                        .attr('target', '_parent')
+                        .attr('title', 'Open here'); // Needs i18n!
+                    $(this).parent().append(viewlink);
+                } else {
+                    $(this).on('click', function(e){
+                       window.parent.location.href = $(e.target).attr('href');
+                    });
+                }
+            });
+
+            // Add an "Open here" link at the top
+            $('#folderlisting-main-table', body).parents('#content').each(function(){
+                var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
+                    .attr('href', href)
+                    .attr('class', 'viewlink')
+                    .attr('target', '_parent')
+                    .attr('title', 'Open here'); // Needs i18n!
+                $('h1.documentFirstHeading', this).append(viewlink);
+            });
+        }
 
         // Init plone forms if they exist
         if ($.fn.ploneTabInit) {
