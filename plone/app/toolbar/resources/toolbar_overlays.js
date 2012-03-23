@@ -74,13 +74,13 @@ window.parent.toolbar.el.on('toolbar_loaded',
                 // Forms are posted to the parent window.
                 $('form', body).attr('target', '_parent');
 
-                // Call any other event handlers
-                ev = $.Event();
-                ev.type='afterSetupOverlay';
-                toolbar.el.trigger(ev);
-
                 // Shrink iframe when the overlay is closed
                 modal.on('hidden', function(e){ toolbar.shrink(); });
+
+                // Call any other event handlers
+                ev = $.Event();
+                ev.type='on_overlay_setup';
+                toolbar.el.trigger(ev);
 
                 // Show overlay
                 toolbar.stretch();
@@ -95,7 +95,7 @@ window.parent.toolbar.el.on('toolbar_loaded',
         return e.preventDefault();
     });
 
-    toolbar.el.on('afterSetupOverlay', function(e){
+    toolbar.el.on('on_overlay_setup', function(e){
         var modal = $('#toolbar-overlay', toolbar.document),
             body = $('.modal-body', modal),
             cancelbuttons = ['form.button.Cancel',
