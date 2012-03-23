@@ -18,7 +18,7 @@ window.parent.toolbar.el.on('toolbar_loaded',
     $('#toolbar-button-plone-contentmenu-actions #toolbar-button-rename a')
         .attr('target', null);
 
-    function overlay(href) {
+    function overlay(href, menuid) {
         var modal = $('#toolbar-overlay', toolbar.document),
             body = $('.modal-body', modal);
 
@@ -39,7 +39,7 @@ window.parent.toolbar.el.on('toolbar_loaded',
                 // Keep all links inside the overlay (except for
                 // the folder_contents overlay)
                 $('a', body).on('click', function(e){
-                    overlay($(e.target).attr('href'));
+                    overlay($(e.target).attr('href'), menuid);
                     return e.preventDefault();
                 });
 
@@ -80,6 +80,7 @@ window.parent.toolbar.el.on('toolbar_loaded',
                 // Call any other event handlers
                 ev = $.Event();
                 ev.type='on_overlay_setup';
+                ev.button=menuid;
                 toolbar.el.trigger(ev);
 
                 // Show overlay
@@ -90,8 +91,10 @@ window.parent.toolbar.el.on('toolbar_loaded',
     }
 
     // Overlay when event is passed
-    toolbar.el.on('setup_overlay', function(e, href){
-        overlay(href);
+    toolbar.el.on('setup_overlay', function(e, el){
+        var trigger = $(el);
+        var menuid = trigger.closest('li.toolbar-button').attr('id');
+        overlay(trigger.attr('href'), menuid);
         return e.preventDefault();
     });
 

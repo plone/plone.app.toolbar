@@ -429,7 +429,7 @@
                         if (el.attr('target') == '_parent') {
                             window.parent.location.href = el.attr('href');
                         } else {
-                            $(self.el).trigger('setup_overlay', el.attr('href'));
+                            $(self.el).trigger('setup_overlay', el[0]);
                             e.preventDefault();
                         }
                     }
