@@ -43,6 +43,8 @@ window.parent.toolbar.el.on('toolbar_loaded',
                     return e.preventDefault();
                 });
 
+                // TODO These things needs to be in some kind of add-on file
+                // that is loaded only for folder_contents.
                 // Override default behaviour on folder_contents links
                 $('#folderlisting-main-table a', body).each(function(){
                     if($(this).attr('href').slice(-16) == '/folder_contents') {
@@ -59,6 +61,7 @@ window.parent.toolbar.el.on('toolbar_loaded',
                     }
                 });
 
+                // Add an "Open here" link at the top
                 $('#folderlisting-main-table', body).parents('#content').each(function(){
                     var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
                         .attr('href', href)
@@ -67,6 +70,9 @@ window.parent.toolbar.el.on('toolbar_loaded',
                         .attr('title', 'Open here'); // Needs i18n!
                     $('h1.documentFirstHeading', this).append(viewlink);
                 });
+
+                // Forms are posted to the parent window.
+                $('form', body).attr('target', '_parent');
 
                 // Call any other event handlers
                 ev = $.Event();
