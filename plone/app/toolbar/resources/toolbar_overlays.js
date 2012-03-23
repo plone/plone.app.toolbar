@@ -39,17 +39,17 @@ window.parent.toolbar.el.on('toolbar_loaded',
                 // Keep all links inside the overlay (except for
                 // the folder_contents overlay)
                 $('a', body).on('click', function(e){
-                    if ($('#folderlisting-main-table', body).length) {
-                        if ($(e.target).attr('href').slice(-16) == '/folder_contents') {
-                            overlay($(e.target).attr('href'));
-                            return e.preventDefault();
-                        } else {
-                            window.parent.location.href = $(e.target).attr('href');
-                        };
-                    } else {
-                        overlay($(e.target).attr('href'));
-                        return e.preventDefault();
-                    };
+                    overlay($(e.target).attr('href'));
+                    return e.preventDefault();
+                });
+
+                // Override default behaviour on folder_contents links
+                $('#folderlisting-main-table a', body).each(function(){
+                    if($(this).attr('href').slice(-16) != '/folder_contents') {
+                        $(this).on('click', function(e){
+                           window.parent.location.href = $(e.target).attr('href');
+                        });
+                    }
                 });
 
                 // Call any other event handlers
