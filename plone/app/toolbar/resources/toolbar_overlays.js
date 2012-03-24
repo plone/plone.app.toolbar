@@ -54,12 +54,8 @@ window.parent.toolbar.el.on('toolbar_loaded',
                 // Shrink iframe when the overlay is closed
                 modal.on('hidden', function(e){ toolbar.shrink(); });
 
-                // Call any other event handlers
-                ev = $.Event();
-                ev.type='on_overlay_setup';
-                ev.button = menuid;
-                ev.href = href;
-                toolbar.el.trigger(ev);
+                // Set up the overlay specifics
+                overlay_setup(modal, body, menuid, href);
 
                 // Show overlay
                 toolbar.stretch();
@@ -68,66 +64,16 @@ window.parent.toolbar.el.on('toolbar_loaded',
         );
     }
 
-    // Overlay when event is passed
-    toolbar.el.on('load_overlay', function(e, el){
-        var trigger = $(el),
-            menuid = trigger.parents('li.toolbar-button').map(function(idx, el){
-                return $(el).attr('id');
-            }).last()[0];
+    function overlay_setup(modal, body, menuid, href){
+        var cancelbuttons = ['form.button.Cancel',
+            'form.button.cancel',
+            'form.actions.cancel'];
 
-        // allow a different selector to be passed in the data-overlay-selector
-        // html5 attribute
-        var selector=trigger.data('overlaySelector');
-        overlay(trigger.attr('href'), menuid, selector);
-        return e.preventDefault();
-    });
-
-    toolbar.el.on('on_overlay_setup', function(e){
-        var modal = $('#toolbar-overlay', toolbar.document),
-            body = $('.modal-body', modal),
-            cancelbuttons = ['form.button.Cancel',
-                'form.button.cancel',
-                'form.actions.cancel'],
-                menuid = e.button,
-                href = e.href;
-
-        // Things restricted to folder_contents.
-        if (menuid == 'toolbar-button-folderContents'){
-            // Override default behaviour on folder_contents links
-            $('#folderlisting-main-table a', body).each(function(){
-                if($(this).attr('href').slice(-16) == '/folder_contents') {
-                    var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
-                        .attr('href', $(this).attr('href'))
-                        .attr('class', 'viewlink')
-                        .attr('target', '_parent')
-                        .attr('title', 'Open here'); // Needs i18n!
-                    $(this).parent().append(viewlink);
-                } else {
-                    // Replace click handler
-                    $(this).off('click');
-                    $(this).on('click', function(e){
-                       window.parent.location.href = $(e.target).attr('href');
-                    });
-                }
-            });
-
-            // Add an "Open here" link at the top
-            var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
-                .attr('href', href)
-                .attr('class', 'viewlink')
-                .attr('target', '_parent')
-                .attr('title', 'Open here'); // Needs i18n!
-            $('h1.documentFirstHeading').append(viewlink);
-        } else if (menuid == 'toolbar-button-plone-contentmenu-factories'){
-            // Submit form using ajax, then close modal and reload parent
-            $('form', body).ajaxForm({
-                success: function() {
-                    modal.modal('hide');
-                    body.empty();
-                    window.parent.location.replace(window.parent.location.href);
-                }
-            });
-        }
+        // Fire a namespaced event for this overlay
+        ev = $.Event();
+        ev.type='overlay_setup.' + menuid;
+        ev.href = href;
+        toolbar.el.trigger(ev);
 
         // Init plone forms if they exist
         if ($.fn.ploneTabInit) {
@@ -156,6 +102,62 @@ window.parent.toolbar.el.on('toolbar_loaded',
             });
         }
 
+    }
+
+    // Handle the load_overlay event from the main window
+    toolbar.el.on('load_overlay', function(e, el){
+        var trigger = $(el),
+            menuid = trigger.parents('li.toolbar-button').map(function(idx, el){
+                return $(el).attr('id');
+            }).last()[0];
+
+        // allow a different selector to be passed in the data-overlay-selector
+        // html5 attribute
+        var selector=trigger.data('overlaySelector');
+        overlay(trigger.attr('href'), menuid, selector);
+        return e.preventDefault();
+    });
+
+    // Namespaced event that only fires for folder_contents
+    toolbar.el.on('overlay_setup.toolbar-button-folderContents', function(e){
+        $('#folderlisting-main-table a').each(function(){
+            if($(this).attr('href').slice(-16) == '/folder_contents') {
+                var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
+                    .attr('href', $(this).attr('href'))
+                    .attr('class', 'viewlink')
+                    .attr('target', '_parent')
+                    .attr('title', 'Open here'); // Needs i18n!
+                $(this).parent().append(viewlink);
+            } else {
+                // Replace click handler
+                $(this).off('click');
+                $(this).on('click', function(e){
+                   window.parent.location.href = $(e.target).attr('href');
+                });
+            }
+        });
+
+        // Add an "Open here" link at the top
+        var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
+            .attr('href', e.href)
+            .attr('class', 'viewlink')
+            .attr('target', '_parent')
+            .attr('title', 'Open here'); // Needs i18n!
+        $('h1.documentFirstHeading').append(viewlink);
+    });
+
+    // Namespaced event that only fires when adding content
+    toolbar.el.on('overlay_setup.toolbar-button-plone-contentmenu-factories', function(e){
+        // Submit form using ajax, then close modal and reload parent
+        var modal = $('#toolbar-overlay', toolbar.document),
+            body = $('.modal-body', modal);
+        $('form', body).ajaxForm({
+            success: function() {
+                modal.modal('hide');
+                body.empty();
+                window.parent.location.replace(window.parent.location.href);
+            }
+        });
     });
 
 });
