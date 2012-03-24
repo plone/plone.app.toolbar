@@ -40,6 +40,8 @@
 
     // # Defaults {{{
     $.iframize.defaults = $.extend(true, {
+        data_attr: 'data-iframe',
+        target_data_attr: 'data-iframe-target',
         resources_data_attr: 'data-iframe-resources',
         resources_delimiter: ';',
         iframe_attrs: {
@@ -132,120 +134,133 @@
     };
     // }}}
 
-    // # IFrame {{{
-    $.iframize.IFrame = function(e, r, a) { this.init(e, r, a); return this; };
+    // # IFrame {{
+    $.iframize.IFrame = function(e, r, t) { this.init(e, r, t); return this; };
     $.iframize.IFrame.prototype = {
-        init: function(el, resources, iframe_attrs) {
-            var self = this;
-
+        init: function(el, resources, target) {
+            var self = this,
+                iframe_attrs = $.iframize.defaults.iframe_attrs;
             // hide and clone original element
             self.el_original = el;
             self.el_original.hide();
-            self.el = self.el_original.clone();
+            self.el = $(self.el_original.html());
             self.el.show();
 
-            // create iframe
-            iframe_attrs = $.extend(true,
-                    $.iframize.defaults.iframe_attrs, iframe_attrs || {})
-            self.el_iframe = $('<iframe/>').attr(iframe_attrs);
+            // target iframe
+            if (target === undefined) {
+                self.el_iframe = $('<iframe/>').attr(iframe_attrs);
 
-            // if nothing was changed from default iframe attr then we can
-            // lower body for 40px as its iframe's height
-            if (iframe_attrs.style === $.iframize.defaults.iframe_attrs.style) {
-                $('body').prepend(self.el_iframe).css('margin-top', '40px');
+                // if nothing was changed from default iframe attr then we can
+                // lower body for 40px as its iframe's height
+                if (iframe_attrs.style === $.iframize.defaults.iframe_attrs.style) {
+                    $('body').prepend(self.el_iframe).css('margin-top', '40px');
 
-            // place iframe before original element
-            } else {
-                self.el_iframe.insertBefore(self.el_original);
-            }
+                // place iframe before original element
+                } else {
+                    self.el_iframe.insertBefore(self.el_original);
+                }
 
-            // resources
-            self.resources = '';
-            $.each(resources, function(i, resource) {
-                self.resources += new $.iframize.Resource(resource)
-                        .render_as_string();
-            });
+                // resources
+                self.resources = '';
+                if (resources !== undefined) {
+                    $.each(resources, function(i, resource) {
+                            self.resources += new $.iframize.Resource(resource)
+                                    .render_as_string();
+                    });
+                }
 
-            // append css and javascript resources
-            self.window = self.el_iframe[0].contentWindow;
-            self.document = self.el_iframe.contents()[0];
-            self.document.open();
-            self.document.write(self.resources);
-            self.document.close();
+                // append css and javascript resources
+                self.window = self.el_iframe[0].contentWindow;
+                self.document = self.el_iframe.contents()[0];
+                self.document.open();
+                self.document.write(self.resources);
+                self.document.close();
 
-            self.el_iframe.load(function() {
+                self.el_iframe.load(function() {
+                    // copy clone of original into iframe
+                    $('body', self.document).append(self.el)
+                        .css({ background: 'transparent', height: '100%' });
 
-                // copy clone of original into iframe
-                $('body', self.document).append(self.el)
-                    .css({ background: 'transparent', height: '100%' });
+                    // capture all clicks on iframe
+                    $('body', self.document).bind('click', { self: self }, function(e) {
+                        var self = e.data.self,
+                            el = $(e.target);
 
-                // capture all clicks on iframe
-                $('body', self.document).bind('click', { self: self }, function(e) {
-                    var self = e.data.self,
-                        el = $(e.target);
+                        // shrink iframe
+                        self.shrink();
 
-                    // shrink iframe
-                    self.shrink();
+                        if (($.nodeName(e.target, 'a') ||
+                                $.nodeName(el.parent()[0], 'a')) &&
+                            (e.which === 1 || e.which === 2)) {
 
-                    if (($.nodeName(e.target, 'a') ||
-                            $.nodeName(el.parent()[0], 'a')) &&
-                        (e.which === 1 || e.which === 2)) {
+                            if (!$.nodeName(e.target, 'a')) {
+                                el = el.parent();
+                            }
 
-                        if (!$.nodeName(e.target, 'a')) {
-                            el = el.parent();
-                        }
+                            // Buttons default to an overlay but if they
+                            // have the '_parent' link target, just load them in
+                            // the top window
+                            //if (el.attr('target') === '_parent') {
+                            //    if (e.which === 1) {
+                            //        window.parent.location.href = el.attr('href');
+                            //    } else {
+                            //        window.parent.open(el.attr('href'));
+                            //    }
+                            //} else {
+                            //    // FIXME: this is too bootstrap specific
+                            //    if (el.parent().hasClass('open')) {
+                            //        self.stretch();
+                            //    }
+                            //    self.window.$(self.document).trigger('iframize_link_clicked', [el, self]);
+                            //    e.preventDefault();
+                            //}
 
-                        // Buttons default to an overlay but if they
-                        // have the '_parent' link target, just load them in
-                        // the top window
-                        //if (el.attr('target') === '_parent') {
-                        //    if (e.which === 1) {
-                        //        window.parent.location.href = el.attr('href');
-                        //    } else {
-                        //        window.parent.open(el.attr('href'));
-                        //    }
-                        //} else {
-                        //    // FIXME: this is too bootstrap specific
-                        //    if (el.parent().hasClass('open')) {
-                        //        self.strech();
-                        //    }
-                        //    self.window.$(self.document).trigger('iframize_link_clicked', [el, self]);
-                        //    e.preventDefault();
-                        //}
-
-                        // XXX: only temporary solution
-                        if (!el.parent().hasClass('dropdown')) {
-                            if (e.which === 1) {
-                                window.parent.location.href = el.attr('href');
+                            // XXX: only temporary solution
+                            if (!el.parent().hasClass('dropdown')) {
+                                if (e.which === 1) {
+                                    window.parent.location.href = el.attr('href');
+                                } else {
+                                    window.parent.open(el.attr('href'));
+                                }
                             } else {
-                                window.parent.open(el.attr('href'));
+                                if (el.parent().hasClass('open')) {
+                                    self.stretch();
+                                }
+                                e.preventDefault();
                             }
-                        } else {
-                            if (el.parent().hasClass('open')) {
-                                self.strech();
-                            }
-                            e.preventDefault();
+
                         }
 
-                    }
+                    });
+
+                    $(self.el_iframe).trigger('iframe_loaded');
 
                 });
 
-                $(self.el).trigger('iframe_loaded');
+            } else {
+                self.el_iframe = $(target);
+                self.window = self.el_iframe[0].contentWindow;
+                self.document = self.el_iframe.contents()[0];
 
-            });
+                // copy clone of original into iframe
+                self.el_iframe.load(function() {
+                    $('body', self.document).append($(self.el));
+                });
+            }
+
+
         },
         shrink: function() {
             var self = this;
             if (self.position !== undefined) {
-                // set to before strech position
+                // set to before stretch position
                 self.el_iframe.height(self.position.height);
                 self.el_iframe.offset(self.position.offset);
                 // clear position
                 self.position = undefined;
             }
         },
-        strech: function() {
+        stretch: function() {
             var self = this;
             // record position / offset
             self.position = {};
@@ -259,17 +274,26 @@
     // }}}
 
     // # jQuery integration {{{
-    $.fn.iframize = function(resources) {
+    $.fn.iframize = function(name, resources, target) {
         var self = this;
         if (self.data('iframize') === undefined) {
-            var iframe = new $.iframize.IFrame(self, resources);
+
+            var iframe = new $.iframize.IFrame(self, resources, target),
+                iframe_data = iframe.el_iframe.data('iframize');
             self.data('iframize', iframe);
 
             // we also store this on iframe element so we can later retrive it
-            // via $('iframe').iframize()
-            iframe.el_iframe.data('iframize', iframe);
+            // via $('iframe').iframize('name')
+            if (iframe_data === undefined) { iframe_data = {}; }
+            iframe_data[name] = iframe;
+            iframe.el_iframe.data('iframize', iframe_data);
+
         }
-        return self.data('iframize');
+        if ($.nodeName(self[0], 'iframe')) {
+            return self.data('iframize')[name];
+        } else {
+            return self.data('iframize');
+        }
     };
     // }}}
 
@@ -277,10 +301,17 @@
     //
     // elements with data-iframe="true"
     $(document).ready(function() {
-        $("[data-iframe='true']").each(function() {
-            $(this).iframize(
-                $(this).attr($.iframize.defaults.resources_data_attr)
-                       .split($.iframize.defaults.resources_delimiter));
+        $('[' + $.iframize.defaults.data_attr + ']').each(function() {
+            var el = $(this),
+                name = el.attr($.iframize.defaults.data_attr),
+                resources = el.attr($.iframize.defaults.resources_data_attr),
+                target = el.attr($.iframize.defaults.target_data_attr);
+            if (resources === undefined) {
+                resources = [];
+            } else {
+                resources = resources.split($.iframize.defaults.resources_delimiter);
+            }
+            $(this).iframize(name, resources, target);
         });
     });
     // }}}
