@@ -18,9 +18,6 @@ window.parent.toolbar.el.on('toolbar_loaded',
     $('#toolbar-button-plone-contentmenu-actions #toolbar-button-rename a')
         .attr('target', null);
 
-    // Manage Portlets gets a different selector
-    $('#manage_portlets a').attr('data-overlay-selector', '#portal-columns');
-
     function overlay(href, menuid, selector) {
         var modal = $('#toolbar-overlay', toolbar.document),
             body = $('.modal-body', modal);
@@ -41,15 +38,11 @@ window.parent.toolbar.el.on('toolbar_loaded',
 
         body.empty().load(unthemed + ' ' + selector,
             function(response, error){
-
                 // Keep all links inside the overlay
                 $('a', body).on('click', function(e){
                     overlay($(e.target).attr('href'), menuid, selector);
                     return e.preventDefault();
                 });
-
-                // All forms are posted to the parent window.
-                $('form', body).attr('target', '_parent');
 
                 // Shrink iframe when the overlay is closed
                 modal.on('hidden', function(e){ toolbar.shrink(); });
@@ -151,6 +144,7 @@ window.parent.toolbar.el.on('toolbar_loaded',
         // Submit form using ajax, then close modal and reload parent
         var modal = $('#toolbar-overlay', toolbar.document),
             body = $('.modal-body', modal);
+
         $('form', body).ajaxForm({
             success: function() {
                 modal.modal('hide');
@@ -159,5 +153,6 @@ window.parent.toolbar.el.on('toolbar_loaded',
             }
         });
     });
+
 
 });
