@@ -18,13 +18,19 @@ window.parent.toolbar.el.on('toolbar_loaded',
     $('#toolbar-button-plone-contentmenu-actions #toolbar-button-rename a')
         .attr('target', null);
 
-    function overlay(href, menuid) {
+    // Manage Portlets gets a different selector
+    $('#manage_portlets a').attr('data-overlay-selector', '#portal-columns');
+
+    function overlay(href, menuid, selector) {
         var modal = $('#toolbar-overlay', toolbar.document),
             body = $('.modal-body', modal);
 
         if(href === undefined){
             return;
         }
+
+        // What part of the result to overlay
+        selector = selector || "#portal-column-content > *";
 
         // Clean up the url
         href = (href.match(/^([^#]+)/)||[])[1];
@@ -33,12 +39,12 @@ window.parent.toolbar.el.on('toolbar_loaded',
         // for absolute urls.
         var unthemed = href.replace(/^(https?:\/\/[^/]+)\/(.*)/, '$1/++untheme++d/$2')
 
-        body.empty().load(unthemed + ' #portal-column-content > *',
+        body.empty().load(unthemed + ' ' + selector,
             function(response, error){
 
                 // Keep all links inside the overlay
                 $('a', body).on('click', function(e){
-                    overlay($(e.target).attr('href'), menuid);
+                    overlay($(e.target).attr('href'), menuid, selector);
                     return e.preventDefault();
                 });
 
@@ -64,9 +70,13 @@ window.parent.toolbar.el.on('toolbar_loaded',
 
     // Overlay when event is passed
     toolbar.el.on('load_overlay', function(e, el){
-        var trigger = $(el);
-        var menuid = trigger.parents('li.toolbar-button').last().attr('id');
-        overlay(trigger.attr('href'), menuid);
+        var trigger = $(el),
+            menuid = trigger.parents('li.toolbar-button').last().attr('id');
+
+        // allow a different selector to be passed in the data-overlay-selector
+        // html5 attribute
+        var selector=trigger.data('overlaySelector');
+        overlay(trigger.attr('href'), menuid, selector);
         return e.preventDefault();
     });
 
