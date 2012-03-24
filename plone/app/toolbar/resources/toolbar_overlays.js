@@ -63,7 +63,7 @@ window.parent.toolbar.el.on('toolbar_loaded',
     }
 
     // Overlay when event is passed
-    toolbar.el.on('setup_overlay', function(e, el){
+    toolbar.el.on('load_overlay', function(e, el){
         var trigger = $(el);
         var menuid = trigger.parents('li.toolbar-button').last().attr('id');
         overlay(trigger.attr('href'), menuid);
