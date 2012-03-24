@@ -106,6 +106,15 @@ window.parent.toolbar.el.on('toolbar_loaded',
                     .attr('title', 'Open here'); // Needs i18n!
                 $('h1.documentFirstHeading', this).append(viewlink);
             });
+        } else if (menuid == 'toolbar-button-plone-contentmenu-factories'){
+            // Submit form using ajax, then close modal and reload parent
+            $('form', body).ajaxForm({
+                success: function() {
+                    modal.modal('hide');
+                    body.empty();
+                    window.parent.location.replace(window.parent.location.href);
+                }
+            });
         }
 
         // Init plone forms if they exist
