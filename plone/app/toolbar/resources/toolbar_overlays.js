@@ -91,6 +91,8 @@ window.parent.toolbar.el.on('toolbar_loaded',
                         .attr('title', 'Open here'); // Needs i18n!
                     $(this).parent().append(viewlink);
                 } else {
+                    // Replace click handler
+                    $(this).off('click');
                     $(this).on('click', function(e){
                        window.parent.location.href = $(e.target).attr('href');
                     });
