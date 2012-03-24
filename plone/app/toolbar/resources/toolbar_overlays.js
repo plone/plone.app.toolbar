@@ -110,14 +110,12 @@ window.parent.toolbar.el.on('toolbar_loaded',
             });
 
             // Add an "Open here" link at the top
-            $('#folderlisting-main-table', body).parents('#content').each(function(){
-                var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
-                    .attr('href', href)
-                    .attr('class', 'viewlink')
-                    .attr('target', '_parent')
-                    .attr('title', 'Open here'); // Needs i18n!
-                $('h1.documentFirstHeading', this).append(viewlink);
-            });
+            var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
+                .attr('href', href)
+                .attr('class', 'viewlink')
+                .attr('target', '_parent')
+                .attr('title', 'Open here'); // Needs i18n!
+            $('h1.documentFirstHeading').append(viewlink);
         } else if (menuid == 'toolbar-button-plone-contentmenu-factories'){
             // Submit form using ajax, then close modal and reload parent
             $('form', body).ajaxForm({
