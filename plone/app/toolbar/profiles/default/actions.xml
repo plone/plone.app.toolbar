@@ -13,7 +13,7 @@
      <property name="description" i18n:translate=""></property>
      <property name="link_target" i18n:translate="">_parent</property>
      <property
-        name="url_expr">string:${portal_url}/@@manage-portlets</property>
+        name="url_expr">string:${object_url}/@@manage-portlets</property>
      <property name="permissions">
       <element value="Portlets: Manage portlets"/>
      </property>
