@@ -71,7 +71,9 @@ window.parent.toolbar.el.on('toolbar_loaded',
     // Overlay when event is passed
     toolbar.el.on('load_overlay', function(e, el){
         var trigger = $(el),
-            menuid = trigger.parents('li.toolbar-button').last().attr('id');
+            menuid = trigger.parents('li.toolbar-button').map(function(idx, el){
+                return $(el).attr('id');
+            }).last()[0];
 
         // allow a different selector to be passed in the data-overlay-selector
         // html5 attribute
