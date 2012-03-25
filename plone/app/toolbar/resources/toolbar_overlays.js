@@ -17,6 +17,9 @@ window.parent.toolbar.el.on('toolbar_loaded',
     // ... but rename goes in an overlay
     $('#toolbar-button-plone-contentmenu-actions #toolbar-button-rename a')
         .attr('target', null);
+    // ... and so does selection of a content item
+    $('#toolbar-button-plone-contentmenu-display #toolbar-button-contextSetDefaultPage a')
+        .attr('target', null);
 
     function overlay(href, menuid, selector) {
         var modal = $('#toolbar-overlay', toolbar.document),
