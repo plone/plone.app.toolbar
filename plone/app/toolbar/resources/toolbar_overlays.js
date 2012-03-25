@@ -149,6 +149,12 @@ window.parent.toolbar.el.on('toolbar_loaded',
             .attr('title', 'Open here'); // Needs i18n!
         $('h1.documentFirstHeading').append(viewlink);
 
+        // Fix breadcrumbs to go to folder_contents
+        $('#toolbar-overlay #portal-breadcrumbs a').each(function(){
+            $this = $(this);
+            $this.attr('href', $this.attr('href') + '/folder_contents');
+        });
+
         // Keep forms inside the overlay by placing result of form submission
         // back into the overlay and calling overlay_setup again.
         $('form').ajaxForm({
