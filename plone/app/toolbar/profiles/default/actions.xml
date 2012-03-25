@@ -7,17 +7,5 @@
     <object name="logout" meta_type="CMF Action" i18n:domain="plone">
      <property name="link_target" i18n:translate="">_parent</property>
     </object>
-    <object name="manage_portlets" meta_type="CMF Action" i18n:domain="plone"
-            insert-before="logout">
-     <property name="title" i18n:translate="">Manage Portlets</property>
-     <property name="description" i18n:translate=""></property>
-     <property name="link_target" i18n:translate="">_parent</property>
-     <property
-        name="url_expr">string:${object_url}/@@manage-portlets</property>
-     <property name="permissions">
-      <element value="Portlets: Manage portlets"/>
-     </property>
-     <property name="visible">True</property>
-    </object>
   </object>
 </object>
