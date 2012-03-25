@@ -126,6 +126,9 @@ window.parent.toolbar.el.on('toolbar_loaded',
                     .attr('target', '_parent')
                     .attr('title', 'Open here'); // Needs i18n!
                 $(this).parent().append(viewlink);
+            } else if (base_href.match(/\/folder_position$/)){
+                // Do nothing, the default click handler already keeps
+                // the result in the overlay
             } else {
                 // Replace click handler
                 $(this).off('click');
