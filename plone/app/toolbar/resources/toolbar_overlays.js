@@ -38,17 +38,11 @@ window.parent.toolbar.el.on('toolbar_loaded',
 
         body.empty().load(unthemed + ' ' + selector,
             function(response, error){
-                // Keep all links inside the overlay
-                $('a', body).on('click', function(e){
-                    overlay($(e.target).attr('href'), menuid, selector);
-                    return e.preventDefault();
-                });
-
                 // Shrink iframe when the overlay is closed
                 modal.on('hidden', function(e){ toolbar.shrink(); });
 
                 // Set up the overlay specifics
-                overlay_setup(modal, body, menuid, href);
+                overlay_setup(modal, body, menuid, href, selector);
 
                 // Show overlay
                 toolbar.stretch();
@@ -57,10 +51,17 @@ window.parent.toolbar.el.on('toolbar_loaded',
         );
     }
 
-    function overlay_setup(modal, body, menuid, href){
+    function overlay_setup(modal, body, menuid, href, selector){
         var cancelbuttons = ['form.button.Cancel',
             'form.button.cancel',
             'form.actions.cancel'];
+
+        // Keep all links inside the overlay. Not sure if this should really
+        // go AFTER the firing of overlay_setup.
+        $('a', body).on('click', function(e){
+            overlay($(e.target).attr('href'), menuid, selector);
+            return e.preventDefault();
+        });
 
         // Fire a namespaced event for this overlay
         ev = $.Event();
@@ -137,6 +138,23 @@ window.parent.toolbar.el.on('toolbar_loaded',
             .attr('target', '_parent')
             .attr('title', 'Open here'); // Needs i18n!
         $('h1.documentFirstHeading').append(viewlink);
+
+        // Keep forms inside the overlay by placing result of form submission
+        // back into the overlay and calling overlay_setup again.
+        $('form').ajaxForm({
+            success: function (responseText){
+                var modal = $('#toolbar-overlay'),
+                    body = $('.modal-body', modal),
+                    selector = '#portal-column-content > *';
+                // strip inline script tags
+                responseText = responseText.replace(/<script(.|\s)*?\/script>/gi, "");
+                var res = $('<div />').append(responseText)
+                    .find(selector);
+                body.empty().append(res);
+                overlay_setup(modal, body, 'toolbar-button-folderContents', e.href, selector);
+                return false;
+            }
+        });
     });
 
     // Namespaced event that only fires when adding content
