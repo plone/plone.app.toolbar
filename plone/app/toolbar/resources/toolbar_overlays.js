@@ -117,15 +117,18 @@ window.parent.toolbar.el.on('toolbar_loaded',
         $('#folderlisting-main-table a').each(function(){
 
             // Remove any parameters from the url
-            var base_href = ($(this).attr('href').match(/^([^?]+)/)||[])[1];
+            var href = $(this).attr('href');
+            var base_href = (href.match(/^([^?]+)/)||[])[1];
 
-            if(base_href.match(/\/folder_contents$/)){
+            if(href.match(/\/folder_contents$/)){
                 var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
                     .attr('href', $(this).attr('href').replace(/\/folder_contents$/, ''))
                     .attr('class', 'viewlink')
                     .attr('target', '_parent')
                     .attr('title', 'Open here'); // Needs i18n!
                 $(this).parent().append(viewlink);
+            } else if (base_href.match(/\/folder_contents$/)) {
+                // It has parameters, leave it alone
             } else if (base_href.match(/\/folder_position$/)){
                 // Do nothing, the default click handler already keeps
                 // the result in the overlay
