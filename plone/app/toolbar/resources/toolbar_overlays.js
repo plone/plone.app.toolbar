@@ -115,7 +115,11 @@ window.parent.toolbar.el.on('toolbar_loaded',
     // Namespaced event that only fires for folder_contents
     toolbar.el.on('overlay_setup.toolbar-button-folderContents', function(e){
         $('#folderlisting-main-table a').each(function(){
-            if($(this).attr('href').slice(-16) == '/folder_contents') {
+
+            // Remove any parameters from the url
+            var base_href = ($(this).attr('href').match(/^([^?]+)/)||[])[1];
+
+            if(base_href.match(/\/folder_contents$/)){
                 var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
                     .attr('href', $(this).attr('href').replace(/\/folder_contents$/, ''))
                     .attr('class', 'viewlink')
