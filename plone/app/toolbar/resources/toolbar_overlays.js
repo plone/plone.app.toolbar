@@ -116,7 +116,7 @@ window.parent.toolbar.el.on('toolbar_loaded',
         $('#folderlisting-main-table a').each(function(){
             if($(this).attr('href').slice(-16) == '/folder_contents') {
                 var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
-                    .attr('href', $(this).attr('href'))
+                    .attr('href', $(this).attr('href').replace(/\/folder_contents$/, ''))
                     .attr('class', 'viewlink')
                     .attr('target', '_parent')
                     .attr('title', 'Open here'); // Needs i18n!
@@ -132,7 +132,7 @@ window.parent.toolbar.el.on('toolbar_loaded',
 
         // Add an "Open here" link at the top
         var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
-            .attr('href', e.href)
+            .attr('href', e.href.replace(/\/folder_contents$/, ''))
             .attr('class', 'viewlink')
             .attr('target', '_parent')
             .attr('title', 'Open here'); // Needs i18n!
