@@ -190,7 +190,7 @@
                         self.shrink();
 
                         if (($.nodeName(e.target, 'a') ||
-                                $.nodeName(el.parent()[0], 'a')) &&
+                                (el.parent().size() !== 0 && $.nodeName(el.parent()[0], 'a'))) &&
                             (e.which === 1 || e.which === 2)) {
 
                             if (!$.nodeName(e.target, 'a')) {
@@ -200,34 +200,38 @@
                             // Buttons default to an overlay but if they
                             // have the '_parent' link target, just load them in
                             // the top window
-                            //if (el.attr('target') === '_parent') {
-                            //    if (e.which === 1) {
-                            //        window.parent.location.href = el.attr('href');
-                            //    } else {
-                            //        window.parent.open(el.attr('href'));
-                            //    }
-                            //} else {
-                            //    // FIXME: this is too bootstrap specific
-                            //    if (el.parent().hasClass('open')) {
-                            //        self.stretch();
-                            //    }
-                            //    self.window.$(self.document).trigger('iframize_link_clicked', [el, self]);
-                            //    e.preventDefault();
-                            //}
-
-                            // XXX: only temporary solution
-                            if (!el.parent().hasClass('dropdown')) {
+                            if (el.attr('target') === '_parent') {
                                 if (e.which === 1) {
                                     window.parent.location.href = el.attr('href');
                                 } else {
                                     window.parent.open(el.attr('href'));
                                 }
                             } else {
+                                e.preventDefault();
+
+                                // stretch iframe 
+                                // FIXME: this is too bootstrap specific
                                 if (el.parent().hasClass('open')) {
                                     self.stretch();
                                 }
-                                e.preventDefault();
+
+                                // 
+                                $(document).trigger('iframe_link_clicked', [el, self]);
                             }
+
+                            // XXX: only temporary solution
+                            //if (!el.parent().hasClass('dropdown')) {
+                            //    if (e.which === 1) {
+                            //        window.parent.location.href = el.attr('href');
+                            //    } else {
+                            //        window.parent.open(el.attr('href'));
+                            //    }
+                            //} else {
+                            //    if (el.parent().hasClass('open')) {
+                            //        self.stretch();
+                            //    }
+                            //    e.preventDefault();
+                            //}
 
                         }
 

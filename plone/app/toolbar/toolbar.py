@@ -44,7 +44,7 @@ class ToolbarTile(Tile):
         for item in self.styles_view.styles() + self.scripts_view.scripts():
             if item['src']:
                 # FIXME: definetly not optimal but for now it will be ok
-                if 'bootstrap-plone.min.css' in item['src']:
+                if 'bootstrap-plone.min.css' in item['src'] and False:
                     resources.append(item['src'].replace('min.css', 'less'))
                     resources.append(
                         item['src'][:-(len('src/bootstrap-plone.min.css'))] +

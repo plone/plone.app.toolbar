@@ -7,36 +7,42 @@
     // }}}
 
     // # Defaults {{{
-    $.plone.overlays = $.extend(true, {
+    $.plone.overlay_mapping = $.extend(true, {
         'default': {
             'h1.documentFirstHeading': '.modal-header h3',
-            'div > #document-base-edit:parent': '.modal-body'
+            'div:has(> form#document-base-edit)': '.modal-body'
         }
-    }, $.plone.overlays || {});
+    }, $.plone.overlay_mapping || {});
     // }}}
 
     // 
     function overlay(href, iframe, id) {
         var overlay = $('#plone-overlay'),
-            content_mapping = $.plone.overlays['default'];
+            overlay_mapping = $.plone.overlay_mapping['default'];
 
-        if (id !== undefined && $.plone.overlays[id] !== undefined) {
-            content_mapping = $.extend({}, content_mapping, $.plone.overlays[id]);
+        overlay.on('click', function(e) {
+            e.stopPropagation();
+        });
+
+        if (id !== undefined && $.plone.overlay_mapping[id] !== undefined) {
+            overlay_mapping = $.extend({}, overlay_mapping, $.plone.overlay_mapping[id]);
         }
 
         // Clean up the url, set toolbar skin
         if (href === undefined) { return; }
         href = (href.match(/^([^#]+)/)||[])[1];
 
+        // TODO: show spinner
         $.get(href, function(data) {
+
             var content = $('<div/>').html(data);
 
-            $.each(content_mapping, function(source, target) {
+            $.each(overlay_mapping, function(source, target) {
                 $(target, overlay).html(content.find(source).html());
             });
 
             function clear_template() {
-                $.each(content_mapping, function(source, target) {
+                $.each(overlay_mapping, function(source, target) {
                     $(target, overlay).html('');
                 });
             }
@@ -92,7 +98,8 @@
             overlay.on('hidden', function(){ iframe.shrink(); });
 
             // Show overlay
-            iframe.strech();
+            iframe.stretch();
+            // TODO: hide spinner
             overlay.modal('show');
         });
     }
@@ -100,6 +107,7 @@
 
     // # Trigger overlay
     $(document).ready(function() {
+
         $('body').append($(''+
             '<div class="modal" id="plone-overlay">' +
             '  <div class="modal-header">' +
@@ -112,10 +120,15 @@
             '    <a href="#" class="btn btn-primary">Save changes</a>' +
             '  </div>' +
             '</div>').hide());
-        $(document).bind('iframize_link_clicked', function(e, el, iframe) {
+
+        var _window = window;
+        if (window.parent !== window) {
+            _window = window.parent;
+        }
+        _window.$(_window.document).bind('iframe_link_clicked', function(e, el, iframe) {
             overlay(el.attr('href'), iframe, el.parent().attr('id'));
-            e.preventDefault();
         });
+
     });
 
 }(jQuery));
