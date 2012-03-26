@@ -8,6 +8,7 @@
         id="++resource++plone.app.toolbar/src/bbb.css"
         />
 
+    <!-- customized bootstrap for plone -->
     <stylesheet
         cacheable="False" compression="none" cookable="True"
         enabled="True" bundle="toolbar"

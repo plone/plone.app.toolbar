@@ -21,7 +21,6 @@ class ToolbarTile(Tile):
         self.context = aq_inner(self.context)
 
         # Set the 'toolbar' skin so that we get the correct resources
-        self.context.changeSkin('toolbar', self.request)
 
         self.tools = self.get_multi_adapter(u'plone_tools')
         self.scripts_view = self.get_multi_adapter(u'resourceregistries_scripts_view')
@@ -41,6 +40,9 @@ class ToolbarTile(Tile):
 
     @memoize
     def resources(self):
+        skinname = self.context.getCurrentSkinName()
+        self.context.changeSkin('toolbar', self.request)
+
         resources = []
         for item in self.styles_view.styles() + self.scripts_view.scripts():
             if item['src']:
@@ -52,6 +54,9 @@ class ToolbarTile(Tile):
                         'lib/less-1.3.0.min.js')
                 else:
                     resources.append(item['src'])
+
+        self.context.changeSkin(skinname, self.request)
+
         return resources
 
     @memoize
