@@ -16,7 +16,7 @@
     // }}}
 
     // 
-    function overlay(href, iframe, id) {
+    function overlay(href, iframe, action_id) {
         var overlay = $('#plone-overlay'),
             overlay_mapping = $.plone.overlay_mapping['default'];
 
@@ -24,45 +24,75 @@
             e.stopPropagation();
         });
 
-        if (id !== undefined && $.plone.overlay_mapping[id] !== undefined) {
-            overlay_mapping = $.extend({}, overlay_mapping, $.plone.overlay_mapping[id]);
+        if (action_id !== undefined && $.plone.overlay_mapping[action_id] !== undefined) {
+            overlay_mapping = $.extend({}, overlay_mapping,
+                    $.plone.overlay_mapping[action_id]);
         }
 
-        // Clean up the url, set toolbar skin
-        if (href === undefined) { return; }
+        // Clean up the url
         href = (href.match(/^([^#]+)/)||[])[1];
 
-        // TODO: show spinner
-        $.get(href, function(data) {
+        // TODO: show spinner before starting a request
 
-            var content = $('<div/>').html(data);
+        // Insert ++untheme++ namespace to disable theming. This only works
+        // for absolute urls.
+        $.get(href.replace(/^(https?:\/\/[^/]+)\/(.*)/, '$1/++untheme++d/$2'),
+                function(data) {
 
+            data = $('<div/>').html(data);
             $.each(overlay_mapping, function(source, target) {
-                $(target, overlay).html(content.find(source).html());
+                $(target, overlay).html(data.find(source).html());
             });
 
-            function clear_template() {
-                $.each(overlay_mapping, function(source, target) {
-                    $(target, overlay).html('');
+            var body = $('.modal-body', overlay);
+
+            // Keep all links inside the overlay
+            $('a', body).on('click', function(e){
+                overlay($(e.target).attr('href'), iframe);
+                return e.preventDefault();
+            });
+
+            // All forms are posted to the parent window.
+            $('form', body).attr('target', '_parent');
+
+            // Things restricted to folder_contents.
+            if (action_id === 'toolbar-button-folderContents') {
+                // Override default behaviour on folder_contents links
+                $('#folderlisting-main-table a', body).each(function() {
+                    if($(this).attr('href').slice(-16) === '/folder_contents') {
+                        var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
+                            .attr('href', $(this).attr('href'))
+                            .attr('class', 'viewlink')
+                            .attr('target', '_parent')
+                            .attr('title', 'Open here'); // Needs i18n!
+                        $(this).parent().append(viewlink);
+                    } else {
+                        // Replace click handler
+                        $(this).off('click');
+                        $(this).on('click', function(e){
+                            window.parent.location.href = $(e.target).attr('href');
+                        });
+                    }
+                });
+
+                // Add an "Open here" link at the top
+                var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
+                    .attr('href', href)
+                    .attr('class', 'viewlink')
+                    .attr('target', '_parent')
+                    .attr('title', 'Open here'); // Needs i18n!
+                $('h1.documentFirstHeading').append(viewlink);
+
+            } else if (action_id === 'toolbar-button-plone-contentmenu-factories'){
+                // Submit form using ajax, then close modal and reload parent
+                $('form', body).ajaxForm({
+                    success: function() {
+                        overlay.modal('hide');
+                        body.empty();
+                        window.parent.location.replace(window.parent.location.href);
+                    }
                 });
             }
-
-            // TODO: this part should be pluggable
-            // Keep all links inside the overlay (except for
-            // the folder_contents overlay)
-            $('a', $('.modal-body', overlay)).on('click', function(e){
-                if ($('#folderlisting-main-table', overlay).length) {
-                    if ($(e.target).attr('href').slice(-16) == '/folder_contents') {
-                        overlay($(e.target).attr('href'), iframe);
-                        return e.preventDefault();
-                    } else {
-                        window.parent.location.href = $(e.target).attr('href');
-                    };
-                } else {
-                    overlay($(e.target).attr('href'), iframe);
-                    return e.preventDefault();
-                };
-            });
 
             // Tinymce editable areas inside overlay
             $('textarea.mce_editable', overlay).each(function() {
@@ -76,6 +106,8 @@
             });
 
             // Tabs ... TODO: use boostrap tabs
+
+            // Form buttons ... TODO: copy form buttons into modal-footer
 
             // Cancel button
             // Modify common plone views so that Cancel button dismisses the
@@ -95,7 +127,10 @@
             }
 
             // Shrink iframe when the overlay is closed
-            overlay.on('hidden', function(){ iframe.shrink(); });
+            overlay.on('hidden', function() { iframe.shrink(); });
+
+            // Call any other event handlers
+            $(iframe.document).trigger('on_overlay_setup', action_id);
 
             // Show overlay
             iframe.stretch();
@@ -120,6 +155,21 @@
             '    <a href="#" class="btn btn-primary">Save changes</a>' +
             '  </div>' +
             '</div>').hide());
+
+        // Links under "Display", "Workflow", etc should open directly in parent
+        var no_overlay = [
+            "#toolbar-button-plone-contentmenu-workflow",
+            "#toolbar-button-plone-contentmenu-display",
+            "#toolbar-button-plone-contentmenu-actions"
+            ];
+
+        for(var idx in no_overlay){
+            $(no_overlay[idx] + " a").attr('target', '_parent');
+        }
+
+        // ... but rename goes in an overlay
+        $('#toolbar-button-plone-contentmenu-actions #toolbar-button-rename a')
+            .attr('target', null);
 
         var _window = window;
         if (window.parent !== window) {
