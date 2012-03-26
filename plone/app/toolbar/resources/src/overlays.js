@@ -1,6 +1,12 @@
 (function($) {
     "use strict";
 
+    // # 
+    //
+    //
+    //
+    //
+    //
 
     // # Namespace {{{
     $.plone = $.plone || {};
@@ -107,6 +113,7 @@
     // # Trigger overlay
     $(document).ready(function() {
 
+        // TODO: we should add this template in toolbar tile at the bottom
         $('body').append($(''+
             '<div class="modal" id="plone-overlay">' +
             '  <div class="modal-header">' +
@@ -120,20 +127,18 @@
             '  </div>' +
             '</div>').hide());
 
+        // TODO: this should be already in html. if its not possible hack it
+        // into toolbar.py
+        //
         // Links under "Display", "Workflow", etc should open directly in parent
         var no_overlay = [
             "#toolbar-button-plone-contentmenu-workflow",
             "#toolbar-button-plone-contentmenu-display",
             "#toolbar-button-plone-contentmenu-actions"
             ];
-
         for(var idx in no_overlay){
             $(no_overlay[idx] + " a").attr('target', '_parent');
         }
-
-        // TODO: this should be already in html. if its not possible hack it
-        // into toolbar.py
-        //
         // ... but rename goes in an overlay
         $('#toolbar-button-plone-contentmenu-actions #toolbar-button-rename a')
             .attr('target', null);
@@ -142,15 +147,21 @@
             .attr('target', null);
         // END:TODO
 
+
         var _window = window;
         if (window.parent !== window) {
             _window = window.parent;
         }
         _window.$(_window.document).bind('iframe_link_clicked', function(e, el, iframe) {
+            // TODO: explain why we need this id
             overlay(el.attr('href'), iframe, el.parent().attr('id'));
         });
 
     });
+
+
+
+
 
     // Namespaced event that only fires for folder_contents
     $(document).on('overlay_setup.toolbar-button-folderContents', function(e){
@@ -188,7 +199,6 @@
             .attr('target', '_parent')
             .attr('title', 'Open here'); // Needs i18n!
         $('h1.documentFirstHeading').append(viewlink);
-
 
         // Keep forms inside the overlay by placing result of form submission
         // back into the overlay and calling overlay_setup again.
@@ -228,6 +238,5 @@
             }
         });
      });
-
 
 }(jQuery));
