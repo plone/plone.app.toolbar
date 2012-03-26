@@ -1,12 +1,13 @@
 from urllib import unquote
+from Acquisition import aq_inner
 from zope.i18n import translate
+from zope.interface import implements
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.browsermenu.interfaces import IBrowserMenu
+from zope.traversing.interfaces import ITraversable
 from plone.memoize.instance import memoize
 from plone.tiles import Tile
-
-from Acquisition import aq_inner
 
 
 class ToolbarTile(Tile):
@@ -180,3 +181,17 @@ class ToolbarTile(Tile):
     def user_actions(self):
         actions = self.context_state.actions('user')
         return [item for item in actions if item['available']]
+
+
+class UnthemeRequest(object):
+    implements(ITraversable)
+
+    def __init__(self, context, request=None):
+        self.context = context
+        self.request = request
+
+    def traverse(self, name, ignore):
+        if self.request is not None:
+            self.request.response.setHeader('X-Theme-Disabled', 'True')
+            self.request['HTTP_X_THEME_ENABLED'] = False
+        return self.context

@@ -38,27 +38,21 @@
         add_permission="plone.AddToolbar"
         permission="plone.ViewToolbar" />
 
-    <!-- Event handlers -->
-    <subscriber
-        for="ZPublisher.interfaces.IPubAfterTraversal"
-        handler=".eventhandlers.UnthemeUI" />
-
-    <class class="plone.app.content.browser.foldercontents.FolderContentsView">
-      <implements interface="plone.app.toolbar.interfaces.IUIView"/>
-    </class>
-    <class class="plone.app.workflow.browser.sharing.SharingView">
-        <implements interface="plone.app.toolbar.interfaces.IUIView"/>
-    </class>
-    <class class="plone.app.contentrules.browser.assignments.ManageAssignments">
-        <implements interface="plone.app.toolbar.interfaces.IUIView"/>
-    </class>
+    <!-- Add /++untheme++d/ to your url to disable theming -->
+    <adapter
+        name="untheme"
+        for="* zope.publisher.interfaces.IRequest"
+        provides="zope.traversing.interfaces.ITraversable"
+        factory=".toolbar.UnthemeRequest"
+        />
 
     <!-- TODO: commenting out until its working
-      browser:page
-      name="portal-notifications"
-      for="*"
-      template="templates/notifications.pt"
-      permission="plone.ViewToolbar" /-->
+     browser:page
+        name="portal-notifications"
+        for="*"
+        template="templates/notifications.pt"
+        permission="plone.ViewToolbar"
+        /-->
 
     <!-- GS profile -->
     <genericsetup:registerProfile
