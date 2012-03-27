@@ -140,6 +140,7 @@
         init: function(el, resources, target) {
             var self = this,
                 iframe_attrs = $.iframize.defaults.iframe_attrs;
+
             // hide and clone original element
             self.el_original = el;
             self.el_original.hide();
@@ -243,8 +244,6 @@
                     $('body', self.document).append($(self.el));
                 });
             }
-
-
         },
         shrink: function() {
             var self = this;
