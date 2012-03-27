@@ -52,18 +52,15 @@
             var self = this;
             self.el = el;
 
-            // FIXME:
-            // clone template, place it after self.el
-            // store it to self._overlay
-            // create also links to title, body, footer
-
-            // convinient 
+            // overlay
+            self._overlay = $('#plone-overlay-template').clone();
+            self._overlay.appendTo($('body'));
             self.title = $('.modal-header > h3', self._overlay);
             self.body = $('.modal-body', self._overlay);
-            self.body = $('.modal-footer', self._overlay);
+            self.footer = $('.modal-footer', self._overlay);
 
-            // by default we dont want to propagete event out of overlay
-            self._overlay.on('click', function(e) { e.stopPropagation(); });
+            // iframe
+            self.iframe = window.parent.$('iframe[name=' + window.name + ']').iframize('toolbar');
 
             // keep all links inside the overlay
             $('a', self.body).on('click', function(e){
@@ -78,34 +75,33 @@
                 $(this).ploneOverlay();
             });
 
-            // FIXME: self.iframe ???
-            self.el.on('show', function() { self.iframe.stretch(); });
-            self.el.on('hide', function() { self.iframe.shrink(); });
 
-            // fifure out how to get id
-            // trigger custom event
-            $(document).trigger('plone_overlay' + id, self);
+            self._overlay.on('click', function(e) { e.stopPropagation(); });
+            self._overlay.on('shown', function() { self.iframe.stretch(); });
+            self._overlay.on('hidden', function() { self.iframe.shrink(); });
+
+            $(document).trigger('plone_overlay.' + self.el.parent().attr('id'), self);
         },
         modal: function(options) {
-            self.el.modal(options);
+            this._overlay.modal(options);
         },
         load: function(on_load) {
             // Clean up the url
             // Insert ++untheme++ namespace to disable theming. This only works
             // for absolute urls.
-            var href = self.el.attr('href');
+            var href = this.el.attr('href');
             href = (href.match(/^([^#]+)/)||[])[1];
             href.replace(/^(https?:\/\/[^/]+)\/(.*)/, '$1/++untheme++d/$2');
 
             // TODO: show spinner before starting a request
 
             $.get(href, function(data) {
-                data = $('<div/>').html(data);
+                data = $(data).filter('div#visual-portal-wrapper');
 
                 // TODO: hide spinner
 
-                if (on_load === undefined) {
-                    on_load.apply(this, [data]);
+                if (on_load !== undefined) {
+                    on_load.apply(this, [ data ]);
                 }
 
             });
@@ -120,6 +116,7 @@
 
         if (overlay === undefined) {
             overlay = new $.plone.Overlay(el);
+            options = {}; // this will trigger modal
         }
 
         if (options !== undefined) {
@@ -135,16 +132,13 @@
 
         // TODO: we should add this template in toolbar tile at the bottom
         $('body').append($(''+
-            '<div class="modal" id="plone-overlay">' +
+            '<div class="modal" id="plone-overlay-template" style="display: none;">' +
             '  <div class="modal-header">' +
-            '    <a class="close" data-dismiss="modal">×</a>' +
+            '    <a class="close" data-dismiss="modal">&times;</a>' +
             '    <h3>Title</h3>' +
             '  </div>' +
             '  <div class="modal-body">Content</div>' +
-            '  <div class="modal-footer">' +
-            '    <a href="#" class="btn">Cancel</a>' +
-            '    <a href="#" class="btn btn-primary">Save changes</a>' +
-            '  </div>' +
+            '  <div class="modal-footer">Buttons</div>' +
             '</div>').hide());
 
         var _window = window;
@@ -152,13 +146,16 @@
             _window = window.parent;
         }
         _window.$(_window.document).bind('iframe_link_clicked', function(e, el) {
-            $(el).ploneOverlay({ show: true }, iframe);
+            $(el).ploneOverlay();
         });
 
     });
     // }}}
 
 }(jQuery));
+
+
+
 
 // XXX: not sure if we should separate this out but for convinience i would
 // keep definitions of action in the same script
@@ -169,8 +166,10 @@
 
     // # Common utils {{{
 
-    // ## Tinymce {{{
-    function tinymce(overlay) {
+    // ## Forms helper {{{
+    function form_fixup(overlay) {
+
+        // trigger tinymce
         $('textarea.mce_editable', overlay.body).each(function() {
             var id = $(this).attr('id'),
                 config = new TinyMCEConfig(id);
@@ -181,22 +180,35 @@
             delete InitializedTinyMCEInstances[id];
             config.init();
         });
-    }
-    // }}}
 
-    // ## Tabs (ala twitter bootstrap) {{{
-    function tabs(overlay) {
-    }
-    // }}}
+        // tabs (ala twitter bootstrap)
+        var tabs = $('<ul class="nav nav-tabs"></ul>'),
+            tabs_content = $('<div class="tab-content">');
 
-    // ## Form title {{{
-    // }}}
+        $('form', overlay.body)
+            .addClass('form-horizontal')
+            .prepend(tabs_content)
+            .prepend(tabs);
 
-    // ## Form {{{
-    // }}}
+        $('fieldset', overlay.body).each(function(i, fieldset) {
+            fieldset = $(fieldset);
+            tabs.append($('<li/>').append(
+                    $('<a/>').attr('href', '#' + fieldset.attr('id'))
+                        .html($('legend', fieldset).hide().html())
+                        .on('click', function(e) {
+                            e.preventDefault();
+                            $(this).tab('show').blur();
+                        })
+                        ));
+            tabs_content.append($('<div>').addClass('tab-pane')
+                    .attr('id', fieldset.attr('id'))
+                    .html(fieldset.html()));
+            fieldset.remove();
+        });
 
-    // ## Form buttons (ala twitter bootstrap) {{{
-    function buttons(overlay) {
+        $('a', tabs).tab();
+        $('a', tabs).first().tab('show');
+
     }
     // }}}
 
@@ -274,6 +286,24 @@
     // and i probably did, also forgot some.
 
     // ## Edit
+    $(document).on('plone_overlay.plone-action-edit', function(e, overlay) {
+
+        // Trigger Deco
+        if ($('[data-iframe="deco-toolbar"]', window.parent.document).size() > 0) {
+            overlay.el.ploneDecoToolbar();
+
+        // or load edit form
+        } else {
+            overlay.load(function(data) {
+
+                // copy content from data into overlay
+                overlay.title.html($('h1.documentFirstHeading', data).html());
+                overlay.body.html($('div:has(> form#document-base-edit)', data).html());
+
+                form_fixup(overlay);
+            });
+        }
+    });
     // # Trigger deco {{{
     //var iframe = window.parent.$('#' + $.plone.globals.toolbar_iframe_id).iframize('deco-toolbar');
     //window.parent.$(iframe.el_iframe).bind('iframe_loaded', function() {
