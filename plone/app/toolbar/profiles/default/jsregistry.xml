@@ -87,10 +87,13 @@
         id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-typeahead.js"
         />
 
+
+    <!-- plone specific scripts -->
+
     <javascript
         cacheable="False" compression="safe" cookable="False"
         enabled="True" inline="False" bundle="toolbar"
-        id="++resource++plone.app.toolbar/src/overlays.js"
+        id="++resource++plone.app.toolbar/src/plone.overlay.js"
         />
 
     <javascript 
