@@ -1,116 +1,100 @@
 (function($) {
     "use strict";
 
-    // # 
-    //
-    //
-    //
-    //
-    //
-
     // # Namespace {{{
     $.plone = $.plone || {};
     // }}}
 
-    // # Defaults {{{
-    $.plone.overlay_mapping = $.extend(true, {
-        'default': {
-            'h1.documentFirstHeading': '.modal-header h3',
-            'div:has(> form#document-base-edit)': '.modal-body'
+    // # Overlay {{{
+    //
+    // TODO: kick garbas to write some docs
+    // TODO: kick him again
+    // TODO: write docs
+    $.plone.Overlay = function(el) { this.init(el); return this; }
+    $.plone.Overlay.prototype = {
+        init: function(el) {
+            var self = this;
+            self.el = el;
+
+            // FIXME:
+            // clone template, place it after self.el
+            // store it to self._overlay
+            // create also links to title, body, footer
+
+            // convinient 
+            self.title = $('.modal-header > h3', self._overlay);
+            self.body = $('.modal-body', self._overlay);
+            self.body = $('.modal-footer', self._overlay);
+
+            // by default we dont want to propagete event out of overlay
+            self._overlay.on('click', function(e) { e.stopPropagation(); });
+
+            // keep all links inside the overlay
+            $('a', self.body).on('click', function(e){
+                e.preventDefault();
+                e.stopPropagation();
+
+                // TODO: should done with slide left effect
+                // TODO: we need to connect this with browser history
+
+                // for now we hide current overlay and open new overlay
+                self.modal('hide');
+                $(this).ploneOverlay();
+            });
+
+            // FIXME: self.iframe ???
+            self.el.on('show', function() { self.iframe.stretch(); });
+            self.el.on('hide', function() { self.iframe.shrink(); });
+
+            // fifure out how to get id
+            // trigger custom event
+            $(document).trigger('plone_overlay' + id, self);
+        },
+        modal: function(options) {
+            self.el.modal(options);
+        },
+        load: function(on_load) {
+            // Clean up the url
+            // Insert ++untheme++ namespace to disable theming. This only works
+            // for absolute urls.
+            var href = self.el.attr('href');
+            href = (href.match(/^([^#]+)/)||[])[1];
+            href.replace(/^(https?:\/\/[^/]+)\/(.*)/, '$1/++untheme++d/$2');
+
+            // TODO: show spinner before starting a request
+
+            $.get(href, function(data) {
+                data = $('<div/>').html(data);
+
+                // TODO: hide spinner
+
+                if (on_load === undefined) {
+                    on_load.apply(this, [data]);
+                }
+
+            });
         }
-    }, $.plone.overlay_mapping || {});
+    }
     // }}}
 
-    // 
-    function overlay(href, iframe, action_id) {
-        var overlay = $('#plone-overlay'),
-            overlay_mapping = $.plone.overlay_mapping['default'];
+    // # jQuery implementation {{{
+    $.fn.ploneOverlay = function (options) {
+        var el = $(this),
+            overlay = el.data('plone-overlay');
 
-        overlay.on('click', function(e) {
-            e.stopPropagation();
-        });
-
-        if (action_id !== undefined && $.plone.overlay_mapping[action_id] !== undefined) {
-            overlay_mapping = $.extend({}, overlay_mapping,
-                    $.plone.overlay_mapping[action_id]);
+        if (overlay === undefined) {
+            overlay = new $.plone.Overlay(el);
         }
 
-        // Clean up the url
-        href = (href.match(/^([^#]+)/)||[])[1];
+        if (options !== undefined) {
+            overlay.modal(options);
+        }
 
-        // TODO: show spinner before starting a request
-
-        // Insert ++untheme++ namespace to disable theming. This only works
-        // for absolute urls.
-        $.get(href.replace(/^(https?:\/\/[^/]+)\/(.*)/, '$1/++untheme++d/$2'),
-                function(data) {
-
-            data = $('<div/>').html(data);
-            $.each(overlay_mapping, function(source, target) {
-                $(target, overlay).html(data.find(source).html());
-            });
-
-            var body = $('.modal-body', overlay);
-
-            // Keep all links inside the overlay
-            $('a', body).on('click', function(e){
-                overlay($(e.target).attr('href'), iframe);
-                return e.preventDefault();
-            });
-
-            // Tinymce editable areas inside overlay
-            $('textarea.mce_editable', overlay).each(function() {
-                var id = $(this).attr('id'),
-                    config = new TinyMCEConfig(id);
-                // Forgive me for I am about to sin. But it does mean
-                // we can overlay it multiple times. If you know a
-                // better way, please share.
-                delete InitializedTinyMCEInstances[id];
-                config.init();
-            });
-
-            // Tabs ... TODO: use boostrap tabs
-
-            // Form buttons ... TODO: copy form buttons into modal-footer
-
-            // Cancel button
-            // Modify common plone views so that Cancel button dismisses the
-            // overlay
-            var cancelbuttons = [
-                'form.button.Cancel',
-                'form.button.cancel',
-                'form.actions.cancel'
-                ];
-            for (var idx in cancelbuttons) {
-                $('input[name="' + cancelbuttons[idx] + '"]', overlay)
-                    .on('click', function(e) {
-                        overlay.modal('hide');
-                        clear_template();
-                        return e.preventDefault();
-                    });
-            }
-
-            // Shrink iframe when the overlay is closed
-            overlay.on('hidden', function() { iframe.shrink(); });
-
-            // Keep all links inside the overlay. Not sure if this should really
-            // go AFTER the firing of overlay_setup.
-            $('a', body).on('click', function(e){
-                overlay($(e.target).attr('href'), menuid, selector);
-                return e.preventDefault();
-            });
-
-            // Call any other event handlers
-            $(document).trigger('overlay_setup.' + action_id, href);
-
-            // Show overlay
-            iframe.stretch();
-            // TODO: hide spinner
-            overlay.modal('show');
-        });
+        return overlay
     }
+    // }}}
 
-    // # Trigger overlay
+    // # Trigger overlay {{{
     $(document).ready(function() {
 
         // TODO: we should add this template in toolbar tile at the bottom
@@ -127,45 +111,69 @@
             '  </div>' +
             '</div>').hide());
 
-        // TODO: this should be already in html. if its not possible hack it
-        // into toolbar.py
-        //
-        // Links under "Display", "Workflow", etc should open directly in parent
-        var no_overlay = [
-            "#toolbar-button-plone-contentmenu-workflow",
-            "#toolbar-button-plone-contentmenu-display",
-            "#toolbar-button-plone-contentmenu-actions"
-            ];
-        for(var idx in no_overlay){
-            $(no_overlay[idx] + " a").attr('target', '_parent');
-        }
-        // ... but rename goes in an overlay
-        $('#toolbar-button-plone-contentmenu-actions #toolbar-button-rename a')
-            .attr('target', null);
-        // ... and so does selection of a content item
-        $('#toolbar-button-plone-contentmenu-display #toolbar-button-contextSetDefaultPage a')
-            .attr('target', null);
-        // END:TODO
-
-
         var _window = window;
         if (window.parent !== window) {
             _window = window.parent;
         }
-        _window.$(_window.document).bind('iframe_link_clicked', function(e, el, iframe) {
-            // TODO: explain why we need this id
-            overlay(el.attr('href'), iframe, el.parent().attr('id'));
+        _window.$(_window.document).bind('iframe_link_clicked', function(e, el) {
+            $(el).ploneOverlay({ show: true }, iframe);
         });
 
     });
+    // }}}
 
+}(jQuery));
 
+// XXX: not sure if we should separate this out but for convinience i would
+// keep definitions of action in the same script
 
+// # Definition of overlays per each button {{{
+(function($) {
+    "use strict";
 
+    // # Common utils {{{
 
-    // Namespaced event that only fires for folder_contents
-    $(document).on('overlay_setup.toolbar-button-folderContents', function(e){
-        $('#folderlisting-main-table a').each(function(){
+    // ## Tinymce {{{
+    function tinymce(overlay) {
+        $('textarea.mce_editable', overlay.body).each(function() {
+            var id = $(this).attr('id'),
+                config = new TinyMCEConfig(id);
+            // Forgive me for I am about to sin. But it does mean
+            // we can overlay it multiple times. If you know a
+            // better way, please share.
+            // garbas: its javascript its ok to sin.
+            delete InitializedTinyMCEInstances[id];
+            config.init();
+        });
+    }
+    // }}}
+
+    // ## Tabs (ala twitter bootstrap) {{{
+    function tabs(overlay) {
+    }
+    // }}}
+
+    // ## Form title {{{
+    // }}}
+
+    // ## Form {{{
+    // }}}
+
+    // ## Form buttons (ala twitter bootstrap) {{{
+    function buttons(overlay) {
+    }
+    // }}}
+
+    // }}}
+
+    // # Actions {{
+
+    // ## Contents (folder_contents) {{{
+    // FIXME: not working
+    $(document).on('plone_overlay.plone-action-folderContents', function(e) {
+        var self = this;
+
+        $('#folderlisting-main-table a', self.body).each(function(){
 
             // Remove any parameters from the url
             var href = $(this).attr('href');
@@ -224,9 +232,25 @@
         });
 
     });
+    // }}}
 
-    // Namespaced event that only fires when adding content
-    $(document).on('overlay_setup.toolbar-button-plone-contentmenu-factories', function(e){
+    // TODO: bellow i listed action which i think we should implement, i might,
+    // and i probably did, also forgot some.
+
+    // ## Edit
+    // ## Rules
+    // ## Sharing
+
+    // ## Actions -> Cut
+    // ## Actions -> Paste
+    // ## Actions -> Delete
+    // ## Actions -> Rename
+
+    // ## Display -> Select a content item as default view
+
+    // ## Add forms {{{
+    // FIXME: not working
+    $(document).on('plone_overlay.toolbar-button-plone-contentmenu-factories', function(e){
         // Submit form using ajax, then close modal and reload parent
         var modal = $('#toolbar-overlay', toolbar.document),
             body = $('.modal-body', modal);
@@ -238,5 +262,13 @@
             }
         });
      });
+    // }}}
+
+    // ## State: ??? -> Publish, Submit for publication, Retract, Send back
+    // ## State: ??? -> Advanced...
+
+    // ## Personal -> Preferences
+    // ## Personal -> Site Setup
 
 }(jQuery));
+// }}}

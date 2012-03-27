@@ -1,7 +1,6 @@
 <!doctype html>
 <html>
 <head>
-
 </head>
 <body>
 
@@ -24,9 +23,7 @@
           <li tal:repeat="item view/contentmenu"
               tal:attributes="class string:dropdown ${item/klass|nothing}; id item/id|nothing;">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"
-               tal:attributes="
-                 href item/action|nothing;
-                 target item/link_target|nothing;">
+               tal:attributes="href item/action|nothing;">
               <span tal:content="item/title">Link Title</span>
               <span tal:condition="python:'extra' in item and 'stateTitle' in item['extra']"
                     tal:attributes="class item/extra/class"
@@ -58,7 +55,8 @@
               <b class="caret">
             </a>
             <ul class="dropdown-menu">
-              <li tal:repeat="subitem view/user_actions">
+              <li tal:repeat="subitem view/user_actions"
+                tal:attributes="id string:plone-personal-actions-${subitem/id};">
                 <a href="#"
                    tal:attributes="href subitem/url"
                    tal:content="subitem/title">Link Title</a>

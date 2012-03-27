@@ -40,10 +40,9 @@ class ToolbarTile(Tile):
 
     @memoize
     def resources(self):
+        resources = []
         skinname = self.context.getCurrentSkinName()
         self.context.changeSkin('toolbar', self.request)
-
-        resources = []
         for item in self.styles_view.styles() + self.scripts_view.scripts():
             if item['src']:
                 # FIXME: definetly not optimal but for now it will be ok
@@ -54,9 +53,7 @@ class ToolbarTile(Tile):
                         'lib/less-1.3.0.min.js')
                 else:
                     resources.append(item['src'])
-
         self.context.changeSkin(skinname, self.request)
-
         return resources
 
     @memoize
@@ -87,6 +84,10 @@ class ToolbarTile(Tile):
 
             # make sure id is unique
             item['id'] = 'plone-action-' + item['id']
+
+            # we force that view is open in parent
+            if item['id'] == 'view':
+                item['link_target'] = '_parent'
 
             # button url
             button_url = action['url'].strip()
