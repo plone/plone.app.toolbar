@@ -17,7 +17,6 @@
                 <element>default</element>
                 <element>jquery</element>
                 <element>jquerytools</element>
-                <element>tinymce</element>
                 <element>toolbar-init</element>
             </element>
 
@@ -25,7 +24,6 @@
                 <element>default</element>
                 <element>jquery</element>
                 <element>jquerytools</element>
-                <element>tinymce</element>
                 <element>toolbar-init</element>
             </element>
 
@@ -33,7 +31,6 @@
                 <element>default</element>
                 <element>jquery</element>
                 <element>jquerytools</element>
-                <element>tinymce</element>
                 <element>toolbar-init</element>
             </element>
         </value>
