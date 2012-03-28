@@ -90,7 +90,8 @@
             // Clean up the url
             // Insert ++untheme++ namespace to disable theming. This only works
             // for absolute urls.
-            var href = this.el.attr('href');
+            var self = this,
+                href = self.el.attr('href');
             href = (href.match(/^([^#]+)/)||[])[1];
             href.replace(/^(https?:\/\/[^/]+)\/(.*)/, '$1/++untheme++d/$2');
 
@@ -101,9 +102,9 @@
 
                 // TODO: hide spinner
 
-                if (on_load !== undefined) {
-                    on_load.apply(this, [ data ]);
-                }
+                on_load.apply(self, [ data ]);
+
+                self.modal(self.options);
 
             });
         }
@@ -114,16 +115,9 @@
     $.fn.ploneOverlay = function (options) {
         var el = $(this),
             overlay = el.data('plone-overlay');
-
         if (overlay === undefined) {
             overlay = new $.plone.Overlay(el, options);
-            options = overlay.options;
         }
-
-        if (options !== undefined) {
-            overlay.modal(options);
-        }
-
         return overlay
     }
     // }}}
