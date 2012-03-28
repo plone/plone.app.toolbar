@@ -53,7 +53,7 @@
         />
 
     <genericsetup:registerProfile
-        name="bbb"
+        name="z_bbb"
         title="Plone Toolbar - Compatibility with Plone 4"
         description="Performs backwards compatibility migrations"
         directory="profiles/bbb"
