@@ -55,6 +55,7 @@
             // overlay
             self._overlay = $('#plone-overlay-template').clone();
             self._overlay.appendTo($('body'));
+            self.form = $('form', self._overlay);
             self.title = $('.modal-header > h3', self._overlay);
             self.body = $('.modal-body', self._overlay);
             self.footer = $('.modal-footer', self._overlay);
@@ -133,19 +134,21 @@
         // TODO: we should add this template in toolbar tile at the bottom
         $('body').append($(''+
             '<div class="modal" id="plone-overlay-template" style="display: none;">' +
+            '  <form>' +
             '  <div class="modal-header">' +
             '    <a class="close" data-dismiss="modal">&times;</a>' +
             '    <h3>Title</h3>' +
             '  </div>' +
             '  <div class="modal-body">Content</div>' +
             '  <div class="modal-footer">Buttons</div>' +
+            '  </form>' +
             '</div>').hide());
 
         var _window = window;
         if (window.parent !== window) {
             _window = window.parent;
         }
-        _window.$(_window.document).bind('iframe_link_clicked', function(e, el) {
+        _window.$(_window.document).on('iframe_link_clicked', function(e, el) {
             $(el).ploneOverlay();
         });
 
@@ -167,7 +170,22 @@
     // # Common utils {{{
 
     // ## Forms helper {{{
-    function form_fixup(overlay) {
+    function form_fixup(overlay, data, title_selector, form_selector,
+            buttons_selector) {
+
+        title_selector = title_selector || 'h1.documentFirstHeading';
+        form_selector = form_selector || 'form#document-base-edit';
+        buttons_selector = buttons_selector || '.formControls > input[type=submit]';
+
+        // copy content from data into overlay
+        overlay.title.html($(title_selector, data).html());
+        overlay.body.html($(form_selector, data).html());
+
+        // set form attributes to form attributes in overlay
+        overlay.form.addClass('form-horizontal');
+        $.each($(form_selector, data)[0].attributes, function(i, attr) {
+            overlay.form.attr(attr.name, attr.value);
+        });
 
         // trigger tinymce
         $('textarea.mce_editable', overlay.body).each(function() {
@@ -184,12 +202,6 @@
         // tabs (ala twitter bootstrap)
         var tabs = $('<ul class="nav nav-tabs"></ul>'),
             tabs_content = $('<div class="tab-content">');
-
-        $('form', overlay.body)
-            .addClass('form-horizontal')
-            .prepend(tabs_content)
-            .prepend(tabs);
-
         $('fieldset', overlay.body).each(function(i, fieldset) {
             fieldset = $(fieldset);
             tabs.append($('<li/>').append(
@@ -205,9 +217,33 @@
                     .html(fieldset.html()));
             fieldset.remove();
         });
+        $(overlay.body).prepend(tabs_content).prepend(tabs);
 
         $('a', tabs).tab();
         $('a', tabs).first().tab('show');
+
+        // copy buttons to modal-footer
+        overlay.buttons = $('<div class="pull-right"/>');
+        overlay.footer.html('');
+        overlay.footer.append(overlay.buttons);
+        $(buttons_selector, overlay.body).each(function(i, button) {
+            button = $(button);
+            button.addClass('btn');
+            if (button.hasClass('context')) {
+                button.addClass('btn-primary');
+            }
+            overlay.buttons.append(button);
+        });
+
+        // change note should be in footer
+        var change_note = $('#cmfeditions_version_comment_block', overlay.body);
+        if (change_note.size() !== 0) {
+            $('input', change_note)
+                .attr('placeholder', $('.formHelp', change_note).text().trim())
+                .appendTo($('<div class="pull-left"/>')
+                        .appendTo(overlay.footer))
+            change_note.remove();
+        }
 
     }
     // }}}
@@ -285,36 +321,12 @@
     // TODO: bellow i listed action which i think we should implement, i might,
     // and i probably did, also forgot some.
 
-    // ## Edit
+    // ## Edit {{{
     $(document).on('plone_overlay.plone-action-edit', function(e, overlay) {
-
-        // Trigger Deco
-        if ($('[data-iframe="deco-toolbar"]', window.parent.document).size() > 0) {
-            overlay.el.ploneDecoToolbar();
-
-        // or load edit form
-        } else {
-            overlay.load(function(data) {
-
-                // copy content from data into overlay
-                overlay.title.html($('h1.documentFirstHeading', data).html());
-                overlay.body.html($('div:has(> form#document-base-edit)', data).html());
-
-                form_fixup(overlay);
-            });
-        }
+        overlay.load(function(data) {
+            form_fixup(overlay, data);
+        });
     });
-    // # Trigger deco {{{
-    //var iframe = window.parent.$('#' + $.plone.globals.toolbar_iframe_id).iframize('deco-toolbar');
-    //window.parent.$(iframe.el_iframe).bind('iframe_loaded', function() {
-    //    $('#plone-action-edit > a').bind('click', function(e) {
-    //        if ($('[data-iframe="deco-toolbar"]', window.parent.document).size() > 0) {
-    //            e.preventDefault();
-    //            e.stopPropagation();
-    //            $(this).ploneDecoToolbar();
-    //        }
-    //    });
-    //});
     // }}}
 
     // ## Rules

@@ -209,7 +209,7 @@
                                 }
                             } else {
                                 e.preventDefault();
-                                $(document).trigger('iframe_link_clicked', el);
+                                $(document).trigger('iframe_link_clicked', [el]);
                             }
 
                             // XXX: only temporary solution
@@ -229,8 +229,6 @@
                         }
 
                     });
-
-                    $(self.el_iframe).trigger('iframe_loaded');
 
                 });
 
@@ -308,6 +306,7 @@
             }
             $(this).iframize(name, resources, target);
         });
+        $(document).trigger('iframize_initialized');
     });
     // }}}
 
