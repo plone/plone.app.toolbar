@@ -123,7 +123,7 @@ class ToolbarTile(Tile):
 
     @memoize
     def contentmenu(self):
-        def contentmenu_actions(items):
+        def contentmenu(items):
             buttons = []
             for item in items:
                 item['id'] = ''
@@ -138,12 +138,12 @@ class ToolbarTile(Tile):
                             if 'stateTitle' not in item['extra']:
                                 item['klass'] = item['extra']['class']
                     if 'submenu' in item and item['submenu']:
-                        item['submenu'] = contentmenu_actions(item['submenu'])
+                        item['submenu'] = contentmenu(item['submenu'])
                 buttons.append(item)
             return buttons
 
-        contentmenu = getUtility(IBrowserMenu, name='plone_contentmenu').getMenuItems
-        return contentmenu_actions(contentmenu(self.context, self.request))
+        plone_contentmenu = getUtility(IBrowserMenu, name='plone_contentmenu').getMenuItems
+        return contentmenu(plone_contentmenu(self.context, self.request))
 
     @memoize
     def user_displayname(self):

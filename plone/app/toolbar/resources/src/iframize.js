@@ -209,27 +209,14 @@
                                 }
                             } else {
                                 e.preventDefault();
-                                $(document).trigger('iframe_link_clicked', [el]);
+                                if (el.attr('data-toggle') === 'dropdown') {
+                                    self.stretch();
+                                } else {
+                                    $(document).trigger('iframe_link_clicked', [el[0]]);
+                                }
                             }
-
-                            // XXX: only temporary solution
-                            //if (!el.parent().hasClass('dropdown')) {
-                            //    if (e.which === 1) {
-                            //        window.parent.location.href = el.attr('href');
-                            //    } else {
-                            //        window.parent.open(el.attr('href'));
-                            //    }
-                            //} else {
-                            //    if (el.parent().hasClass('open')) {
-                            //        self.stretch();
-                            //    }
-                            //    e.preventDefault();
-                            //}
-
                         }
-
                     });
-
                 });
 
             } else {

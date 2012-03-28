@@ -46,11 +46,12 @@
     // TODO: kick garbas to write some docs
     // TODO: kick him again
     // TODO: write docs
-    $.plone.Overlay = function(el) { this.init(el); return this; }
+    $.plone.Overlay = function(el, options) { this.init(el, options); }
     $.plone.Overlay.prototype = {
-        init: function(el) {
+        init: function(el, options) {
             var self = this;
             self.el = el;
+            self.options = $.extend({ show: true }, options);
 
             // overlay
             self._overlay = $('#plone-overlay-template').clone();
@@ -75,7 +76,6 @@
                 self.modal('hide');
                 $(this).ploneOverlay();
             });
-
 
             self._overlay.on('click', function(e) { e.stopPropagation(); });
             self._overlay.on('shown', function() { self.iframe.stretch(); });
@@ -116,8 +116,8 @@
             overlay = el.data('plone-overlay');
 
         if (overlay === undefined) {
-            overlay = new $.plone.Overlay(el);
-            options = {}; // this will trigger modal
+            overlay = new $.plone.Overlay(el, options);
+            options = overlay.options;
         }
 
         if (options !== undefined) {
@@ -149,7 +149,18 @@
             _window = window.parent;
         }
         _window.$(_window.document).on('iframe_link_clicked', function(e, el) {
-            $(el).ploneOverlay();
+            var id = $(el).parent().attr('id'),
+                event_handler_exists = false;
+            $.each($(document).data('events').plone_overlay, function(i, e) {
+                if (e.namespace === id) {
+                    event_handler_exists = true;
+                    $(el).ploneOverlay();
+                    return;
+                }
+            });
+            if (!event_handler_exists) {
+                window.parent.location.href = $(el).attr('href');
+            }
         });
 
     });
@@ -174,7 +185,7 @@
             buttons_selector) {
 
         title_selector = title_selector || 'h1.documentFirstHeading';
-        form_selector = form_selector || 'form#document-base-edit';
+        form_selector = form_selector || '#content form';
         buttons_selector = buttons_selector || '.formControls > input[type=submit]';
 
         // copy content from data into overlay
@@ -325,6 +336,12 @@
     $(document).on('plone_overlay.plone-action-edit', function(e, overlay) {
         overlay.load(function(data) {
             form_fixup(overlay, data);
+
+            // hide overlay and trigger deco
+            if ($('[data-iframe="deco-toolbar"]', window.parent.document).size() > 0) {
+                overlay.options = { show: false };
+                $(overlay.el).ploneDecoToolbar();
+            }
         });
     });
     // }}}
