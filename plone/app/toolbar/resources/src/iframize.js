@@ -242,13 +242,15 @@
         },
         stretch: function() {
             var self = this;
-            // record position / offset
-            self.position = {};
-            self.position.height = self.el_iframe.height();
-            self.position.offset = self.el_iframe.offset();
-            // stretch over whole document
-            self.el_iframe.height($(document).height());
-            self.el_iframe.offset($(document).offset());
+            if (self.position === undefined) {
+                // record position / offset
+                self.position = {};
+                self.position.height = self.el_iframe.height();
+                self.position.offset = self.el_iframe.offset();
+                // stretch over whole document
+                self.el_iframe.height($(document).height());
+                self.el_iframe.offset($(document).offset());
+            }
         }
     };
     // }}}

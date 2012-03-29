@@ -51,7 +51,7 @@
         init: function(el, options) {
             var self = this;
             self.el = el;
-            self.options = $.extend({ show: true }, options);
+            self.options = $.extend({ show: true }, options, { backdrop: false});
 
             // overlay
             self._overlay = $('#plone-overlay-template').clone();
@@ -78,9 +78,19 @@
             });
 
             self._overlay.on('click', function(e) { e.stopPropagation(); });
-            self._overlay.on('shown', function() { self.iframe.stretch(); });
-            self._overlay.on('hidden', function() { self.iframe.shrink(); });
-
+            self._overlay.on('shown', function() {
+                self.iframe.stretch();
+                $.plone.mask.load();
+            });
+            self._overlay.on('hidden', function() {
+                self.iframe.shrink();
+                $.plone.mask.close();
+            });
+            $('[data-dismiss=modal]', self._overlay).on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                self.modal('hide');
+            });
             $(document).trigger('plone_overlay.' + self.el.parent().attr('id'), self);
         },
         modal: function(options) {
@@ -161,9 +171,6 @@
     // }}}
 
 }(jQuery));
-
-
-
 
 // XXX: not sure if we should separate this out but for convinience i would
 // keep definitions of action in the same script
