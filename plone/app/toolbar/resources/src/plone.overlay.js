@@ -46,9 +46,9 @@
     // TODO: kick garbas to write some docs
     // TODO: kick him again
     // TODO: write docs
-    $.plone.Overlay = function(el, options) { this.init(el, options); }
+    $.plone.Overlay = function(e, o, c) { this.init(e, o, c); }
     $.plone.Overlay.prototype = {
-        init: function(el, options) {
+        init: function(el, options, callback) {
             var self = this;
             self.el = el;
             self.options = $.extend({ show: true }, options, { backdrop: false});
@@ -60,6 +60,7 @@
             self.title = $('.modal-header > h3', self._overlay);
             self.body = $('.modal-body', self._overlay);
             self.footer = $('.modal-footer', self._overlay);
+            self.mask = $.plone.mask;
 
             // iframe
             self.iframe = window.parent.$('iframe[name=' + window.name + ']').iframize('toolbar');
@@ -80,18 +81,27 @@
             self._overlay.on('click', function(e) { e.stopPropagation(); });
             self._overlay.on('shown', function() {
                 self.iframe.stretch();
-                $.plone.mask.load();
+                if (self.mask !== false) {
+                    self.mask.load();
+                }
             });
             self._overlay.on('hidden', function() {
                 self.iframe.shrink();
-                $.plone.mask.close();
+                if (self.mask !== false) {
+                    self.mask.close();
+                }
             });
             $('[data-dismiss=modal]', self._overlay).on('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 self.modal('hide');
             });
-            $(document).trigger('plone_overlay.' + self.el.parent().attr('id'), self);
+
+            if (callback === undefined) {
+                $(document).trigger('plone_overlay.' + self.el.parent().attr('id'), self);
+            } else {
+                callback(self);
+            }
         },
         modal: function(options) {
             this._overlay.modal(options);
@@ -122,11 +132,17 @@
     // }}}
 
     // # jQuery implementation {{{
-    $.fn.ploneOverlay = function (options) {
+    $.fn.ploneOverlay = function (options, callback) {
         var el = $(this),
             overlay = el.data('plone-overlay');
+
+        if (typeof(options) === 'function') {
+            callback = options;
+            options = {};
+        }
+
         if (overlay === undefined) {
-            overlay = new $.plone.Overlay(el, options);
+            overlay = new $.plone.Overlay(el, options, callback);
         }
         return overlay
     }
@@ -182,20 +198,27 @@
     // # Common utils {{{
 
     // ## Forms helper {{{
-    function form_fixup(overlay, data, title_selector, form_selector,
-            buttons_selector) {
+    $.plone.overlay_form_transform = function(overlay, data, options) {
 
-        title_selector = title_selector || 'h1.documentFirstHeading';
-        form_selector = form_selector || '#content form';
-        buttons_selector = buttons_selector || '.formControls > input[type=submit]';
+        options = $.extend({
+            title_selector: 'h1.documentFirstHeading',
+            form_selector: '#content form',
+            buttons_selector: '.formControls > input[type=submit]',
+            cancel_buttons: [
+                "input[name='buttons.cancel']",
+                "input[name='form.button.Cancel']",
+                "input[name='form.button.cancel']",
+                "input[name='form.actions.cancel']"
+                ]
+        }, options || {});
 
         // copy content from data into overlay
-        overlay.title.html($(title_selector, data).html());
-        overlay.body.html($(form_selector, data).html());
+        overlay.title.html($(options.title_selector, data).html());
+        overlay.body.html($(options.form_selector, data).html());
 
         // set form attributes to form attributes in overlay
         overlay.form.addClass('form-horizontal');
-        $.each($(form_selector, data)[0].attributes, function(i, attr) {
+        $.each($(options.form_selector, data)[0].attributes, function(i, attr) {
             overlay.form.attr(attr.name, attr.value);
         });
 
@@ -213,8 +236,9 @@
 
         // tabs (ala twitter bootstrap)
         var tabs = $('<ul class="nav nav-tabs"></ul>'),
-            tabs_content = $('<div class="tab-content">');
-        $('fieldset', overlay.body).each(function(i, fieldset) {
+            tabs_content = $('<div class="tab-content">'),
+            fieldsets = $('fieldset', overlay.body);
+        fieldsets.each(function(i, fieldset) {
             fieldset = $(fieldset);
             tabs.append($('<li/>').append(
                     $('<a/>').attr('href', '#' + fieldset.attr('id'))
@@ -229,7 +253,9 @@
                     .html(fieldset.html()));
             fieldset.remove();
         });
-        $(overlay.body).prepend(tabs_content).prepend(tabs);
+        if (fieldsets.size() > 0) {
+            $(overlay.body).prepend(tabs_content).prepend(tabs);
+        }
 
         $('a', tabs).tab();
         $('a', tabs).first().tab('show');
@@ -238,7 +264,7 @@
         overlay.buttons = $('<div class="pull-right"/>');
         overlay.footer.html('');
         overlay.footer.append(overlay.buttons);
-        $(buttons_selector, overlay.body).each(function(i, button) {
+        $(options.buttons_selector, overlay.body).each(function(i, button) {
             button = $(button);
             button.addClass('btn');
             if (button.hasClass('context')) {
@@ -257,7 +283,16 @@
             change_note.remove();
         }
 
-    }
+        // cancel buttons should close overlay
+         $.each(options.cancel_buttons, function(i, selector) {
+             var button = $(selector, overlay.footer);
+             button.on('click', function(e) {
+                 e.preventDefault();
+                 e.stopPropagation();
+                 overlay.modal('hide');
+             });
+         });
+    };
     // }}}
 
     // }}}
@@ -336,12 +371,17 @@
     // ## Edit {{{
     $(document).on('plone_overlay.plone-action-edit', function(e, overlay) {
         overlay.load(function(data) {
-            form_fixup(overlay, data);
+            $.plone.overlay_form_transform(overlay, data);
 
             // hide overlay and trigger deco
             if ($('[data-iframe="deco-toolbar"]', window.parent.document).size() > 0) {
                 overlay.options = { show: false };
-                $(overlay.el).ploneDecoToolbar();
+                var deco_toolbar = $(overlay.el).ploneDecoToolbar();
+                if (deco_toolbar.visible === false) {
+                    deco_toolbar.activate();
+                } else {
+                    deco_toolbar.deactivate();
+                }
             }
         });
     });

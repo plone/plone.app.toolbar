@@ -232,6 +232,9 @@
         },
         shrink: function() {
             var self = this;
+            if ($('body', self.document).hasClass('iframe-locked')) {
+                return;
+            }
             if (self.position !== undefined) {
                 // set to before stretch position
                 self.el_iframe.height(self.position.height);
