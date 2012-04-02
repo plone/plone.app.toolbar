@@ -113,7 +113,7 @@
             var self = this,
                 href = self.el.attr('href');
             href = (href.match(/^([^#]+)/)||[])[1];
-            href.replace(/^(https?:\/\/[^/]+)\/(.*)/, '$1/++untheme++d/$2');
+            href = href.replace(/^(https?:\/\/[^/]+)\/(.*)/, '$1/++untheme++d/$2');
 
             // TODO: show spinner before starting a request
 
