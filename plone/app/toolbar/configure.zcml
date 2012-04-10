@@ -12,7 +12,9 @@
     <include package="plone.app.jquery" />
 
     <!-- Permissions -->
-
+    <permission
+        id="plone.AddToolbar"
+        title="Plone: Add Toolbar" />
     <permission
         id="plone.ViewToolbar"
         title="Plone: View Toolbar"
