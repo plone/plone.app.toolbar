@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>TinycMCE Example</title>
+</head>
+<body>
+
+
+  <iframe src="" frameborder="0">
+    <html>
+    <head>
+      <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+      <title>Example</title>
+      <script type="text/javascript" src="lib/jquery-1.7.2.min.js"></script>
+      <script type="text/javascript" src="lib/tinymce/jquery.tinymce.js"></script>
+    </head>
+    <body>
+      <textarea name="text" id="text" rows="8" cols="40"></textarea>
+
+      <script type="text/javascript" charset="utf-8">
+        $('#text').tinymce({
+          script_url: 'lib/tinymce/tiny_mce.js'
+        }); 
+      </script>
+    </body>
+    </html>
+  </iframe>
+</body>
+</html>

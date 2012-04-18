@@ -128,7 +128,7 @@
 
             });
         }
-    }
+    };
     // }}}
 
     // # jQuery implementation {{{
@@ -144,8 +144,8 @@
         if (overlay === undefined) {
             overlay = new $.plone.Overlay(el, options, callback);
         }
-        return overlay
-    }
+        return overlay;
+    };
     // }}}
 
     // # Trigger overlay {{{
@@ -202,7 +202,7 @@
 
         options = $.extend({
             title_selector: 'h1.documentFirstHeading',
-            form_selector: '#content form',
+            content_selector: '#content',
             buttons_selector: '.formControls > input[type=submit]',
             cancel_buttons: [
                 "input[name='buttons.cancel']",
@@ -212,26 +212,27 @@
                 ]
         }, options || {});
 
+        overlay.title.html('');
+        overlay.title.append($(options.title_selector, data));
+
         // copy content from data into overlay
-        overlay.title.html($(options.title_selector, data).html());
-        overlay.body.html($(options.form_selector, data).html());
+        overlay.body.html($(options.content_selector, data).html());
 
         // set form attributes to form attributes in overlay
         overlay.form.addClass('form-horizontal');
-        $.each($(options.form_selector, data)[0].attributes, function(i, attr) {
+        $.each($('form', $(options.content_selector, data))[0].attributes,
+          function(i, attr) {
             overlay.form.attr(attr.name, attr.value);
-        });
+          });
 
         // trigger tinymce
-        $('textarea.mce_editable', overlay.body).each(function() {
-            var id = $(this).attr('id'),
-                config = new TinyMCEConfig(id);
-            // Forgive me for I am about to sin. But it does mean
-            // we can overlay it multiple times. If you know a
-            // better way, please share.
-            // garbas: its javascript its ok to sin.
-            delete InitializedTinyMCEInstances[id];
-            config.init();
+        // TODO: for some reason i couldn't get wysiwyg widget to add correct
+        // class for this textarea
+        $('textarea#plone-app-texttile-text', overlay.body).cleditor({
+          controls: "bold italic underline | style removeformat | bullets " +
+                    "numbering | outdent indent | alignleft center " +
+                    "alignright justify | undo redo | link unlink | " +
+                    "pastetext source"
         });
 
         // tabs (ala twitter bootstrap)
@@ -279,7 +280,7 @@
             $('input', change_note)
                 .attr('placeholder', $('.formHelp', change_note).text().trim())
                 .appendTo($('<div class="pull-left"/>')
-                        .appendTo(overlay.footer))
+                        .appendTo(overlay.footer));
             change_note.remove();
         }
 
@@ -371,17 +372,19 @@
     // ## Edit {{{
     $(document).on('plone_overlay.plone-action-edit', function(e, overlay) {
         overlay.load(function(data) {
-            $.plone.overlay_form_transform(overlay, data);
 
             // hide overlay and trigger deco
             if ($('[data-iframe="deco-toolbar"]', window.parent.document).size() > 0) {
-                overlay.options = { show: false };
-                var deco_toolbar = $(overlay.el).ploneDecoToolbar();
-                if (deco_toolbar.visible === false) {
-                    deco_toolbar.activate();
-                } else {
-                    deco_toolbar.deactivate();
-                }
+              $.plone.overlay_form_transform(overlay, data);
+              overlay.options = { show: false };
+              var deco_toolbar = $(overlay.el).ploneDecoToolbar();
+              if (deco_toolbar.visible === false) {
+                deco_toolbar.activate();
+              } else {
+                deco_toolbar.deactivate();
+              }
+            } else {
+              $.plone.overlay_form_transform(overlay, data);
             }
         });
     });
