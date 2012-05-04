@@ -46,21 +46,22 @@
     // TODO: kick garbas to write some docs
     // TODO: kick him again
     // TODO: write docs
-    $.plone.Overlay = function(e, o, c) { this.init(e, o, c); }
+    $.plone.Overlay = function(e, o, c) { this.init(e, o, c); };
     $.plone.Overlay.prototype = {
         init: function(el, options, callback) {
             var self = this;
             self.el = el;
             self.options = $.extend({ show: true }, options, { backdrop: false});
+            self.mask = false; //$.plone.mask;
 
             // overlay
             self._overlay = $('#plone-overlay-template').clone();
-            self._overlay.appendTo($('body'));
+            self._overlay.removeAttr('id').appendTo($('body'));
+
             self.form = $('form', self._overlay);
             self.title = $('.modal-header > h3', self._overlay);
             self.body = $('.modal-body', self._overlay);
             self.footer = $('.modal-footer', self._overlay);
-            self.mask = $.plone.mask;
 
             // iframe
             self.iframe = window.parent.$('iframe[name=' + window.name + ']').iframize('toolbar');
@@ -134,17 +135,19 @@
     // # jQuery implementation {{{
     $.fn.ploneOverlay = function (options, callback) {
         var el = $(this),
-            overlay = el.data('plone-overlay');
+            data = el.data('plone-overlay');
 
         if (typeof(options) === 'function') {
             callback = options;
             options = {};
         }
 
-        if (overlay === undefined) {
-            overlay = new $.plone.Overlay(el, options, callback);
+        if (data === undefined) {
+            data = new $.plone.Overlay(el, options, callback);
+            el.data('plone-overlay', data);
         }
-        return overlay;
+
+        return data;
     };
     // }}}
 
@@ -171,13 +174,15 @@
         _window.$(_window.document).on('iframe_link_clicked', function(e, el) {
             var id = $(el).parent().attr('id'),
                 event_handler_exists = false;
-            $.each($(document).data('events').plone_overlay, function(i, e) {
+            if ($(document).data('events') !== undefined) {
+              $.each($(document).data('events').plone_overlay, function(i, e) {
                 if (e.namespace === id) {
-                    event_handler_exists = true;
-                    $(el).ploneOverlay();
-                    return;
+                  event_handler_exists = true;
+                  $(el).ploneOverlay();
+                  return;
                 }
-            });
+              });
+            }
             if (!event_handler_exists) {
                 window.parent.location.href = $(el).attr('href');
             }
@@ -213,7 +218,7 @@
         }, options || {});
 
         overlay.title.html('');
-        overlay.title.append($(options.title_selector, data));
+        overlay.title.append($(options.title_selector, data).html());
 
         // copy content from data into overlay
         overlay.body.html($(options.content_selector, data).html());
@@ -302,92 +307,92 @@
 
     // ## Contents (folder_contents) {{{
     // FIXME: not working
-    $(document).on('plone_overlay.plone-action-folderContents', function(e) {
-        var self = this;
+    //$(document).on('plone_overlay.plone-action-folderContents', function(e) {
+    //    var self = this;
 
-        $('#folderlisting-main-table a', self.body).each(function(){
+    //    $('#folderlisting-main-table a', self.body).each(function(){
 
-            // Remove any parameters from the url
-            var href = $(this).attr('href');
-            var base_href = (href.match(/^([^?]+)/)||[])[1];
+    //        // Remove any parameters from the url
+    //        var href = $(this).attr('href');
+    //        var base_href = (href.match(/^([^?]+)/)||[])[1];
 
-            if(base_href.match(/\/folder_contents$/)){
-                var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
-                    .attr('href', $(this).attr('href').replace(/\/folder_contents$/, ''))
-                    .attr('class', 'viewlink')
-                    .attr('target', '_parent')
-                    .attr('title', 'Open here'); // Needs i18n!
-                $(this).parent().append(viewlink);
-            } else if (base_href.match(/\/folder_position$/)){
-                // Do nothing, the default click handler already keeps
-                // the result in the overlay
-            } else if (base_href.match(/\/folder_contents$/)) {
-                // It has parameters, leave it alone
-            } else {
-                // Replace click handler
-                $(this).off('click');
-                $(this).on('click', function(e){
-                   window.parent.location.href = $(e.target).attr('href');
-                });
-            }
-        });
+    //        if(base_href.match(/\/folder_contents$/)){
+    //            var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
+    //                .attr('href', $(this).attr('href').replace(/\/folder_contents$/, ''))
+    //                .attr('class', 'viewlink')
+    //                .attr('target', '_parent')
+    //                .attr('title', 'Open here'); // Needs i18n!
+    //            $(this).parent().append(viewlink);
+    //        } else if (base_href.match(/\/folder_position$/)){
+    //            // Do nothing, the default click handler already keeps
+    //            // the result in the overlay
+    //        } else if (base_href.match(/\/folder_contents$/)) {
+    //            // It has parameters, leave it alone
+    //        } else {
+    //            // Replace click handler
+    //            $(this).off('click');
+    //            $(this).on('click', function(e){
+    //               window.parent.location.href = $(e.target).attr('href');
+    //            });
+    //        }
+    //    });
 
-        // Add an "Open here" link at the top
-        var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
-            .attr('href', e.href.replace(/\/folder_contents$/, ''))
-            .attr('class', 'viewlink')
-            .attr('target', '_parent')
-            .attr('title', 'Open here'); // Needs i18n!
-        $('h1.documentFirstHeading').append(viewlink);
+    //    // Add an "Open here" link at the top
+    //    var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
+    //        .attr('href', e.href.replace(/\/folder_contents$/, ''))
+    //        .attr('class', 'viewlink')
+    //        .attr('target', '_parent')
+    //        .attr('title', 'Open here'); // Needs i18n!
+    //    $('h1.documentFirstHeading').append(viewlink);
 
-        // Keep forms inside the overlay by placing result of form submission
-        // back into the overlay and calling overlay_setup again.
-        $('form').ajaxForm({
-            success: function (responseText){
-                var modal = $('#toolbar-overlay'),
-                    body = $('.modal-body', modal),
-                    selector = '#portal-column-content > *';
-                // strip inline script tags
-                responseText = responseText.replace(/<script(.|\s)*?\/script>/gi, "");
-                var res = $('<div />').append(responseText)
-                    .find(selector);
-                body.empty().append(res);
-                overlay_setup(modal, body, 'toolbar-button-folderContents', e.href, selector);
-                return false;
-            }
-        });
+    //    // Keep forms inside the overlay by placing result of form submission
+    //    // back into the overlay and calling overlay_setup again.
+    //    $('form').ajaxForm({
+    //        success: function (responseText){
+    //            var modal = $('#toolbar-overlay'),
+    //                body = $('.modal-body', modal),
+    //                selector = '#portal-column-content > *';
+    //            // strip inline script tags
+    //            responseText = responseText.replace(/<script(.|\s)*?\/script>/gi, "");
+    //            var res = $('<div />').append(responseText)
+    //                .find(selector);
+    //            body.empty().append(res);
+    //            overlay_setup(modal, body, 'toolbar-button-folderContents', e.href, selector);
+    //            return false;
+    //        }
+    //    });
 
-        // Fix breadcrumbs to go to folder_contents
-        $('#toolbar-overlay #portal-breadcrumbs a').each(function(){
-            $this = $(this);
-            $this.attr('href', $this.attr('href') + '/folder_contents');
-        });
+    //    // Fix breadcrumbs to go to folder_contents
+    //    $('#toolbar-overlay #portal-breadcrumbs a').each(function(){
+    //        $this = $(this);
+    //        $this.attr('href', $this.attr('href') + '/folder_contents');
+    //    });
 
-    });
+    //});
     // }}}
 
     // TODO: bellow i listed action which i think we should implement, i might,
     // and i probably did, also forgot some.
 
     // ## Edit {{{
-    $(document).on('plone_overlay.plone-action-edit', function(e, overlay) {
-        overlay.load(function(data) {
+    //$(document).on('plone_overlay.plone-action-edit', function(e, overlay) {
+    //    overlay.load(function(data) {
 
-            // hide overlay and trigger deco
-            if ($('[data-iframe="deco-toolbar"]', window.parent.document).size() > 0) {
-              $.plone.overlay_form_transform(overlay, data);
-              overlay.options = { show: false };
-              var deco_toolbar = $(overlay.el).ploneDecoToolbar();
-              if (deco_toolbar.visible === false) {
-                deco_toolbar.activate();
-              } else {
-                deco_toolbar.deactivate();
-              }
-            } else {
-              $.plone.overlay_form_transform(overlay, data);
-            }
-        });
-    });
+    //        $.plone.overlay_form_transform(overlay,
+    //            $('#portal-columns #portal-column-content', data));
+
+    //        // hide overlay and trigger deco
+    //        if ($('[data-iframe="deco-toolbar"]', window.parent.document).size() > 0) {
+    //          overlay.options = { show: false };
+    //          var deco_toolbar = $(overlay.el).ploneDecoToolbar();
+    //          if (deco_toolbar.visible === false) {
+    //            deco_toolbar.activate();
+    //          } else {
+    //            deco_toolbar.deactivate();
+    //          }
+    //        }
+    //    });
+    //});
     // }}}
 
     // ## Rules
@@ -402,18 +407,18 @@
 
     // ## Add forms {{{
     // FIXME: not working
-    $(document).on('plone_overlay.toolbar-button-plone-contentmenu-factories', function(e){
-        // Submit form using ajax, then close modal and reload parent
-        var modal = $('#toolbar-overlay', toolbar.document),
-            body = $('.modal-body', modal);
-        $('form', body).ajaxForm({
-            success: function() {
-                modal.modal('hide');
-                body.empty();
-                window.parent.location.replace(window.parent.location.href);
-            }
-        });
-     });
+    //$(document).on('plone_overlay.toolbar-button-plone-contentmenu-factories', function(e){
+    //    // Submit form using ajax, then close modal and reload parent
+    //    var modal = $('#toolbar-overlay', toolbar.document),
+    //        body = $('.modal-body', modal);
+    //    $('form', body).ajaxForm({
+    //        success: function() {
+    //            modal.modal('hide');
+    //            body.empty();
+    //            window.parent.location.replace(window.parent.location.href);
+    //        }
+    //    });
+    // });
     // }}}
 
     // ## State: ??? -> Publish, Submit for publication, Retract, Send back
