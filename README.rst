@@ -1,4 +1,4 @@
-. contents:: Contents
+.. contents:: Contents
 
 ``plone.app.toolbar`` installs a new toolbar for Plone.
 
