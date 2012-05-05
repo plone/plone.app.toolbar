@@ -1,9 +1,10 @@
-.. contents:: Contents
-
 ``plone.app.toolbar`` installs a new toolbar for Plone.
 
 For the moment, it is an experiment only, but hopefully it will be soon ready
 for prime time.
+
+.. contents:: Contents
+
 
 Installation
 ============
