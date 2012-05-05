@@ -3,7 +3,7 @@
 For the moment, it is an experiment only, but hopefully it will be soon ready
 for prime time.
 
-.. contents:: Contents
+.. contents::
 
 
 Installation
