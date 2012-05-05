@@ -1,6 +1,3 @@
-Introduction
-============
-
 .. contents:: Contents
 
 ``plone.app.toolbar`` installs a new toolbar for Plone.
