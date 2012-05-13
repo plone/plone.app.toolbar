@@ -2,5 +2,19 @@
 *.py?
 *.sw?
 
-plone.app.toolbar.egg-info/
-build/
+/.installed.cfg
+/.mr.developer.cfg
+/.project
+/.pydevproject
+/tags
+
+/bin/
+/develop-eggs/
+/eggs/
+/lib/
+/include/
+/parts/
+/var
+/plone.app.toolbar.egg-info/
+/src/
+/build/
