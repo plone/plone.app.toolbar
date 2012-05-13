@@ -71,8 +71,11 @@ Todo
 
  - it should be possible to use custom skin for instead hardcoded `toolbar`
    skin
+ - for more TODO see the `p.a.toolbar github issues`
+ - to see progress on deco toolbar integration go to `buildout.deco`
 
-
+.. _`buildout.deco`: https://github.com/plone/buildout.deco
+.. _ `p.a.toolbar github issues`: https://github.com/plone/plone.app.toolbar/issues
 .. _`iframize.js`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/resources/src/iframize.js
 .. _`plone.overlay.js`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/resources/src/plone.overlay.js
 .. _`plone.cmsui.js`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/resources/src/plone.cmsui.js
