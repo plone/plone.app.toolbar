@@ -2,6 +2,7 @@
 *.py?
 *.sw?
 
+/.coverage
 /.installed.cfg
 /.mr.developer.cfg
 /.project

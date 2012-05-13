@@ -28,7 +28,10 @@ setup(
         'Products.ResourceRegistries',
         ],
     extras_require={
-        'test': ['plone.app.testing'],
+        'test': [
+            'plone.app.testing',
+            'unittest_jshint',
+            ],
         },
     entry_points="""
         [z3c.autoinclude.plugin]
