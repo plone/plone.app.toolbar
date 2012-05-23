@@ -151,32 +151,7 @@
             if (target === undefined) {
                 self.el_iframe = $('<iframe/>').attr(iframe_attrs);
 
-                // if nothing was changed from default iframe attr then we can
-                // lower body for 40px as its iframe's height
-                if (iframe_attrs.style === $.iframize.defaults.iframe_attrs.style) {
-                    $('body').prepend(self.el_iframe).css('margin-top', '40px');
-
-                // place iframe before original element
-                } else {
-                    self.el_iframe.insertBefore(self.el_original);
-                }
-
-                // resources
-                self.resources = '';
-                if (resources !== undefined) {
-                    $.each(resources, function(i, resource) {
-                            self.resources += new $.iframize.Resource(resource)
-                                    .render_as_string();
-                    });
-                }
-
-                // append css and javascript resources
-                self.window = self.el_iframe[0].contentWindow;
-                self.document = self.el_iframe.contents()[0];
-                self.document.open();
-                self.document.write(self.resources);
-                self.document.close();
-
+                // register the event before attaching
                 self.el_iframe.load(function() {
                     // copy clone of original into iframe
                     $('body', self.document).append(self.el)
@@ -218,6 +193,32 @@
                         }
                     });
                 });
+
+                // if nothing was changed from default iframe attr then we can
+                // lower body for 40px as its iframe's height
+                if (iframe_attrs.style === $.iframize.defaults.iframe_attrs.style) {
+                    $('body').prepend(self.el_iframe).css('margin-top', '40px');
+
+                // place iframe before original element
+                } else {
+                    self.el_iframe.insertBefore(self.el_original);
+                }
+
+                // resources
+                self.resources = '';
+                if (resources !== undefined) {
+                    $.each(resources, function(i, resource) {
+                            self.resources += new $.iframize.Resource(resource)
+                                    .render_as_string();
+                    });
+                }
+
+                // append css and javascript resources
+                self.window = self.el_iframe[0].contentWindow;
+                self.document = self.el_iframe.contents()[0];
+                self.document.open();
+                self.document.write(self.resources);
+                self.document.close();
 
             } else {
                 self.el_iframe = $(target);
