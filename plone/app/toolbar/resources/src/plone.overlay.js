@@ -60,9 +60,6 @@
             self.body = $('.modal-body', self._overlay);
             self.footer = $('.modal-footer', self._overlay);
 
-            // iframe
-            self.iframe = window.parent.$('iframe[name=' + window.name + ']').iframize('toolbar');
-
             // keep all links inside the overlay
             $('a', self.body).on('click', function(e){
                 e.preventDefault();
@@ -78,13 +75,13 @@
 
             self._overlay.on('click', function(e) { e.stopPropagation(); });
             self._overlay.on('shown', function() {
-                self.iframe.stretch();
+                $.iframe.stretch();
                 if (self.mask !== false) {
                     self.mask.load();
                 }
             });
             self._overlay.on('hidden', function() {
-                self.iframe.shrink();
+                $.iframe.shrink();
                 if (self.mask !== false) {
                     self.mask.close();
                 }

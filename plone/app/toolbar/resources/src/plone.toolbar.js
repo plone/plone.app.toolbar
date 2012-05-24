@@ -1,28 +1,30 @@
 (function($) {
 
-var iframe = parent.window.iframized[window.name],
-    iframe_state;
+$.iframe = $.iframe || {};
 
-function shrink() {
-  if (iframe_state !== undefined) {
-    $(iframe.el).height(iframe_state.height);
-    $(iframe.el).offset(iframe_state.offset);
-    iframe_state = undefined;
+$.iframe.obj = window.parent.iframized[window.name],
+    $.iframe.iframe_state;
+
+$.iframe.shrink = function() {
+  if ($.iframe.iframe_state !== undefined) {
+    $($.iframe.obj.el).height($.iframe.iframe_state.height);
+    $($.iframe.obj.el).offset($.iframe.iframe_state.offset);
+    $.iframe.iframe_state = undefined;
   }
 }
 
 // stretch over whole parent document
-function stretch() {
-  if (iframe_state === undefined) {
-    iframe_state = {};
-    iframe_state.height = $(iframe.el).height();
-    iframe_state.offset = $(iframe.el).offset();
-    $(iframe.el).height($(window.parent.document).height());
-    $(iframe.el).offset({top: 0, left: 0});
+$.iframe.stretch = function() {
+  if ($.iframe.iframe_state === undefined) {
+    $.iframe.iframe_state = {};
+    $.iframe.iframe_state.height = $($.iframe.obj.el).height();
+    $.iframe.iframe_state.offset = $($.iframe.obj.el).offset();
+    $($.iframe.obj.el).height($(window.parent.document).height());
+    $($.iframe.obj.el).offset({top: 0, left: 0});
   }
 }
 
-$(document).on('click', function(e) { shrink(); });
+$(document).on('click', function(e) { $.iframe.shrink(); });
 
 $('body > .navbar a').on('click', function(e) {
   if (e.which === 1 || e.which === 2) {

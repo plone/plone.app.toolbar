@@ -72,14 +72,15 @@
         // trigger tinymce
         // TODO: for some reason i couldn't get wysiwyg widget to add correct
         // class for this textarea
-        $('textarea#plone-app-texttile-text', overlay.body).cleditor({
+/*        $('textarea#plone-app-texttile-text', overlay.body).cleditor({
           controls: "bold italic underline | style removeformat | bullets " +
                     "numbering | outdent indent | alignleft center " +
                     "alignright justify | undo redo | link unlink | " +
                     "pastetext source"
-        });
+        });*/
 
         // tabs (ala twitter bootstrap)
+
         var tabs = $('<ul class="nav nav-tabs"></ul>'),
             tabs_content = $('<div class="tab-content">'),
             fieldsets = $('fieldset', overlay.body);
@@ -104,6 +105,7 @@
 
         $('a', tabs).tab();
         $('a', tabs).first().tab('show');
+        
 
         // copy buttons to modal-footer
         overlay.buttons = $('<div class="pull-right"/>');
@@ -214,13 +216,15 @@
     // and i probably did, also forgot some.
 
     // ## Edit {{{
-    $(document).on('plone_toolbar.plone-action-edit', function(e, overlay) {
+    $(document).on('plone_toolbar.plone-action-edit', function(e, link) {
+        var overlay = $(link).ploneOverlay();
         overlay.load(function(data) {
 
             $.plone.overlay_form_transform(overlay,
                 $('#portal-columns #portal-column-content', data));
 
-            // hide overlay and trigger deco
+            // hide overlay and trigger deco\
+            /*
             if ($('[data-iframe="deco-toolbar"]', window.parent.document).size() > 0) {
               overlay.options = { show: false };
               var deco_toolbar = $(overlay.el).ploneDecoToolbar();
@@ -229,7 +233,7 @@
               } else {
                 deco_toolbar.deactivate();
               }
-            }
+            }*/
         });
     });
     // }}}
