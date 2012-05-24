@@ -26,13 +26,31 @@ $(document).on('click', function(e) { shrink(); });
 
 $('body > .navbar a').on('click', function(e) {
   if (e.which === 1 || e.which === 2) {
-    var el = $(this);
+    var el = $(this),
+        id = el.attr('id'),
+        event_exists = false;
     e.preventDefault();
+
+    if (id === undefined) {
+      id = el.parents('[id]');
+    }
+
+    if ($(document).data('events') !== undefined) {
+      $.each($(document).data('events').plone_toolbar || [], function(i, e) {
+        if (e.namespace === id) {
+          event_exists = true;
+          return;
+        }
+      });
+    }
+
+    if (el.attr('data-toggle') === 'dropdown') {
+        stretch();
 
     // Buttons default to an overlay but if they
     // have the '_parent' link target, just load them in
     // the top window
-    if (el.attr('target') === '_parent') {
+    } else if (el.attr('target') === '_parent' || event_exists === false) {
       if (e.which === 1) {
         window.parent.location.href = el.attr('href');
       } else {
@@ -40,12 +58,7 @@ $('body > .navbar a').on('click', function(e) {
       }
 
     } else {
-      if (el.attr('data-toggle') === 'dropdown') {
-        stretch();
-      } else {
-        console.log('CLICKED!!!');
-        $(document).trigger('iframe_link_clicked', [el[0]]);
-      }
+      $(document).trigger('plone_toolbar.' + id, el);
     }
   }
 });
