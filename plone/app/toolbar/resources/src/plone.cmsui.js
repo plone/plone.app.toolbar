@@ -255,6 +255,12 @@ function addEditor(){
     });
 
     // ## Sharing
+    $(document).on('plone_toolbar.plone-action-local_roles', function(e, link) {
+        var overlay = $(link).ploneOverlay();
+        overlay.load(function(data) {
+                $.plone.overlay_form_transform(overlay, $('#portal-columns #portal-column-content', data));
+        });
+    });
 
     // ## Actions -> Cut
     // ## Actions -> Paste
