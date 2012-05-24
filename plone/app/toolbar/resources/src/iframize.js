@@ -156,6 +156,7 @@ IFrame.prototype = {
         resource = document.createElement('script');
         resource.src = url;
         resource.type = 'text/javascript';
+        resource.async = false;
         js_onload(resource);
       } else if (url.slice(-4) === '.css') {
         resource = document.createElement('link');
