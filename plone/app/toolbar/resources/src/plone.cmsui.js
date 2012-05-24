@@ -156,66 +156,71 @@ function addEditor(){
 
     // ## Contents (folder_contents) {{{
     // FIXME: not working
-    $(document).on('plone_overlay.plone-action-folderContents', function(e) {
-        var self = this;
-
-        $('#folderlisting-main-table a', self.body).each(function(){
-
-            // Remove any parameters from the url
-            var href = $(this).attr('href');
-            var base_href = (href.match(/^([^?]+)/)||[])[1];
-
-            if(base_href.match(/\/folder_contents$/)){
-                var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
-                    .attr('href', $(this).attr('href').replace(/\/folder_contents$/, ''))
-                    .attr('class', 'viewlink')
-                    .attr('target', '_parent')
-                    .attr('title', 'Open here'); // Needs i18n!
-                $(this).parent().append(viewlink);
-            } else if (base_href.match(/\/folder_position$/)){
-                // Do nothing, the default click handler already keeps
-                // the result in the overlay
-            } else if (base_href.match(/\/folder_contents$/)) {
-                // It has parameters, leave it alone
-            } else {
-                // Replace click handler
-                $(this).off('click');
-                $(this).on('click', function(e){
-                   window.parent.location.href = $(e.target).attr('href');
-                });
-            }
+    $(document).on('plone_toolbar.plone-action-folderContents', function(e, link) {
+        //var self = this;
+        var overlay = $(link).ploneOverlay();
+        overlay.load(function(data) {
+            $.plone.overlay_form_transform(overlay, $('#portal-columns #portal-column-content', data));
         });
 
-        // Add an "Open here" link at the top
-        var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
-            .attr('href', e.href.replace(/\/folder_contents$/, ''))
-            .attr('class', 'viewlink')
-            .attr('target', '_parent')
-            .attr('title', 'Open here'); // Needs i18n!
-        $('h1.documentFirstHeading').append(viewlink);
 
-        // Keep forms inside the overlay by placing result of form submission
-        // back into the overlay and calling overlay_setup again.
-        $('form').ajaxForm({
-            success: function (responseText){
-                var modal = $('#toolbar-overlay'),
-                    body = $('.modal-body', modal),
-                    selector = '#portal-column-content > *';
-                // strip inline script tags
-                responseText = responseText.replace(/<script(.|\s)*?\/script>/gi, "");
-                var res = $('<div />').append(responseText)
-                    .find(selector);
-                body.empty().append(res);
-                overlay_setup(modal, body, 'toolbar-button-folderContents', e.href, selector);
-                return false;
-            }
-        });
+        //$('#folderlisting-main-table a', self.body).each(function(){
 
-        // Fix breadcrumbs to go to folder_contents
-        $('#toolbar-overlay #portal-breadcrumbs a').each(function(){
-            $this = $(this);
-            $this.attr('href', $this.attr('href') + '/folder_contents');
-        });
+            //// Remove any parameters from the url
+            //var href = $(this).attr('href');
+            //var base_href = (href.match(/^([^?]+)/)||[])[1];
+
+            //if(base_href.match(/\/folder_contents$/)){
+                //var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
+                    //.attr('href', $(this).attr('href').replace(/\/folder_contents$/, ''))
+                    //.attr('class', 'viewlink')
+                    //.attr('target', '_parent')
+                    //.attr('title', 'Open here'); // Needs i18n!
+                //$(this).parent().append(viewlink);
+            //} else if (base_href.match(/\/folder_position$/)){
+                //// Do nothing, the default click handler already keeps
+                //// the result in the overlay
+            //} else if (base_href.match(/\/folder_contents$/)) {
+                //// It has parameters, leave it alone
+            //} else {
+                //// Replace click handler
+                //$(this).off('click');
+                //$(this).on('click', function(e){
+                   //window.parent.location.href = $(e.target).attr('href');
+                //});
+            //}
+        //});
+
+        //// Add an "Open here" link at the top
+        //var viewlink = $('<a><img src="++resource++plone.app.toolbar/view.png" /></a>')
+            //.attr('href', e.href.replace(/\/folder_contents$/, ''))
+            //.attr('class', 'viewlink')
+            //.attr('target', '_parent')
+            //.attr('title', 'Open here'); // Needs i18n!
+        //$('h1.documentFirstHeading').append(viewlink);
+
+        //// Keep forms inside the overlay by placing result of form submission
+        //// back into the overlay and calling overlay_setup again.
+        //$('form').ajaxForm({
+            //success: function (responseText){
+                //var modal = $('#toolbar-overlay'),
+                    //body = $('.modal-body', modal),
+                    //selector = '#portal-column-content > *';
+                //// strip inline script tags
+                //responseText = responseText.replace(/<script(.|\s)*?\/script>/gi, "");
+                //var res = $('<div />').append(responseText)
+                    //.find(selector);
+                //body.empty().append(res);
+                //overlay_setup(modal, body, 'toolbar-button-folderContents', e.href, selector);
+                //return false;
+            //}
+        //});
+
+        //// Fix breadcrumbs to go to folder_contents
+        //$('#toolbar-overlay #portal-breadcrumbs a').each(function(){
+            //$this = $(this);
+            //$this.attr('href', $this.attr('href') + '/folder_contents');
+        //});
 
     });
     // }}}
