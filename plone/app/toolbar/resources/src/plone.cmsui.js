@@ -62,6 +62,8 @@
         // copy content from data into overlay
         overlay.body.html($(options.content_selector, data).html());
 
+        if($('form', $(options.content_selector, data)).length < 1) {return;}
+
         // set form attributes to form attributes in overlay
         overlay.form.addClass('form-horizontal');
         $.each($('form', $(options.content_selector, data))[0].attributes,
@@ -105,7 +107,7 @@
 
         $('a', tabs).tab();
         $('a', tabs).first().tab('show');
-        
+
 
         // copy buttons to modal-footer
         overlay.buttons = $('<div class="pull-right"/>');
@@ -239,6 +241,13 @@
     // }}}
 
     // ## Rules
+    $(document).on('plone_toolbar.plone-action-contentrules', function(e, link) {
+        var overlay = $(link).ploneOverlay();
+        overlay.load(function(data) {
+                $.plone.overlay_form_transform(overlay, $('#portal-columns #portal-column-content', data));
+        });
+    });
+
     // ## Sharing
 
     // ## Actions -> Cut
