@@ -42,12 +42,22 @@ function addEditor(){
     config.init();
 }
 
+
 (function($) {
     "use strict";
 
     // # Common utils {{{
 
     $.plone = $.plone || {};
+    // set of ids where overlay code should be triggered on.
+    $.plone._basic_overlays = [
+        'plone-action-contentrules',
+        'plone-action-local_roles',
+        'advanced',
+        'folderChangeDefaultPage',
+        'contextSetDefaultPage',
+        'plone-personal-actions-plone_setup'
+    ];
 
     // ## Forms helper {{{
     $.plone.overlay_form_transform = function(overlay, data, options) {
@@ -231,8 +241,7 @@ function addEditor(){
             $.plone.overlay_form_transform(overlay,
                 $('#portal-columns #portal-column-content', data));
 
-            // hide overlay and trigger deco\
-            /*
+            // hide overlay and trigger deco
             if ($('[data-iframe="deco-toolbar"]', window.parent.document).size() > 0) {
               overlay.options = { show: false };
               var deco_toolbar = $(overlay.el).ploneDecoToolbar();
@@ -241,47 +250,44 @@ function addEditor(){
               } else {
                 deco_toolbar.deactivate();
               }
-            }*/
+            }
         });
     });
     // }}}
-
-    // ## Rules
-    $(document).on('plone_toolbar.plone-action-contentrules', function(e, link) {
-        var overlay = $(link).ploneOverlay();
-        overlay.load(function(data) {
-                $.plone.overlay_form_transform(overlay, $('#portal-columns #portal-column-content', data));
-        });
-    });
-
-    // ## Sharing
-    $(document).on('plone_toolbar.plone-action-local_roles', function(e, link) {
-        var overlay = $(link).ploneOverlay();
-        overlay.load(function(data) {
-                $.plone.overlay_form_transform(overlay, $('#portal-columns #portal-column-content', data));
-        });
-    });
 
     // ## Actions -> Cut
     // ## Actions -> Paste
     // ## Actions -> Delete
     // ## Actions -> Rename
 
-    // ## Display -> Select a content item as default view
+    // setup simple overlays
+    for(var i=0; i<$.plone._basic_overlays.length; i++){
+        var id = $.plone._basic_overlays[i];
+        $(document).on('plone_toolbar.' + id, function(e, link){
+            var overlay = $(link).ploneOverlay();
+            overlay.load(function(data) {
+                $.plone.overlay_form_transform(overlay, $('#portal-columns #portal-column-content', data));
+            });
+        });
+    }
 
     // ## Add forms {{{
     // FIXME: not working
-    $(document).on('plone_overlay.toolbar-button-plone-contentmenu-factories', function(e){
-        // Submit form using ajax, then close modal and reload parent
-        var modal = $('#toolbar-overlay', toolbar.document),
-            body = $('.modal-body', modal);
-        $('form', body).ajaxForm({
-            success: function() {
-                modal.modal('hide');
-                body.empty();
-                window.parent.location.replace(window.parent.location.href);
-            }
+    $(document).on('plone_toolbar.plone-contentmenu-factories', function(e, link){
+        var overlay = $(link).ploneOverlay();
+        overlay.load(function(data) {
+            $.plone.overlay_form_transform(overlay, $('#portal-columns #portal-column-content', data));
         });
+        // Submit form using ajax, then close modal and reload parent
+        // var modal = $('#toolbar-overlay', toolbar.document),
+        //     body = $('.modal-body', modal);
+        // $('form', body).ajaxForm({
+        //     success: function() {
+        //         modal.modal('hide');
+        //         body.empty();
+        //         window.parent.location.replace(window.parent.location.href);
+        //     }
+        // });
     });
     // }}}
 
