@@ -109,8 +109,11 @@ IFrame.prototype = {
             self.options.style);
         self.el.setAttribute('style', self.el.getAttribute('style') +
             'height:' + self.document.body.offsetHeight + 'px;');
+        self.document.body.setAttribute('style',
+            self.document.body.getAttribute('style') || '' +
+            'background:transparent;');
         document.body.setAttribute('style', document.body.getAttribute('style') || '' +
-            'margin-top:' + self.el.offsetHeight + 'px;');
+            ';margin-top:' + self.el.offsetHeight + 'px;');
       }
     }
 
