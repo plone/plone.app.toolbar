@@ -182,8 +182,6 @@ IFrame.prototype = {
     var attr = this.el_original.getAttribute(name);
     if (attr) { return attr; }
     return _default;
-  },
-  close: function() {
   }
 };
 // }}}
