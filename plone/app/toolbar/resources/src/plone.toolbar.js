@@ -47,7 +47,7 @@ $('body > .navbar a').on('click', function(e) {
     }
 
     if (el.attr('data-toggle') === 'dropdown') {
-        stretch();
+        $.iframe.stretch();
 
     // Buttons default to an overlay but if they
     // have the '_parent' link target, just load them in
