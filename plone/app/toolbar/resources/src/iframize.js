@@ -55,6 +55,32 @@ IFrame.prototype = {
       resources: self.getAttribute('resources', '').split(';')
     };
 
+    // get resources (js/css/less)
+    self.resources = '';
+    for (var i = 0; i < self.options.resources.length; i += 1) {
+      var url = self.options.resources[i].replace(/^\s+|\s+$/g, ''),
+          resource = '';
+      if (url.slice(-3) === '.js') {
+        resource = document.createElement('script');
+        resource.src = url;
+        resource.type = 'text/javascript';
+        resource.async = false;
+      } else if (url.slice(-4) === '.css') {
+        resource = document.createElement('link');
+        resource.href = url;
+        resource.type = 'text/css';
+        resource.rel = 'stylesheet';
+      } else if (url.slice(-5) === '.less') {
+        resource = document.createElement('link');
+        resource.href = url;
+        resource.type = 'text/less';
+        resource.rel = 'stylesheet';
+      }
+      if (resource !== '') {
+        self.resources += resource.outerHTML;
+      }
+    }
+
     // Create iframe
     var iframe = document.createElement('iframe');
     iframe.setAttribute('frameBorder', '0');
@@ -84,6 +110,7 @@ IFrame.prototype = {
           '<body onload="parent.window.iframized[\'' +
               self.options.name + '\'].load()">' +
             self.el_original.innerHTML +
+            self.resources +
           '</body>' +
         '</html>');
     self.document.close();
@@ -99,83 +126,18 @@ IFrame.prototype = {
     // mark iframe as loaded
     self.loaded = true;
 
-    var resources = 0;
-    function count_resources() {
-      resources += 1;
-      if (resources === self.options.resources.length) {
-        self.el.setAttribute('style', 'border:0;overflow:hidden;' +
-            'position:absolute;left:0px;position:fixed;top:0px;overflow:hidden;' +
-            'width:100%;background-color:transparent;z-index:500;' +
-            self.options.style);
-        self.el.setAttribute('style', self.el.getAttribute('style') +
-            'height:' + self.document.body.offsetHeight + 'px;');
-        self.document.body.setAttribute('style',
-            self.document.body.getAttribute('style') || '' +
-            'background:transparent;');
-        document.body.setAttribute('style', document.body.getAttribute('style') || '' +
-            ';margin-top:' + self.el.offsetHeight + 'px;');
-      }
-    }
 
-    function js_onload(el) {
-      el.onreadystatechange = function() {
-        if (this.readyState === 'complete' || this.readyState === 'loaded') {
-          count_resources();
-        }
-      };
-      el.onload = count_resources;
-    }
-    function css_onload(el) {
-      var sheet, cssRules;
-      if ('sheet' in el) {
-        sheet = 'sheet'; cssRules = 'cssRules';
-      } else {
-        sheet = 'styleSheet'; cssRules = 'rules';
-      }
-      var timeout_id = setInterval(function() {
-          try {
-            if ( el[sheet] && el[sheet][cssRules].length ) {
-              clearInterval( timeout_id );
-              clearTimeout( timeout_id2 );
-              count_resources();
-            }
-          } catch( e ) {} finally {}
-        }, 10 ),
-        timeout_id2 = setTimeout( function() {
-          clearInterval( timeout_id );
-          clearTimeout( timeout_id2 );
-          count_resources();
-        }, 15000 );
-    }
-
-    // Inject the resources (js/css/less)
-    for (var i = 0; i < self.options.resources.length; i += 1) {
-      var url = self.options.resources[i].replace(/^\s+|\s+$/g, ''),
-          resource = '';
-      if (url.slice(-3) === '.js') {
-        resource = document.createElement('script');
-        resource.src = url;
-        resource.type = 'text/javascript';
-        resource.async = false;
-        js_onload(resource);
-      } else if (url.slice(-4) === '.css') {
-        resource = document.createElement('link');
-        resource.href = url;
-        resource.type = 'text/css';
-        resource.rel = 'stylesheet';
-        css_onload(resource);
-      } else if (url.slice(-5) === '.less') {
-        resource = document.createElement('link');
-        resource.href = url;
-        resource.type = 'text/less';
-        resource.rel = 'stylesheet';
-        css_onload(resource);
-      }
-      if (resource !== '') {
-        self.document.body.appendChild(resource);
-      }
-    }
-
+    self.el.setAttribute('style', 'border:0;overflow:hidden;' +
+        'position:absolute;left:0px;position:fixed;top:0px;overflow:hidden;' +
+        'width:100%;background-color:transparent;z-index:500;' +
+        self.options.style);
+    self.el.setAttribute('style', self.el.getAttribute('style') +
+        'height:' + self.document.body.offsetHeight + 'px;');
+    self.document.body.setAttribute('style',
+        self.document.body.getAttribute('style') || '' +
+        'background:transparent;');
+    document.body.setAttribute('style', document.body.getAttribute('style') || '' +
+        ';margin-top:' + self.el.offsetHeight + 'px;');
   },
   getAttribute: function(name, _default) {
     if (name === 'name') { name = 'data-iframe'; }
