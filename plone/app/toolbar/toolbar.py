@@ -1,6 +1,5 @@
 from urllib import unquote
 from Acquisition import aq_inner
-from zope.i18n import translate
 from zope.interface import implements
 from zope.component import getMultiAdapter
 from zope.component import getUtility
@@ -15,7 +14,6 @@ class ToolbarTile(Tile):
     def get_multi_adapter(self, name):
         return getMultiAdapter((self.context, self.request), name=name)
 
-
     def __init__(self, context, request):
         super(ToolbarTile, self).__init__(context, request)
         self.context = aq_inner(self.context)
@@ -23,8 +21,10 @@ class ToolbarTile(Tile):
         # Set the 'toolbar' skin so that we get the correct resources
 
         self.tools = self.get_multi_adapter(u'plone_tools')
-        self.scripts_view = self.get_multi_adapter(u'resourceregistries_scripts_view')
-        self.styles_view = self.get_multi_adapter(u'resourceregistries_styles_view')
+        self.scripts_view = self.get_multi_adapter(
+            u'resourceregistries_scripts_view')
+        self.styles_view = self.get_multi_adapter(
+            u'resourceregistries_styles_view')
         self.context_state = self.get_multi_adapter(u'plone_context_state')
         self.portal_state = self.get_multi_adapter(u'plone_portal_state')
         self.anonymous = self.portal_state.anonymous()
@@ -58,6 +58,8 @@ class ToolbarTile(Tile):
 
     @memoize
     def actions(self):
+        if 'disable_border' in self.request:
+            return []
         actions = []
 
         # 'folder' actions
@@ -103,7 +105,7 @@ class ToolbarTile(Tile):
             action_method = self.context_fti.queryMethodID(
                     action_method, default=action_method)
 
-            # Determine if action is activated 
+            # Determine if action is activated
             if action_method:
                 request_action = unquote(self.request_url_path)
                 request_action = self.context_fti.queryMethodID(
@@ -123,6 +125,8 @@ class ToolbarTile(Tile):
 
     @memoize
     def contentmenu(self):
+        if 'disable_border' in self.request:
+            return []
         def contentmenu(items):
             buttons = []
             for item in items:
@@ -142,7 +146,8 @@ class ToolbarTile(Tile):
                 buttons.append(item)
             return buttons
 
-        plone_contentmenu = getUtility(IBrowserMenu, name='plone_contentmenu').getMenuItems
+        plone_contentmenu = getUtility(IBrowserMenu,
+            name='plone_contentmenu').getMenuItems
         return contentmenu(plone_contentmenu(self.context, self.request))
 
     @memoize
