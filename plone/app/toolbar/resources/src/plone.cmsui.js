@@ -39,6 +39,8 @@
 
     // # Common utils {{{
 
+    $.plone = $.plone || {};
+
     // ## Forms helper {{{
     $.plone.overlay_form_transform = function(overlay, data, options) {
 
@@ -212,7 +214,7 @@
     // and i probably did, also forgot some.
 
     // ## Edit {{{
-    $(document).on('plone_overlay.plone-action-edit', function(e, overlay) {
+    $(document).on('plone_toolbar.plone-action-edit', function(e, overlay) {
         overlay.load(function(data) {
 
             $.plone.overlay_form_transform(overlay,

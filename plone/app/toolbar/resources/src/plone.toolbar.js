@@ -32,7 +32,7 @@ $('body > .navbar a').on('click', function(e) {
     e.preventDefault();
 
     if (id === undefined) {
-      id = el.parents('[id]');
+      id = el.parents('[id]').attr('id');
     }
 
     if ($(document).data('events') !== undefined) {
@@ -50,7 +50,7 @@ $('body > .navbar a').on('click', function(e) {
     // Buttons default to an overlay but if they
     // have the '_parent' link target, just load them in
     // the top window
-    } else if (el.attr('target') === '_parent' || event_exists === false) {
+    } else if (el.attr('target') === '_parent') {
       if (e.which === 1) {
         window.parent.location.href = el.attr('href');
       } else {
