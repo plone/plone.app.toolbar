@@ -22,11 +22,12 @@ function stretch() {
   }
 }
 
-$('body').on('click', function(e) { shrink(); });
+$(document).on('click', function(e) { shrink(); });
 
 $('body > .navbar a').on('click', function(e) {
   if (e.which === 1 || e.which === 2) {
-    var el = $(e.target);
+    var el = $(this);
+    e.preventDefault();
 
     // Buttons default to an overlay but if they
     // have the '_parent' link target, just load them in
@@ -39,7 +40,6 @@ $('body > .navbar a').on('click', function(e) {
       }
 
     } else {
-      e.preventDefault();
       if (el.attr('data-toggle') === 'dropdown') {
         stretch();
       } else {
