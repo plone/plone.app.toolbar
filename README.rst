@@ -1,4 +1,4 @@
-``plone.app.toolbar`` installs a new toolbar for Plone.
+`plone.app.toolbar`` installs a new toolbar for Plone.
 
 For the moment, it is an experiment only, but hopefully it will be soon ready
 for prime time.
@@ -9,15 +9,31 @@ for prime time.
 Installation
 ============
 
-You can use the following buildout to test plone.app.toolbar against
-Plone 4.2a2 - update versions as applicable::
+To install toolbar drop following lines to your buildout.cfg::
 
-    [buildout]
-    extends = https://raw.github.com/plone/buildout.deco/master/toolbar-only.cfg
+    [instance]
+    eggs =
+        ...
+        plone.app.toolbar
+
+    [versions]
+    plone.app.jquery = 1.7.2
+    plone.app.jquerytools = 1.4
+    plone.tiles = 1.0b2
+    Products.ResourceRegistries = 2.1.1
+    plone.app.toolbar = 1.0
+
+In case this document gets outdated use latest versions of eggs in ``versions``
+section.
+
+Make sure you install the "Plone Toolbar" profile when creating your Plone site
+or include ``plone.app.toolbar:default`` profile in your ``metadata.xml``..
+
+To start developing plone.app.toolbar you can find buildout at
+``buildout.deco`` repository.::
     
-Make sure you install the "Plone Toolbar" profile when creating your
-Plone site.
-
+    https://github.com/plone/buildout.deco/blob/master/toolbar-only.cfg
+    
 
 How it works
 ============
