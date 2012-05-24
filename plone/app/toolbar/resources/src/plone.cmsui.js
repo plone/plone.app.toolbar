@@ -70,20 +70,22 @@ function addEditor(){
         // copy content from data into overlay
         overlay.body.html($(options.content_selector, data).html());
 
-        if($('form', $(options.content_selector, data)).length < 1) {return;}
+        var has_form = $('form', $(options.content_selector, data)).length > 0;
 
-        // set form attributes to form attributes in overlay
-        overlay.form.addClass('form-horizontal');
-        $.each($('form', $(options.content_selector, data))[0].attributes,
-          function(i, attr) {
-            overlay.form.attr(attr.name, attr.value);
-          });
+        if(has_form) {
+            // set form attributes to form attributes in overlay
+            overlay.form.addClass('form-horizontal');
+            $.each($('form', $(options.content_selector, data))[0].attributes,
+              function(i, attr) {
+                overlay.form.attr(attr.name, attr.value);
+              });
 
-        // trigger tinymce
-        // TODO: for some reason i couldn't get wysiwyg widget to add correct
-        // class for this textarea
-        // So look for the text format options, check that html is selected
-        $('.fieldTextFormat option[value="text/x-plone-outputfilters-html"]').each(addEditor);
+            // trigger tinymce
+            // TODO: for some reason i couldn't get wysiwyg widget to add correct
+            // class for this textarea
+            // So look for the text format options, check that html is selected
+            $('.fieldTextFormat option[value="text/x-plone-outputfilters-html"]').each(addEditor);
+        }
 
         // tabs (ala twitter bootstrap)
 
