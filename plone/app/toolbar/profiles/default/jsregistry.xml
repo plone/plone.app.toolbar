@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <object name="portal_javascripts">
 
-    <!-- BBB: Create bundles for jQuery, jQueryTools and TinyMCE - see
-         registry.xml -->
     <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.js"  />
     <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.form.js"  />
     <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.overlayhelpers.js"  />
@@ -10,6 +8,10 @@
     <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.dateinput.js"  />
     <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.rangeinput.js"  />
     <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.validator.js"  />
+
+    <!-- tiny bundle overrides -->
+    <javascript bundle="tinymce" id="tiny_mce.js"  />
+    <javascript bundle="tinymce" id="tiny_mce_init.js"  />
 
     <!-- bootstrap javascript -->
     <javascript 
