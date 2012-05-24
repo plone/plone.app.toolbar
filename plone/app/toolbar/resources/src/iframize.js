@@ -51,6 +51,7 @@ IFrame.prototype = {
       name: self.getAttribute('name', '_iframize'),
       title: self.getAttribute('title', ''),
       doctype: self.getAttribute('doctype', '<!doctype html>'),
+      style: self.getAttribute('style', ''),
       resources: self.getAttribute('resources', '').split(';')
     };
 
@@ -62,10 +63,7 @@ IFrame.prototype = {
     iframe.setAttribute('scrolling', 'no');
     iframe.setAttribute('id', self.options.name);
     iframe.setAttribute('name', self.options.name);
-    // TODO: apply correct styles for position (top, bottom, left, right)
-    iframe.setAttribute("style","border:0;overflow:hidden;" +
-        "position:absolute;left:0px;position:fixed;top:0px;overflow:hidden;" +
-        "width:100%;background-color:transparent;");
+    iframe.setAttribute('style', 'display:none;');
 
     document.body.appendChild(iframe);
 
@@ -101,9 +99,53 @@ IFrame.prototype = {
     // mark iframe as loaded
     self.loaded = true;
 
-    // TODO: connect to history code to listen to events
+    var resources = 0;
+    function count_resources() {
+      resources += 1;
+      if (resources === self.options.resources.length) {
+        self.el.setAttribute('style', 'border:0;overflow:hidden;' +
+            'position:absolute;left:0px;position:fixed;top:0px;overflow:hidden;' +
+            'width:100%;background-color:transparent;z-index:500;' +
+            self.options.style);
+        self.el.setAttribute('style', self.el.getAttribute('style') +
+            'height:' + self.document.body.offsetHeight + 'px;');
+        document.body.setAttribute('style', document.body.getAttribute('style') || '' +
+            'margin-top:' + self.el.offsetHeight + 'px;');
+      }
+    }
 
-    // Inject the reousrces (js/css/less)
+    function js_onload(el) {
+      el.onreadystatechange = function() {
+        if (this.readyState === 'complete' || this.readyState === 'loaded') {
+          count_resources();
+        }
+      };
+      el.onload = count_resources;
+    }
+    function css_onload(el) {
+      var sheet, cssRules;
+      if ('sheet' in el) {
+        sheet = 'sheet'; cssRules = 'cssRules';
+      } else {
+        sheet = 'styleSheet'; cssRules = 'rules';
+      }
+      var timeout_id = setInterval(function() {
+          try {
+            if ( el[sheet] && el[sheet][cssRules].length ) {
+              clearInterval( timeout_id );
+              clearTimeout( timeout_id2 );
+              count_resources();
+            }
+          } catch( e ) {} finally {}
+        }, 10 ),
+        timeout_id2 = setTimeout( function() {
+          clearInterval( timeout_id );
+          clearTimeout( timeout_id2 );
+          count_resources();
+        }, 15000 );
+    }
+
+    // Inject the resources (js/css/less)
     for (var i = 0; i < self.options.resources.length; i += 1) {
       var url = self.options.resources[i].replace(/^\s+|\s+$/g, ''),
           resource = '';
@@ -111,16 +153,19 @@ IFrame.prototype = {
         resource = document.createElement('script');
         resource.src = url;
         resource.type = 'text/javascript';
+        js_onload(resource);
       } else if (url.slice(-4) === '.css') {
         resource = document.createElement('link');
         resource.href = url;
         resource.type = 'text/css';
         resource.rel = 'stylesheet';
+        css_onload(resource);
       } else if (url.slice(-5) === '.less') {
         resource = document.createElement('link');
         resource.href = url;
         resource.type = 'text/less';
         resource.rel = 'stylesheet';
+        css_onload(resource);
       }
       if (resource !== '') {
         self.document.body.appendChild(resource);
