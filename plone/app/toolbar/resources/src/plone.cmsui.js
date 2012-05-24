@@ -34,6 +34,14 @@
 /*global $:false, jQuery:false */
 
 
+function addEditor(){
+    var text = $(this).parent().parent().next().find('textarea');
+    var id = Math.floor(Math.random()*11) + '';
+    text.attr('id', id);
+    var config = new TinyMCEConfig(id);
+    config.init();
+}
+
 (function($) {
     "use strict";
 
@@ -72,12 +80,8 @@
         // trigger tinymce
         // TODO: for some reason i couldn't get wysiwyg widget to add correct
         // class for this textarea
-/*        $('textarea#plone-app-texttile-text', overlay.body).cleditor({
-          controls: "bold italic underline | style removeformat | bullets " +
-                    "numbering | outdent indent | alignleft center " +
-                    "alignright justify | undo redo | link unlink | " +
-                    "pastetext source"
-        });*/
+        // So look for the text format options, check that html is selected
+        $('.fieldTextFormat option[value="text/x-plone-outputfilters-html"]').each(addEditor);
 
         // tabs (ala twitter bootstrap)
 
