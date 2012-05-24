@@ -50,7 +50,7 @@ $('body > .navbar a').on('click', function(e) {
     // Buttons default to an overlay but if they
     // have the '_parent' link target, just load them in
     // the top window
-    } else if (el.attr('target') === '_parent') {
+    } else if (el.attr('target') === '_parent' || event_exists === false) {
       if (e.which === 1) {
         window.parent.location.href = el.attr('href');
       } else {
