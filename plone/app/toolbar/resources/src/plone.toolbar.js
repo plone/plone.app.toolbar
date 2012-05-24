@@ -18,21 +18,15 @@ function stretch() {
     iframe_state.height = $(iframe.el).height();
     iframe_state.offset = $(iframe.el).offset();
     $(iframe.el).height($(window.parent.document).height());
-    $(iframe.el).offset($(window.parent.document).offset());
+    $(iframe.el).offset({top: 0, left: 0});
   }
 }
 
+$('body').on('click', function(e) { shrink(); });
+
 $('body > .navbar a').on('click', function(e) {
-  var el = $(e.target);
-
-  shrink();
-
-  if (($.nodeName(e.target, 'a') || (el.parent().size() !== 0 &&
-       $.nodeName(el.parent()[0], 'a'))) && (e.which === 1 || e.which === 2)) {
-
-    if (!$.nodeName(e.target, 'a')) {
-      el = el.parent();
-    }
+  if (e.which === 1 || e.which === 2) {
+    var el = $(e.target);
 
     // Buttons default to an overlay but if they
     // have the '_parent' link target, just load them in
@@ -43,12 +37,14 @@ $('body > .navbar a').on('click', function(e) {
       } else {
         window.parent.open(el.attr('href'));
       }
+
     } else {
       e.preventDefault();
       if (el.attr('data-toggle') === 'dropdown') {
         stretch();
       } else {
-        window.$(document).trigger('iframe_link_clicked', [el[0]]);
+        console.log('CLICKED!!!');
+        $(document).trigger('iframe_link_clicked', [el[0]]);
       }
     }
   }
