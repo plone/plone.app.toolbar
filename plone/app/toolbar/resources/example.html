@@ -1,30 +1,22 @@
-<!DOCTYPE HTML>
+<!doctype html>
 <html>
 <head>
-  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-  <title>TinycMCE Example</title>
+  <meta charset="utf-8" />
+  <title>toolbar.js example</title>
+  <script type="text/javascript" src="src/iframize.js"></script>
 </head>
 <body>
 
+  <div data-iframe="example"
+       data-iframe-resources="
+          example.css;
+          example.less;
+          lib/jquery-1.7.2.min.js;
+          lib/less-1.3.0.min.js;
+          example.js;"
+       style="display:none">
+    <h1>Works!</h1>
+  </div>
 
-  <iframe src="" frameborder="0">
-    <html>
-    <head>
-      <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-      <title>Example</title>
-      <script type="text/javascript" src="lib/jquery-1.7.2.min.js"></script>
-      <script type="text/javascript" src="lib/tinymce/jquery.tinymce.js"></script>
-    </head>
-    <body>
-      <textarea name="text" id="text" rows="8" cols="40"></textarea>
-
-      <script type="text/javascript" charset="utf-8">
-        $('#text').tinymce({
-          script_url: 'lib/tinymce/tiny_mce.js'
-        }); 
-      </script>
-    </body>
-    </html>
-  </iframe>
 </body>
 </html>

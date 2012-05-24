@@ -27,279 +27,284 @@
 /*jshint bitwise:true, curly:true, eqeqeq:true, immed:true, latedef:true,
   newcap:true, noarg:true, noempty:true, nonew:true, plusplus:true,
   regexp:true, undef:true, strict:true, trailing:true, browser:true */
-/*global $:false, jQuery:false, alert:false */
 
 // }}}
 
-(function ($) {
-    "use strict";
+(function(window, document) {
+"use strict";
 
-    // # Namespace {{{
-    $.iframize = $.iframize || {};
-    // }}}
+// # IFrame {{{
+ var IFrame = function(el) { this.init(el); };
+IFrame.prototype = {
+  init: function(el) {
+    var self = this;
 
-    // # Defaults {{{
-    $.iframize.defaults = $.extend(true, {
-        data_attr: 'data-iframe',
-        target_data_attr: 'data-iframe-target',
-        resources_data_attr: 'data-iframe-resources',
-        resources_delimiter: ';',
-        iframe_attrs: {
-            id: 'plone-toolbar',
-            name: 'plone-toolbar',
-            allowtransparency: 'true',
-            style: 'margin: 0; padding: 0; border: 0; outline: 0; ' +
-                   'width: 100%; height: 40px; z-index: 500; ' +
-                   'position: fixed; left: 0; top: 0; ' +
-                   'background-color: transparent; overflow: hidden;'
-        }
-    }, $.iframize.defaults || {});
-    // }}}
+    // store original element on IFrame object and make sure its hidden
+    self.el_original = el;
+    self.el_original.setAttribute("style", "display:none;");
 
-    // # Resource {{{
-    $.iframize.Resource = function(r, a) { this.init(r, a); return this; };
-    $.iframize.Resource.prototype = {
-        init: function(res, attrs) {
-            var self = this,
-                tmp = $(res.split('!'));
-            self._is = {};
-            self.attrs = attrs;
-            if (tmp.size() === 2) {
-                res = tmp[1];
-                self._is[tmp[0]] = true;
-            }
-            self.res = res;
-        },
-        is: function(type) {
-            var self = this,
-                res = self.res;
-            if (self._is[type] === undefined) {
-                if ((res.substr((type.length + 1) * -1) === '.' + type) ||
-                    (res.substr((type.length + 1)) === type + '!')) {
-                    self._is[type] = true;
-                } else {
-                    self._is[type] = false;
-                }
-            }
-            return self._is[type];
-        },
-        render: function() {
-            var self = this,
-                attr_name = 'src',
-                attrs = $.extend({}, self.attrs);
-            if (self.is('css') || self.is('less')) {
-                attr_name = 'href';
-            }
-            attrs[attr_name] = self.res;
-            if (self.is('css')) {
-                return $('<link/>').attr($.extend({
-                    type: 'text/css',
-                    rel: 'stylesheet',
-                    media: 'screen',
-                    href: ''
-                }, attrs));
-            } else if (self.is('less')) {
-                return $('<link/>').attr($.extend({
-                    type: 'text/css',
-                    rel: 'stylesheet/less',
-                    media: 'screen',
-                    href: ''
-                }, attrs));
-            } else if (self.is('js')) {
-                return $('<script/>').attr($.extend({
-                    type: 'text/javascript',
-                    src: ''
-                }, attrs));
-            }
-            return $('');
-        },
-        render_as_string: function() {
-            return this.outerHtml(this.render());
-        },
-        outerHtml: function(el) {
-            el = el[0];
-            if ($.nodeName(el, 'script')) {
-                var attrs;
-                if (el.attributes) {
-                    attrs = $.map(el.attributes, function(attr) {
-                        return attr.name + '="' + attr.value + '"';
-                    });
-                }
-                return '<script ' + attrs.join(' ') + '>' +
-                    $(el).html() + '</script>';
-            } else {
-                return $('<div>').append(el).remove().html();
-            }
-        }
+    // mark iframe as not yet loaded
+    self.loaded = false;
+
+    // get options from original element
+    self.options = {
+      name: self.getAttribute('name', '_iframize'),
+      title: self.getAttribute('title', ''),
+      doctype: self.getAttribute('doctype', '<!doctype html>'),
+      resources: self.getAttribute('resources', '').split(';')
     };
-    // }}}
 
-    // # IFrame {{
-    $.iframize.IFrame = function(e, r, t) { this.init(e, r, t); return this; };
-    $.iframize.IFrame.prototype = {
-        init: function(el, resources, target) {
-            var self = this,
-                iframe_attrs = $.iframize.defaults.iframe_attrs;
+    // Create iframe
+    var iframe = document.createElement('iframe');
+    iframe.setAttribute('frameBorder', '0');
+    iframe.setAttribute('border', '0');
+    iframe.setAttribute('allowTransparency', 'true');
+    iframe.setAttribute('scrolling', 'no');
+    iframe.setAttribute('id', self.options.name);
+    iframe.setAttribute('name', self.options.name);
+    // TODO: apply correct styles for position (top, bottom, left, right)
+    iframe.setAttribute("style","border:0;overflow:hidden;" +
+        "position:absolute;left:0px;position:fixed;top:0px;overflow:hidden;" +
+        "width:100%;background-color:transparent;");
 
-            // hide and clone original element
-            self.el_original = el;
-            self.el_original.hide();
-            self.el = $(self.el_original.html());
-            self.el.show();
+    document.body.appendChild(iframe);
 
-            // target iframe
-            if (target === undefined) {
-                self.el_iframe = $('<iframe/>').attr(iframe_attrs);
+    self.el = iframe;
+    self.window = iframe.contentWindow;
+    self.document = self.window.document;
+  },
+  open: function() {
+    var self = this;
+    self.document.open();
+    self.document.write(
+        self.options.doctype +
+        '<html>' +
+          '<head>' +
+            '<title>' + self.options.title + '</title>' +
+            '<meta http-equiv="X-UA-Compatible" content="IE=edge">' +
+          '</head>' +
+          '<body onload="parent.window.iframized[\'' +
+              self.options.name + '\'].load()">' +
+            self.el_original.innerHTML +
+          '</body>' +
+        '</html>');
+    self.document.close();
+  },
+  load: function() {
+    var self = this;
 
-                // if nothing was changed from default iframe attr then we can
-                // lower body for 40px as its iframe's height
-                if (iframe_attrs.style === $.iframize.defaults.iframe_attrs.style) {
-                    $('body').prepend(self.el_iframe).css('margin-top', '40px');
+    // check if already loaded
+    if ( self.loaded === true ) {
+      return;
+    }
 
-                // place iframe before original element
-                } else {
-                    self.el_iframe.insertBefore(self.el_original);
-                }
+    // mark iframe as loaded
+    self.loaded = true;
 
-                // resources
-                self.resources = '';
-                if (resources !== undefined) {
-                    $.each(resources, function(i, resource) {
-                            self.resources += new $.iframize.Resource(resource)
-                                    .render_as_string();
-                    });
-                }
+    // TODO: connect to history code to listen to events
 
-                // append css and javascript resources
-                self.window = self.el_iframe[0].contentWindow;
-                self.document = self.el_iframe.contents()[0];
-                self.document.open();
-                self.document.write(self.resources);
-                self.document.close();
+    // Inject the reousrces (js/css/less)
+    for (var i = 0; i < self.options.resources.length; i += 1) {
+      var url = self.options.resources[i].replace(/^\s+|\s+$/g, ''),
+          resource = '';
+      if (url.slice(-3) === '.js') {
+        resource = document.createElement('script');
+        resource.src = url;
+        resource.type = 'text/javascript';
+      } else if (url.slice(-4) === '.css') {
+        resource = document.createElement('link');
+        resource.href = url;
+        resource.type = 'text/css';
+        resource.rel = 'stylesheet';
+      } else if (url.slice(-5) === '.less') {
+        resource = document.createElement('link');
+        resource.href = url;
+        resource.type = 'text/less';
+        resource.rel = 'stylesheet';
+      }
+      if (resource !== '') {
+        self.document.body.appendChild(resource);
+      }
+    }
 
-                self.el_iframe.load(function() {
-                    // copy clone of original into iframe
-                    $('body', self.document).append(self.el)
-                        .css({ background: 'transparent', height: '100%' });
+  },
+  getAttribute: function(name, _default) {
+    if (name === 'name') { name = 'data-iframe'; }
+    else { name = 'data-iframe-' + name; }
+    var attr = this.el_original.getAttribute(name);
+    if (attr) { return attr; }
+    return _default;
+  },
+  close: function() {
+  }
+};
+// }}}
 
-                    // capture all clicks on iframe
-                    $('body', self.document).bind('click', { self: self }, function(e) {
-                        var self = e.data.self,
-                            el = $(e.target);
+// # Initialize {{{
+function initialize() {
 
-                        // shrink iframe
-                        self.shrink();
+  // Check
+  var body = document.getElementsByTagName('body')[0];
+  if (body === undefined) {
+    window.setTimeout(initialize, 23);
+    return;
+  }
 
-                        if (($.nodeName(e.target, 'a') ||
-                                (el.parent().size() !== 0 && $.nodeName(el.parent()[0], 'a'))) &&
-                            (e.which === 1 || e.which === 2)) {
+  // find [data-iframe] elements in context
+  var matching = [];
+  if (document.querySelectorAll !== undefined) {
+    matching = document.querySelectorAll('[data-iframe]');
+  } else {
+    var all = document.getElementsByTagName('*');
+    for (var i = 0; i < all.length; i += 1) {
+      if (all[i].getAttribute('data-iframe')) {
+        matching.push(all[i]);
+      }
+    }
+  }
 
-                            if (!$.nodeName(e.target, 'a')) {
-                                el = el.parent();
-                            }
+  // initialize IFrame object for each of them  and store them
+  window.iframized = {};
+  for (var j = 0; j < matching.length; j += 1) {
+    var name = matching[j].getAttribute('data-iframe');
+    window.iframized[name] = new IFrame(matching[j]);
+    window.iframized[name].open();
+  }
 
-                            // Buttons default to an overlay but if they
-                            // have the '_parent' link target, just load them in
-                            // the top window
-                            if (el.attr('target') === '_parent') {
-                                if (e.which === 1) {
-                                    window.parent.location.href = el.attr('href');
-                                } else {
-                                    window.parent.open(el.attr('href'));
-                                }
-                            } else {
-                                e.preventDefault();
-                                if (el.attr('data-toggle') === 'dropdown') {
-                                    self.stretch();
-                                } else {
-                                    window.$(document).trigger('iframe_link_clicked', [el[0]]);
-                                }
-                            }
-                        }
-                    });
-                });
+}
+initialize();
+// }}}
 
-            } else {
-                self.el_iframe = $(target);
-                self.window = self.el_iframe[0].contentWindow;
-                self.document = self.el_iframe.contents()[0];
+}(window, window.document));
 
-                // copy clone of original into iframe
-                self.el_iframe.load(function() {
-                    $('body', self.document).append($(self.el));
-                });
-            }
-        },
-        shrink: function() {
-            var self = this;
-            if ($('body', self.document).hasClass('iframe-locked')) {
-                return;
-            }
-            if (self.position !== undefined) {
-                // set to before stretch position
-                self.el_iframe.height(self.position.height);
-                self.el_iframe.offset(self.position.offset);
-                // clear position
-                self.position = undefined;
-            }
-        },
-        stretch: function() {
-            var self = this;
-            if (self.position === undefined) {
-                // record position / offset
-                self.position = {};
-                self.position.height = self.el_iframe.height();
-                self.position.offset = self.el_iframe.offset();
-                // stretch over whole document
-                self.el_iframe.height($(document).height());
-                self.el_iframe.offset($(document).offset());
-            }
-        }
-    };
-    // }}}
 
-    // # jQuery integration {{{
-    $.fn.iframize = function(name, resources, target) {
-        var self = this;
-        if (self.data('iframize') === undefined) {
+/*
+// Globals
+var
+  bh = namespace.bh = namespace.bh || {},
+  location = namespace.location;
 
-            var iframe = new $.iframize.IFrame(self, resources, target),
-                iframe_data = iframe.el_iframe.data('iframize');
-            self.data('iframize', iframe);
+// Compatibility
+bh.data = bh.data || namespace.bh_init_data;
+bh.widgetType = bh.widgetType || namespace.bh_widget_type;
+bh.testing = bh.testing || namespace.bh_testing;
+bh.url = bh.url || namespace.bh_url;
+bh.apiKey = bh.apiKey || namespace._bugHerdAPIKey;
+bh.sidebarJS = namespace.bh.sidebarJS;
+bh.sidebarCSS = namespace.bh.sidebarCSS;
 
-            // we also store this on iframe element so we can later retrive it
-            // via $('iframe').iframize('name')
-            if (iframe_data === undefined) { iframe_data = {}; }
-            iframe_data[name] = iframe;
-            iframe.el_iframe.data('iframize', iframe_data);
+// Close the window
+bh.close = function(){
+  // window.close does not work by itself, you have to do this hack
+  // http://productforums.google.com/d/msg/chrome/GjsCrvPYGlA/pdvPRzBA4WwJ
+  window.open('', '_self', '');
+  window.close();
+};
 
-        }
-        if ($.nodeName(self[0], 'iframe')) {
-            return self.data('iframize')[name];
-        } else {
-            return self.data('iframize');
-        }
-    };
-    // }}}
+// Load the html
+bh.load = function(){
+ //removed this check as it prevents the body==null from doing its thing for Opera
+  // // Check
+  // if ( bh.loading ) {
+  //   return;
+  // }
+  // bh.loading = true;
 
-    // # Auto trigger iframe plugin {{{
-    //
-    // elements with data-iframe="true"
-    $(document).ready(function() {
-        $('[' + $.iframize.defaults.data_attr + ']').each(function() {
-            var el = $(this),
-                name = el.attr($.iframize.defaults.data_attr),
-                resources = el.attr($.iframize.defaults.resources_data_attr),
-                target = el.attr($.iframize.defaults.target_data_attr);
-            if (resources === undefined) {
-                resources = [];
-            } else {
-                resources = resources.split($.iframize.defaults.resources_delimiter);
-            }
-            $(this).iframize(name, resources, target);
-        });
-        $(document).trigger('iframize_initialized');
-    });
-    // }}}
+  // Prepare
+  var head = document.getElementsByTagName('head')[0];
+  var body = document.getElementsByTagName('body')[0];
 
-}(jQuery));
+  // Check
+  if ( body == null) {
+    window.setTimeout(bh.load, 23);
+    return;
+  }
+
+// Inject the CSS
+  var c = document.createElement('link');
+  c.type = "text/css";
+  c.rel = "stylesheet";
+  c.href = bh.url+"/gui.css";
+  head.appendChild(c);
+
+  // Create iframe
+  var iframe = document.createElement('iframe');
+
+  // Create our bugherd container iframe
+  iframe.setAttribute("style","border:0;overflow:hidden;position:absolute;right:0px;position:fixed;top:0px;overflow:hidden;width:100%;background-color:transparent;");
+  iframe.setAttribute('frameBorder', '0');
+  iframe.setAttribute('border', '0');
+  iframe.setAttribute('allowTransparency', 'true');
+  iframe.setAttribute('id', '_BH_frame');
+  iframe.setAttribute('name', '_BH_frame');
+  iframe.setAttribute('scrolling', 'no');
+
+  document.body.appendChild(iframe);
+
+  // Apply
+  bh.iframe = iframe;
+  bh.win = iframe.contentWindow;
+  bh.doc = bh.win.document;
+
+
+  bh.doc.open().write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html><head><title>BugHerd Sidebar</title><meta http-equiv="X-UA-Compatible" content="IE=edge"></head><body onload="parent.window.bh.loaded()">'+bh.data.h+'</body></html>');
+  bh.doc.close();
+};
+
+// Loaded
+bh.loaded = function(){
+  // Check
+  if ( bh.loadingComplete ) {
+    return;
+  }
+  bh.loadingComplete = true;
+
+  // What to do when the page state changes
+  var stateChange = function(){
+    if ( bh.win.bugherd ) {
+      bh.win.bugherd.stateChange();
+    }
+  };
+
+  // Check the url for state changes
+  var currentUrl = location.href;
+  var locationInterval = setInterval(function(){
+    if ( currentUrl !== location.href ) {
+      currentUrl = location.href;
+      stateChange();
+    }
+  },3000);
+
+  // Check events for state changes
+  if ( window.addEventListener ) {
+    window.addEventListener('hashchange',stateChange);
+    window.addEventListener('popstate',stateChange);
+  }
+  else if ( window.attachEvent ) {
+    window.attachEvent('hashchange',stateChange);
+    window.attachEvent('popstate',stateChange);
+  }
+
+  // Check history.js for state changes
+  if ( window.History && window.History.Adapter ) {
+    window.History.Adapter.bind(window,'statechange',stateChange);
+    window.History.Adapter.bind(window,'anchorchange',stateChange);
+  }
+
+  // Inject Script
+  var script = bh.doc.createElement('script');
+  script.setAttribute('type', 'text/javascript');
+  script.setAttribute('src', bh.sidebarJS);
+  bh.doc.body.appendChild(script);
+
+  // Inject more Styles
+  var style = bh.doc.createElement('link');
+  style.setAttribute('href', bh.url+"/sidebar/css/sidebar.css");
+  style.setAttribute('href', bh.sidebarCSS);
+  style.setAttribute('type', 'text/css');
+  style.setAttribute('rel', 'stylesheet');
+  bh.doc.body.appendChild(style);
+};
+
+bh.load();
+*/
