@@ -116,4 +116,10 @@
         id="++resource++plone.app.toolbar/src/plone.overlay.js"
         />
 
+    <javascript
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="toolbar"
+        id="++resource++plone.app.toolbar/src/plone.cmsui.js"
+        />
+
 </object>
