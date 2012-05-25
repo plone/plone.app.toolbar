@@ -29,6 +29,7 @@
   regexp:true, undef:true, strict:true, trailing:true, browser:true */
 /*global jQuery:false */
 
+
 (function($) {
 "use strict";
 
@@ -41,7 +42,7 @@ $.plone.toolbar = $.plone.toolbar || {};
 // # IFrame Object
 //
 // nicer way to create shortcut 
-$.plone.toolbar.iframe = window.parent.iframized[window.name];
+$.plone.toolbar.iframe = window.parent.iframed[window.name];
 
 // # Shrink IFrame Object
 //

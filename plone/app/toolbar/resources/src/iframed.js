@@ -1,4 +1,4 @@
-// This plugin is used to put selected into iframe. {{{
+// This plugin is used to put selected element into iframe.
 //
 // @author Rok Garbas
 // @version 1.0
@@ -28,14 +28,13 @@
   newcap:true, noarg:true, noempty:true, nonew:true, plusplus:true,
   regexp:true, undef:true, strict:true, trailing:true, browser:true */
 
-// }}}
 
 (function(window, document) {
 "use strict";
 
-// # IFrame {{{
-var IFrame = function(el) { this.init(el); };
-IFrame.prototype = {
+// # IFramed Object
+var IFramed = function(el) { this.init(el); };
+IFramed.prototype = {
   init: function(el) {
     var self = this;
 
@@ -48,7 +47,7 @@ IFrame.prototype = {
 
     // get options from original element
     self.options = {
-      name: self.getAttribute('name', '_iframize'),
+      name: self.getAttribute('name', 'noname_frame'),
       title: self.getAttribute('title', ''),
       doctype: self.getAttribute('doctype', '<!doctype html>'),
       style: self.getAttribute('style', ''),
@@ -107,7 +106,7 @@ IFrame.prototype = {
             '<title>' + self.options.title + '</title>' +
             '<meta http-equiv="X-UA-Compatible" content="IE=edge">' +
           '</head>' +
-          '<body onload="parent.window.iframized[\'' +
+          '<body onload="parent.window.iframed[\'' +
               self.options.name + '\'].load()">' +
             self.el_original.innerHTML +
             self.resources +
@@ -135,7 +134,8 @@ IFrame.prototype = {
     self.document.body.setAttribute('style',
         self.document.body.getAttribute('style') || '' +
         'background:transparent;');
-    document.body.setAttribute('style', document.body.getAttribute('style') || '' +
+    document.body.setAttribute('style',
+        document.body.getAttribute('style') || '' +
         ';margin-top:' + self.el.offsetHeight + 'px;');
   },
   getAttribute: function(name, _default) {
@@ -146,12 +146,11 @@ IFrame.prototype = {
     return _default;
   }
 };
-// }}}
 
-// # Initialize {{{
+// # Initialize
 function initialize() {
 
-  // Check
+  // Check for DOM to be ready
   var body = document.getElementsByTagName('body')[0];
   if (body === undefined) {
     window.setTimeout(initialize, 23);
@@ -171,16 +170,15 @@ function initialize() {
     }
   }
 
-  // initialize IFrame object for each of them  and store them
-  window.iframized = {};
+  // initialize IFramed object for each of them
+  window.iframed = {};
   for (var j = 0; j < matching.length; j += 1) {
     var name = matching[j].getAttribute('data-iframe');
-    window.iframized[name] = new IFrame(matching[j]);
-    window.iframized[name].open();
+    window.iframed[name] = new IFramed(matching[j]);
+    window.iframed[name].open();
   }
 
 }
 initialize();
-// }}}
 
 }(window, window.document));

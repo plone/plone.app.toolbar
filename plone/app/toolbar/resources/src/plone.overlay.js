@@ -1,5 +1,5 @@
 //
-// This script is used to provide glue code between iframize and twitter
+// This script is used to provide glue code between iframed and twitter
 // bootstrap modal. And also providing some convinience method for usage in
 // Plone.
 //
