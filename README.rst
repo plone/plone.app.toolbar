@@ -1,4 +1,4 @@
-``plone.app.toolbar`` installs a new toolbar for Plone.
+`plone.app.toolbar`` installs a new toolbar for Plone.
 
 For the moment, it is an experiment only, but hopefully it will be soon ready
 for prime time.
@@ -32,24 +32,24 @@ or include ``plone.app.toolbar:default`` profile in your ``metadata.xml``..
 To start developing plone.app.toolbar you can find buildout at
 ``buildout.deco`` repository.::
     
-    https://github.com/plone/buildout.deco/blob/master/toolbar-2.0.cfg
+    https://github.com/plone/buildout.deco/blob/master/toolbar-only.cfg
     
 
 How it works
 ============
 
 Registers toolbar tile which creates toolbar html on every page in twitter
-bootstrap structure and is hidden by default. Toolbar tile also lists resources
+bootstrap structure and is hidden by default. Toolbar tile also lists resouces
 from ``toolbar`` skin in ``data-iframe-resources`` attribute of top element. ::
 
     <div style="display: none;"
-         data-iframe-resources="resource1.js;resource2.css;...">
+         data-iframe-resouces="resource1.js;resource2.css;...">
       <div class="navbar">
         ...
       </div>
     </div>
 
-``data-iframe-resources`` attribute is picked out by `iframize.js`_ which creates
+``data-iframe-resouces`` attribute is picked out by `iframize.js`_ which creates
 iframe with resources picked from ``data-iframe-resources`` attribute.
 `iframize.js` script also takes care that dropdown in toolbar which goes
 outside iframe area stretches it in transparent way so that user doesn't even
@@ -85,7 +85,7 @@ documentation for it.
 Todo
 ====
 
- - it should be possible to use custom skin for ??? instead hardcoded `toolbar`
+ - it should be possible to use custom skin for instead hardcoded `toolbar`
    skin
  - for more TODO see the `p.a.toolbar github issues`
  - to see progress on deco toolbar integration go to `buildout.deco`
