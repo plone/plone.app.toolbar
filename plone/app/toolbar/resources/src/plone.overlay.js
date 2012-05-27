@@ -1,3 +1,4 @@
+//
 // This script is used to provide glue code between iframed and twitter
 // bootstrap modal. And also providing some convinience method for usage in
 // Plone.
@@ -30,126 +31,158 @@
 /*jshint bitwise:true, curly:true, eqeqeq:true, immed:true, latedef:true,
   newcap:true, noarg:true, noempty:true, nonew:true, plusplus:true,
   regexp:true, undef:true, strict:true, trailing:true, browser:true */
-/*global jQuery:false */
+/*global $:false, jQuery:false */
 
 
 (function($) {
-"use strict";
+    "use strict";
 
-// # Namespace
-$.plone = $.plone || {};
-$.plone.overlay = $.plone.overlay || {};
+    // # Namespace {{{
+    $.plone = $.plone || {};
+    // }}}
 
-// # Overlay Object
-$.plone.overlay.Overlay = function(el, options) { this.init(el, options); };
-$.plone.overlay.Overlay.prototype = {
-  init: function(el, options) {
-    var self = this;
+    // # Overlay {{{
+    //
+    $.plone.Overlay = function(e, o, c) { this.init(e, o, c); };
+    $.plone.Overlay.prototype = {
+        init: function(el, options, callback) {
+            var self = this;
+            self.el = el;
+            self.options = $.extend({ show: true }, options, { backdrop: false});
+            self.mask = false; //$.plone.mask;
 
-    self.el_trigger = el;
-    self.options = $.extend(true, {
-      mask: $.plone.mask,
-      filter_selector: 'div#visual-portal-wrapper',
-      template: '' +
-        '<div class="modal fade">' +
-        '  <div class="modal-header">' +
-        '    <a class="close" data-dismiss="modal">&times;</a>' +
-        '    <h3>Title</h3>' +
-        '  </div>' +
-        '  <div class="modal-body">Content</div>' +
-        '  <div class="modal-footer">Buttons</div>' +
-        '</div>'
-    }, options);
+            // overlay
+            self._overlay = $('#plone-overlay-template').clone();
+            self._overlay.removeAttr('id').appendTo($('body'));
 
-    self.el_trigger.on('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
+            self.form = $('form', self._overlay);
+            self.title = $('.modal-header > h3', self._overlay);
+            self.body = $('.modal-body', self._overlay);
+            self.footer = $('.modal-footer', self._overlay);
 
-      // add overlay element into dom
-      if (self.el.parents('body').size() === 0) {
-        self.el.hide().prependTo($('body'));
-      }
+            // keep all links inside the overlay
+            $('a', self.body).on('click', function(e){
+                e.preventDefault();
+                e.stopPropagation();
 
-      // load content from link and open overlay
-      if (self.loaded_data === undefined) {
-        self.load();
-      } else {
-        self.open();
-      }
-    });
+                // TODO: should done with slide left effect
+                // TODO: we need to connect this with browser history
 
-    // create modal element from template
-    self.el = $(self.options.template)
-      .modal({ backdrop:false, keyboard: true, show: false })
-      .on('click', function(e) { e.stopPropagation(); })
-      .on('shown', function() {
-          if (self.options.mask) {
-            self.options.mask.load();
-          }
-        })
-      .on('hidden', function() {
-          if (self.options.mask !== false) {
-            self.options.mask.close();
-          }
+                // for now we hide current overlay and open new overlay
+                self.modal('hide');
+                $(this).ploneOverlay();
+            });
+
+            self._overlay.on('click', function(e) { e.stopPropagation(); });
+            self._overlay.on('shown', function() {
+                $.iframe.stretch();
+                if (self.mask !== false) {
+                    self.mask.load();
+                }
+            });
+            self._overlay.on('hidden', function() {
+                $.iframe.shrink();
+                if (self.mask !== false) {
+                    self.mask.close();
+                }
+            });
+            $('[data-dismiss=modal]', self._overlay).on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                self.modal('hide');
+            });
+
+            if (callback === undefined) {
+                $(document).trigger('plone_overlay.' + self.el.parent().attr('id'), self);
+            } else {
+                callback(self);
+            }
+        },
+        modal: function(options) {
+            this._overlay.modal(options);
+        },
+        load: function(on_load) {
+            // Clean up the url
+            // Insert ++untheme++ namespace to disable theming. This only works
+            // for absolute urls.
+            var self = this,
+                href = self.el.attr('href');
+            href = (href.match(/^([^#]+)/)||[])[1];
+            href = href.replace(/^(https?:\/\/[^/]+)\/(.*)/, '$1/++untheme++d/$2');
+
+            // TODO: show spinner before starting a request
+
+            $.get(href, function(data) {
+                data = $(data).filter('div#visual-portal-wrapper');
+
+                // TODO: hide spinner
+
+                on_load.apply(self, [ data ]);
+
+                self.modal(self.options);
+
+            });
+        }
+    };
+    // }}}
+
+    // # jQuery implementation {{{
+    $.fn.ploneOverlay = function (options, callback) {
+        var el = $(this),
+            data = el.data('plone-overlay');
+
+        if (typeof(options) === 'function') {
+            callback = options;
+            options = {};
+        }
+
+        if (data === undefined) {
+            data = new $.plone.Overlay(el, options, callback);
+            el.data('plone-overlay', data);
+        }
+
+        return data;
+    };
+    // }}}
+
+    // # Trigger overlay {{{
+    $(document).ready(function() {
+
+        // TODO: we should add this template in toolbar tile at the bottom
+        $('body').append($(''+
+            '<div class="modal" id="plone-overlay-template" style="display: none;">' +
+            '  <form>' +
+            '  <div class="modal-header">' +
+            '    <a class="close" data-dismiss="modal">&times;</a>' +
+            '    <h3>Title</h3>' +
+            '  </div>' +
+            '  <div class="modal-body">Content</div>' +
+            '  <div class="modal-footer">Buttons</div>' +
+            '  </form>' +
+            '</div>').hide());
+
+        var _window = window;
+        if (window.parent !== window) {
+            _window = window.parent;
+        }
+        _window.$(_window.document).on('iframe_link_clicked', function(e, el) {
+            var id = $(el).parent().attr('id'),
+                event_handler_exists = false;
+            if ($(document).data('events') !== undefined) {
+              $.each($(document).data('events').plone_overlay, function(i, e) {
+                if (e.namespace === id) {
+                  event_handler_exists = true;
+                  $(el).ploneOverlay();
+                  return;
+                }
+              });
+            }
+            if (!event_handler_exists) {
+                window.parent.location.href = $(el).attr('href');
+            }
         });
 
-    // TODO: keep all links inside the overlay
-    //$('a', self.el).on('click', function(e){
-    //  e.preventDefault();
-    //  e.stopPropagation();
-
-    //  // TODO: should done with slide left effect
-    //  // TODO: we need to connect this with browser history
-
-    //  // for now we hide current overlay and open new overlay
-    //  self.modal('hide');
-    //  $(this).ploneOverlay();
-    //});
-
-    // TODO: check if this is really needed
-    //$('[data-dismiss=modal]', self._overlay).on('click', function(e) {
-    //    e.preventDefault();
-    //    e.stopPropagation();
-    //    self.modal('hide');
-    //});
-
-  },
-  load: function() {
-    // Clean up the url
-    // Insert ++untheme++ namespace to disable theming. This only works
-    // for absolute urls.
-    var self = this,
-        href = self.el_trigger.attr('href');
-
-    //href = (href.match(/^([^#]+)/)||[])[1];
-    //href = href.replace(/^(https?:\/\/[^/]+)\/(.*)/, '$1/++untheme++d/$2');
-
-    // TODO: show spinner
-
-    $.get(href, function(data) {
-
-      self.loaded_data = $(data).filter(self.options.filter_selector);
-
-      // TODO: hide spinner
-
-      self.open();
     });
-  },
-  open: function() {
-    var self = this;
-    self.el.modal('show');
-  }
-};
-
-// # jQuery integration 
-$.fn.ploneOverlay = function (options) {
-  var el = $(this),
-      data = el.data('plone-overlay');
-  if (data === undefined) {
-    data = new $.plone.overlay.Overlay(el, options);
-    el.data('plone-overlay', data);
-  }
-  return data;
-};
+    // }}}
 
 }(jQuery));

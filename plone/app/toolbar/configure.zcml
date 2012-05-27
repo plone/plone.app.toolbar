@@ -38,12 +38,12 @@
         add_permission="plone.AddToolbar"
         permission="plone.ViewToolbar" />
 
-    <!-- Add /++unthemed++/ to your url to disable theming -->
+    <!-- Add /++untheme++d/ to your url to disable theming -->
     <adapter
-        name="unthemed"
+        name="untheme"
         for="* zope.publisher.interfaces.IRequest"
         provides="zope.traversing.interfaces.ITraversable"
-        factory=".toolbar.UnthemedRequest"
+        factory=".toolbar.UnthemeRequest"
         />
 
     <!-- TODO: commenting out until its working
