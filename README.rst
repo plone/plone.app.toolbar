@@ -43,31 +43,29 @@ bootstrap structure and is hidden by default. Toolbar tile also lists resources
 from ``toolbar`` skin in ``data-iframe-resources`` attribute of top element. ::
 
     <div style="display: none;"
+         data-iframe="example"
          data-iframe-resources="resource1.js;resource2.css;...">
       <div class="navbar">
         ...
       </div>
     </div>
 
-``data-iframe-resources`` attribute is picked out by `iframize.js`_ which creates
-iframe with resources picked from ``data-iframe-resources`` attribute.
-`iframize.js` script also takes care that dropdown in toolbar which goes
-outside iframe area stretches it in transparent way so that user doesn't even
-notice it.
+Elements with ``data-iframe`` attribute are picked by `iframed.js`_ and inserts
+resources found in ``data-iframe-resources`` attribute. `iframed.js` script
+also takes care that dropdown in toolbar which goes outside iframe area
+stretches it in transparent way so that user doesn't even notice it.
 
 Same transparent stretching of iframe is used when overlay is opened. This is
-done by `plone.overlay.js`_ script. This script also triggers event when
-toolbar button is clicked. You can subscribe to it you binding to
-``plone_overlay.<id-of-button>`` jquery event.::
+done by `plone.overlay.js`_ script. Example of how to open overlay when user
+click on ``Edit`` action in toolbar would be::
 
-    // Example of how to bind to Contents button in toolbar
-    $(document).on('plone_overlay.plone-action-folderContents', function(e) {
-        ... do stuff
+    $('#plone-toolbar ul.nav > li#plone-action-edit > a').ploneOverlay({
+      after_load: function(overlay) {
+        $.plone.cmsui.bootstrapOverlayTransform(overlay.el, overlay.loaded_data);
+      }
     });
 
-Examples of this can be found in `plone.cmsui.js`_ script. At the time of
-writing this documentation `plone.cmsui.js`_ script is not used by
-plone.app.toolbar.
+More examples of this can be found in `plone.cmsui.js`_ script.
 
 Since in current Plone we're not using `plone.app.blocks`_ to render tiles we
 provide plone toolbar viewlet which renders toolbar tile. This is done by
@@ -81,18 +79,15 @@ More on plone.overlay.js
 TODO: once jquery.form.js is integrated into $.plone.Overlay write
 documentation for it.
 
+More on plone.cmsui.js
+======================
 
-Todo
-====
+TODO: once it gets fairly working some documentation would be nice.
 
- - it should be possible to use custom skin for ??? instead hardcoded `toolbar`
-   skin
- - for more TODO see the `p.a.toolbar github issues`
- - to see progress on deco toolbar integration go to `buildout.deco`
 
 .. _`buildout.deco`: https://github.com/plone/buildout.deco
 .. _ `p.a.toolbar github issues`: https://github.com/plone/plone.app.toolbar/issues
-.. _`iframize.js`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/resources/src/iframize.js
+.. _`iframed.js`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/resources/src/iframed.js
 .. _`plone.overlay.js`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/resources/src/plone.overlay.js
 .. _`plone.cmsui.js`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/resources/src/plone.cmsui.js
 .. _`bbb`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/bbb.zcml
