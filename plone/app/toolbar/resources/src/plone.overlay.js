@@ -81,7 +81,7 @@ $.plone.overlay.Overlay.prototype = {
     // create modal element from template
     self.el = $(self.options.template)
       .modal({ backdrop:false, keyboard: true, show: false })
-      .on('click', function(e) { e.stopPropagation(); })
+      .on('click', function(e) { e.preventDefault(); e.stopPropagation(); })
       .on('shown', function() {
           if (self.options.mask) {
             self.options.mask.load();
