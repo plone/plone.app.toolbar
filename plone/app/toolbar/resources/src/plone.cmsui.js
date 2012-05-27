@@ -44,11 +44,12 @@ function addEditor(){
   config.init();
 }
 
-// # Common utils {{{
-
+// # Namespace
 $.plone = $.plone || {};
+$.plone.cmsui = $.plone.cmsui || {};
+
 // set of ids where overlay code should be triggered on.
-$.plone._basic_overlays = [
+$.plone.cmsui._basic_overlays = [
   'plone-action-contentrules',
   'plone-action-local_roles',
   'advanced',
@@ -168,7 +169,7 @@ $(document).on('plone_toolbar.plone-action-folderContents', function(e, link) {
   //var self = this;
   var overlay = $(link).ploneOverlay();
   overlay.load(function(data) {
-    $.plone.overlay_form_transform(overlay, $('#portal-columns #portal-column-content', data));
+    $.plone.cmsui.overlay_form_transform(overlay, $('#portal-columns #portal-column-content', data));
   });
 
 
@@ -241,7 +242,7 @@ $(document).on('plone_toolbar.plone-action-edit', function(e, link) {
   var overlay = $(link).ploneOverlay();
     overlay.load(function(data) {
 
-    $.plone.overlay_form_transform(overlay,
+    $.plone.cmsui.overlay_form_transform(overlay,
         $('#portal-columns #portal-column-content', data));
 
     // hide overlay and trigger deco
@@ -264,8 +265,8 @@ $(document).on('plone_toolbar.plone-action-edit', function(e, link) {
 // ## Actions -> Rename
 
 // setup simple overlays
-for(var i=0; i<$.plone._basic_overlays.length; i++){
-  var id = $.plone._basic_overlays[i];
+for(var i=0; i<$.plone.cmsui._basic_overlays.length; i++){
+  var id = $.plone.cmsui._basic_overlays[i];
   $(document).on('plone_toolbar.' + id, function(e, link){
     var overlay = $(link).ploneOverlay();
     overlay.load(function(data) {
