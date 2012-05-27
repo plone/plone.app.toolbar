@@ -98,39 +98,50 @@ $.plone.cmsui.bootstrapOverlayTransform = function(modal, loaded, options) {
     // class for this textarea
     // So look for the text format options, check that html is selected
     $('.fieldTextFormat option[value="text/x-plone-outputfilters-html"]', modal).each(addEditor);
-  }
 
+    // Submit form using ajax, then close modal and reload parent
+    // 
+    // var modal = $('#toolbar-overlay', toolbar.document),
+    //     body = $('.modal-body', modal);
+    // $('form', body).ajaxForm({
+    //     success: function() {
+    //         modal.modal('hide');
+    //         body.empty();
+    //         window.parent.location.replace(window.parent.location.href);
+    //     }
+    // });
+  }
 };
 
-// # Toolbar Actions
-// setup simple overlays
-// set of ids where overlay code should be triggered on.
-$.plone.cmsui._basic_overlays = [
-  'plone-action-contentrules',
-  'plone-action-local_roles',
-  'advanced',
-  'folderChangeDefaultPage',
-  'contextSetDefaultPage',
-  'plone-personal-actions-plone_setup'
-];
-for(var i=0; i<$.plone.cmsui._basic_overlays.length; i+=1){
-  $('#plone-toolbar ul.nav > li#' + $.plone.cmsui._basic_overlays[i] + ' a').ploneOverlay({
+// # Toolbar Actions : General
+$.each([
+  '#plone-toolbar ul.nav > li#plone-action-contentrules > a',
+  '#plone-toolbar ul.nav > li#plone-action-local_roles > a',
+  '#plone-toolbar ul.nav > li#plone-contentmenu-factories > ul > li > a',
+  '#plone-toolbar ul.nav > li#plone-contentmenu-workflow > ul > li#advanced > a',
+  '#plone-toolbar ul.nav > li#plone-contentmenu-display > ul > li#folderChangeDefaultPage > a',
+  '#plone-toolbar ul.nav > li#plone-contentmenu-display > ul > li#contextSetDefaultPage > a',
+  '#plone-toolbar ul.nav > li#plone-personal-actions > ul > li#plone-personal-actions-dashboard > a',
+  '#plone-toolbar ul.nav > li#plone-personal-actions > ul > li#plone-personal-actions-preferences > a',
+  '#plone-toolbar ul.nav > li#plone-personal-actions > ul > li#plone-personal-actions-plone_setup > a'
+], function(i, selector) {
+  $(selector).ploneOverlay({
     after_load: function() {
-        var overlay = this;
-        $.plone.cmsui.bootstrapOverlayTransform(overlay.el, overlay.loaded_data);
-      }
+      $.plone.cmsui.bootstrapOverlayTransform(this.el, this.loaded_data);
+    }
   });
-}
-// ## Contents (folder_contents)
+});
+// # Contents (folder_contents)
 $('#plone-toolbar ul.nav > li#plone-action-folderContents a').ploneOverlay({
   after_load: function() {
     var overlay = this;
     $.plone.cmsui.bootstrapOverlayTransform(overlay.el, overlay.loaded_data);
-    // TODO: need to continue and make it working
+    // TODO: we know that contents action will require more then just general
+    // overlay transforms, below this todo is a place to hook them in.
   }
 });
-// ## Edit
-$('#plone-toolbar ul.nav > li#plone-action-edit a').ploneOverlay({
+// # Edit Action
+$('#plone-toolbar ul.nav > li#plone-action-edit > a').ploneOverlay({
   after_load: function() {
     var overlay = this;
     if ($('[data-iframe="deco-toolbar"]', window.parent.document).size() > 0) {
@@ -145,31 +156,5 @@ $('#plone-toolbar ul.nav > li#plone-action-edit a').ploneOverlay({
     }
   }
 });
-// ## Actions -> Cut
-// ## Actions -> Paste
-// ## Actions -> Delete
-// ## Actions -> Rename
-// ## Add forms
-$('#plone-toolbar ul.nav > li#plone-contentmenu-factories a').ploneOverlay({
-  after_load: function() {
-    var overlay = this;
-    $.plone.cmsui.bootstrapOverlayTransform(overlay.el, overlay.loaded_data);
-  }
-});
-  // Submit form using ajax, then close modal and reload parent
-  // var modal = $('#toolbar-overlay', toolbar.document),
-  //     body = $('.modal-body', modal);
-  // $('form', body).ajaxForm({
-  //     success: function() {
-  //         modal.modal('hide');
-  //         body.empty();
-  //         window.parent.location.replace(window.parent.location.href);
-  //     }
-  // });
-
-// ## State: (Some State) -> Publish, Submit for publication, Retract, Send back
-// ## State: (Some Sate) -> Advanced...
-// ## Personal -> Preferences
-// ## Personal -> Site Setup
 
 }(jQuery));
