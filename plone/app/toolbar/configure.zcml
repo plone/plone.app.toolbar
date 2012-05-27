@@ -38,22 +38,6 @@
         add_permission="plone.AddToolbar"
         permission="plone.ViewToolbar" />
 
-    <!-- Add /++unthemed++/ to your url to disable theming -->
-    <adapter
-        name="unthemed"
-        for="* zope.publisher.interfaces.IRequest"
-        provides="zope.traversing.interfaces.ITraversable"
-        factory=".toolbar.UnthemedRequest"
-        />
-
-    <!-- TODO: commenting out until its working
-     browser:page
-        name="portal-notifications"
-        for="*"
-        template="templates/notifications.pt"
-        permission="plone.ViewToolbar"
-        /-->
-
     <!-- GS profile -->
     <genericsetup:registerProfile
         name="default"
