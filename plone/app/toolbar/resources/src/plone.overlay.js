@@ -88,7 +88,7 @@ $.plone.overlay.Overlay.prototype = {
           }
         })
       .on('hidden', function() {
-          if (self.options.mask !== false) {
+          if (self.options.mask) {
             self.options.mask.close();
           }
         });
@@ -132,12 +132,18 @@ $.plone.overlay.Overlay.prototype = {
 
       // TODO: hide spinner
 
+      if (self.options.after_load) {
+        self.options.after_load.call(self);
+      }
       self.open();
     });
   },
   open: function() {
     var self = this;
     self.el.modal('show');
+    if (self.options.after_open) {
+      self.options.after_open.call(this);
+    }
   }
 };
 
