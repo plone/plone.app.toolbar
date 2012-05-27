@@ -1,4 +1,3 @@
-//
 // This script is used to provide glue code between iframed and twitter
 // bootstrap modal. And also providing some convinience method for usage in
 // Plone.
@@ -31,8 +30,11 @@
 /*jshint bitwise:true, curly:true, eqeqeq:true, immed:true, latedef:true,
   newcap:true, noarg:true, noempty:true, nonew:true, plusplus:true,
   regexp:true, undef:true, strict:true, trailing:true, browser:true */
-/*global $:false, jQuery:false */
+/*global TinyMCEConfig:false, jQuery:false */
 
+
+(function($) {
+    "use strict";
 
 function addEditor(){
     var text = $(this).parent().parent().next().find('textarea');
@@ -41,10 +43,6 @@ function addEditor(){
     var config = new TinyMCEConfig(id);
     config.init();
 }
-
-
-(function($) {
-    "use strict";
 
     // # Common utils {{{
 
