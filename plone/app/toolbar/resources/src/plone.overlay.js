@@ -130,11 +130,12 @@ $.plone.overlay.Overlay.prototype = {
 
       self.loaded_data = $(data).filter(self.options.filter_selector);
 
+      if (self.options.after_load) {
+        self.options.after_load(self);
+      }
+
       // TODO: hide spinner
 
-      if (self.options.after_load) {
-        self.options.after_load.call(self);
-      }
       self.open();
     });
   },
@@ -142,7 +143,7 @@ $.plone.overlay.Overlay.prototype = {
     var self = this;
     self.el.modal('show');
     if (self.options.after_open) {
-      self.options.after_open.call(this);
+      self.options.after_open(self);
     }
   }
 };

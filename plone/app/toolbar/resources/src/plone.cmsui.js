@@ -126,15 +126,14 @@ $.each([
   '#plone-toolbar ul.nav > li#plone-personal-actions > ul > li#plone-personal-actions-plone_setup > a'
 ], function(i, selector) {
   $(selector).ploneOverlay({
-    after_load: function() {
-      $.plone.cmsui.bootstrapOverlayTransform(this.el, this.loaded_data);
+    after_load: function(overlay) {
+      $.plone.cmsui.bootstrapOverlayTransform(overlay.el, overlay.loaded_data);
     }
   });
 });
 // # Contents (folder_contents)
 $('#plone-toolbar ul.nav > li#plone-action-folderContents a').ploneOverlay({
-  after_load: function() {
-    var overlay = this;
+  after_load: function(overlay) {
     $.plone.cmsui.bootstrapOverlayTransform(overlay.el, overlay.loaded_data);
     // TODO: we know that contents action will require more then just general
     // overlay transforms, below this todo is a place to hook them in.
@@ -142,8 +141,7 @@ $('#plone-toolbar ul.nav > li#plone-action-folderContents a').ploneOverlay({
 });
 // # Edit Action
 $('#plone-toolbar ul.nav > li#plone-action-edit > a').ploneOverlay({
-  after_load: function() {
-    var overlay = this;
+  after_load: function(overlay) {
     if ($('[data-iframe="deco-toolbar"]', window.parent.document).size() > 0) {
       var deco_toolbar = $(overlay.el).ploneDecoToolbar();
       if (deco_toolbar.visible === false) {
