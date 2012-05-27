@@ -59,7 +59,7 @@ $.plone.cmsui._basic_overlays = [
 ];
 
 // ## Forms helper {{{
-$.plone.overlay_form_transform = function(overlay, data, options) {
+$.plone.cmsui.overlay_form_transform = function(overlay, data, options) {
 
   options = $.extend({
     title_selector: 'h1.documentFirstHeading',
@@ -270,7 +270,7 @@ for(var i=0; i<$.plone.cmsui._basic_overlays.length; i++){
   $(document).on('plone_toolbar.' + id, function(e, link){
     var overlay = $(link).ploneOverlay();
     overlay.load(function(data) {
-      $.plone.overlay_form_transform(overlay, $('#portal-columns #portal-column-content', data));
+      $.plone.cmsui.overlay_form_transform(overlay, $('#portal-columns #portal-column-content', data));
     });
   });
 }
@@ -280,7 +280,7 @@ for(var i=0; i<$.plone.cmsui._basic_overlays.length; i++){
 $(document).on('plone_toolbar.plone-contentmenu-factories', function(e, link){
   var overlay = $(link).ploneOverlay();
   overlay.load(function(data) {
-    $.plone.overlay_form_transform(overlay, $('#portal-columns #portal-column-content', data));
+    $.plone.cmsui.overlay_form_transform(overlay, $('#portal-columns #portal-column-content', data));
   });
   // Submit form using ajax, then close modal and reload parent
   // var modal = $('#toolbar-overlay', toolbar.document),
