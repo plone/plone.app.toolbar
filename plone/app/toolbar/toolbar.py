@@ -194,7 +194,7 @@ class ToolbarTile(Tile):
         return [item for item in actions if item['available']]
 
 
-class UnthemeRequest(object):
+class UnthemedRequest(object):
     implements(ITraversable)
 
     def __init__(self, context, request=None):

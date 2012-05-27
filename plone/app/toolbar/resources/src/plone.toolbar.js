@@ -98,8 +98,12 @@ $('a').on('click', function(e) {
     // sure that iframe is stretched before being open and shrank on closing
     } else if (el.data('plone-overlay') !== undefined) {
       el.data('plone-overlay').el
-        .on('show', function(e) { $.plone.toolbar.iframe_stretch(); })
-        .on('hide', function(e) { $.plone.toolbar.iframe_shrink(); });
+        .on('show', function(e) {
+            $.plone.toolbar.iframe_stretch();
+          })
+        .on('hide', function(e) {
+            $.plone.toolbar.iframe_shrink();
+          });
 
     // if none of above conditions is met then open link in top frame or new
     // window in case right button was used
