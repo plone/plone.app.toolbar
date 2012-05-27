@@ -1,97 +1,7 @@
-// BOOTSTRAP IMPORTS {{{
-
 @import "../lib/bootstrap/less/bootstrap.less";
-@import "../lib/bootstrap/less/responsive.less";
 
-// }}}
-
-
-.modal-form {
-    margin: 0;
-}
-.modal.fade.in {
-  margin: 0;
-  position: absolute;
-  left: 20%;
-  top: 50px;
-  width: 60%;
-  form { margin: 0; }
-}
-
-// FORM
-input.context[type='submit'] {
-  .btn();
-  .btn-primary();
-}
-input.standalone[type='submit'] {
-  .btn();
-}
-dl.portalMessage {
-  .alert();
-  .alert-block();
-  &.info { .alert-info(); }
-  &.error {
-    .alert-error();
-    dd { background: transparent; }
-  }
-  dt {
-    .alert-heading();
-    .border-radius(0);
-    float: none;
-    font-size: 1.2em;
-    line-height: 1.25em;
-    background: transparent;
-    color: inherit;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-  dd {
-    margin: 0;
-    padding: 0;
-  }
-}
-div.field {
-  &.error {
-    .control-group.error();
-    .fieldRequired { color: transparent; }
-    label { color: @grayDarker; }
-    div {
-      color: #B94A48;
-      &.formHelp { color: @grayDarker; }
-    }
-    color: #B94A48;
-    background: transparent;
-    border: 0;
-    margin: 0;
-    padding: 0;
-  }
-  .control-group();
-  label {
-    font-size: 1.2em;
-    font-weight: bold;
-    display: inline-block;
-  }
-  .fieldRequired { color: transparent; }
-  div {
-    .help-block();
-    line-height: 2em;
-    padding: 0;
-    &.formHelp { line-height: 1em; }
-  }
-  input[type="text"] {
-   margin-bottom: 1em;
-   margin-top: 0.2em;
-   height: 1.2em;
-  }
-  margin-bottom: 1em;
-}
-
-// }}}
-
-// 
 #plone-toolbar {
   margin-bottom: 0;
-
   #plone-personal-actions > a > img { height: 17px; margin-right: 0.5em; }
   .navbar-inner { .border-radius(0); padding-left: 1em; padding-right: 1em }
   .container { width: 100% }
@@ -122,7 +32,6 @@ div.field {
     .contenttype-collection > a { background-position: 0px -1721px; }
     .contenttype-topic > a { background-position: 0px -1721px; }
   }
-
   .state-private,
   .state-visible,
   .state-published,
@@ -142,6 +51,5 @@ div.field {
   .state-published { background-color: #436976 !important; }
   .state-pending { background-color: #FFA500 !important; }
   .state-expired { background-color: Red !important; }
-
 }
 
