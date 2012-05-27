@@ -1,0 +1,9 @@
+/* toolbar styles loaded in the main page */
+
+div#edit-bar,
+dl.portalMessage {
+  display: none;
+}
+body.template-usergroup-userprefs div#edit-bar {
+  display: block;
+}
