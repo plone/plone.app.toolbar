@@ -23,12 +23,23 @@ setup(
     zip_safe=False,
     install_requires=[
         'setuptools',
+        'lxml',
+        'Acquisition',
+        'Products.CMFCore',
+        'zope.interface',
+        'zope.component',
+        'zope.i18nmessageid',
+        'zope.browsermenu',
+        'zope.traversing',
+        'zope.viewlet',
+        'plone.memoize',
         'plone.tiles',
         'plone.app.jquery',
         'Products.ResourceRegistries',
         ],
     extras_require={
         'test': [
+            'zope.configuration',
             'plone.app.testing',
             'unittest_jshint',
             ],
