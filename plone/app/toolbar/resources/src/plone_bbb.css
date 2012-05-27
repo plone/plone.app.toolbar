@@ -2,5 +2,8 @@
 
 div#edit-bar,
 dl.portalMessage {
-    display: none;
+  display: none;
+}
+body.template-usergroup-userprefs div#edit-bar {
+  display: block;
 }
