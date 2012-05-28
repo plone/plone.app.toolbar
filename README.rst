@@ -73,6 +73,27 @@ provide plone toolbar viewlet which renders toolbar tile. This is done by
 integrated into current Plone, eg: hidding old green edit bar, ...
 
 
+Diazo rules
+===========
+
+First we need to copy toolbar's html code, which will be picked by
+`iframed.js`_::
+
+    <append theme="/html/body"
+        content="//div[@data-iframe='toolbar']" />
+
+Then in case we are not copying all resources from Plone to theme we have to
+include `iframed.js`_::
+
+    <append theme="/html/head">
+        <script type="text/javascript"
+            src="++resource++plone.app.toolbar/src/iframed.js"></script>
+    </append>
+
+Above 2 rules should be enought so that your theme will support
+`plone.app.toolbar`_
+
+
 More on plone.overlay.js
 ========================
 
