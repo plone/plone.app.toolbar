@@ -94,16 +94,26 @@ Above 2 rules should be enought so that your theme will support
 `plone.app.toolbar`_
 
 
-More on plone.overlay.js
-========================
+Changelog
+=========
 
-TODO: once jquery.form.js is integrated into $.plone.Overlay write
-documentation for it.
 
-More on plone.cmsui.js
-======================
+1.1 - XX-XX-XXXX
+----------------
 
-TODO: once it gets fairly working some documentation would be nice.
+- other tabs in user/group management were not showing #edit-bar.
+  [garbas]
+
+- removed development code which inserted less files.
+  [garbas]
+
+
+1.0 - 28-05-2012
+----------------
+
+- initial release
+  [garbas]
+
 
 
 .. _`buildout.deco`: https://github.com/plone/buildout.deco
