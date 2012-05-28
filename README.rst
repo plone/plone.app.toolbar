@@ -107,7 +107,7 @@ TODO: once it gets fairly working some documentation would be nice.
 
 
 .. _`buildout.deco`: https://github.com/plone/buildout.deco
-.. _ `p.a.toolbar github issues`: https://github.com/plone/plone.app.toolbar/issues
+.. _ `plone.app.toolbar`: https://github.com/plone/plone.app.toolbar
 .. _`iframed.js`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/resources/src/iframed.js
 .. _`plone.overlay.js`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/resources/src/plone.overlay.js
 .. _`plone.cmsui.js`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/resources/src/plone.cmsui.js

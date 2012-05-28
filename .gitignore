@@ -11,6 +11,7 @@
 
 /bin/
 /develop-eggs/
+/dist/
 /eggs/
 /lib/
 /include/
