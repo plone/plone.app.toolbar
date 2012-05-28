@@ -101,6 +101,10 @@ Changelog
 1.1 - XX-XX-XXXX
 ----------------
 
+- added IFramed.add method to IFramed object. now its possible to "commulate"
+  content inside one iframe.
+  [garbas]
+
 - other tabs in user/group management were not showing #edit-bar.
   [garbas]
 
