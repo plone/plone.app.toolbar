@@ -91,7 +91,6 @@ Above 2 rules should be enought so that your theme will support
 Changelog
 =========
 
-
 1.1 (2012-06-22)
 ----------------
 
