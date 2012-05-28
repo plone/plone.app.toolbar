@@ -4,6 +4,9 @@ div#edit-bar,
 dl.portalMessage {
   display: none;
 }
-body.template-usergroup-userprefs div#edit-bar {
+body.template-member-registration div#edit-bar,
+body.template-usergroup-userprefs div#edit-bar,
+body.template-usergroup-groupprefs  div#edit-bar,
+body.template-usergroup-controlpanel div#edit-bar {
   display: block;
 }
