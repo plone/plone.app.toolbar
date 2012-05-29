@@ -49,70 +49,6 @@ function addEditor(){
 $.plone = $.plone || {};
 $.plone.cmsui = $.plone.cmsui || {};
 
-// # Bootstrap Overlay Transform
-$.plone.cmsui.bootstrapOverlayTransform = function(modal, loaded, options) {
-  var title = $('.modal-header > h3', modal),
-      body = $('.modal-body',modal),
-      footer = $('.modal-footer', modal);
-
-  options = $.extend({
-    title: 'h1.documentFirstHeading',
-    body: '#content',
-    footer: '.formControls',
-    close: 'input[name="buttons.cancel"],' +
-      'input[name="form.button.Cancel"],' +
-      'input[name="form.button.cancel"],' +
-      'input[name="form.actions.cancel"]'
-    }, options || {});
-
-  // Title
-  title.html($(options.title, loaded).html());
-
-  // Footer
-  footer.html($(options.footer, loaded).html());
-
-  // Content
-  body.html($(options.body, loaded).html());
-  $(options.title, body).remove();
-  $(options.footer, body).remove();
-
-  // Closing buttons (eg: on Cancel buttons of form)
-  $(options.close, modal).on('click', function(e) {
-    $(modal).modal('hide');
-  });
-
-  // ## Form (only if included in body of modal)
-  var body_form = $('> div > form', body);
-  if (body_form.size() === 1) {
-    // copy all attributed to form which will wrap
-    var form = $('<form/>');
-    $.each(body_form[0].attributes, function(i, attr) {
-      form.attr(attr.name, attr.value);
-    });
-    form.addClass('modal-form');
-    modal.wrap(form);  // wrap modal with new form
-    body_form.children(':first-child').unwrap();  // remove form from modal's body
-
-    // trigger tinymce
-    // TODO: for some reason i couldn't get wysiwyg widget to add correct
-    // class for this textarea
-    // So look for the text format options, check that html is selected
-    $('.fieldTextFormat option[value="text/x-plone-outputfilters-html"]', modal).each(addEditor);
-
-    // Submit form using ajax, then close modal and reload parent
-    // 
-    // var modal = $('#toolbar-overlay', toolbar.document),
-    //     body = $('.modal-body', modal);
-    // $('form', body).ajaxForm({
-    //     success: function() {
-    //         modal.modal('hide');
-    //         body.empty();
-    //         window.parent.location.replace(window.parent.location.href);
-    //     }
-    // });
-  }
-};
-
 // # Toolbar Actions : General
 $.each([
   '#plone-toolbar ul.nav > li#plone-action-contentrules > a',
@@ -127,14 +63,14 @@ $.each([
 ], function(i, selector) {
   $(selector).ploneOverlay({
     after_load: function(overlay) {
-      $.plone.cmsui.bootstrapOverlayTransform(overlay.el, overlay.loaded_data);
+      $.plone.overlay.bootstrap_overlay_transform(overlay.el, overlay.loaded_data);
     }
   });
 });
 // # Contents (folder_contents)
 $('#plone-toolbar ul.nav > li#plone-action-folderContents a').ploneOverlay({
   after_load: function(overlay) {
-    $.plone.cmsui.bootstrapOverlayTransform(overlay.el, overlay.loaded_data);
+    $.plone.overlay.bootstrap_overlay_transform(overlay.el, overlay.loaded_data);
     // TODO: we know that contents action will require more then just general
     // overlay transforms, below this todo is a place to hook them in.
   }
@@ -150,7 +86,7 @@ $('#plone-toolbar ul.nav > li#plone-action-edit > a').ploneOverlay({
         deco_toolbar.deactivate();
       }
     } else {
-      $.plone.cmsui.bootstrapOverlayTransform(overlay.el, overlay.loaded_data);
+      $.plone.overlay.bootstrap_overlay_transform(overlay.el, overlay.loaded_data);
     }
   }
 });

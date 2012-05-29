@@ -101,6 +101,17 @@ Changelog
 1.1 - XX-XX-XXXX
 ----------------
 
+- edit action on deco enabled pages will have "plone-action-deco" id
+  [garbas]
+
+- bootstrap_overlay_trasform moved from ``plone.cmsui.js`` script to
+  ``plone.overlay.js``
+  [garbas]
+
+- adding javascript (and register them in resources register) needed for deco:
+  plone.mask.js, plone.overlay.js, bootstrap-tooltip.js, bootstrap-modal.js
+  [garbas]
+
 - added IFramed.add method to IFramed object. now its possible to "commulate"
   content inside one iframe.
   [garbas]
@@ -117,7 +128,6 @@ Changelog
 
 - initial release
   [garbas]
-
 
 
 .. _`buildout.deco`: https://github.com/plone/buildout.deco

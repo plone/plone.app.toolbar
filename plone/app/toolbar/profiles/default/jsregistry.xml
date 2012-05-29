@@ -19,6 +19,18 @@
         id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-dropdown.js"
         />
 
+    <javascript 
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="bootstrap"
+        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-tooltip.js"
+        />
+
+    <javascript 
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="bootstrap"
+        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-modal.js"
+        />
+
     <!-- plone scripts -->
     <javascript 
         cacheable="False" compression="safe" cookable="False"
@@ -30,6 +42,18 @@
         cacheable="False" compression="safe" cookable="False"
         enabled="True" inline="False" bundle="toolbar"
         id="++resource++plone.app.toolbar/src/plone.toolbar.js"
+        />
+
+    <javascript 
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="toolbar"
+        id="++resource++plone.app.toolbar/src/plone.mask.js"
+        />
+
+    <javascript 
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="toolbar"
+        id="++resource++plone.app.toolbar/src/plone.overlay.js"
         />
 
 </object>

@@ -40,6 +40,70 @@
 $.plone = $.plone || {};
 $.plone.overlay = $.plone.overlay || {};
 
+// # Bootstrap Overlay Transform
+$.plone.overlay.bootstrap_overlay_transform = function(modal, loaded, options) {
+  var title = $('.modal-header > h3', modal),
+      body = $('.modal-body',modal),
+      footer = $('.modal-footer', modal);
+
+  options = $.extend({
+    title: 'h1.documentFirstHeading',
+    body: '#content',
+    footer: '.formControls',
+    close: 'input[name="buttons.cancel"],' +
+      'input[name="form.button.Cancel"],' +
+      'input[name="form.button.cancel"],' +
+      'input[name="form.actions.cancel"]'
+    }, options || {});
+
+  // Title
+  title.html($(options.title, loaded).html());
+
+  // Footer
+  footer.html($(options.footer, loaded).html());
+
+  // Content
+  body.html($(options.body, loaded).html());
+  $(options.title, body).remove();
+  $(options.footer, body).remove();
+
+  // Closing buttons (eg: on Cancel buttons of form)
+  $(options.close, modal).on('click', function(e) {
+    $(modal).modal('hide');
+  });
+
+  // ## Form (only if included in body of modal)
+  var body_form = $('> div > form', body);
+  if (body_form.size() === 1) {
+    // copy all attributed to form which will wrap
+    var form = $('<form/>');
+    $.each(body_form[0].attributes, function(i, attr) {
+      form.attr(attr.name, attr.value);
+    });
+    form.addClass('modal-form');
+    modal.wrap(form);  // wrap modal with new form
+    body_form.children(':first-child').unwrap();  // remove form from modal's body
+
+    // trigger tinymce
+    // TODO: for some reason i couldn't get wysiwyg widget to add correct
+    // class for this textarea
+    // So look for the text format options, check that html is selected
+    $('.fieldTextFormat option[value="text/x-plone-outputfilters-html"]', modal).each(addEditor);
+
+    // Submit form using ajax, then close modal and reload parent
+    // 
+    // var modal = $('#toolbar-overlay', toolbar.document),
+    //     body = $('.modal-body', modal);
+    // $('form', body).ajaxForm({
+    //     success: function() {
+    //         modal.modal('hide');
+    //         body.empty();
+    //         window.parent.location.replace(window.parent.location.href);
+    //     }
+    // });
+  }
+};
+
 // # Overlay Object
 $.plone.overlay.Overlay = function(el, options) { this.init(el, options); };
 $.plone.overlay.Overlay.prototype = {
@@ -60,6 +124,8 @@ $.plone.overlay.Overlay.prototype = {
         '  <div class="modal-footer">Buttons</div>' +
         '</div>'
     }, options);
+
+    self.loaded_data = self.options.loaded_data;
 
     self.el_trigger.on('click', function(e) {
       e.preventDefault();

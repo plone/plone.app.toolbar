@@ -49,6 +49,15 @@ class ToolbarTile(Tile):
         self.context.changeSkin(skinname, self.request)
         return resources
 
+    def is_deco_enabled(self):
+        try:
+            from plone.app.blocks.layoutbehavior import ILayoutAware
+            if ILayoutAware.providedBy(self.context):
+                return True
+        except:
+            pass
+        return False
+
     @memoize
     def actions(self):
         if 'disable_border' in self.request:
@@ -76,6 +85,10 @@ class ToolbarTile(Tile):
         active_action_found = False
         for action in actions:
             item = action
+
+            # deco edit button should have a bit different id
+            if item['id'] == 'edit' and self.is_deco_enabled():
+                item['id'] = 'deco'
 
             # make sure id is unique
             item['id'] = 'plone-action-' + item['id']
