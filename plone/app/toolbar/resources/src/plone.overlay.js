@@ -52,7 +52,6 @@ function addEditor(el) {
   config.init();
 }
 
-
 // # Overlay Class Definition 
 $.plone.overlay.Overlay = function(options) { this._init(options); };
 $.plone.overlay.Overlay.prototype = {
