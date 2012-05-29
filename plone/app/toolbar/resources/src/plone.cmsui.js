@@ -53,15 +53,15 @@ $.each([
   '#plone-toolbar ul.nav > li#plone-personal-actions > ul > li#plone-personal-actions-plone_setup > a'
 ], function(i, selector) {
   $(selector).ploneOverlay({
-    after_load: function(overlay) {
-      $.plone.overlay.bootstrap_overlay_transform(overlay.el, overlay.loaded_data);
+    after_load: function() {
+      $.plone.overlay.bootstrap_overlay_transform(this.el, this.loaded_data);
     }
   });
 });
 // # Contents (folder_contents)
 $('#plone-toolbar ul.nav > li#plone-action-folderContents a').ploneOverlay({
-  after_load: function(overlay) {
-    $.plone.overlay.bootstrap_overlay_transform(overlay.el, overlay.loaded_data);
+  after_load: function() {
+    $.plone.overlay.bootstrap_overlay_transform(this.el, this.loaded_data);
     // TODO: we know that contents action will require more then just general
     // overlay transforms, below this todo is a place to hook them in.
   }
@@ -70,14 +70,14 @@ $('#plone-toolbar ul.nav > li#plone-action-folderContents a').ploneOverlay({
 $('#plone-toolbar ul.nav > li#plone-action-edit > a').ploneOverlay({
   after_load: function(overlay) {
     if ($('[data-iframe="deco-toolbar"]', window.parent.document).size() > 0) {
-      var deco_toolbar = $(overlay.el).ploneDecoToolbar();
+      var deco_toolbar = $(this.el).ploneDecoToolbar();
       if (deco_toolbar.visible === false) {
         deco_toolbar.activate();
       } else {
         deco_toolbar.deactivate();
       }
     } else {
-      $.plone.overlay.bootstrap_overlay_transform(overlay.el, overlay.loaded_data);
+      $.plone.overlay.bootstrap_overlay_transform(this.el, this.loaded_data);
     }
   }
 });
