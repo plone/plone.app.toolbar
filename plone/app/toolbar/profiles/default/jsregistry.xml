@@ -12,6 +12,15 @@
     <javascript bundle="tinymce" id="tiny_mce.js"  />
     <javascript bundle="tinymce" id="tiny_mce_init.js"  />
 
+    <!-- jquery form -->
+    <!-- TODO: this is actually plone.app.jquerytools.form.js but would be nice
+         to package it out from plone.app.jquerytools package -->
+    <javascript 
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="toolbar"
+        id="++resource++plone.app.toolbar/lib/jquery.form.js"
+        />
+
     <!-- bootstrap javascript -->
     <javascript 
         cacheable="False" compression="safe" cookable="False"
