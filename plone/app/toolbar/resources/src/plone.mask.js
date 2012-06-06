@@ -29,7 +29,7 @@
     }
 
     function call(fn) {
-        if (fn) { return fn.call($.mask); }
+        if (fn) { return fn.call($.plone.mask); }
     }
 
     var mask, exposed, loaded, config, overlayIndex;
@@ -104,7 +104,7 @@
             if (conf.closeOnEsc) {
                 $(_document).on("keydown.mask", function(e) {
                     if (e.keyCode == 27) {
-                        $.mask.close(e);
+                        $.plone.mask.close(e);
                     }
                 });
             }
@@ -112,18 +112,18 @@
             // mask click closes
             if (conf.closeOnClick) {
                 mask.on("click.mask", function(e) {
-                    $.mask.close(e);
+                    $.plone.mask.close(e);
                 });
             }
 
             // resize mask when window is resized
             $(_window).on("resize.mask", function() {
-                $.mask.fit();
+                $.plone.mask.fit();
             });
 
             // reveal mask
             mask.css({display: 'block'}).fadeTo(conf.loadSpeed, conf.opacity, function() {
-                $.mask.fit();
+                $.plone.mask.fit();
                 call(conf.onLoad);
                 loaded = "full";
             });
