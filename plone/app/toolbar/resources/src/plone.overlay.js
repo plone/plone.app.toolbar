@@ -1,12 +1,18 @@
-// This script is used to provide glue code between iframed and twitter
-// bootstrap modal. And also providing some convinience method for usage in
-// Plone.
+// Plone Overlay
+// =============
 //
+// Author: Rok Garbas
+// Contact: rok@garbas.si
+// Version: 1.0
+// Depends:
+//    ++resource++plone.app.jquery.j
 //
-// @author Rok Garbas, Izak Burger
-// @version 0.1
-// @licstart  The following is the entire license notice for the JavaScript
-//            code in this page.
+// Description: 
+//    This script is used to provide glue code between iframed and twitter
+//    bootstrap modal. And also providing some convinience method for usage in
+//    Plone.
+//
+// License:
 //
 // Copyright (C) 2010 Plone Foundation
 //
@@ -23,14 +29,11 @@
 // this program; if not, write to the Free Software Foundation, Inc., 51
 // Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 //
-// @licend  The above is the entire license notice for the JavaScript code in
-//          this page.
-//
 
 /*jshint bitwise:true, curly:true, eqeqeq:true, immed:true, latedef:true,
   newcap:true, noarg:true, noempty:true, nonew:true, plusplus:true,
-  regexp:true, undef:true, strict:true, trailing:true, browser:true */
-/*global jQuery:false */
+  undef:true, strict:true, trailing:true, browser:true */
+/*global TinyMCEConfig:false, jQuery:false */
 
 
 (function($) {
@@ -41,187 +44,254 @@ $.plone = $.plone || {};
 $.plone.overlay = $.plone.overlay || {};
 
 // # Bootstrap Overlay Transform
-$.plone.overlay.bootstrap_overlay_transform = function(modal, loaded, options) {
-  var title = $('.modal-header > h3', modal),
-      body = $('.modal-body',modal),
-      footer = $('.modal-footer', modal);
+// TODO: should be moved out of here
+function addEditor(el) {
+  var id = Math.floor(Math.random()*11) + '';
+  $(el).attr('id', id);
+  var config = new TinyMCEConfig(id);
+  config.init();
+}
 
-  options = $.extend({
-    title: 'h1.documentFirstHeading',
-    body: '#content',
-    footer: '.formControls',
-    close: 'input[name="buttons.cancel"],' +
-      'input[name="form.button.Cancel"],' +
-      'input[name="form.button.cancel"],' +
-      'input[name="form.actions.cancel"]'
-    }, options || {});
+// TODO
+// Clean up the url
+// Insert ++untheme++ namespace to disable theming. This only works
+// for absolute urls.
+//url = url || self.el_trigger.attr('href');
 
-  // Title
-  title.html($(options.title, loaded).html());
+//href = (href.match(/^([^#]+)/)||[])[1];
+//href = href.replace(/^(https?:\/\/[^/]+)\/(.*)/, '$1/++untheme++d/$2');
 
-  // Footer
-  footer.html($(options.footer, loaded).html());
 
-  // Content
-  body.html($(options.body, loaded).html());
-  $(options.title, body).remove();
-  $(options.footer, body).remove();
-
-  // Closing buttons (eg: on Cancel buttons of form)
-  $(options.close, modal).on('click', function(e) {
-    $(modal).modal('hide');
-  });
-
-  // ## Form (only if included in body of modal)
-  var body_form = $('> div > form', body);
-  if (body_form.size() === 1) {
-    // copy all attributed to form which will wrap
-    var form = $('<form/>');
-    $.each(body_form[0].attributes, function(i, attr) {
-      form.attr(attr.name, attr.value);
-    });
-    form.addClass('modal-form');
-    modal.wrap(form);  // wrap modal with new form
-    body_form.children(':first-child').unwrap();  // remove form from modal's body
-
-    // trigger tinymce
-    // TODO: for some reason i couldn't get wysiwyg widget to add correct
-    // class for this textarea
-    // So look for the text format options, check that html is selected
-    $('.fieldTextFormat option[value="text/x-plone-outputfilters-html"]', modal).each(addEditor);
-
-    // Submit form using ajax, then close modal and reload parent
-    // 
-    // var modal = $('#toolbar-overlay', toolbar.document),
-    //     body = $('.modal-body', modal);
-    // $('form', body).ajaxForm({
-    //     success: function() {
-    //         modal.modal('hide');
-    //         body.empty();
-    //         window.parent.location.replace(window.parent.location.href);
-    //     }
-    // });
-  }
-};
-
-// # Overlay Object
-$.plone.overlay.Overlay = function(el, options) { this.init(el, options); };
+// # Overlay Class Definition 
+$.plone.overlay.Overlay = function(options) { this._init(options); };
 $.plone.overlay.Overlay.prototype = {
-  init: function(el, options) {
+  _init: function(options) {
     var self = this;
 
-    self.el_trigger = el;
     self.options = $.extend(true, {
-      mask: $.plone.mask,
-      filter_selector: 'div#visual-portal-wrapper',
-      template: '' +
-        '<div class="modal fade">' +
-        '  <div class="modal-header">' +
-        '    <a class="close" data-dismiss="modal">&times;</a>' +
-        '    <h3>Title</h3>' +
-        '  </div>' +
-        '  <div class="modal-body">Content</div>' +
-        '  <div class="modal-footer">Buttons</div>' +
-        '</div>'
-    }, options);
+      modal_template: function(content, options) {
+        var el = $('' +
+          '<div class="modal fade">' +
+          '  <div class="modal-header">' +
+          '    <a class="close" data-dismiss="modal">&times;</a>' +
+          '    <h3>Title</h3>' +
+          '  </div>' +
+          '  <div class="modal-body">Content</div>' +
+          '  <div class="modal-footer">Buttons</div>' +
+          '</div>'),
+          title = $('.modal-header > h3', el),
+          body = $('.modal-body', el),
+          footer = $('.modal-footer', el);
 
-    self.loaded_data = self.options.loaded_data;
+        // Merge options
+        options = $.extend({
+          title: 'h1.documentFirstHeading',
+          body: '#content',
+          footer: '.formControls',
+          cancel: 'input[name="buttons.cancel"],' +
+                'input[name="form.button.Cancel"],' +
+                'input[name="form.button.cancel"],' +
+                'input[name="form.actions.cancel"]'
+        }, options || {});
 
-    self.el_trigger.on('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
+        // Title
+        title.html($(options.title, content).html());
 
-      // add overlay element into dom
-      if (self.el.parents('body').size() === 0) {
-        self.el.hide().prependTo($('body'));
-      }
+        // Footer
+        footer.html($(options.footer, content).html());
 
-      // load content from link and open overlay
-      if (self.loaded_data === undefined) {
-        self.load();
-      } else {
-        self.open();
-      }
-    });
+        // Content
+        body.html($(options.body, content).html());
+        $(options.title, body).remove();
+        $(options.footer, body).remove();
 
-    // create modal element from template
-    self.el = $(self.options.template)
-      .modal({ backdrop:false, keyboard: true, show: false })
-      .on('click', function(e) { e.preventDefault(); e.stopPropagation(); })
-      .on('shown', function() {
-          if (self.options.mask) {
-            self.options.mask.load();
-          }
-        })
-      .on('hidden', function() {
-          if (self.options.mask) {
-            self.options.mask.close();
+        // Cancel buttons
+        $(options.cancel, el).on('click', function(e) {
+          if (self.options.cancel !== undefined) {
+            self.options.cancel.apply(self, [ e, $(this) ]);
+          } else {
+            self.hide();
           }
         });
 
-    // TODO: keep all links inside the overlay
-    //$('a', self.el).on('click', function(e){
-    //  e.preventDefault();
-    //  e.stopPropagation();
+        return el;
+      },
+      modal_options: {
+        backdrop: false,
+        keyboard: true
+      },
+      form: 'form#form,form[name="edit_form"]',
+      form_options: {
+        success: function(response, state, xhr, form) {
+          var old_el = self._el,
+              response_body = $('<div/>').html(
+                  (/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[1]);
 
-    //  // TODO: should done with slide left effect
-    //  // TODO: we need to connect this with browser history
+          if ($('dl.portalMessage.error', response_body).size() !== 0) {
+            self._el = response_body;
+            if (self.options.el !== undefined) {
+              self._el = $(self.options.el, self._el);
+            }
+            old_el.remove();
+            init_el();
+          } else {
+            if (self.options.save !== undefined) {
+              self.options.save.apply(self, [ response_body, state, xhr, form ]);
+            }
+          }
+        }
+      },
+      mask: $.plone.mask || false
+    }, options);
 
-    //  // for now we hide current overlay and open new overlay
-    //  self.modal('hide');
-    //  $(this).ploneOverlay();
-    //});
-
-    // TODO: check if this is really needed
-    //$('[data-dismiss=modal]', self._overlay).on('click', function(e) {
-    //    e.preventDefault();
-    //    e.stopPropagation();
-    //    self.modal('hide');
-    //});
-
-  },
-  load: function() {
-    // Clean up the url
-    // Insert ++untheme++ namespace to disable theming. This only works
-    // for absolute urls.
-    var self = this,
-        href = self.el_trigger.attr('href');
-
-    //href = (href.match(/^([^#]+)/)||[])[1];
-    //href = href.replace(/^(https?:\/\/[^/]+)\/(.*)/, '$1/++untheme++d/$2');
-
-    // TODO: show spinner
-
-    $.get(href, function(data) {
-
-      self.loaded_data = $(data).filter(self.options.filter_selector);
-
-      if (self.options.after_load) {
-        self.options.after_load(self);
+    // if no url is specified then no loading is needed
+    if (self.options.url === undefined) {
+      // in case el option is a string we assume its css selector
+      if (typeof(self.options.el) === 'string') {
+        self._el = $(self.options.el);
       }
+      self._init_el();
 
-      // TODO: hide spinner
-
-      self.open();
-    });
-  },
-  open: function() {
-    var self = this;
-    self.el.modal('show');
-    if (self.options.after_open) {
-      self.options.after_open(self);
+    // if url is specified this mean we'll want to load html from that url
+    } else {
+      self._el = function(action) {
+        var self = this;
+        if (self.options.load !== undefined) {
+          self.options.load.call(self);
+        }
+        $.get(self.options.url, function(response) {
+          self._el = $('<div/>').html(
+              (/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[1]);
+          if (self.options.el !== undefined) {
+            self._el = $(self.options.el, self.options.el);
+          }
+          if (self.options.loaded !== undefined) {
+            self.options.loaded.call(self);
+          }
+          self._init_el();
+          self._action(action);
+        });
+      };
     }
+  },
+  _init_el: function() {
+    var self = this;
+
+    // use modal_template to create new modal element
+    // this should give us enough functionality to do with overlay html
+    // whatever we want
+    self._el = self.options.modal_template(self._el);
+
+    // register _el as twitter bootstrap's modal
+    self._el.modal($.extend(self.options.modal_options, { show: false }));
+
+    // disable all clicks on modal
+    self._el.on('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (self.options.form !== false) {
+        var form = $(self.options.form, self._el);
+        if ( form.size() !== 0  &&
+            $.nodeName(e.target, 'input') &&
+            $(e.target).attr('type') === 'submit') {
+
+          var form_options = $.extend({}, self.options.form_options),
+              data = {};
+
+          data[$(e.target).attr('name')] = $(e.target).attr('value');
+          form.ajaxSubmit($.extend(true, form_options, { data: data }));
+        }
+      }
+    });
+
+    // check if there is form and instantiate ajaxForm
+    var form = $(self.options.form, self._el);
+    if (form.size() !== 0) {
+
+      var new_form = $('<form/>');
+      $.each(form[0].attributes, function(i, attr) {
+        new_form.attr(attr.name, attr.value);
+      });
+
+      form.children().first().unwrap();
+      self._el.wrapInner(new_form);
+    }
+
+    // $.plone.toolbar integration 
+    if ($.plone.toolbar !== undefined) {
+      self._el
+        .on('show', function() { $.plone.toolbar.iframe_stretch(); })
+        .on('hidden', function() { $.plone.toolbar.iframe_shrink(); });
+    }
+
+    // bind events passes with twitter bootstrap's modal events
+    $.each(['show', 'shown', 'hide', 'hidden'], function(i, name) {
+      self._el.on(name, function() {
+        if (self.options[name] !== undefined) {
+          self.options[name].call(self);
+        }
+      });
+    });
+
+    if (self.options.init !== undefined) {
+      self.options.init.call(self);
+    }
+  },
+  _action: function(action) {
+    var self = this;
+
+    // if _el is a function then we call _action back
+    if (typeof(self._el) === 'function') {
+      self._el(action);
+
+    // trigger show/hide action of modal
+    } else {
+      self._el.modal(action);
+    }
+
+    return self;
+  },
+  show: function() {
+    return this._action('show');
+  },
+  hide: function() {
+    return this._action('hide');
+  },
+  destroy: function() {
+    this.hide();
+    this._el.remove();
   }
 };
 
-// # jQuery integration 
+
+// # jQuery Integration 
 $.fn.ploneOverlay = function (options) {
   var el = $(this),
       data = el.data('plone-overlay');
+
   if (data === undefined) {
-    data = new $.plone.overlay.Overlay(el, options);
+    var defaults = { el: el };
+    if ($.nodeName(el[0], 'a')) {
+      defaults = { url: el.attr('href') };
+      if (el.attr('rel')) {
+        defaults[el] = el.attr('rel');
+      }
+    }
+
+    data = new $.plone.overlay.Overlay($.extend({}, defaults, options));
+
+    if ($.nodeName(el[0], 'a')) {
+      el.on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        data.show();
+      });
+    }
+
     el.data('plone-overlay', data);
   }
+
   return data;
 };
 
