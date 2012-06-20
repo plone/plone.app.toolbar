@@ -30,20 +30,11 @@
 /*jshint bitwise:true, curly:true, eqeqeq:true, immed:true, latedef:true,
   newcap:true, noarg:true, noempty:true, nonew:true, plusplus:true,
   regexp:true, undef:true, strict:true, trailing:true, browser:true */
-/*global TinyMCEConfig:false, jQuery:false */
+/*global jQuery:false */
 
 
 (function($) {
 "use strict";
-
-// TODO: should be moved out of here
-function addEditor(){
-  var text = $(this).parent().parent().next().find('textarea');
-  var id = Math.floor(Math.random()*11) + '';
-  text.attr('id', id);
-  var config = new TinyMCEConfig(id);
-  config.init();
-}
 
 // # Namespace
 $.plone = $.plone || {};
