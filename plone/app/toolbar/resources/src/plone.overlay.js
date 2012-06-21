@@ -64,14 +64,14 @@ $.plone.overlay.Overlay.prototype = {
         // remove hash part of url
         url = (url.match(/^([^#]+)/)||[])[1];
         if (url.indexOf('http') === 0) {
-          return url.rdeplace(/^(https?:\/\/[^\/]+)\/(.*)/, '$1/++unthemed++/$2');
+          return url.replace(/^(https?:\/\/[^\/]+)\/(.*)/, '$1/++unthemed++/$2');
         } else if (url.indexOf('/') === 0) {
           return window.location.protocol + '//' +
                  window.location.host + '/++unthemed++' + url;
         } else {
           return window.location.protocol + '//' +
                  window.location.host + '/++unthemed++' +
-                 window.location.pathname + url;
+                 window.location.pathname + '/' + url;
         }
       },
       modal_template: function(content, options) {
