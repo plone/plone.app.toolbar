@@ -2,13 +2,6 @@
 <object name="portal_javascripts">
 
     <!-- assign bundle to other scritps, for now -->
-    <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.js"  />
-    <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.form.js"  />
-    <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.overlayhelpers.js"  />
-    <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.plugins.js"  />
-    <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.dateinput.js"  />
-    <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.rangeinput.js"  />
-    <javascript bundle="jquerytools" id="++resource++plone.app.jquerytools.validator.js"  />
     <javascript bundle="tinymce" id="tiny_mce.js"  />
     <javascript bundle="tinymce" id="tiny_mce_init.js"  />
 
