@@ -133,7 +133,7 @@ $.plone.overlay.Overlay.prototype = {
               self._el = $(self.options.el, self._el);
             }
             old_el.remove();
-            init_el();
+            self._init_el();
           } else {
             if (self.options.save !== undefined) {
               self.options.save.apply(self, [ response_body, state, xhr, form ]);
