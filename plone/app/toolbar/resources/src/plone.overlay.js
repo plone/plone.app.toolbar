@@ -52,15 +52,6 @@ function addEditor(el) {
   config.init();
 }
 
-// TODO
-// Clean up the url
-// Insert ++untheme++ namespace to disable theming. This only works
-// for absolute urls.
-//url = url || self.el_trigger.attr('href');
-
-//href = (href.match(/^([^#]+)/)||[])[1];
-//href = href.replace(/^(https?:\/\/[^/]+)\/(.*)/, '$1/++untheme++d/$2');
-
 
 // # Overlay Class Definition 
 $.plone.overlay.Overlay = function(options) { this._init(options); };
@@ -69,6 +60,20 @@ $.plone.overlay.Overlay.prototype = {
     var self = this;
 
     self.options = $.extend(true, {
+      url_rewrite: function(url) {
+        // remove hash part of url
+        url = (url.match(/^([^#]+)/)||[])[1];
+        if (url.indexOf('http') === 0) {
+          return url.rdeplace(/^(https?:\/\/[^\/]+)\/(.*)/, '$1/++unthemed++/$2');
+        } else if (url.indexOf('/') === 0) {
+          return window.location.protocol + '//' +
+                 window.location.host + '/++unthemed++' + url;
+        } else {
+          return window.location.protocol + '//' +
+                 window.location.host + '/++unthemed++' +
+                 window.location.pathname + url;
+        }
+      },
       modal_template: function(content, options) {
         var el = $('' +
           '<div class="modal fade">' +
@@ -159,7 +164,7 @@ $.plone.overlay.Overlay.prototype = {
         if (self.options.load !== undefined) {
           self.options.load.call(self);
         }
-        $.get(self.options.url, function(response) {
+        $.get(self.options.url_rewrite(self.options.url), function(response) {
           self._el = $('<div/>').html(
               (/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[1]);
           if (self.options.el !== undefined) {

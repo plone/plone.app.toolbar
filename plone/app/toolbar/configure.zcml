@@ -28,6 +28,14 @@
         name="plone.app.toolbar"
         directory="resources" />
 
+    <!-- Add /++unthemed++/ to your url to disable theming -->
+    <adapter
+        name="unthemed"
+        for="* zope.publisher.interfaces.IRequest"
+        provides="zope.traversing.interfaces.ITraversable"
+        factory=".toolbar.UnthemedRequest"
+        />
+
     <!-- Toolbar Tile -->
     <plone:tile
         name="plone.toolbar"

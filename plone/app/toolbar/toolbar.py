@@ -198,3 +198,17 @@ class ToolbarTile(Tile):
     def user_actions(self):
         actions = self.context_state.actions('user')
         return [item for item in actions if item['available']]
+
+
+class UnthemedRequest(object):
+    implements(ITraversable)
+
+    def __init__(self, context, request=None):
+        self.context = context
+        self.request = request
+
+    def traverse(self, name, ignore):
+        if self.request is not None:
+            self.request.response.setHeader('X-Theme-Disabled', 'True')
+            self.request['HTTP_X_THEME_ENABLED'] = False
+        return self.context
