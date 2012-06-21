@@ -98,8 +98,23 @@ Changelog
 =========
 
 
-1.1 - XX-XX-XXXX
+1.1 - 22-06-2012
 ----------------
+
+- plone.overlay.js is serving overlay content from urls with "/++unthemed++/"
+  appended to their path. this gets content without diazo theme being applied.
+  [garbas]
+
+- plone.mask.js: bug with resizing mask fixed.
+  [garbas]
+
+- plone.overlay.js script is now included for support of deco plone.app.deco
+  version  1.0.
+  [garbas]
+
+- removed dependency jquerytools by packaging jquery.form.js inside
+  plone.app.toolbar
+  [garbas]
 
 - edit action on deco enabled pages will have "plone-action-deco" id
   [garbas]
