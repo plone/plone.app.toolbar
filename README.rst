@@ -98,7 +98,7 @@ Changelog
 =========
 
 
-1.1 - 22-06-2012
+1.1 (2012-06-22)
 ----------------
 
 - plone.overlay.js is serving overlay content from urls with "/++unthemed++/"
@@ -138,7 +138,7 @@ Changelog
   [garbas]
 
 
-1.0 - 28-05-2012
+1.0 (2012-05-28)
 ----------------
 
 - initial release
