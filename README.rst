@@ -20,7 +20,7 @@ To install toolbar drop following lines to your buildout.cfg::
     plone.app.jquery = 1.7.2
     plone.app.jquerytools = 1.4
     plone.tiles = 1.1
-    Products.ResourceRegistries = 2.1.1
+    Products.ResourceRegistries = 2.1.2
     plone.app.toolbar = 1.1
 
 In case this document gets outdated use latest versions of eggs in ``versions``
