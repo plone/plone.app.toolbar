@@ -274,6 +274,8 @@ $.fn.ploneOverlay = function (options) {
   var el = $(this),
       data = el.data('plone-overlay');
 
+  if (el.size() === 0) { return; }
+
   if (data === undefined) {
     var defaults = { el: el };
     if ($.nodeName(el[0], 'a')) {

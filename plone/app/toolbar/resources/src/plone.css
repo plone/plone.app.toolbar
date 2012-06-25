@@ -4267,3 +4267,279 @@ a.badge:hover {
 #plone-toolbar .state-expired {
   background-color: Red !important;
 }
+.modal.fade.in {
+  margin: 0;
+  width: 70%;
+  top: 100px;
+  left: 15%;
+}
+.modal form {
+  margin: 0;
+}
+.modal input.context[type='submit'] {
+  display: inline-block;
+  *display: inline;
+  /* IE7 inline-block hack */
+
+  *zoom: 1;
+  padding: 4px 10px 4px;
+  margin-bottom: 0;
+  font-size: 13px;
+  line-height: 18px;
+  *line-height: 20px;
+  color: #333333;
+  text-align: center;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+  vertical-align: middle;
+  cursor: pointer;
+  background-color: #f5f5f5;
+  background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -ms-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+  background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: linear-gradient(top, #ffffff, #e6e6e6);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#e6e6e6', GradientType=0);
+  border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #e6e6e6;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+  border: 1px solid #cccccc;
+  *border: 0;
+  border-bottom-color: #b3b3b3;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  *margin-left: .3em;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+  border-color: #ccc;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  color: #ffffff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #0074cc;
+  background-image: -moz-linear-gradient(top, #0088cc, #0055cc);
+  background-image: -ms-linear-gradient(top, #0088cc, #0055cc);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0055cc));
+  background-image: -webkit-linear-gradient(top, #0088cc, #0055cc);
+  background-image: -o-linear-gradient(top, #0088cc, #0055cc);
+  background-image: linear-gradient(top, #0088cc, #0055cc);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0088cc', endColorstr='#0055cc', GradientType=0);
+  border-color: #0055cc #0055cc #003580;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #0055cc;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
+.modal input.context[type='submit']:hover,
+.modal input.context[type='submit']:active,
+.modal input.context[type='submit'].active,
+.modal input.context[type='submit'].disabled,
+.modal input.context[type='submit'][disabled] {
+  background-color: #e6e6e6;
+  *background-color: #d9d9d9;
+}
+.modal input.context[type='submit']:active,
+.modal input.context[type='submit'].active {
+  background-color: #cccccc \9;
+}
+.modal input.context[type='submit']:first-child {
+  *margin-left: 0;
+}
+.modal input.context[type='submit']:hover,
+.modal input.context[type='submit']:active,
+.modal input.context[type='submit'].active,
+.modal input.context[type='submit'].disabled,
+.modal input.context[type='submit'][disabled] {
+  background-color: #0055cc;
+  *background-color: #004ab3;
+}
+.modal input.context[type='submit']:active,
+.modal input.context[type='submit'].active {
+  background-color: #004099 \9;
+}
+.modal input.context[type='submit'] .caret {
+  border-top-color: #ffffff;
+  border-bottom-color: #ffffff;
+  opacity: 0.75;
+  filter: alpha(opacity=75);
+}
+.modal input.standalone[type='submit'] {
+  display: inline-block;
+  *display: inline;
+  /* IE7 inline-block hack */
+
+  *zoom: 1;
+  padding: 4px 10px 4px;
+  margin-bottom: 0;
+  font-size: 13px;
+  line-height: 18px;
+  *line-height: 20px;
+  color: #333333;
+  text-align: center;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+  vertical-align: middle;
+  cursor: pointer;
+  background-color: #f5f5f5;
+  background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -ms-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+  background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: linear-gradient(top, #ffffff, #e6e6e6);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#e6e6e6', GradientType=0);
+  border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #e6e6e6;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+  border: 1px solid #cccccc;
+  *border: 0;
+  border-bottom-color: #b3b3b3;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  *margin-left: .3em;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+  border-color: #ccc;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+.modal input.standalone[type='submit']:hover,
+.modal input.standalone[type='submit']:active,
+.modal input.standalone[type='submit'].active,
+.modal input.standalone[type='submit'].disabled,
+.modal input.standalone[type='submit'][disabled] {
+  background-color: #e6e6e6;
+  *background-color: #d9d9d9;
+}
+.modal input.standalone[type='submit']:active,
+.modal input.standalone[type='submit'].active {
+  background-color: #cccccc \9;
+}
+.modal input.standalone[type='submit']:first-child {
+  *margin-left: 0;
+}
+.modal dl.portalMessage {
+  padding: 8px 35px 8px 14px;
+  margin-bottom: 18px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  background-color: #fcf8e3;
+  border: 1px solid #fbeed5;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  color: #c09853;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+.modal dl.portalMessage.info {
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+  color: #3a87ad;
+}
+.modal dl.portalMessage.error {
+  background-color: #f2dede;
+  border-color: #eed3d7;
+  color: #b94a48;
+}
+.modal dl.portalMessage.error dd {
+  background: transparent;
+}
+.modal dl.portalMessage dt {
+  color: inherit;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  float: none;
+  font-size: 1.2em;
+  line-height: 1.25em;
+  background: transparent;
+  color: inherit;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.modal dl.portalMessage dd {
+  margin: 0;
+  padding: 0;
+}
+.modal div.field {
+  margin-bottom: 9px;
+  margin-bottom: 1em;
+}
+.modal div.field.error {
+  color: #B94A48;
+  background: transparent;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+.modal div.field.error > label,
+.modal div.field.error .help-block,
+.modal div.field.error .help-inline {
+  color: #b94a48;
+}
+.modal div.field.error input,
+.modal div.field.error select,
+.modal div.field.error textarea {
+  color: #b94a48;
+  border-color: #b94a48;
+}
+.modal div.field.error input:focus,
+.modal div.field.error select:focus,
+.modal div.field.error textarea:focus {
+  border-color: #953b39;
+  -webkit-box-shadow: 0 0 6px #d59392;
+  -moz-box-shadow: 0 0 6px #d59392;
+  box-shadow: 0 0 6px #d59392;
+}
+.modal div.field.error .input-prepend .add-on,
+.modal div.field.error .input-append .add-on {
+  color: #b94a48;
+  background-color: #f2dede;
+  border-color: #b94a48;
+}
+.modal div.field.error .fieldRequired {
+  color: transparent;
+}
+.modal div.field.error label {
+  color: #222222;
+}
+.modal div.field.error div {
+  color: #B94A48;
+}
+.modal div.field.error div.formHelp {
+  color: #222222;
+}
+.modal div.field label {
+  font-size: 1.2em;
+  font-weight: bold;
+  display: inline-block;
+}
+.modal div.field .fieldRequired {
+  color: transparent;
+}
+.modal div.field div {
+  color: #555555;
+  display: block;
+  margin-bottom: 9px;
+  line-height: 2em;
+  padding: 0;
+}
+.modal div.field div.formHelp {
+  line-height: 1em;
+}
+.modal div.field input[type="text"] {
+  margin-bottom: 1em;
+  margin-top: 0.2em;
+  height: 1.2em;
+}

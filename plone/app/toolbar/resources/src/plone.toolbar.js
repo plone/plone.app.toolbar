@@ -87,6 +87,7 @@ $('a').on('click', function(e) {
 
     // since we'll be handling this link we prevent any default behaivour
     e.preventDefault();
+    e.stopPropagation();
 
     // if link has twitter bootstrap dropdown assigned to it then make sure 
     // current frame gets streched invisibly just in case dropdown goes over
@@ -94,20 +95,12 @@ $('a').on('click', function(e) {
     if (el.attr('data-toggle') === 'dropdown') {
       $.plone.toolbar.iframe_stretch();
 
+    // TODO: rewrite 
     // if ploneOverlay is registered for currently clicked link then we make
     // sure that iframe is stretched before being open and shrank on closing
-    } else if (el.data('plone-overlay') !== undefined) {
-      el.data('plone-overlay').el
-        .on('show', function(e) {
-            $.plone.toolbar.iframe_stretch();
-          })
-        .on('hide', function(e) {
-            $.plone.toolbar.iframe_shrink();
-          });
-
     // if none of above conditions is met then open link in top frame or new
     // window in case right button was used
-    } else {
+    } else if (el.data('plone-overlay') === undefined) {
       if (e.which === 1) {
         window.parent.location.href = el.attr('href');
       } else {

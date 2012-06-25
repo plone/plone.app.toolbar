@@ -53,3 +53,84 @@
   .state-expired { background-color: Red !important; }
 }
 
+// MODAL {{{
+.modal {
+
+  &.fade.in {
+    margin: 0;
+    width: 70%;
+    top: 100px;
+    left: 15%;
+  }
+
+  form { margin: 0; }
+
+  input.context[type='submit'] {
+    .btn();
+    .btn-primary();
+  }
+  input.standalone[type='submit'] {
+    .btn();
+  }
+  dl.portalMessage {
+    .alert();
+    .alert-block();
+    &.info { .alert-info(); }
+    &.error {
+      .alert-error();
+      dd { background: transparent; }
+    }
+    dt {
+      .alert-heading();
+      .border-radius(0);
+      float: none;
+      font-size: 1.2em;
+      line-height: 1.25em;
+      background: transparent;
+      color: inherit;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    dd {
+      margin: 0;
+      padding: 0;
+    }
+  }
+  div.field {
+    &.error {
+      .control-group.error();
+      .fieldRequired { color: transparent; }
+      label { color: @grayDarker; }
+      div {
+        color: #B94A48;
+        &.formHelp { color: @grayDarker; }
+      }
+      color: #B94A48;
+      background: transparent;
+      border: 0;
+      margin: 0;
+      padding: 0;
+    }
+    .control-group();
+    label {
+      font-size: 1.2em;
+      font-weight: bold;
+      display: inline-block;
+    }
+    .fieldRequired { color: transparent; }
+    div {
+      .help-block();
+      line-height: 2em;
+      padding: 0;
+      &.formHelp { line-height: 1em; }
+    }
+    input[type="text"] {
+    margin-bottom: 1em;
+    margin-top: 0.2em;
+    height: 1.2em;
+    }
+    margin-bottom: 1em;
+  }
+
+}
+// }}}
