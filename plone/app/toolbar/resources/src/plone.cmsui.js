@@ -62,6 +62,10 @@ $('#plone-toolbar ul.nav > li#plone-action-folderContents a').ploneOverlay({
 
 // # Edit Action
 $('#plone-toolbar ul.nav > li#plone-action-edit > a').ploneOverlay({
+  save: function(response) {
+    $('#content', window.parent.document).replaceWith($('#content', response));
+    this.hide();
+  }
 });
 
 }(jQuery));
