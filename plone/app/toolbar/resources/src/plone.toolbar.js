@@ -87,7 +87,6 @@ $('a').on('click', function(e) {
 
     // since we'll be handling this link we prevent any default behaivour
     e.preventDefault();
-    e.stopPropagation();
 
     // if link has twitter bootstrap dropdown assigned to it then make sure 
     // current frame gets streched invisibly just in case dropdown goes over
