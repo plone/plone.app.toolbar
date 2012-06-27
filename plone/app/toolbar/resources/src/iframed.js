@@ -160,8 +160,9 @@ IFramed.prototype = {
         'background:transparent;');
     document.body.setAttribute('style',
         document.body.getAttribute('style') || '' +
-        ';margin-top:' + self.el.offsetHeight + 'px;');
-  },
+        ';margin-top:0' +
+        ';border-top:' + self.el.offsetHeight + 'px solid #333333;');
+  }
 };
 
 // # Initialize

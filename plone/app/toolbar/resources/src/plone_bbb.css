@@ -10,3 +10,6 @@ body.template-usergroup-groupprefs  div#edit-bar,
 body.template-usergroup-controlpanel div#edit-bar {
   display: block;
 }
+body {
+  border-top: 40px solid #333333
+}
