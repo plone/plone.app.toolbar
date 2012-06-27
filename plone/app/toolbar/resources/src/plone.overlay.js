@@ -43,14 +43,6 @@
 $.plone = $.plone || {};
 $.plone.overlay = $.plone.overlay || {};
 
-// # Bootstrap Overlay Transform
-// TODO: should be moved out of here
-function addEditor(el) {
-  var id = Math.floor(Math.random()*11) + '';
-  $(el).attr('id', id);
-  var config = new TinyMCEConfig(id);
-  config.init();
-}
 
 // # Overlay Class Definition 
 $.plone.overlay.Overlay = function(options) { this._init(options); };
@@ -237,6 +229,9 @@ $.plone.overlay.Overlay.prototype = {
         }
       });
     });
+
+    self._el.appendTo($('body'));
+    self._el.ploneInit();
 
     if (self.options.init !== undefined) {
       self.options.init.call(self);
