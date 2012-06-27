@@ -5,7 +5,7 @@
 // Contact: rok@garbas.si
 // Version: 1.0
 // Depends:
-//    ++resource++plone.app.jquery.j
+//    ++resource++plone.app.jquery.js
 //
 // Description: 
 //    This script is used to provide glue code between iframed and twitter
@@ -114,7 +114,7 @@ $.plone.overlay.Overlay.prototype = {
           if (self.options.cancel !== undefined) {
             self.options.cancel.apply(self, [ e, $(this) ]);
           } else {
-            self.hide();
+            self.destroy();
           }
         });
 
@@ -263,8 +263,10 @@ $.plone.overlay.Overlay.prototype = {
     return this._action('hide');
   },
   destroy: function() {
-    this.hide();
-    this._el.remove();
+    var self = this;
+    self.hide();
+    self._el.remove();
+    self._init(self.options);
   }
 };
 
