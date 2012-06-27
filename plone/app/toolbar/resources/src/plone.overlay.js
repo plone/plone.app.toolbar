@@ -114,7 +114,8 @@ $.plone.overlay.Overlay.prototype = {
       },
       modal_options: {
         backdrop: false,
-        keyboard: true
+        keyboard: true,
+        dynamic: true
       },
       form: 'form#form,form[name="edit_form"]',
       form_options: {
