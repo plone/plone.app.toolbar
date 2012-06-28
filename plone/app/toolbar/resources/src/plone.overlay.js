@@ -113,7 +113,7 @@ $.plone.overlay.Overlay.prototype = {
         return el;
       },
       modal_options: {
-        backdrop: false,
+        backdrop: true,
         keyboard: true,
         dynamic: true
       },
@@ -217,9 +217,22 @@ $.plone.overlay.Overlay.prototype = {
 
     // $.plone.toolbar integration 
     if ($.plone.toolbar !== undefined) {
+      var topFrameHeight = $(window.parent.document).height();
       self._el
         .on('show', function() { $.plone.toolbar.iframe_stretch(); })
-        .on('hidden', function() { $.plone.toolbar.iframe_shrink(); });
+        .on('shown', function() {
+          if (self._el.parents('.modal-wrapper').height() > topFrameHeight) {
+            $('body', window.parent.document).height(
+                self._el.parents('.modal-wrapper').height() +
+                self._el.parents('.modal-wrapper').offset().top);
+            self._el.parents('.modal-backdrop').height(
+                $(window.parent).height());
+          }
+        })
+        .on('hidden', function() {
+          $('body', window.parent.document).height(topFrameHeight);
+          $.plone.toolbar.iframe_shrink();
+        });
     }
 
     // bind events passes with twitter bootstrap's modal events
@@ -231,8 +244,19 @@ $.plone.overlay.Overlay.prototype = {
       });
     });
 
+    // initialize element
     self._el.appendTo($('body'));
     self._el.ploneInit();
+
+    // scrolling
+    $(window.parent.document).scroll(function () {
+      if (typeof(self._el) === 'object' && self._el.size() === 1) {
+        self._el.parents('.modal-backdrop').scrollTop(
+            $(window.parent.document).scrollTop());
+        self._el.parents('.modal-backdrop').scrollLeft(
+            $(window.parent.document).scrollLeft());
+      }
+    });
 
     if (self.options.init !== undefined) {
       self.options.init.call(self);

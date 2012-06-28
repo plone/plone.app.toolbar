@@ -4338,6 +4338,14 @@ a.badge:hover {
 #plone-toolbar .state-expired {
   background-color: Red !important;
 }
+.modal-backdrop {
+  overflow: hidden;
+}
+.modal-wrapper {
+  left: 15%;
+  margin-left: 0;
+  width: 100%;
+}
 .modal.fade.in {
   margin: 0;
   width: 70%;
