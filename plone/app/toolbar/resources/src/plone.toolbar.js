@@ -68,7 +68,7 @@ $.plone.toolbar.iframe_stretch = function() {
     $.plone.toolbar.iframe_state.height = $($.plone.toolbar.iframe.el).height();
     $.plone.toolbar.iframe_state.offset = $($.plone.toolbar.iframe.el).offset();
     $($.plone.toolbar.iframe.el).height($(window.parent.document).height());
-    $($.plone.toolbar.iframe.el).offset({top: 0, left: 0});
+    $($.plone.toolbar.iframe.el).css({top: 0, left: 0});
   }
 };
 
