@@ -297,34 +297,37 @@ $.plone.overlay.Overlay.prototype = {
 
 // # jQuery Integration 
 $.fn.ploneOverlay = function (options) {
-  var el = $(this),
-      data = el.data('plone-overlay');
+  if ($(this).size() === 0) { return; }
 
-  if (el.size() === 0) { return; }
+  $(this).each(function(i, el) {
+    el = $(el);
+    var data = el.data('plone-overlay');
 
-  if (data === undefined) {
-    var defaults = { el: el };
-    if ($.nodeName(el[0], 'a')) {
-      defaults = { url: el.attr('href') };
-      if (el.attr('rel')) {
-        defaults[el] = el.attr('rel');
+    if (data === undefined) {
+      var defaults = { el: el };
+      if ($.nodeName(el[0], 'a')) {
+        defaults = { url: el.attr('href') };
+        if (el.attr('rel')) {
+          defaults[el] = el.attr('rel');
+        }
       }
+
+      data = new $.plone.overlay.Overlay($.extend({}, defaults, options));
+
+      if ($.nodeName(el[0], 'a')) {
+        el.on('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          data.show();
+        });
+      }
+
+      el.data('plone-overlay', data);
     }
 
-    data = new $.plone.overlay.Overlay($.extend({}, defaults, options));
+  });
 
-    if ($.nodeName(el[0], 'a')) {
-      el.on('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        data.show();
-      });
-    }
-
-    el.data('plone-overlay', data);
-  }
-
-  return data;
+  return this;
 };
 
 }(jQuery));

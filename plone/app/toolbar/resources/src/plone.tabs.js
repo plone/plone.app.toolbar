@@ -73,7 +73,12 @@ $.plone.tabs.Constructor.prototype = {
 
       fieldset.addClass('tab-pane');
 
-      $('> a', tab).on('click', function() { $(this).tab('show'); })
+      $('> a', tab)
+        .on('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          $(this).tab('show');
+        })
         .on('shown', function(e) {
           $('body', window.parent.document).height(
                 self.el.parents('.modal-wrapper').height() +
@@ -85,6 +90,7 @@ $.plone.tabs.Constructor.prototype = {
 
     self.el.parents('.modal').on('shown', function(e) {
       $('a', self.navTabs).first().tab('show');
+      $(this).off('shown');
     });
 
   }
