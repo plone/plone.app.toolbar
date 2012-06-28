@@ -87,7 +87,8 @@ $.plone.overlay.Overlay.prototype = {
           cancel: 'input[name="buttons.cancel"],' +
                 'input[name="form.button.Cancel"],' +
                 'input[name="form.button.cancel"],' +
-                'input[name="form.actions.cancel"]'
+                'input[name="form.actions.cancel"],' +
+                '.modal-header [data-dismiss="modal"]'
         }, options || {});
 
         // Title
@@ -113,7 +114,7 @@ $.plone.overlay.Overlay.prototype = {
         return el;
       },
       modal_options: {
-        backdrop: true,
+        backdrop: 'static',
         keyboard: true,
         dynamic: true
       },
@@ -219,7 +220,10 @@ $.plone.overlay.Overlay.prototype = {
     if ($.plone.toolbar !== undefined) {
       var topFrameHeight = $(window.parent.document).height();
       self._el
-        .on('show', function() { $.plone.toolbar.iframe_stretch(); })
+        .on('show', function() {
+          $.plone.toolbar.iframe_stretch();
+          $('.dropdown.open a[data-toggle="dropdown"]').dropdown('toggle');
+        })
         .on('shown', function() {
           if (self._el.parents('.modal-wrapper').height() > topFrameHeight) {
             $('body', window.parent.document).height(

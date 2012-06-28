@@ -74,7 +74,9 @@ $.plone.toolbar.iframe_stretch = function() {
 
 // # Shrink on any non binded click happends
 $(document).on('click', function(e) {
-  $.plone.toolbar.iframe_shrink();
+  if (!$(e.target).hasClass('modal-backdrop')) {
+    $.plone.toolbar.iframe_shrink();
+  }
 });
 
 // # Handle every click on every link inside current frame 
