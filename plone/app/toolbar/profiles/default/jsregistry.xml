@@ -18,6 +18,12 @@
     <javascript 
         cacheable="False" compression="safe" cookable="False"
         enabled="True" inline="False" bundle="bootstrap"
+        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-tab.js"
+        />
+
+    <javascript 
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="bootstrap"
         id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-dropdown.js"
         />
 
@@ -56,6 +62,12 @@
         cacheable="False" compression="safe" cookable="False"
         enabled="True" inline="False" bundle="toolbar"
         id="++resource++plone.app.toolbar/src/plone.mask.js"
+        />
+
+    <javascript 
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="toolbar"
+        id="++resource++plone.app.toolbar/src/plone.tabs.js"
         />
 
     <javascript 
