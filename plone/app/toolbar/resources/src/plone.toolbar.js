@@ -50,7 +50,10 @@ $.plone.toolbar.iframe = window.parent.iframed[window.name];
 $.plone.toolbar.iframe_shrink = function() {
   if ($.plone.toolbar.iframe_state !== undefined) {
     $($.plone.toolbar.iframe.el).height($.plone.toolbar.iframe_state.height);
-    $($.plone.toolbar.iframe.el).offset($.plone.toolbar.iframe_state.offset);
+    $($.plone.toolbar.iframe.el).css({
+      top: $.plone.toolbar.iframe_state.offset.top,
+      left: $.plone.toolbar.iframe_state.offset.left
+    });
     $.plone.toolbar.iframe_state = undefined;
   }
 };
