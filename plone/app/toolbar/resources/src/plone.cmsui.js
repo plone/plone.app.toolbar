@@ -44,7 +44,6 @@ $.plone.cmsui = $.plone.cmsui || {};
 $.each([
   '#plone-toolbar ul.nav > li#plone-action-contentrules > a',
   '#plone-toolbar ul.nav > li#plone-action-local_roles > a',
-  '#plone-toolbar ul.nav > li#plone-contentmenu-factories > ul > li > a',
   '#plone-toolbar ul.nav > li#plone-contentmenu-workflow > ul > li#advanced > a',
   '#plone-toolbar ul.nav > li#plone-contentmenu-display > ul > li#folderChangeDefaultPage > a',
   '#plone-toolbar ul.nav > li#plone-contentmenu-display > ul > li#contextSetDefaultPage > a',
@@ -60,9 +59,18 @@ $.each([
 $('#plone-toolbar ul.nav > li#plone-action-folderContents a').ploneOverlay({
 });
 
-// # Edit Action
-$('#plone-toolbar ul.nav > li#plone-action-edit > a,' +
-  '#plone-toolbar ul.nav > li#plone-contentmenu-factories > ul > li > a').ploneOverlay({
+
+// "Add new ..." Action
+$('#plone-toolbar ul.nav > li#plone-contentmenu-factories > ul > li > a').ploneOverlay({
+  save: function(response, state, xhr, form) {
+    // XXX: not sure if this is correct solution, check with others on mailing
+    // list. what we do is we parse out base from responseText
+    window.parent.location.href = $($(xhr.responseText).filter('base')[0]).attr('href');
+  }
+});
+
+// # "Edit" Action
+$('#plone-toolbar ul.nav > li#plone-action-edit > a').ploneOverlay({
   save: function(response) {
     $('#content', window.parent.document).replaceWith($('#content', response));
     this.destroy();

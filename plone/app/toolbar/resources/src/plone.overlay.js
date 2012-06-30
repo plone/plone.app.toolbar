@@ -33,7 +33,7 @@
 /*jshint bitwise:true, curly:true, eqeqeq:true, immed:true, latedef:true,
   newcap:true, noarg:true, noempty:true, nonew:true, plusplus:true,
   undef:true, strict:true, trailing:true, browser:true */
-/*global TinyMCEConfig:false, jQuery:false */
+/*global tinyMCE:false, TinyMCEConfig:false, jQuery:false */
 
 
 (function($) {
@@ -126,7 +126,7 @@ $.plone.overlay.Overlay.prototype = {
               textarea_id = textarea.attr('id');
           if (textarea.size() !== 0 &&
               tinyMCE.editors[textarea_id] !== undefined) {
-            tinyMCE.editors[textarea_id].save()
+            tinyMCE.editors[textarea_id].save();
             tinyMCE.editors[textarea_id].remove();
           }
         },
