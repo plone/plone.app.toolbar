@@ -70,7 +70,7 @@ $.plone.init.register(function(context) {
     $(el).attr('id', id);
 
     var config = new TinyMCEConfig(id);
-    //delete InitializedTinyMCEInstances[id];
+    delete InitializedTinyMCEInstances[id];
     config.init();
 
   });

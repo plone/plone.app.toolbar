@@ -120,6 +120,16 @@ $.plone.overlay.Overlay.prototype = {
       },
       form: 'form#form,form[name="edit_form"]',
       form_options: {
+        beforeSerialize: function(form, options) {
+          // save tinymce text to textarea
+          var textarea = $('.mce_editable', form),
+              textarea_id = textarea.attr('id');
+          if (textarea.size() !== 0 &&
+              tinyMCE.editors[textarea_id] !== undefined) {
+            tinyMCE.editors[textarea_id].save()
+            tinyMCE.editors[textarea_id].remove();
+          }
+        },
         success: function(response, state, xhr, form) {
           var old_el = self._el,
               response_body = $('<div/>').html(
@@ -132,6 +142,7 @@ $.plone.overlay.Overlay.prototype = {
             }
             old_el.remove();
             self._init_el();
+            self.show();
           } else {
             if (self.options.save !== undefined) {
               self.options.save.apply(self, [ response_body, state, xhr, form ]);
@@ -248,7 +259,7 @@ $.plone.overlay.Overlay.prototype = {
       });
     });
 
-    // initialize element
+    // initialize element's javascript widgets
     self._el.appendTo($('body'));
     self._el.ploneInit();
 
