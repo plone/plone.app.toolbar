@@ -30,7 +30,7 @@
 /*jshint bitwise:true, curly:true, eqeqeq:true, immed:true, latedef:true,
   newcap:true, noarg:true, noempty:true, nonew:true, plusplus:true,
   undef:true, strict:true, trailing:true, browser:true */
-/*global TinyMCEConfig:false, jQuery:false */
+/*global InitializedTinyMCEInstances:false, TinyMCEConfig:false, jQuery:false */
 
 (function($) {
 "use strict";
@@ -55,14 +55,16 @@ $.fn.ploneInit = function() {
 };
 
 
-// Initialization
+// # Initial initialization
 $(document).ready(function() {
   $(document).ploneInit();
 });
 
 
-// # Register TinyMCE
-// TODO: move this to tine_mce_init.js
+// ------------------------------------------------------------------------- //
+
+
+// # Initialize TinyMCE
 $.plone.init.register(function(context) {
   $('textarea.mce_editable', context).each(function() {
     var el = $(this),
@@ -76,4 +78,49 @@ $.plone.init.register(function(context) {
   });
 });
 
+// # Initialize Bootstrap Datepicker
+$.plone.init.register(function(context) {
+  $('.plone-jscalendar-popup', context).each(function() {
+    var el = $(this), date = new Date(),
+        base_id = el.attr('id').substr(0, el.attr('id').length - 6);
+
+    if (el.parent().find('#' + base_id + '_year').val() === '0000') {
+      date = '' +
+        date.getFullYear() + '-' +
+        (date.getMonth() < 9 ? '0' : '') + (date.getMonth() + 1) + '-' +
+        (date.getDate() < 10 ? '0' : '') + date.getDate();
+    } else {
+      date = '' +
+        el.parent().find('#' + base_id + '_year').val() + '-' +
+        el.parent().find('#' + base_id + '_month').val() + '-' +
+        el.parent().find('#' + base_id + '_day').val();
+    }
+
+    $('img', el)
+      .attr('data-date', date)
+      .datepicker({ format: 'yyyy-mm-dd', autoclose: true })
+      .on('changeDate', function(e){
+        el.parent().find('#' + base_id + '_year').val(e.date.getFullYear());
+        el.parent().find('#' + base_id + '_month').val(
+          e.date.getMonth() < 9 ? '0' + (e.date.getMonth() + 1)
+                                : e.date.getMonth() + 1);
+        el.parent().find('#' + base_id + '_day').val(
+          e.date.getDate() < 10 ? '0' + e.date.getDate() : e.date.getDate());
+      });
+
+    // update datepicker on dropdown change
+    el.parent().find('#' + base_id + '_year,' +
+                     '#' + base_id + '_month,' +
+                     '#' + base_id + '_day').on('change', function(e) {
+      $('img', el).data('date', '' +
+          el.parent().find('#' + base_id + '_year').val() + '-' +
+          el.parent().find('#' + base_id + '_month').val() + '-' +
+          el.parent().find('#' + base_id + '_day').val())
+        .datepicker('update');
+    });
+
+    el.show();
+
+  });
+});
 }(jQuery));

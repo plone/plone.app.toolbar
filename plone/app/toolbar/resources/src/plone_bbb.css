@@ -10,6 +10,6 @@ body.template-usergroup-groupprefs  div#edit-bar,
 body.template-usergroup-controlpanel div#edit-bar {
   display: block;
 }
-body {
+body.userrole-authenticated {
   border-top: 40px solid #333333
 }
