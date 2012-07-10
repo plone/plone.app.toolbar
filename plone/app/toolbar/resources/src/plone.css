@@ -4852,8 +4852,15 @@ a.badge:hover {
 .modal div.field div.formHelp {
   line-height: 1em;
 }
+.modal div.field textarea {
+  width: 98%;
+}
+.modal div.field input#title {
+  font-size: 2em;
+}
 .modal div.field input[type="text"] {
   margin-bottom: 1em;
   margin-top: 0.2em;
   height: 1.2em;
+  width: 98%;
 }
