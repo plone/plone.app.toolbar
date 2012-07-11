@@ -72,6 +72,12 @@ $.plone.toolbar.iframe_stretch = function() {
   }
 };
 
+// on every click we shrink iframe
+$(document).on('click', function(e) {
+  $.plone.toolbar.iframe_shrink();
+});
+
+
 // # Handle every click on every link inside current frame 
 // 
 // Currently script recognizes:
