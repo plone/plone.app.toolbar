@@ -3159,10 +3159,10 @@ input[type="submit"].btn.btn-mini {
 .navbar .nav > li {
   display: block;
   float: left;
+  padding: 9px 10px 11px;
 }
 .navbar .nav > li > a {
   float: none;
-  padding: 9px 10px 11px;
   line-height: 19px;
   color: #999999;
   text-decoration: none;
@@ -3189,10 +3189,11 @@ input[type="submit"].btn.btn-mini {
   text-decoration: none;
   background-color: #222222;
 }
-.navbar .divider-vertical {
+.navbar .nav .divider-vertical {
   height: 40px;
   width: 1px;
   margin: 0 9px;
+  padding: 0;
   overflow: hidden;
   background-color: #222222;
   border-right: 1px solid #333333;
