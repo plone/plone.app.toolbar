@@ -22,7 +22,8 @@
         <ul class="nav pull-right">
           <li tal:repeat="item view/contentmenu"
               tal:attributes="class string:dropdown ${item/klass|nothing}; id item/id|nothing;">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+            <a tal:omit-tag="python:repeat['item'].length() == 1"
+                href="#" class="dropdown-toggle" data-toggle="dropdown"
                tal:attributes="href item/action; target item/link_target|nothing;">
               <span tal:content="item/title">Link Title</span>
               <span tal:condition="python:'extra' in item and 'stateTitle' in item['extra']"
