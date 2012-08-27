@@ -3320,6 +3320,12 @@ input[type="submit"].btn.btn-mini {
   left: auto;
   right: 13px;
 }
+.navbar .dropdown-menu a {
+padding: 3px 9px;
+}
+.navbar .dropdown-menu a img {
+padding-right: 3px;
+}
 .breadcrumb {
   padding: 7px 14px;
   margin: 0 0 18px;
