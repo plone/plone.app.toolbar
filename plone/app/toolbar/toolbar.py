@@ -118,7 +118,6 @@ class ToolbarTile(Tile):
                     request_action, default=request_action)
                 if action_method == request_action:
                     item['klass'] = 'active'
-                    active_action_found = True
 
             result.append(item)
 
@@ -127,6 +126,10 @@ class ToolbarTile(Tile):
                 if action['id'] == 'plone-toolbar-action-view':
                     action['klass'] = 'active'
 
+        # only return when something else available then view
+        # this will show view button only if other option available
+        if len(result) == 1 and result[0]['id'] == 'plone-action-view':
+            return []
         return result
 
     @memoize
