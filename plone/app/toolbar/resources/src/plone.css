@@ -112,6 +112,7 @@ textarea {
   display: table;
   content: "";
 }
+.visualClear,
 .clearfix:after {
   clear: both;
 }
