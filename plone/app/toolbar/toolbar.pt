@@ -4,7 +4,10 @@
 </head>
 <body>
 
-  <div id="plone-toolbar" class="navbar">
+  <div id="plone-toolbar" class="navbar navbar-inverse">
+    <script type="text/javascript" src="http://127.0.0.1:8080/support-nl/portal_javascripts/Sunburst%20Theme/++resource++plone.formwidget.autocomplete/jquery.autocomplete.min.js"></script>
+    <script type="text/javascript" src="http://127.0.0.1:8080/support-nl/portal_javascripts/Sunburst%20Theme/++resource++plone.formwidget.autocomplete/formwidget-autocomplete.js"></script>
+
     <div class="navbar-inner">
       <div class="container">
 

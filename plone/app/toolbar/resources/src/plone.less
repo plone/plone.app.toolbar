@@ -17,8 +17,8 @@
     .contenttype-plone-site > a,
     .contenttype-collection > a,
     .contenttype-topic > a {
-        padding-left: 20px;
         margin-left: 9px;
+        padding: 3px 20px;
         background-repeat: no-repeat;
         background-image: url(++resource++plone.app.toolbar/contenttypes-sprite.png);
     }
@@ -32,6 +32,17 @@
     .contenttype-plone-site > a { background-position: 0px -1503px; }
     .contenttype-collection > a { background-position: 0px -1721px; }
     .contenttype-topic > a { background-position: 0px -1721px; }
+    a {
+     padding: 3px 9px;
+     img { padding-right: 3px; }
+    }
+  }
+  .nav > li {
+    padding: 10px 15px 10px;
+  }
+  .nav > li > a,
+  .nav .divider-vertical {
+    padding: 0;
   }
   .state-private,
   .state-visible,
@@ -84,7 +95,6 @@
       dd { background: transparent; }
     }
     dt {
-      .alert-heading();
       .border-radius(0);
       float: none;
       font-size: 1.2em;
