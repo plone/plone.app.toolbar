@@ -9,7 +9,7 @@
 //    ++resource++plone.app.toolbar/lib/js/bootstrap-tab.js
 //    ++resource++plone.app.toolbar/src/plone.init.js
 //
-// Description: 
+// Description:
 //
 // License:
 //
@@ -79,12 +79,6 @@ $.plone.tabs.Constructor.prototype = {
           e.stopPropagation();
           $(this).tab('show');
         })
-        .on('shown', function(e) {
-          $('body', window.parent.document).height(
-                self.el.parents('.modal-wrapper').height() +
-                self.el.parents('.modal-wrapper').offset().top);
-          self.el.parents('.modal-backdrop').height($(window.parent).height());
-        });
 
     }).wrapAll('<div class="tab-content" />');
 

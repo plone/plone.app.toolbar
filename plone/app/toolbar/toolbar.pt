@@ -4,7 +4,10 @@
 </head>
 <body>
 
-  <div id="plone-toolbar" class="navbar">
+  <div id="plone-toolbar" class="navbar navbar-inverse">
+    <script type="text/javascript" src="http://127.0.0.1:8080/support-nl/portal_javascripts/Sunburst%20Theme/++resource++plone.formwidget.autocomplete/jquery.autocomplete.min.js"></script>
+    <script type="text/javascript" src="http://127.0.0.1:8080/support-nl/portal_javascripts/Sunburst%20Theme/++resource++plone.formwidget.autocomplete/formwidget-autocomplete.js"></script>
+
     <div class="navbar-inner">
       <div class="container">
 
@@ -22,13 +25,14 @@
         <ul class="nav pull-right">
           <li tal:repeat="item view/contentmenu"
               tal:attributes="class string:dropdown ${item/klass|nothing}; id item/id|nothing;">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+            <a tal:omit-tag="python:repeat['item'].length() == 1"
+                href="#" class="dropdown-toggle" data-toggle="dropdown"
                tal:attributes="href item/action; target item/link_target|nothing;">
               <span tal:content="item/title">Link Title</span>
               <span tal:condition="python:'extra' in item and 'stateTitle' in item['extra']"
                     tal:attributes="class item/extra/class"
                     tal:content="item/extra/stateTitle">Private</span>
-              <b class="caret">
+              <b tal:condition="python:repeat['item'].length() > 1" class="caret" />
             </a>
             <ul class="dropdown-menu" tal:condition="item/submenu">
               <li tal:repeat="subitem item/submenu"

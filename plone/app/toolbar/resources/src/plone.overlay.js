@@ -7,7 +7,7 @@
 // Depends:
 //    ++resource++plone.app.jquery.js
 //
-// Description: 
+// Description:
 //    This script is used to provide glue code between iframed and twitter
 //    bootstrap modal. And also providing some convinience method for usage in
 //    Plone.
@@ -44,7 +44,7 @@ $.plone = $.plone || {};
 $.plone.overlay = $.plone.overlay || {};
 
 
-// # Overlay Class Definition 
+// # Overlay Class Definition
 $.plone.overlay.Overlay = function(options) { this._init(options); };
 $.plone.overlay.Overlay.prototype = {
   _init: function(options) {
@@ -83,7 +83,7 @@ $.plone.overlay.Overlay.prototype = {
         options = $.extend({
           title: 'h1.documentFirstHeading',
           body: '#content',
-          footer: '.formControls',
+          footer: 'form > div.formControls',
           cancel: 'input[name="buttons.cancel"],' +
                 'input[name="form.button.Cancel"],' +
                 'input[name="form.button.cancel"],' +
@@ -196,7 +196,9 @@ $.plone.overlay.Overlay.prototype = {
 
     // disable all clicks on modal
     self._el.on('click', function(e) {
-      e.preventDefault();
+      if ($(e.target).attr('type') !== 'file') {
+        e.preventDefault();
+      }
       e.stopPropagation();
 
       if (self.options.form !== false) {
@@ -227,7 +229,7 @@ $.plone.overlay.Overlay.prototype = {
       self._el.wrapInner(new_form);
     }
 
-    // $.plone.toolbar integration 
+    // $.plone.toolbar integration
     if ($.plone.toolbar !== undefined) {
       var topFrameHeight = $(window.parent.document).height();
       self._el
@@ -306,7 +308,7 @@ $.plone.overlay.Overlay.prototype = {
 };
 
 
-// # jQuery Integration 
+// # jQuery Integration
 $.fn.ploneOverlay = function (options) {
   if ($(this).size() === 0) { return; }
 
