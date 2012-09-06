@@ -1,10 +1,10 @@
 *** Settings ***
 Resource  plone.txt
 
-Suite Setup  Start browser and wake Plone up  plone.app.toolbar.testing.TOOLBAR_FUNCTIONAL_TESTING
+Suite Setup  Start browser and wake Plone up  plone.app.toolbar.testing.TOOLBAR_ROBOTFRAMEWORK_TESTING
 Suite Teardown  Close browser and selenium server
 
 *** Test cases ***
 
 Dismiss Overlay
-    Page Should Contain Element  id=plone-toolbar
+    Wait Until Keyword Succeeds  3 min  20 sec  Page Should Contain Element  id=plone-toolbar
