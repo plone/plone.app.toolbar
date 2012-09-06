@@ -12,7 +12,7 @@ Anonymous should'nt see toolbar
     Page Should Not Contain Element  id=plone-toolbar
 
 Logged in should see toolbar
-    Log in  test-user  secret
+    Toolbar Log in  test-user  secret
     Page Should Contain Element  id=plone-toolbar
 
 
@@ -27,3 +27,14 @@ Create plone.app.toolbar test site
     ${previous}  Register keyword to run on failure  Close Browser
     Wait until keyword succeeds  2min  3s  Access plone
     Register keyword to run on failure  ${previous}
+
+Toolbar Log in
+    [Arguments]  ${userid}  ${password}
+    Go to  ${PLONE_URL}/login_form
+    Page should contain element  __ac_name
+    Input text  __ac_name  ${userid}
+    Input text  __ac_password  ${password}
+    Click Button  Log in
+    #Page should contain element  css=#user-name 
+    Go to  ${PLONE_URL}
+    [Return]  True
