@@ -1,11 +1,29 @@
 *** Settings ***
-#Resource  plone.txt
 Resource  plone/act/plone.txt
 
-Suite Setup  Start browser and wake Plone up  plone.app.toolbar.testing.TOOLBAR_ROBOTFRAMEWORK_TESTING
+#Suite Setup  Start browser and wake Plone up  plone.app.toolbar.testing.TOOLBAR_ROBOTFRAMEWORK_TESTING
+Suite Setup  Create plone.app.toolbar test site
 Suite Teardown  Close browser and selenium server
 
 *** Test cases ***
 
-Dismiss Overlay
-    Wait Until Keyword Succeeds  3 min  20 sec  Page Should Contain Element  id=plone-toolbar
+Anonymous should'nt see toolbar
+    Log out
+    Page Should Not Contain Element  id=plone-toolbar
+
+Logged in should see toolbar
+    Log in  test-user  secret
+    Page Should Contain Element  id=plone-toolbar
+
+
+*** Keywords ***
+
+Create plone.app.toolbar test site
+    Start Zope Server  plone.app.toolbar.testing.TOOLBAR_ROBOTFRAMEWORK_TESTING
+    Zodb setup
+    Set Selenium timeout  15s
+    Set Selenium implicit wait  1s
+    
+    ${previous}  Register keyword to run on failure  Close Browser
+    Wait until keyword succeeds  2min  3s  Access plone
+    Register keyword to run on failure  ${previous}
