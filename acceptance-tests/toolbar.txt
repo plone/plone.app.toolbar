@@ -1,5 +1,6 @@
 *** Settings ***
-Resource  plone.txt
+#Resource  plone.txt
+Resource  plone/act/plone.txt
 
 Suite Setup  Start browser and wake Plone up  plone.app.toolbar.testing.TOOLBAR_ROBOTFRAMEWORK_TESTING
 Suite Teardown  Close browser and selenium server
