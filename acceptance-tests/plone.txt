@@ -1,0 +1,53 @@
+*** Settings ***
+Library  plone.act.Zope2ServerLibrary
+Library  plone.act.PloneLibrary
+Library  Selenium2Library  run_on_failure=Capture Page Screenshot
+
+*** Variables ***
+
+${PORT} =  55001
+${ZOPE_URL} =  http://localhost:${PORT}
+${PLONE_URL} =  ${ZOPE_URL}/plone
+${BROWSER} =  Firefox
+
+#Resource  plone/act/plone.txt
+#
+##Suite Setup  Start browser and wake Plone up  plone.app.testing.PLONE_ZSERVER
+
+*** Keywords ***
+
+
+Start browser and wake plone up
+    [Arguments]  ${ZOPE_LAYER_DOTTED_NAME}
+    
+    Start Zope Server  ${ZOPE_LAYER_DOTTED_NAME}
+    Zodb setup
+    Set Selenium timeout  15s
+    Set Selenium implicit wait  1s
+    
+    ${previous}  Register keyword to run on failure  Close Browser
+    Wait until keyword succeeds  2min  3s  Access plone
+    Register keyword to run on failure  ${previous}
+
+
+    Wait until keyword succeeds  30s  1s  Log in as site owner
+    Log out
+    Zodb teardown
+
+Log in as site owner
+    ${name} =  Get site owner name
+    ${password} =  Get site owner password
+    Log in  ${name}  ${password}
+
+Close browser and selenium server
+    Close browser
+    Stop Zope Server
+
+Access plone
+    Open browser  ${ZOPE_URL}  ${BROWSER}
+    Goto homepage
+    [Return]  True
+
+Goto homepage
+    Go to   ${PLONE_URL}
+    Page should contain  Powered by Plone & Python

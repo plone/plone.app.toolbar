@@ -1,0 +1,10 @@
+*** Settings ***
+Resource  plone.txt
+
+Suite Setup  Start browser and wake Plone up  plone.app.toolbar.testing.TOOLBAR_FUNCTIONAL_TESTING
+Suite Teardown  Close browser and selenium server
+
+*** Test cases ***
+
+Dismiss Overlay
+    Page Should Contain Element  id=plone-toolbar
