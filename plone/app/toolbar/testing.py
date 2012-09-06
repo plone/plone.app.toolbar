@@ -1,3 +1,4 @@
+from plone.testing import z2
 from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import TEST_USER_NAME
@@ -41,6 +42,7 @@ class Toolbar(PloneSandboxLayer):
 TOOLBAR_FIXTURE = Toolbar()
 TOOLBAR_INTEGRATION_TESTING = IntegrationTesting(bases=(TOOLBAR_FIXTURE,), name="TOOLBAR:Integration")
 TOOLBAR_FUNCTIONAL_TESTING = FunctionalTesting(bases=(TOOLBAR_FIXTURE,), name="TOOLBAR:Functional")
+TOOLBAR_ROBOTFRAMEWORK_TESTING = FunctionalTesting(bases=(TOOLBAR_FIXTURE,z2.ZSERVER_FIXTURE,), name="TOOLBAR_ROBOT:Functional")
 
 def browser_login(portal, browser, username=None, password=None):
     handleErrors = browser.handleErrors
