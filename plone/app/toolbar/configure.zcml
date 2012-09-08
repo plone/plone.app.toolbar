@@ -56,4 +56,13 @@
         provides="Products.GenericSetup.interfaces.EXTENSION"
         />
 
+    <genericsetup:registerProfile
+        name="testfixture"
+        title="Plone Toolbar Test Fixture"
+        description="Installs sample content for testing the Plone Toolbar"
+        directory="profiles/testfixture"
+        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+        provides="Products.GenericSetup.interfaces.EXTENSION"
+        />
+
 </configure>
