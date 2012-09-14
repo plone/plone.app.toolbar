@@ -1,9 +1,7 @@
 *** Settings ***
 Resource  plone/act/plone.txt
 
-#Suite Setup  Start browser and wake Plone up  plone.app.toolbar.testing.TOOLBAR_ROBOTFRAMEWORK_TESTING
 Suite Setup  Create plone.app.toolbar test site
-#Suite Teardown  Close browser and selenium server
 Suite Teardown  Close browser, teardown zodb, and selenium server
 
 *** Test cases ***
@@ -20,7 +18,7 @@ Logged in should see toolbar
 *** Keywords ***
 
 Create plone.app.toolbar test site
-    Start Zope Server  plone.app.toolbar.testing.TOOLBAR_ROBOTFRAMEWORK_TESTING
+    Start Zope Server  plone.app.toolbar.testing.TOOLBAR_ACCEPTANCE_TESTING
     Zodb setup
     Set Selenium timeout  15s
     Set Selenium implicit wait  1s
