@@ -42,7 +42,7 @@ class Toolbar(PloneSandboxLayer):
 TOOLBAR_FIXTURE = Toolbar()
 TOOLBAR_INTEGRATION_TESTING = IntegrationTesting(bases=(TOOLBAR_FIXTURE,), name="TOOLBAR:Integration")
 TOOLBAR_FUNCTIONAL_TESTING = FunctionalTesting(bases=(TOOLBAR_FIXTURE,), name="TOOLBAR:Functional")
-TOOLBAR_ROBOTFRAMEWORK_TESTING = FunctionalTesting(bases=(TOOLBAR_FIXTURE,z2.ZSERVER_FIXTURE,), name="TOOLBAR_ROBOT:Functional")
+TOOLBAR_ACCEPTANCE_TESTING = FunctionalTesting(bases=(TOOLBAR_FIXTURE,z2.ZSERVER_FIXTURE,), name="TOOLBAR:Acceptance")
 
 def browser_login(portal, browser, username=None, password=None):
     handleErrors = browser.handleErrors
