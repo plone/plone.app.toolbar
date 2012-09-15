@@ -20,6 +20,7 @@ class Toolbar(PloneSandboxLayer):
     def setUpPloneSite(self, portal):
         # install into the Plone site
         applyProfile(portal, 'plone.app.toolbar:default')
+        applyProfile(portal, 'plone.app.toolbar:testfixture')
         workflowTool = getToolByName(portal, 'portal_workflow')
         workflowTool.setDefaultChain('plone_workflow')
 
