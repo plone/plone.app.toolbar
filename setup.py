@@ -42,7 +42,6 @@ setup(
             'zope.configuration',
             'plone.app.testing',
             'unittest_jshint',
-            'plone.act',
             'robotsuite',
             'robotframework-selenium2library',
             ],
