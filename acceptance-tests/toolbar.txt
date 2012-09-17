@@ -1,9 +1,6 @@
 *** Settings ***
 Resource  plone/act/plone.txt
 
-Suite Setup  Create plone.app.toolbar test site
-Suite Teardown  Close browser, teardown zodb, and selenium server
-
 *** Test cases ***
 
 Anonymous should'nt see toolbar
@@ -12,20 +9,10 @@ Anonymous should'nt see toolbar
 
 Logged in should see toolbar
     Toolbar Log in  test-user  secret
+    #Log in as site owner
     Page Should Contain Element  id=plone-toolbar
 
-
 *** Keywords ***
-
-Create plone.app.toolbar test site
-    Start Zope Server  plone.app.toolbar.testing.TOOLBAR_ACCEPTANCE_TESTING
-    Zodb setup
-    Set Selenium timeout  15s
-    Set Selenium implicit wait  1s
-    
-    ${previous}  Register keyword to run on failure  Close Browser
-    Wait until keyword succeeds  2min  3s  Access plone
-    Register keyword to run on failure  ${previous}
 
 Toolbar Log in
     [Arguments]  ${userid}  ${password}
@@ -37,8 +24,3 @@ Toolbar Log in
     #Page should contain element  css=#user-name 
     Go to  ${PLONE_URL}
     [Return]  True
-
-Close browser, teardown zodb, and selenium server
-    Close browser
-    Zodb teardown
-    Stop Zope Server
