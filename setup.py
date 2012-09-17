@@ -42,6 +42,8 @@ setup(
             'zope.configuration',
             'plone.app.testing',
             'unittest_jshint',
+            'robotsuite',
+            'robotframework-selenium2library',
             ],
         },
     entry_points="""
