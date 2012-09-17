@@ -1,9 +1,9 @@
 *** Settings ***
-Resource  plone/act/plone.txt
+Resource  plone/act/keyword.txt
 
 *** Test cases ***
 
-Anonymous should'nt see toolbar
+Anonymous shouldn't see toolbar
     Log out
     Page Should Not Contain Element  id=plone-toolbar
 
