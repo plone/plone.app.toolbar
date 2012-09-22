@@ -42,7 +42,7 @@ $.plone.toolbar = $.plone.toolbar || {};
 // # IFrame Object
 //
 // nicer way to create shortcut 
-var iframe = $.plone.toolbar.iframe = window.parent.iframes[window.name];
+var iframe = $.plone.toolbar.iframe = window.parent.iframed[window.name];
 
 // # Shrink IFrame Object
 //
@@ -87,12 +87,16 @@ $.plone.toolbar.iframe_stretch = function() {
 $(document).on('click', function(e) {
   // in case of clicking on modal background or tinyMCE style dropdown we
   // shouldn't do anything
-  if ($(e.target).parents('body').size() === 0 ||
-      $(e.target).hasClass('modal-backdrop')) {
-    e.preventDefault();
-    e.stopPropagation();
-  } else {
+  if ($.nodeName(e.target, 'html')) {
     $.plone.toolbar.iframe_shrink();
+  } else {
+    if ($(e.target).parents('body').size() === 0 ||
+        $(e.target).hasClass('modal-backdrop')) {
+      e.preventDefault();
+      e.stopPropagation();
+    } else {
+      $.plone.toolbar.iframe_shrink();
+    }
   }
 });
 
