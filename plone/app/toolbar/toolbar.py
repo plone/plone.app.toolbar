@@ -1,4 +1,6 @@
+import time
 from urllib import unquote
+import Globals
 from Acquisition import aq_inner
 from zope.interface import implements
 from zope.component import getMultiAdapter
@@ -45,7 +47,10 @@ class ToolbarTile(Tile):
         self.context.changeSkin('toolbar', self.request)
         for item in self.styles_view.styles() + self.scripts_view.scripts():
             if item['src']:
-                resources.append(item['src'])
+                src = item['src']
+                if Globals.DevelopmentMode:
+                    src += '?_time=' + str(time.time())
+                resources.append(src)
         self.context.changeSkin(skinname, self.request)
         return resources
 
