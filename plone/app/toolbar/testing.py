@@ -1,3 +1,4 @@
+from plone.testing import z2
 from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import TEST_USER_NAME
@@ -19,6 +20,7 @@ class Toolbar(PloneSandboxLayer):
     def setUpPloneSite(self, portal):
         # install into the Plone site
         applyProfile(portal, 'plone.app.toolbar:default')
+        applyProfile(portal, 'plone.app.toolbar:testfixture')
         workflowTool = getToolByName(portal, 'portal_workflow')
         workflowTool.setDefaultChain('plone_workflow')
 
@@ -41,6 +43,7 @@ class Toolbar(PloneSandboxLayer):
 TOOLBAR_FIXTURE = Toolbar()
 TOOLBAR_INTEGRATION_TESTING = IntegrationTesting(bases=(TOOLBAR_FIXTURE,), name="TOOLBAR:Integration")
 TOOLBAR_FUNCTIONAL_TESTING = FunctionalTesting(bases=(TOOLBAR_FIXTURE,), name="TOOLBAR:Functional")
+TOOLBAR_ACCEPTANCE_TESTING = FunctionalTesting(bases=(TOOLBAR_FIXTURE,z2.ZSERVER_FIXTURE,), name="TOOLBAR:Acceptance")
 
 def browser_login(portal, browser, username=None, password=None):
     handleErrors = browser.handleErrors
