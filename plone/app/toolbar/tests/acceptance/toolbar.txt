@@ -24,6 +24,27 @@ Anonymous should'nt see toolbar
     Page Should Not Contain Element  id=plone-toolbar
 
 Logged in should see toolbar
-    Log in  test-user  secret
-    #Log in as site owner
+    Log in as site owner
     Page Should Contain Element  id=plone-toolbar
+
+Toolbar should contain content actions
+    Log in as site owner
+    Go to  ${PLONE_URL}
+    
+    Wait Until Page Contains Element  id=toolbar
+    
+    Frame Should Contain  id=toolbar  Contents
+    Frame Should Contain  id=toolbar  View
+    # The 'Edit' button is not present, as we are viewing a Plone Site, not
+    #   a default front page for a Plone Site.
+    Frame Should Contain  id=toolbar  Rules
+    Frame Should Contain  id=toolbar  Sharing
+
+Toolbar should contain document actions menus
+    Log in as site owner
+    Go to  ${PLONE_URL}
+
+    Wait Until Page Contains Element  id=toolbar
+
+    Frame Should Contain  id=toolbar  Display
+    Frame Should Contain  id=toolbar  Add new
