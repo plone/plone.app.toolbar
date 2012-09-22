@@ -50,3 +50,15 @@ Toolbar should contain document actions menus
 
     Frame Should Contain  id=toolbar  Display
     Frame Should Contain  id=toolbar  Add new
+
+Contents tab should open folder listing
+    Log in as site owner
+    Go to  ${PLONE_URL}
+
+    Wait Until Page Contains Element  id=toolbar
+    Select Frame  id=toolbar
+    Wait Until Keyword Succeeds  3  5  Current Frame Contains  Contents
+    Click Link  Contents
+
+    Location Should Contain  folder_contents
+    
