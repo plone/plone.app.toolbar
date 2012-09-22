@@ -55,22 +55,21 @@ IFramed.prototype = {
     if (resources) {
       resources = resources.split(';');
       for (var i = 0; i < resources.length; i += 1) {
-        var full_url = resources[i].replace(/^\s+|\s+$/g, ''),
+        var url = resources[i].replace(/^\s+|\s+$/g, ''),
             resource = '';
-        var url = full_url.replace(/^([^?]+).*$/, '$1');
         if (url.slice(-3) === '.js') {
           resource = document.createElement('script');
-          resource.src = full_url;
+          resource.src = url;
           resource.type = 'text/javascript';
           resource.async = false;
         } else if (url.slice(-4) === '.css') {
           resource = document.createElement('link');
-          resource.href = full_url;
+          resource.href = url;
           resource.type = 'text/css';
           resource.rel = 'stylesheet';
         } else if (url.slice(-5) === '.less') {
           resource = document.createElement('link');
-          resource.href = full_url;
+          resource.href = url;
           resource.type = 'text/less';
           resource.rel = 'stylesheet';
         }
