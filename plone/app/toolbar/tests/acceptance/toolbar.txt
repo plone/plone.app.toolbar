@@ -24,20 +24,6 @@ Anonymous should'nt see toolbar
     Page Should Not Contain Element  id=plone-toolbar
 
 Logged in should see toolbar
-    Toolbar Log in  test-user  secret
+    Log in  test-user  secret
     #Log in as site owner
     Page Should Contain Element  id=plone-toolbar
-
-
-*** Keywords ***
-
-Toolbar Log in
-    [Arguments]  ${userid}  ${password}
-    Go to  ${PLONE_URL}/login_form
-    Page should contain element  __ac_name
-    Input text  __ac_name  ${userid}
-    Input text  __ac_password  ${password}
-    Click Button  Log in
-    #Page should contain element  css=#user-name 
-    Go to  ${PLONE_URL}
-    [Return]  True
