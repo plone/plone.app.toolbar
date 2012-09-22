@@ -42,7 +42,7 @@ $.plone.toolbar = $.plone.toolbar || {};
 // # IFrame Object
 //
 // nicer way to create shortcut 
-var iframe = $.plone.toolbar.iframe = window.parent.iframes[window.name];
+var iframe = $.plone.toolbar.iframe = window.parent.iframed[window.name];
 
 // # Shrink IFrame Object
 //
