@@ -44,6 +44,7 @@ setup(
             'unittest_jshint',
             'robotsuite',
             'robotframework-selenium2library',
+            'plone.act',
             ],
         },
     entry_points="""

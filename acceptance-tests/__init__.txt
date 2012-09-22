@@ -1,5 +1,0 @@
-*** Settings ***
-Resource  plone/act/plone.txt
-
-Suite Setup  Start browser and wake Plone up  plone.app.toolbar.testing.TOOLBAR_ACCEPTANCE_TESTING
-Suite Teardown  Close browser, teardown zodb, and stop selenium server
