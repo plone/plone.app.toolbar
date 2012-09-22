@@ -108,7 +108,7 @@ All options that take a "Date" can handle a `Date` object; a String formatted ac
 
 String.  Default: 'mm/dd/yyyy'
 
-The date format, combination of d, dd, m, mm, M, MM, yy, yyy.
+The date format, combination of d, dd, m, mm, M, MM, yy, yyyy.
 
 ### weekStart
 
@@ -139,6 +139,12 @@ Whether or not to close the datepicker immediately when a date is selected.
 Number, String.  Default: 0, 'month'
 
 The view that the datepicker should show when it is opened.  Accepts values of 0 or 'month' for month view (the default), 1 or 'year' for the 12-month overview, and 2 or 'decade' for the 10-year overview.  Useful for date-of-birth datepickers.
+
+### keyboardNavigation
+
+Boolean.  Default: true
+
+Whether or not to allow date navigation by arrow keys.
 
 ### language
 
@@ -238,6 +244,14 @@ Fired when the date is changed.
                 ....
             }
         });
+
+### changeYear
+
+Fired when the *view* year is changed from decade view.
+
+### changeMonth
+
+Fired when the *view* month is changed from year view.
 
 ## Keyboard support
 
