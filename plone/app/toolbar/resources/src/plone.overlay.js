@@ -266,10 +266,12 @@ $.plone.overlay.Overlay.prototype = {
     // scrolling
     $(window.parent.document).scroll(function () {
       if (typeof(self._el) === 'object' && self._el.size() === 1) {
-        self._el.parents('.modal-backdrop').scrollTop(
-            $(window.parent.document).scrollTop());
-        self._el.parents('.modal-backdrop').scrollLeft(
-            $(window.parent.document).scrollLeft());
+        var modal = self._el.parents('.modal-backdrop');
+        modal.css({
+          'top': -1 * $(window.parent.document).scrollTop(),
+          'height': $(window.parent.document).scrollTop() + modal.height()
+        });
+        //modal.modal('show');  // this will make sure backdrop is fully sized
       }
     });
 

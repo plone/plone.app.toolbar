@@ -42,19 +42,17 @@ $.plone.toolbar = $.plone.toolbar || {};
 // # IFrame Object
 //
 // nicer way to create shortcut 
-$.plone.toolbar.iframe = window.parent.iframed[window.name];
+var iframe = $.plone.toolbar.iframe = window.parent.iframes[window.name];
 
 // # Shrink IFrame Object
 //
 // Shrink current frame to the size that was before stretching it.
 $.plone.toolbar.iframe_shrink = function() {
-  if ($.plone.toolbar.iframe_state !== undefined) {
-    $($.plone.toolbar.iframe.el).height($.plone.toolbar.iframe_state.height);
-    $($.plone.toolbar.iframe.el).css({
-      top: $.plone.toolbar.iframe_state.offset.top,
-      left: $.plone.toolbar.iframe_state.offset.left
-    });
-    $.plone.toolbar.iframe_state = undefined;
+  var $el = $(iframe.el),
+      iframe_state = $.plone.toolbar.iframe_state;
+  if (iframe_state !== undefined) {
+    $el.css(iframe_state);
+    iframe_state = $.plone.toolbar.iframe_state = undefined;
   }
 };
 
@@ -63,18 +61,39 @@ $.plone.toolbar.iframe_shrink = function() {
 // This function stretches current frame over whole top frame while keeping
 // iframe object trasparent
 $.plone.toolbar.iframe_stretch = function() {
-  if ($.plone.toolbar.iframe_state === undefined) {
-    $.plone.toolbar.iframe_state = {};
-    $.plone.toolbar.iframe_state.height = $($.plone.toolbar.iframe.el).height();
-    $.plone.toolbar.iframe_state.offset = $($.plone.toolbar.iframe.el).offset();
-    $($.plone.toolbar.iframe.el).height($(window.parent.document).height());
-    $($.plone.toolbar.iframe.el).css({top: 0, left: 0});
+  var $el = $(iframe.el),
+      iframe_state = $.plone.toolbar.iframe_state;
+  if (iframe_state === undefined) {
+    iframe_state = $.plone.toolbar.iframe_state = {};
+    iframe_state.height = $el.height();
+    if ($el.css('position') === 'fixed') {
+      // XXX: maybe we should get offset of parent here
+      iframe_state.top = 0;
+      iframe_state.left = 0;
+    } else {
+      var offset = $el.offset();
+      iframe_state.top = offset.top;
+      iframe_state.left = offset.left;
+    }
+    $el.css({
+      height: $(window.parent.document).height(),
+      top: 0,
+      left: 0
+    });
   }
 };
 
 // on every click we shrink iframe
 $(document).on('click', function(e) {
-  $.plone.toolbar.iframe_shrink();
+  // in case of clicking on modal background or tinyMCE style dropdown we
+  // shouldn't do anything
+  if ($(e.target).parents('body').size() === 0 ||
+      $(e.target).hasClass('modal-backdrop')) {
+    e.preventDefault();
+    e.stopPropagation();
+  } else {
+    $.plone.toolbar.iframe_shrink();
+  }
 });
 
 
