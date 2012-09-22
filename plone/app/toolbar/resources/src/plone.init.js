@@ -29,7 +29,7 @@
 
 /*jshint bitwise:true, curly:true, eqeqeq:true, immed:true, latedef:true,
   newcap:true, noarg:true, noempty:true, nonew:true, plusplus:true,
-  undef:true, strict:true, trailing:true, browser:true */
+  undef:true, strict:true, trailing:true, browser:true, evil:true */
 /*global InitializedTinyMCEInstances:false, TinyMCEConfig:false, jQuery:false */
 
 (function($) {
@@ -66,15 +66,54 @@ $(document).ready(function() {
 
 // # Initialize TinyMCE
 $.plone.init.register(function(context) {
+  var modal = context.hasClass('modal') ? context : context.parents('.modal');
   $('textarea.mce_editable', context).each(function() {
     var el = $(this),
-        id = Math.floor(Math.random() * 11) + '';
+        buttons = [],
+        content_css = [],
+        config = eval('(' + el.attr('title') + ')'),
+        id = 'mce_editable-' + new Date().getTime();
     $(el).attr('id', id);
 
-    var config = new TinyMCEConfig(id);
-    delete InitializedTinyMCEInstances[id];
-    config.init();
+    // filter out buttons we dont allow
+    $.each(config.buttons, function(i, button) {
+      // probably it would be nice that the list of buttons below would be
+      // possible to configure
+      if ($.inArray(button, ["style", "bold", "italic", "justifyleft",
+          "justifycenter", "justifyright", "justifyfull", "bullist",
+          "numlist", "definitionlist", "outdent", "indent", "link",
+          "unlink", "code"]) !== -1) {
+        // not sure about "anchor", "fullscreen"
+        buttons.push(button);
+      }
+    });
 
+    // copy css from top frame to content frame of tinymce
+    // FIXME: its not copying style elements with css using @import
+    $('link,style', window.parent.document).each(function(i, item) {
+      if ($.nodeName(item, 'link') && $(item).attr('href')) {
+        content_css += ',' + $(item).attr('href');
+      } else if ($.nodeName(item, 'style') && $(item).attr('src')) {
+        content_css += ',' + $(item).attr('src');
+      }
+    });
+
+    config.buttons = buttons;
+    config.content_css = content_css;
+    el.attr('title', JSON.stringify(config));
+
+    // not sure if this is ebve
+    if (modal.size() !== 0) {
+      modal.on('shown', function() {
+        var mce_config = new TinyMCEConfig(id);
+        delete InitializedTinyMCEInstances[id];
+        mce_config.init();
+      });
+      modal.on('hide', function() {
+        tinyMCE.execCommand('mceRemoveControl', false, id);
+      });
+    } else {
+    }
   });
 });
 
