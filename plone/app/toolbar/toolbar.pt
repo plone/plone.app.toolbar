@@ -4,7 +4,7 @@
 </head>
 <body>
 
-  <div id="plone-toolbar" class="navbar">
+  <div id="plone-toolbar" class="navbar navbar-inverse">
     <div class="navbar-inner">
       <div class="container">
 
