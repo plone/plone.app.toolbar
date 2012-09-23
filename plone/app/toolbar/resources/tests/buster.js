@@ -7,6 +7,6 @@ config["My tests"] = {
       'src/iframed.js'
     ],
     tests: [
-        "test/*-test.js"
+        "tests/*-test.js"
     ]
 };
