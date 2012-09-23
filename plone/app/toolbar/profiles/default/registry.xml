@@ -5,6 +5,7 @@
             field="resourceBundlesForThemes">
         <value purge="false">
             <element key="toolbar">
+                <element>old</element>
                 <element>tinymce</element>
                 <element>jquery</element>
                 <element>bootstrap</element>
@@ -13,6 +14,7 @@
 
             <!-- BBB: These bundle assignments should go into each theme's package -->
             <element key="Plone Classic Theme">
+                <element>old</element>
                 <element>tinymce</element>
                 <element>jquery</element>
                 <element>default</element>
@@ -20,6 +22,7 @@
             </element>
 
             <element key="Plone Default">
+                <element>old</element>
                 <element>tinymce</element>
                 <element>jquery</element>
                 <element>default</element>
@@ -27,6 +30,7 @@
             </element>
 
             <element key="Sunburst Theme">
+                <element>old</element>
                 <element>tinymce</element>
                 <element>jquery</element>
                 <element>default</element>
