@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 <object name="portal_javascripts">
 
+    <!-- old stuff we should reimplement -->
+    <javascript bundle="old" id="plone_javascript_variables.js" />
+
     <!-- assign bundle to other scritps, for now -->
     <javascript bundle="tinymce" id="tiny_mce.js"  />
     <javascript bundle="tinymce" id="tiny_mce_init.js"  />

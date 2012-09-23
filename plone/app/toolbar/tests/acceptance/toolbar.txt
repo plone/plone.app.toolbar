@@ -19,7 +19,7 @@ Logged in should see toolbar
     Log in as site owner
     Page Should Contain Element  id=plone-toolbar
 
-Toolbar should contain content actions
+Toolbar should contain content action tabs
     Log in as site owner
     Go to  ${PLONE_URL}
 
@@ -51,4 +51,107 @@ Contents tab should open folder listing
     Click Link  Contents
 
     Location Should Contain  folder_contents
-    
+
+Edit tab should open edit view
+    Log in as site owner
+    Go to  ${TEST_FOLDER}
+
+    Wait Until Page Contains Element  id=toolbar
+    Select Frame  id=toolbar
+    Wait Until Keyword Succeeds  3  5  Current Frame Contains  Edit
+    Click Link  Edit
+
+    Location Should Be  ${TEST_FOLDER}/edit
+
+View tab should return to view
+    Log in as site owner
+    Go to  ${TEST_FOLDER}/edit
+
+    Wait Until Page Contains Element  id=toolbar
+    Select Frame  id=toolbar
+    Wait Until Keyword Succeeds  3  5  Current Frame Contains  View
+    Click Link  View
+
+    Location Should Be  ${TEST_FOLDER}
+
+Rules tab should open rules view
+    Log in as site owner
+    Go to  ${PLONE_URL}
+
+    Wait Until Page Contains Element  id=toolbar
+    Select Frame  id=toolbar
+    Wait Until Keyword Succeeds  3  5  Current Frame Contains  Rules
+    Click Link  Rules
+
+    Location Should Be  ${PLONE_URL}/@@manage-content-rules
+
+Sharing tab should open sharing view
+    Log in as site owner
+    Go to  ${PLONE_URL}
+
+    Wait Until Page Contains Element  id=toolbar
+    Select Frame  id=toolbar
+    Wait Until Keyword Succeeds  3  5  Current Frame Contains  Sharing
+    Click Link  Sharing
+
+    Location Should Be  ${PLONE_URL}/@@sharing
+
+Actions menu dropdown should open on click
+    Log in as site owner
+    Go to  ${TEST_FOLDER}
+    Wait Until Page Contains Element  id=toolbar
+    Select Frame  id=toolbar
+    Wait Until Keyword Succeeds  3  5  Current Frame Contains  Actions
+
+    Element Should Not Be Visible  id=cut
+    Click Element  xpath=id('plone-contentmenu-actions')/a
+
+    Element Should Be Visible  id=cut
+
+Display menu dropdown should open on click
+    Log in as site owner
+    Go to  ${TEST_FOLDER}
+    Wait Until Page Contains Element  id=toolbar
+    Select Frame  id=toolbar
+    Wait Until Keyword Succeeds  3  5  Current Frame Contains  Display
+
+    Element Should Not Be Visible  id=contextSetDefaultPage
+    Click Element  xpath=id('plone-contentmenu-display')/a
+
+    Element Should Be Visible  id=contextSetDefaultPage
+
+Factories menu dropdown should open on click
+    Log in as site owner
+    Go to  ${TEST_FOLDER}
+    Wait Until Page Contains Element  id=toolbar
+    Select Frame  id=toolbar
+    Wait Until Keyword Succeeds  3  5  Current Frame Contains  Add new…
+
+    Element Should Not Be Visible  id=document
+    Click Element  xpath=id('plone-contentmenu-factories')/a
+
+    Element Should Be Visible  id=document
+
+Workflow menu dropdown should open on click
+    Log in as site owner
+    Go to  ${TEST_FOLDER}
+    Wait Until Page Contains Element  id=toolbar
+    Select Frame  id=toolbar
+    Wait Until Keyword Succeeds  3  5  Current Frame Contains  State:
+
+    Element Should Not Be Visible  id=advanced
+    Click Element  xpath=id('plone-contentmenu-workflow')/a
+
+    Element Should Be Visible  id=advanced
+
+Personal actions dropdown should open on click
+    Log in as site owner
+    Go to  ${TEST_FOLDER}
+    Wait Until Page Contains Element  id=toolbar
+    Select Frame  id=toolbar
+    Wait Until Keyword Succeeds  3  5  Current Frame Contains  State:
+
+    Element Should Not Be Visible  id=plone-personal-actions-logout
+    Click Element  xpath=id('plone-personal-actions')/a
+
+    Element Should Be Visible  id=plone-personal-actions-logout
