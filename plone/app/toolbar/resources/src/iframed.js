@@ -166,12 +166,12 @@ IFramed.prototype = {
 };
 
 // # Initialize
-function initialize() {
+window.initialize_iframed = function() {
 
   // Check for DOM to be ready
   var body = document.getElementsByTagName('body')[0];
   if (body === undefined) {
-    window.setTimeout(initialize, 23);
+    window.setTimeout(window.initialize_iframed, 23);
     return;
   }
 
@@ -203,7 +203,7 @@ function initialize() {
       window.iframed[iframe].open();
     }
   }
-}
-initialize();
+};
+window.initialize_iframed();
 
 }(window, window.document));
