@@ -29,12 +29,12 @@
   regexp:true, undef:true, strict:true, trailing:true, browser:true */
 
 
-(function(window, document) {
+(function(window, document, undefined) {
 "use strict";
 
 // # IFramed Object
-var IFramed = function(el) { this.init(el); };
-IFramed.prototype = {
+window.IFramed = function(el) { this.init(el); };
+window.IFramed.prototype = {
   add: function(el) {
     var self = this;
 
@@ -166,12 +166,12 @@ IFramed.prototype = {
 };
 
 // # Initialize
-window.initialize_iframed = function() {
+window.iframed_initialize = function() {
 
   // Check for DOM to be ready
   var body = document.getElementsByTagName('body')[0];
   if (body === undefined) {
-    window.setTimeout(window.initialize_iframed, 23);
+    window.setTimeout(window.iframed_initialize, 23);
     return;
   }
 
@@ -193,7 +193,7 @@ window.initialize_iframed = function() {
   for (var j = 0; j < matching.length; j += 1) {
     var name = matching[j].getAttribute('data-iframe');
     if (window.iframed[name] === undefined) {
-      window.iframed[name] = new IFramed(matching[j]);
+      window.iframed[name] = new window.IFramed(matching[j]);
     } else {
       window.iframed[name].add(matching[j]);
     }
@@ -204,6 +204,6 @@ window.initialize_iframed = function() {
     }
   }
 };
-window.initialize_iframed();
+window.iframed_initialize();
 
 }(window, window.document));
