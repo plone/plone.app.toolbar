@@ -196,7 +196,12 @@ $.plone.overlay.Overlay.prototype = {
 
     // disable all clicks on modal
     self._el.on('click', function(e) {
-      e.preventDefault();
+      var target = $(e.target);
+      if (!target.hasClass("allowDefault")) {
+        if (target.parents(".allowDefault").length === 0) {
+          e.preventDefault();
+        }
+      }
       e.stopPropagation();
 
       if (self.options.form !== false) {
