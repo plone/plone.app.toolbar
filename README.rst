@@ -1,9 +1,11 @@
-``plone.app.toolbar`` installs a new toolbar for Plone.
+=======================
+Introduction to Toolbar
+=======================
 
-.. contents::
+``plone.app.toolbar`` installs a new content editing toolbar for Plone.
 
 Installation
-============
+------------
 
 To install toolbar drop following lines to your buildout.cfg::
 
@@ -30,7 +32,7 @@ To start developing plone.app.toolbar you can find buildout at
     
 
 How it works
-============
+------------
 
 Registers toolbar tile which creates toolbar html on every page in twitter
 bootstrap structure and is hidden by default. Toolbar tile also lists resources
@@ -68,7 +70,7 @@ integrated into current Plone, eg: hidding old green edit bar, ...
 
 
 Diazo rules
-===========
+-----------
 
 First we need to copy toolbar's html code, which will be picked by
 `iframed.js`_::
@@ -86,57 +88,6 @@ include `iframed.js`_::
 
 Above 2 rules should be enought so that your theme will support
 `plone.app.toolbar`_
-
-
-Changelog
-=========
-
-1.1 (2012-06-22)
-----------------
-
-- plone.overlay.js is serving overlay content from urls with "/++unthemed++/"
-  appended to their path. this gets content without diazo theme being applied.
-  [garbas]
-
-- plone.mask.js: bug with resizing mask fixed.
-  [garbas]
-
-- plone.overlay.js script is now included for support of deco plone.app.deco
-  version  1.0.
-  [garbas]
-
-- removed dependency jquerytools by packaging jquery.form.js inside
-  plone.app.toolbar
-  [garbas]
-
-- edit action on deco enabled pages will have "plone-action-deco" id
-  [garbas]
-
-- bootstrap_overlay_trasform moved from ``plone.cmsui.js`` script to
-  ``plone.overlay.js``
-  [garbas]
-
-- adding javascript (and register them in resources register) needed for deco:
-  plone.mask.js, plone.overlay.js, bootstrap-tooltip.js, bootstrap-modal.js
-  [garbas]
-
-- added IFramed.add method to IFramed object. now its possible to "commulate"
-  content inside one iframe.
-  [garbas]
-
-- other tabs in user/group management were not showing #edit-bar.
-  [garbas]
-
-- removed development code which inserted less files.
-  [garbas]
-
-
-1.0 (2012-05-28)
-----------------
-
-- initial release
-  [garbas]
-
 
 .. _`buildout.deco`: https://github.com/plone/buildout.deco
 .. _`plone.app.toolbar`: https://github.com/plone/plone.app.toolbar
