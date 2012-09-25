@@ -28,7 +28,7 @@
               <span tal:condition="python:'extra' in item and 'stateTitle' in item['extra']"
                     tal:attributes="class item/extra/class"
                     tal:content="item/extra/stateTitle">Private</span>
-              <b class="caret">
+              <b tal:condition="item/submenu" class="caret" />
             </a>
             <ul class="dropdown-menu" tal:condition="item/submenu">
               <li tal:repeat="subitem item/submenu"
