@@ -278,6 +278,12 @@ $.plone.overlay.Overlay.prototype = {
           'top': -1 * $(window.parent.document).scrollTop(),
           'height': $(window.parent.document).scrollTop() + modal.height()
         });
+        if ($.plone.tinymce.menuStylePosition === undefined) {
+          $.plone.tinymce.menuStylePosition = $('.mceMenu').parent().offset().top;
+        }
+        $('.mceMenu').parent().css('top',
+              $.plone.tinymce.menuStylePosition -
+                $(window.parent.document).scrollTop());
         //modal.modal('show');  // this will make sure backdrop is fully sized
       }
     });

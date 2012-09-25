@@ -91,6 +91,7 @@ $(document).on('click', function(e) {
     $.plone.toolbar.iframe_shrink();
   } else {
     if ($(e.target).parents('body').size() === 0 ||
+        $(e.target).parents('.mceMenuItem').size() === 1 ||
         $(e.target).hasClass('modal-backdrop')) {
       e.preventDefault();
       e.stopPropagation();

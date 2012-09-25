@@ -30,7 +30,8 @@
 /*jshint bitwise:true, curly:true, eqeqeq:true, immed:true, latedef:true,
   newcap:true, noarg:true, noempty:true, nonew:true, plusplus:true,
   undef:true, strict:true, trailing:true, browser:true, evil:true */
-/*global InitializedTinyMCEInstances:false, TinyMCEConfig:false, jQuery:false */
+/*global InitializedTinyMCEInstances:false, tinyMCE: false,
+  TinyMCEConfig:false, jQuery:false */
 
 (function($) {
 "use strict";
@@ -102,17 +103,20 @@ $.plone.init.register(function(context) {
     config.content_css = content_css;
     el.attr('title', JSON.stringify(config));
 
+    $.plone.tinymce = $.plone.tinymce || {};
+
     // not sure if this is ebve
     if (modal.size() !== 0) {
       modal.on('shown', function() {
         var mce_config = new TinyMCEConfig(id);
         delete InitializedTinyMCEInstances[id];
         mce_config.init();
+        $.plone.tinymce.menuStylePosition = undefined;
       });
       modal.on('hide', function() {
         tinyMCE.execCommand('mceRemoveControl', false, id);
+        $.plone.tinymce.menuStylePosition = undefined;
       });
-    } else {
     }
   });
 });
