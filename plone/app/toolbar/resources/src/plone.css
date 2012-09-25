@@ -5178,6 +5178,12 @@ a.badge:hover {
 #plone-toolbar .container {
   width: 100%;
 }
+#plone-toolbar .dropdown-menu a {
+  padding: 3px 9px;
+}
+#plone-toolbar .dropdown-menu a img {
+  padding-right: 3px;
+}
 #plone-toolbar .dropdown-menu .contenttype-image > a,
 #plone-toolbar .dropdown-menu .contenttype-file > a,
 #plone-toolbar .dropdown-menu .contenttype-document > a,
