@@ -7,7 +7,7 @@
     <!-- Hiding portal messages and edit bar -->
     <stylesheet
         cacheable="False" compression="safe" cookable="True"
-        enabled="True" bundle="default"
+        enabled="True" bundle="default" authenticated="True"
         id="++resource++plone.app.toolbar/src/plone_bbb.css"
         />
 
