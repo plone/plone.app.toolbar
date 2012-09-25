@@ -5,6 +5,7 @@ from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.browsermenu.interfaces import IBrowserMenu
 from zope.traversing.interfaces import ITraversable
+from plone.registry.interfaces import IRegistry
 from plone.memoize.instance import memoize
 from plone.tiles import Tile
 
@@ -20,6 +21,7 @@ class ToolbarTile(Tile):
 
         # Set the 'toolbar' skin so that we get the correct resources
 
+        self.registry = getUtility(IRegistry)
         self.tools = self.get_multi_adapter(u'plone_tools')
         self.scripts_view = self.get_multi_adapter(
             u'resourceregistries_scripts_view')
@@ -42,7 +44,8 @@ class ToolbarTile(Tile):
     def resources(self):
         resources = []
         skinname = self.context.getCurrentSkinName()
-        self.context.changeSkin('toolbar', self.request)
+        self.context.changeSkin(
+                self.registry['plone.app.toolbar.skinname'], self.request)
         for item in self.styles_view.styles() + self.scripts_view.scripts():
             if item['src']:
                 resources.append(item['src'])
