@@ -198,7 +198,9 @@ $.plone.overlay.Overlay.prototype = {
     self._el.on('click', function(e) {
       var target = $(e.target);
       if (!target.hasClass("allowDefault")) {
-        if (target.parents(".allowDefault").length === 0) {
+        if (target.parents(".allowDefault").length === 0 &&
+            target.attr('type') !== 'file' &&
+            target.attr('type') !== 'checkbox') {
           e.preventDefault();
         }
       }
