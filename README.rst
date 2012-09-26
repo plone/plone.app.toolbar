@@ -46,8 +46,8 @@ from ``toolbar`` skin in ``data-iframe-resources`` attribute of top element. ::
       </div>
     </div>
 
-Elements with ``data-iframe`` attribute are picked by `iframed.js`_ and inserts
-resources found in ``data-iframe-resources`` attribute. `iframed.js` script
+Elements with ``data-iframe`` attribute are picked by `iframe.js`_ and inserts
+resources found in ``data-iframe-resources`` attribute. `iframe.js` script
 also takes care that dropdown in toolbar which goes outside iframe area
 stretches it in transparent way so that user doesn't even notice it.
 
@@ -73,17 +73,17 @@ Diazo rules
 -----------
 
 First we need to copy toolbar's html code, which will be picked by
-`iframed.js`_::
+`iframe.js`_::
 
     <append theme="/html/body"
         content="//div[@data-iframe='toolbar']" />
 
 Then in case we are not copying all resources from Plone to theme we have to
-include `iframed.js`_::
+include `iframe.js`_::
 
     <append theme="/html/head">
         <script type="text/javascript"
-            src="++resource++plone.app.toolbar/src/iframed.js"></script>
+            src="++resource++plone.app.toolbar/src/iframe.js"></script>
     </append>
 
 Above 2 rules should be enought so that your theme will support
@@ -92,7 +92,7 @@ Above 2 rules should be enought so that your theme will support
 .. _`buildout.deco`: https://github.com/plone/buildout.deco
 .. _`plone.app.toolbar`: https://github.com/plone/plone.app.toolbar
 .. _`plone.app.blocks`: https://github.com/plone/plone.app.blocks
-.. _`iframed.js`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/resources/src/iframed.js
+.. _`iframe.js`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/resources/src/iframe.js
 .. _`plone.overlay.js`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/resources/src/plone.overlay.js
 .. _`plone.cmsui.js`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/resources/src/plone.cmsui.js
 .. _`bbb`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/bbb.zcml

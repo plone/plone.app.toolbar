@@ -11,7 +11,7 @@ config["plone.app.toolbar"] = {
       'test/example.js'
     ],
     sources: [
-      'src/iframed.js'
+      'src/iframe.js'
     ],
     tests: [
         "test/*-test.js"

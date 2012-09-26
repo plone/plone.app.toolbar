@@ -23,13 +23,13 @@ TestCase("iframe stuff", {
   //  --- tests --- //
 
   "check html of generated iframe": function(done) {
-    window.iframed_initialize();
+    window.iframe_initialize();
 
     var iframe = document.getElementsByTagName('iframe')[0],
         iframe_document =  iframe.contentWindow.document;
 
     function on_load() {
-      if (window.iframed.example.loaded === true) {
+      if (window.iframe.example.loaded === true) {
         assert(document.getElementsByTagName('iframe').length === 1);
         assert(iframe_document.body.childNodes.length === 3);
         assert(iframe_document.getElementsByTagName('p').length === 1);
@@ -54,7 +54,7 @@ TestCase("iframe stuff", {
         assert(iframe.getAttribute('name') === 'example');
         assert(iframe.getAttribute('style').indexOf('height:0px') === -1);
 
-        assert(window.iframed.example.el === iframe);
+        assert(window.iframe.example.el === iframe);
 
         // TODO: test updateOption method
         // TODO: test add method
@@ -72,12 +72,12 @@ TestCase("iframe stuff", {
   "height of empty iframe should be 0px": function(done) {
     var el = createElement('example2', '', '');
 
-    window.iframed_initialize();
+    window.iframe_initialize();
 
     var iframe = document.getElementsByName('example2')[0];
 
     function on_load() {
-      if (window.iframed.example2.loaded === true) {
+      if (window.iframe.example2.loaded === true) {
         assert(iframe.getAttribute('style').indexOf('height:0px') !== -1);
         el.parentNode.removeChild(el);
         done();
@@ -93,7 +93,7 @@ TestCase("iframe stuff", {
     var el = createElement('example3',
         'test/example.js;test/example.css', '<p>example content</p>');
 
-    window.iframed_initialize();
+    window.iframe_initialize();
 
     assert(document.getElementsByTagName('iframe').length === 2);
 
@@ -104,7 +104,7 @@ TestCase("iframe stuff", {
     var el = createElement('example',
         'test/example.js;test/example.css', '<p>example content</p>');
 
-    window.iframed_initialize();
+    window.iframe_initialize();
 
     assert(document.getElementsByTagName('iframe').length === 1);
 

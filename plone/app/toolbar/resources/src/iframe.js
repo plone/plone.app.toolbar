@@ -32,9 +32,9 @@
 (function(window, document, undefined) {
 "use strict";
 
-// # IFramed Object
-window.IFramed = function(el) { this.init(el); };
-window.IFramed.prototype = {
+// # IFrame Object
+window.IFrame = function(el) { this.init(el); };
+window.IFrame.prototype = {
   add: function(el) {
     var self = this;
 
@@ -131,7 +131,7 @@ window.IFramed.prototype = {
             '<title>' + self.options.title + '</title>' +
             '<meta http-equiv="X-UA-Compatible" content="IE=edge">' +
           '</head>' +
-          '<body onload="parent.window.iframed[\'' +
+          '<body onload="parent.window.iframe[\'' +
               self.options.name + '\'].load()">' +
             self.content + self.resources +
           '</body>' +
@@ -166,12 +166,12 @@ window.IFramed.prototype = {
 };
 
 // # Initialize
-window.iframed_initialize = function() {
+window.iframe_initialize = function() {
 
   // Check for DOM to be ready
   var body = document.getElementsByTagName('body')[0];
   if (body === undefined) {
-    window.setTimeout(window.iframed_initialize, 23);
+    window.setTimeout(window.iframe_initialize, 23);
     return;
   }
 
@@ -188,22 +188,22 @@ window.iframed_initialize = function() {
     }
   }
 
-  // initialize IFramed object for each of them
-  window.iframed = {};
+  // initialize IFrame object for each of them
+  window.iframe = {};
   for (var j = 0; j < matching.length; j += 1) {
     var name = matching[j].getAttribute('data-iframe');
-    if (window.iframed[name] === undefined) {
-      window.iframed[name] = new window.IFramed(matching[j]);
+    if (window.iframe[name] === undefined) {
+      window.iframe[name] = new window.IFrame(matching[j]);
     } else {
-      window.iframed[name].add(matching[j]);
+      window.iframe[name].add(matching[j]);
     }
   }
-  for (var iframe in window.iframed) {
-    if (window.iframed.hasOwnProperty(iframe)) {
-      window.iframed[iframe].open();
+  for (var iframe in window.iframe) {
+    if (window.iframe.hasOwnProperty(iframe)) {
+      window.iframe[iframe].open();
     }
   }
 };
-window.iframed_initialize();
+window.iframe_initialize();
 
 }(window, window.document));

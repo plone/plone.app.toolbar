@@ -1,4 +1,4 @@
-// This script is used to provide glue code between iframed and twitter
+// This script is used to provide glue code between iframe and twitter
 // bootstrap modal. And also providing some convinience method for usage in
 // Plone.
 //

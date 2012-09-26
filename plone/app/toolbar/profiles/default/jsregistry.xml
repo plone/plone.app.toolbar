@@ -53,7 +53,7 @@
     <javascript 
         cacheable="False" compression="safe" cookable="False"
         enabled="True" inline="False" bundle="toolbar-init"
-        id="++resource++plone.app.toolbar/src/iframed.js"
+        id="++resource++plone.app.toolbar/src/iframe.js"
         />
 
     <javascript 
@@ -65,7 +65,7 @@
     <javascript 
         cacheable="False" compression="safe" cookable="False"
         enabled="True" inline="False" bundle="toolbar"
-        id="++resource++plone.app.toolbar/src/plone.toolbar.js"
+        id="++resource++plone.app.toolbar/src/plone.iframe.js"
         />
 
     <javascript 
