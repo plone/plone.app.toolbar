@@ -7,11 +7,11 @@ from plone.app.testing import TEST_USER_ID
 from plone.app.testing import applyProfile
 from plone.app.testing import login
 from plone.app.testing import setRoles
-from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing.layers import FunctionalTesting
 from plone.app.testing.layers import IntegrationTesting
 from Products.CMFCore.utils import getToolByName
 from zope.configuration import xmlconfig
+
 
 class Toolbar(PloneSandboxLayer):
     defaultBases = (PLONE_FIXTURE,)
@@ -19,7 +19,8 @@ class Toolbar(PloneSandboxLayer):
     def setUpZope(self, app, configurationContext):
         # load ZCML
         import plone.app.toolbar
-        xmlconfig.file('configure.zcml', plone.app.toolbar, context=configurationContext)
+        xmlconfig.file('configure.zcml', plone.app.toolbar,
+                context=configurationContext)
 
     def setUpPloneSite(self, portal):
         # install into the Plone site
@@ -42,19 +43,13 @@ class Toolbar(PloneSandboxLayer):
         getToolByName(portal, 'portal_css').setDebugMode(True)
         getToolByName(portal, 'portal_javascripts').setDebugMode(True)
         getToolByName(portal, 'portal_kss').setDebugMode(True)
-        
+
         # set up content required for acceptance tests
         login(portal, TEST_USER_NAME)
         setRoles(portal, TEST_USER_ID, ['Manager', ])
-        afid = portal.invokeFactory(
-            'Folder','acceptance-test-folder', title='Acceptance Test Folder')
-        # afolder = portal[afid]
+        portal.invokeFactory('Folder', 'acceptance-test-folder',
+                title='Acceptance Test Folder')
 
-
-TOOLBAR_FIXTURE = Toolbar()
-TOOLBAR_INTEGRATION_TESTING = IntegrationTesting(bases=(TOOLBAR_FIXTURE,), name="TOOLBAR:Integration")
-TOOLBAR_FUNCTIONAL_TESTING = FunctionalTesting(bases=(TOOLBAR_FIXTURE,), name="TOOLBAR:Functional")
-TOOLBAR_ACCEPTANCE_TESTING = FunctionalTesting(bases=(TOOLBAR_FIXTURE,z2.ZSERVER_FIXTURE,), name="TOOLBAR:Acceptance")
 
 def browser_login(portal, browser, username=None, password=None):
     handleErrors = browser.handleErrors
@@ -70,3 +65,12 @@ def browser_login(portal, browser, username=None, password=None):
         browser.getControl(name='submit').click()
     finally:
         browser.handleErrors = handleErrors
+
+
+TOOLBAR_FIXTURE = Toolbar()
+TOOLBAR_INTEGRATION_TESTING = IntegrationTesting(
+    bases=(TOOLBAR_FIXTURE,), name="TOOLBAR:Integration")
+TOOLBAR_FUNCTIONAL_TESTING = FunctionalTesting(
+    bases=(TOOLBAR_FIXTURE,), name="TOOLBAR:Functional")
+TOOLBAR_ACCEPTANCE_TESTING = FunctionalTesting(
+    bases=(TOOLBAR_FIXTURE, z2.ZSERVER_FIXTURE,), name="TOOLBAR:Acceptance")

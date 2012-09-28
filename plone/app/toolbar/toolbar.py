@@ -76,11 +76,13 @@ class ToolbarTile(Tile):
 
         # sort actions
         sort_order = ['folderContents']
+
         def sort_actions(action):
             try:
                 return sort_order.index(action['id'])
             except ValueError:
                 return 255
+
         actions.sort(key=sort_actions)
 
         # content actions (eg. Contents, Edit, View, Sharing...)
@@ -103,7 +105,7 @@ class ToolbarTile(Tile):
             # button url
             button_url = action['url'].strip()
             if button_url.startswith('http') or \
-               button_url.startswith('javascript'):
+                button_url.startswith('javascript'):
                 item['url'] = button_url
             else:
                 item['url'] = '%s/%s' % (self.context_url, button_url)
@@ -112,7 +114,7 @@ class ToolbarTile(Tile):
             # Attempt to resolve to a template.
             action_method = item['url'].split('/')[-1]
             action_method = self.context_fti.queryMethodID(
-                    action_method, default=action_method)
+                action_method, default=action_method)
 
             # Determine if action is activated
             if action_method:
@@ -136,13 +138,14 @@ class ToolbarTile(Tile):
     def contentmenu(self):
         if 'disable_border' in self.request:
             return []
+
         def contentmenu(items):
             buttons = []
             for item in items:
                 item['id'] = ''
                 item['klass'] = ''
                 if 'extra' in item:
-                    if 'id'  in item['extra'] and item['extra']['id']:
+                    if 'id' in item['extra'] and item['extra']['id']:
                         item['id'] = item['extra']['id']
                     if 'class' in item['extra'] and item['extra']['class']:
                         if item['extra']['class'] == 'actionMenuSelected':
@@ -156,7 +159,8 @@ class ToolbarTile(Tile):
             return buttons
 
         plone_contentmenu = getUtility(IBrowserMenu,
-            name='plone_contentmenu').getMenuItems
+                name='plone_contentmenu').getMenuItems
+
         return contentmenu(plone_contentmenu(self.context, self.request))
 
     @memoize
@@ -195,7 +199,7 @@ class ToolbarTile(Tile):
         member = self.portal_state.member()
         userid = member.getId()
         return "%s/author/%s" % (
-                self.portal_state.navigation_root_url(), userid)
+            self.portal_state.navigation_root_url(), userid)
 
     @memoize
     def user_actions(self):
