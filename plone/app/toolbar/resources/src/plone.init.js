@@ -101,6 +101,7 @@ $.plone.init.register(function(context) {
 
     config.buttons = buttons;
     config.content_css = content_css;
+    el.attr('rows', '8');  // set height
     el.attr('title', JSON.stringify(config));
 
     $.plone.tinymce = $.plone.tinymce || {};
