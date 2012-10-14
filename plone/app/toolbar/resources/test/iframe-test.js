@@ -129,6 +129,22 @@ TestCase("iframe stuff", {
 
     el.parentNode.removeChild(el1);
     el.parentNode.removeChild(el2);
+  },
+
+  "CSS Styles only apply to inner document": function() {
+    var el1 = createElement('example_pink',
+        'test/example.js;test/example.css', "<h1>I'm a pink title</h1>",
+        { 'docstyles': 'h1 { background-color: pink; }' });
+
+    window.iframe_initialize();
+
+    iframes = document.getElementsByTagName('iframe');
+    assert(iframes.length === 2);
+    iframe_h1_color = getStyle(iframes.example_pink.contentWindow.document.getElementsByTagName('h1')[0],'background-color');
+    doc_h1_color = getStyle(document.getElementsByTagName('h1')[0],'background-color');
+    assert(iframe_h1_color !== doc_h1_color);
+
+    el.parentNode.removeChild(el1);
   }
 
 });

@@ -18,3 +18,20 @@ function createElement(name, resources, content, extra_options) {
   document.body.insertBefore(el, document.body.firstChild);
   return el;
 }
+
+// Get the computed style from an element
+// Inspired by: http://www.quirksmode.org/dom/getstyles.html
+function getStyle(el, styleProp) {
+  if (typeof el.currentStyle !== 'undefined') {
+    if (typeof el.currentStyle.getPropertyValue === 'function') {
+      return el.currentStyle.getPropertyValue(styleProp);
+    }
+    return el.currentStyle[styleProp];
+  }
+
+  if (typeof el.ownerDocument.defaultView.getComputedStyle === 'function') {
+    return el.ownerDocument.defaultView.getComputedStyle(el,null).getPropertyValue(styleProp);
+  }
+
+  return "";
+}

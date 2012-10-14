@@ -79,6 +79,14 @@ window.IFrame.prototype = {
         }
       }
     }
+    // get manual CSS styles
+    var styles = el.getAttribute('data-iframe-docstyles')
+    if (styles) {
+      var style_node = document.createElement('style');
+      style_node.type = "text/css";
+      style_node.textContent = styles;
+      self.resources += style_node.outerHTML;
+    }
   },
   updateOption: function(el, name, _default) {
     var self = this,
