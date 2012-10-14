@@ -109,6 +109,26 @@ TestCase("iframe stuff", {
     assert(document.getElementsByTagName('iframe').length === 1);
 
     el.parentNode.removeChild(el);
+  },
+
+  "Bottom-aligned iFrame does not add to height": function() {
+    var el1 = createElement('example_top',
+        'test/example.js;test/example.css', "<p>I'm on top of the world!</p>",
+        { 'alignment': 'top' });
+
+    var el2 = createElement('example_bottom',
+        'test/example.js;test/example.css', "<p>I'm.......<br/><br/><br/>Not.</p>",
+        { 'alignment': 'bottom' });
+
+    window.iframe_initialize();
+
+    iframes = document.getElementsByTagName('iframe');
+    assert(iframes.length === 3);
+    assert(iframes.example_top.offsetHeight < iframes.example_bottom.offsetHeight);
+    assert(iframes.example_top.offsetHeight + 'px' === document.body.style.marginTop);
+
+    el.parentNode.removeChild(el1);
+    el.parentNode.removeChild(el2);
   }
 
 });

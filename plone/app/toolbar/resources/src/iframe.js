@@ -49,6 +49,7 @@ window.IFrame.prototype = {
     self.updateOption(el, 'title', '');
     self.updateOption(el, 'doctype', '<!doctype html>');
     self.updateOption(el, 'style', '');
+    self.updateOption(el, 'alignment', 'top');
 
     // get resources (js/css/less)
     var resources = el.getAttribute('data-iframe-resources');
@@ -150,18 +151,27 @@ window.IFrame.prototype = {
     self.loaded = true;
 
     self.el.setAttribute('style', 'border:0;overflow:hidden;' +
-        'position:absolute;left:0px;position:fixed;top:0px;overflow:hidden;' +
+        'position:absolute;left:0px;position:fixed;overflow:hidden;' +
         'width:100%;background-color:transparent;z-index:500;' +
         self.options.style);
+    if(self.options.alignment === 'top') {
+        self.el.setAttribute('style', self.el.getAttribute('style') +
+            'top:0px;');
+    } if(self.options.alignment === 'bottom') {
+        self.el.setAttribute('style', self.el.getAttribute('style') +
+            'bottom:0px;');
+    }
     self.el.setAttribute('style', self.el.getAttribute('style') +
         'height:' + self.document.body.offsetHeight + 'px;');
     self.document.body.setAttribute('style',
         self.document.body.getAttribute('style') || '' +
         'background:transparent;');
-    document.body.setAttribute('style',
-        document.body.getAttribute('style') || '' +
-        ';border-top:0' +
-        ';margin-top:' + self.el.offsetHeight + 'px;');
+    if(self.options.alignment === 'top') {
+      document.body.setAttribute('style',
+          document.body.getAttribute('style') || '' +
+          ';border-top:0' +
+          ';margin-top:' + self.el.offsetHeight + 'px;');
+    }
   }
 };
 
