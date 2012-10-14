@@ -3,6 +3,7 @@
 
     <!-- old stuff we should reimplement -->
     <javascript bundle="old" id="plone_javascript_variables.js" />
+    <javascript bundle="toolbar" id="++resource++plone.formwidget.querystring.querywidget.js" />
 
     <!-- assign bundle to other scritps, for now -->
     <javascript bundle="tinymce" id="tiny_mce.js"  />
