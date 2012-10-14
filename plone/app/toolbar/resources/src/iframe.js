@@ -53,9 +53,11 @@ window.IFrame.prototype = {
 
     // get resources (js/css/less)
     var resources = el.getAttribute('data-iframe-resources');
+    var i;
+
     if (resources) {
       resources = resources.split(';');
-      for (var i = 0; i < resources.length; i += 1) {
+      for (i = 0; i < resources.length; i += 1) {
         var url = resources[i].replace(/^\s+|\s+$/g, ''),
             resource = '';
         if (url.slice(-3) === '.js') {
@@ -80,7 +82,7 @@ window.IFrame.prototype = {
       }
     }
     // get manual CSS styles
-    var styles = el.getAttribute('data-iframe-docstyles')
+    var styles = el.getAttribute('data-iframe-docstyles');
     if (styles) {
       var style_node = document.createElement('style');
       style_node.type = "text/css";
@@ -172,11 +174,11 @@ window.IFrame.prototype = {
     self.el.setAttribute('style', self.el.getAttribute('style') +
         'height:' + self.document.body.offsetHeight + 'px;');
     self.document.body.setAttribute('style',
-        self.document.body.getAttribute('style') || '' +
+        (self.document.body.getAttribute('style') || '') +
         'background:transparent;');
     if(self.options.alignment === 'top') {
       document.body.setAttribute('style',
-          document.body.getAttribute('style') || '' +
+          (document.body.getAttribute('style') || '') +
           ';border-top:0' +
           ';margin-top:' + self.el.offsetHeight + 'px;');
     }
@@ -185,21 +187,22 @@ window.IFrame.prototype = {
 
 // # Initialize
 window.iframe_initialize = function() {
+  var i,j, body, matching, iframe;
 
   // Check for DOM to be ready
-  var body = document.getElementsByTagName('body')[0];
+  body = document.getElementsByTagName('body')[0];
   if (body === undefined) {
     window.setTimeout(window.iframe_initialize, 23);
     return;
   }
 
   // find [data-iframe] elements in context
-  var matching = [];
+  matching = [];
   if (document.querySelectorAll !== undefined) {
     matching = document.querySelectorAll('[data-iframe]');
   } else {
     var all = document.getElementsByTagName('*');
-    for (var i = 0; i < all.length; i += 1) {
+    for (i = 0; i < all.length; i += 1) {
       if (all[i].getAttribute('data-iframe')) {
         matching.push(all[i]);
       }
@@ -208,7 +211,7 @@ window.iframe_initialize = function() {
 
   // initialize IFrame object for each of them
   window.iframe = {};
-  for (var j = 0; j < matching.length; j += 1) {
+  for (j = 0; j < matching.length; j += 1) {
     var name = matching[j].getAttribute('data-iframe');
     if (window.iframe[name] === undefined) {
       window.iframe[name] = new window.IFrame(matching[j]);
@@ -216,7 +219,7 @@ window.iframe_initialize = function() {
       window.iframe[name].add(matching[j]);
     }
   }
-  for (var iframe in window.iframe) {
+  for (iframe in window.iframe) {
     if (window.iframe.hasOwnProperty(iframe)) {
       window.iframe[iframe].open();
     }

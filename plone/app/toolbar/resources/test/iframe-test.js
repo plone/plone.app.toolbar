@@ -13,7 +13,9 @@ TestCase("iframe stuff", {
   // remove iframe and element which triggers iframe to be created
   tearDown: function() {
     var iframes = document.getElementsByTagName('iframe');
-    for (var i = 0; frames.length !== 0; ) {
+    var i;
+
+    for (i = 0; frames.length !== 0; ) {
       iframes[i].parentNode.removeChild(iframes[i]);
     }
     this.el.parentNode.removeChild(this.el);
