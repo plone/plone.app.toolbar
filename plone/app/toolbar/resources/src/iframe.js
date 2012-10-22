@@ -36,12 +36,12 @@
 window.IFrame = function(el) { this.init(el); };
 window.IFrame.prototype = {
   add: function(el) {
-    var self = this;
+    var self = this, attr;
 
     // make sure original element is hidden
     el.setAttribute("style", "display:none;");
 
-    // 
+    //
     self.content += el.innerHTML;
 
     // get options from original element
@@ -53,13 +53,22 @@ window.IFrame.prototype = {
 
     // get resources (js/css/less)
     var resources = el.getAttribute('data-iframe-resources');
-    var i;
 
     if (resources) {
       resources = resources.split(';');
-      for (i = 0; i < resources.length; i += 1) {
+      for (var i = 0; i < resources.length; i += 1) {
         var url = resources[i].replace(/^\s+|\s+$/g, ''),
-            resource = '';
+            resource = '', attrs = {};
+
+        if (url.indexOf('#') !== -1) {
+          var url2 = url.slice(url.indexOf('#') + 1, url.length).split('&');
+          for (var j = 0; j < url2.length; j += 1) {
+            attr = url2[j].split('=');
+            attrs[attr[0]] = attr[1];
+          }
+          url = url.slice(0, url.indexOf('#'));
+        }
+
         if (url.slice(-3) === '.js') {
           resource = document.createElement('script');
           resource.src = url;
@@ -76,7 +85,11 @@ window.IFrame.prototype = {
           resource.type = 'text/less';
           resource.rel = 'stylesheet';
         }
+
         if (resource !== '') {
+          for (attr in attrs) {
+            resource.setAttribute(attr, attrs[attr]);
+          }
           self.resources += resource.outerHTML;
         }
       }
