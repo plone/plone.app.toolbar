@@ -16,3 +16,4 @@ body {
 body.mceContentBody {
   border-top: 0;
 }
+#portal-header .plone-tile { float: left; }
