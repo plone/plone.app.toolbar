@@ -8,8 +8,8 @@
         <value>toolbar</value>
     </record>
 
-    <record interface="Products.ResourceRegistries.interfaces.settings.IResourceRegistriesSettings"
-            field="resourceBundlesForThemes">
+    <record
+        name="Products.ResourceRegistries.interfaces.settings.IResourceRegistriesSettings.resourceBundlesForThemes">
         <value purge="false">
             <element key="toolbar">
                 <element>old</element>
@@ -19,7 +19,6 @@
                 <element>toolbar</element>
             </element>
 
-            <!-- BBB: These bundle assignments should go into each theme's package -->
             <element key="Plone Classic Theme">
                 <element>old</element>
                 <element>tinymce</element>
