@@ -3,7 +3,8 @@
 
     <!-- old stuff we should reimplement -->
     <javascript bundle="old" id="plone_javascript_variables.js" />
-    <javascript bundle="toolbar" id="++resource++plone.formwidget.querystring.querywidget.js" />
+    <javascript bundle="toolbar"
+        id="++resource++plone.formwidget.querystring.querywidget.js" />
 
     <!-- assign bundle to other scritps, for now -->
     <javascript bundle="tinymce" id="tiny_mce.js"  />
@@ -60,13 +61,13 @@
     <javascript 
         cacheable="False" compression="safe" cookable="False"
         enabled="True" inline="False" bundle="toolbar"
-        id="++resource++plone.app.toolbar/src/plone.init.js"
+        id="++resource++plone.app.toolbar/src/jquery.iframe.js"
         />
 
     <javascript 
         cacheable="False" compression="safe" cookable="False"
         enabled="True" inline="False" bundle="toolbar"
-        id="++resource++plone.app.toolbar/src/plone.iframe.js"
+        id="++resource++plone.app.toolbar/src/plone.init.js"
         />
 
     <javascript 

@@ -65,6 +65,16 @@ $.plone.overlay.Overlay.prototype = {
                  window.location.pathname + '/' + url;
         }
       },
+      modal_template_options: {
+          title: 'h1.documentFirstHeading',
+          body: '#content',
+          footer: '.formControls',
+          cancel: 'input[name="buttons.cancel"],' +
+                'input[name="form.button.Cancel"],' +
+                'input[name="form.button.cancel"],' +
+                'input[name="form.actions.cancel"],' +
+                '.modal-header [data-dismiss="modal"]'
+      },
       modal_template: function(content, options) {
         var el = $('' +
           '<div class="modal fade">' +
@@ -80,16 +90,7 @@ $.plone.overlay.Overlay.prototype = {
           footer = $('.modal-footer', el);
 
         // Merge options
-        options = $.extend({
-          title: 'h1.documentFirstHeading',
-          body: '#content',
-          footer: '.formControls',
-          cancel: 'input[name="buttons.cancel"],' +
-                'input[name="form.button.Cancel"],' +
-                'input[name="form.button.cancel"],' +
-                'input[name="form.actions.cancel"],' +
-                '.modal-header [data-dismiss="modal"]'
-        }, options || {});
+        options = $.extend(self.options.modal_template_options, options || {});
 
         // Title
         title.html($(options.title, content).html());
@@ -154,8 +155,9 @@ $.plone.overlay.Overlay.prototype = {
     }, options);
 
     // if no url is specified then no loading is needed
-    if (self.options.url === undefined) {
+    if (self.options.el !== undefined) {
       // in case el option is a string we assume its css selector
+      self._el = self.options.el;
       if (typeof(self.options.el) === 'string') {
         self._el = $(self.options.el);
       }
@@ -189,7 +191,7 @@ $.plone.overlay.Overlay.prototype = {
     // use modal_template to create new modal element
     // this should give us enough functionality to do with overlay html
     // whatever we want
-    self._el = self.options.modal_template(self._el);
+    self._el = self.options.modal_template(self._el, self.options.modal_template_options);
 
     // register _el as twitter bootstrap's modal
     self._el.modal($.extend(self.options.modal_options, { show: false }));
@@ -234,12 +236,12 @@ $.plone.overlay.Overlay.prototype = {
       self._el.wrapInner(new_form);
     }
 
-    // $.plone.toolbar integration 
-    if ($.plone.toolbar !== undefined) {
+    // $.plone.iframe integration 
+    if ($.plone.iframe !== undefined) {
       var topFrameHeight = $(window.parent.document).height();
       self._el
         .on('show', function() {
-          $.plone.toolbar.iframe_stretch();
+          $.plone.iframe.stretch();
           $('.dropdown.open a[data-toggle="dropdown"]').dropdown('toggle');
         })
         .on('shown', function() {
@@ -253,7 +255,7 @@ $.plone.overlay.Overlay.prototype = {
         })
         .on('hidden', function() {
           $('body', window.parent.document).height(topFrameHeight);
-          $.plone.toolbar.iframe_shrink();
+          $.plone.iframe.shrink();
         });
     }
 

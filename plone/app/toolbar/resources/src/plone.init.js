@@ -64,9 +64,11 @@ $(document).ready(function() {
 
 // ------------------------------------------------------------------------- //
 
-$.plone.init.register(function(context) {
-      $('.QueryWidget',context).ploneQueryStringWidget();
-});
+if ($.fn.ploneQueryStringWidget !== undefined) {
+  $.plone.init.register(function(context) {
+    $('.QueryWidget',context).ploneQueryStringWidget();
+  });
+}
 
 // # Initialize TinyMCE
 $.plone.init.register(function(context) {
