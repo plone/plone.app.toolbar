@@ -18,5 +18,7 @@
 /parts/
 /var
 /plone.app.toolbar.egg-info/
+/plone/app/toolbar/resources/coverage/
+/plone/app/toolbar/resources/report/
 /src/
 /build/

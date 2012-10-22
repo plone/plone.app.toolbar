@@ -4,16 +4,19 @@ config["plone.app.toolbar"] = {
     rootPath: "../",
     environment: "browser",
     testHelpers: [
-      'test/helper.js'
+      'test/helpers/*.js'
     ],
     resources: [
-      'test/example.css',
-      'test/example.js'
+      'test/resources/*'
     ],
     sources: [
-      'src/iframe.js'
+      'src/*.js'
     ],
     tests: [
-        "test/*-test.js"
+      'test/*-test.js'
+    ],
+    extensions: [
+      require("buster-lint"),
+      require("buster-coverage")
     ]
 };
