@@ -5180,7 +5180,7 @@ a.badge:hover {
   padding-right: 1em;
 }
 #plone-toolbar .navbar-inner .nav > li > a {
-  padding: 10px;
+  padding: 10px 0.5em;
 }
 #plone-toolbar .dropdown-menu a {
   padding: 3px 9px;
