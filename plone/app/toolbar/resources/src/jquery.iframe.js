@@ -45,6 +45,8 @@ $.IFrame.prototype = {
 
     // # on every click we shrink iframe
     $(document).on('click', function(e) {
+      // TODO: we need to generalize all this
+      //
       // in case of clicking on modal background or tinyMCE style dropdown we
       // shouldn't do anything
       if ($.nodeName(e.target, 'html')) {
@@ -61,8 +63,8 @@ $.IFrame.prototype = {
       }
     });
 
-    // # Handle every click on every link inside current frame 
-    // 
+    // # Handle every click on every link inside current frame
+    //
     // Currently script recognizes:
     //  - twitter bootstrap dropdown
     //  - ploneOverlay links
@@ -75,13 +77,13 @@ $.IFrame.prototype = {
         // since we'll be handling this link we prevent any default behaivour
         e.preventDefault();
 
-        // if link has twitter bootstrap dropdown assigned to it then make sure 
+        // if link has twitter bootstrap dropdown assigned to it then make sure
         // current frame gets streched invisibly just in case dropdown goes over
         // the area of top frame.
         if (el.attr('data-toggle') === 'dropdown') {
           self.stretch();
 
-        // TODO: rewrite 
+        // TODO: rewrite
         // if ploneOverlay is registered for currently clicked link then we make
         // sure that iframe is stretched before being open and shrank on closing
         // if none of above conditions is met then open link in top frame or new
@@ -136,6 +138,9 @@ $.IFrame.prototype = {
 
 };
 
-$.iframe = new $.IFrame($(window.parent.iframe[window.name].el));
+if (window.parent.iframe !== undefined && window.name &&
+    window.parent.iframe[window.name] !== undefined) {
+  $.iframe = new $.IFrame($(window.parent.iframe[window.name].el));
+}
 
 }(jQuery));
