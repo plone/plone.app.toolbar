@@ -25,9 +25,9 @@ config["plone.app.toolbar"] = {
     ],
     tests: [
       'test/iframe-test.js',
-      'test/jquery.iframe-test.js'
     ],
     extensions: [
       require("buster-coverage")
-    ]
+    ],
+    "buster-coverage": { combinedResultsOnly: true }
 };

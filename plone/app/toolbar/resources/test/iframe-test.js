@@ -38,15 +38,13 @@ var testCase = buster.testCase,
 
 testCase("iframe.js", {
 
-  // create element which triggers iframe to be created
   setUp: function() {
-    this.timeout = 1000;
+    this.timeout = 5000;
     this.el = createIFrameReadyElement('example',
         'test/example-resource.js;test/example-resource.css',
         '<p>example content</p>');
   },
 
-  // remove iframe and element which triggers iframe to be created
   tearDown: function() {
     $('iframe,[data-iframe]').remove();
   },
@@ -54,176 +52,136 @@ testCase("iframe.js", {
 
   //  --- tests --- //
 
+
   "check html of generated iframe": function(done) {
     window.iframe_initialize();
-    return onLoad(done, window.iframe.example, function() {
+    onLoad(done, window.iframe.example, function() {
+      var iframe_el = $(window.iframe.example.el),
+          iframe_doc = window.iframe.example.document;
 
       assert($('iframe').size() === 1);
 
-      assert($('body').children().size() === 3);
-      assert($('p').size() === 1);
-      assert($('p').html() === 'example content');
+      assert($('body > *', iframe_doc).size() === 3);
+      assert($('p', iframe_doc).size() === 1);
+      assert($('p', iframe_doc).html() === 'example content');
 
-      assert($('link').size() === 1);
-      assert($('link').attr('href') === 'test/example-resource.css');
-      assert($('link').attr('type') === 'text/css');
-      assert($('link').attr('rel') === 'stylesheet');
+      assert($('link', iframe_doc).size() === 1);
+      assert($('link', iframe_doc).attr('href') === 'test/example-resource.css');
+      assert($('link', iframe_doc).attr('type') === 'text/css');
+      assert($('link', iframe_doc).attr('rel') === 'stylesheet');
 
-      assert($('script').size() === 1);
-      assert($('script').attr('src') === 'test/example-resource.js');
-      assert($('script').attr('type') === 'text/javascript');
+      assert($('script', iframe_doc).size() === 1);
+      assert($('script', iframe_doc).attr('src') === 'test/example-resource.js');
+      assert($('script', iframe_doc).attr('type') === 'text/javascript');
 
-      var iframe = window.iframe.example;
-      assert(iframe.attr('frameBorder') === '0');
-      assert(iframe.attr('border') === '0');
-      assert(iframe.attr('allowTransparency') === 'true');
-      assert(iframe.attr('scrolling') === 'no');
-      assert(iframe.attr('id') === 'example');
-      assert(iframe.attr('name') === 'example');
-      assert(iframe.css('height') !== '0px');
+      assert(iframe_el.attr('frameBorder') === '0');
+      assert(iframe_el.attr('border') === '0');
+      assert(iframe_el.attr('allowTransparency') === 'true');
+      assert(iframe_el.attr('scrolling') === 'no');
+      assert(iframe_el.attr('id') === 'example');
+      assert(iframe_el.attr('name') === 'example');
+      assert(iframe_el.css('height') !== '0px');
 
-      assert(iframe.el === $('iframe'));
+      assert(iframe_el[0] === $('iframe[name="example"]')[0]);
 
       // TODO: test updateOption method
       // TODO: test add method
     });
-  }
+  },
 
-  /*
+  "less resources": function(done) {
+    createIFrameReadyElement('example2', 'test/example-resource.less');
+    window.iframe_initialize();
+    onLoad(done, window.iframe.example2, function() {
+      assert($('iframe').size() === 2);
+
+      var iframe_doc = window.iframe.example2.document;
+      assert($('link', iframe_doc).size() === 1);
+      assert($('link', iframe_doc).attr('href') === 'test/example-resource.less');
+      assert($('link', iframe_doc).attr('type') === 'text/less');
+      assert($('link', iframe_doc).attr('rel') === 'stylesheet');
+    });
+  },
 
   "height of empty iframe should be 0px": function(done) {
-    var el = createIFrameReadyElement('example2', '', '');
-
+    createIFrameReadyElement('example2', '', '');
     window.iframe_initialize();
-
-    var iframe = document.getElementsByName('example2')[0];
-
-    function on_load() {
-      if (window.iframe.example2.loaded === true) {
-        assert(iframe.getAttribute('style').indexOf('height:0px') !== -1);
-        el.parentNode.removeChild(el);
-        done();
-        return;
-      }
-      window.setTimeout(on_load, 23);
-      return;
-    }
-    on_load();
+    onLoad(done, window.iframe.example2, function() {
+      assert($(window.iframe.example2.el).css('height') === '0px');
+    });
   },
 
-  "2 elements gets content into DIFFERENT iframe": function() {
-    var el = createIFrameReadyElement('example3',
+  "2 elements gets content into DIFFERENT iframe": function(done) {
+    createIFrameReadyElement('example3',
         'test/example-resource.js;test/example-resource.css',
             '<p>example content</p>');
-
     window.iframe_initialize();
-
-    assert(document.getElementsByTagName('iframe').length === 2);
-
-    el.parentNode.removeChild(el);
+    onLoad(done, window.iframe.example3, function() {
+      assert($('iframe').size() === 2);
+    });
   },
 
-  "2 elements gets content into SAME iframe": function() {
-    var el = createIFrameReadyElement('example',
+  "2 elements gets content into SAME iframe": function(done) {
+    createIFrameReadyElement('example',
         'test/example-resource.js;test/example-resource.css',
             '<p>example content</p>');
-
     window.iframe_initialize();
-
-    assert(document.getElementsByTagName('iframe').length === 1);
-
-    el.parentNode.removeChild(el);
+    onLoad(done, window.iframe.example, function() {
+      assert($('iframe').size() === 1);
+    });
   },
 
   "Bottom-aligned iFrame does not add to height": function(done) {
-    var el1 = createIFrameReadyElement('example_top',
+    createIFrameReadyElement('example_top',
         'test/example-resource.js;test/example-resource.css',
             "<p>I'm on top of the world!</p>",
-            { 'alignment': 'top' });
-
-    var el2 = createIFrameReadyElement('example_bottom',
+            { 'data-iframe-position': 'top' });
+    createIFrameReadyElement('example_bottom',
         'test/example-resource.js;test/example-resource.css',
             "<p>I'm.......<br/><br/><br/>Not.</p>",
-            { 'alignment': 'bottom' });
-
+            { 'data-iframe-position': 'bottom' });
     window.iframe_initialize();
+    onLoad(done, [window.iframe.example_top, window.iframe.example_bottom],
+        function() {
 
-    var iframes = document.getElementsByTagName('iframe');
+        assert($('iframe').size() === 3);
 
-    function on_load() {
-      if (window.iframe.example_top.loaded === true &&
-          window.iframe.example_bottom.loaded === true) {
+        assert(window.iframe.example_top.el.offsetHeight <
+               window.iframe.example_bottom.el.offsetHeight);
 
-        assert(iframes.length === 3);
-        assert(iframes.example_top.offsetHeight < iframes.example_bottom.offsetHeight);
-        assert(iframes.example_top.offsetHeight + 'px' === document.body.style.marginTop);
+        assert(window.iframe.example_top.el.offsetHeight + 'px' ===
+               $('body').css('margin-top'));
+        assert(window.iframe.example_bottom.el.offsetHeight + 'px' ===
+               $('body').css('margin-bottom'));
 
-        el1.parentNode.removeChild(el1);
-        el2.parentNode.removeChild(el2);
-
-        done();
-        return;
       }
-      window.setTimeout(on_load, 23);
-      return;
-    }
-    on_load();
+    );
   },
 
   "CSS Styles only apply to inner document": function(done) {
-    var el1 = createIFrameReadyElement('example_pink', '',
+    createIFrameReadyElement('example_pink', '',
             "<h1>I'm a pink title</h1>",
-            { 'data-iframe-docstyles': 'h1 { background-color: pink; }' });
-
+            { 'data-iframe-styles': 'h1 { background-color: pink; }' });
     window.iframe_initialize();
-
-    var iframes = document.getElementsByTagName('iframe');
-
-    function on_load() {
-      if (window.iframe.example_pink.loaded === true) {
-
-        assert(iframes.length === 2);
-        assert(
-            $('h1').css('background-color') !==
-            $('h1', iframes.example_pink.contentWindow.document)
-                .css('background-color'));
-
-        el1.remove();
-
-        done();
-        return;
-      }
-      window.setTimeout(on_load, 23);
-      return;
-    }
-    on_load();
+    onLoad(done, window.iframe.example_pink, function() {
+      assert($('iframe').size() === 2);
+      assert(
+          $('h1').css('background-color') !==
+          $('h1', window.iframe.example_pink.document)
+              .css('background-color'));
+    });
   },
 
   "extra attributes passed via url": function(done) {
-    var el1 = createIFrameReadyElement('example2',
-        'test/example-resource.js?data-main="example3"');
-
+    createIFrameReadyElement('example2',
+        'test/example-resource.js?data-main="example";');
     window.iframe_initialize();
-
-    var iframes = document.getElementsByTagName('iframe');
-
-    function on_load() {
-      if (window.iframe.example2.loaded === true) {
-
-        assert(iframes.length === 2);
-        console.log('test');
-
-        el1.parentNode.removeChild(el1);
-
-        done();
-        return;
-      }
-      window.setTimeout(on_load, 23);
-      return;
-    }
-    on_load();
+    onLoad(done, window.iframe.example2, function() {
+      assert($('iframe').size() === 2);
+      assert($('script', window.iframe.example2.document).attr('data-main') === 'example');
+    });
   }
-?*/
+
 });
 
 }(jQuery));

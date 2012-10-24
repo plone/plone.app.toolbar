@@ -44,15 +44,33 @@ function createIFrameReadyElement(name, resources, content, extra) {
         }, extra));
 }
 
-function onLoad(done, iframe, callable) {
+function onLoad(done, iframes, callable) {
   "use strict";
+  var iframes_loaded;
 
   function onLoadInner() {
-    if (iframe.loaded === true) {
-      done(callable.call);
+
+    if (iframes.loaded !== undefined) {
+      iframes_loaded = iframes.loaded;
+    } else {
+      iframes_loaded = true;
+      $.each(iframes, function(i, iframe) {
+        if (iframe.loaded === false) {
+          iframes_loaded = false;
+          return;
+        }
+      });
+    }
+
+    if (iframes_loaded === true) {
+      callable();
+      done();
       return;
     }
+
     window.setTimeout(onLoadInner, 23);
+    return;
   }
+
   onLoadInner();
 }

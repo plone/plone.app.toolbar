@@ -49,59 +49,10 @@ window.IFrame.prototype = {
     self.updateOption(el, 'title', '');
     self.updateOption(el, 'doctype', '<!doctype html>');
     self.updateOption(el, 'style', '');
-    self.updateOption(el, 'alignment', 'top');
+    self.updateOption(el, 'position', 'top');
+    self.updateOption(el, 'resources', '');
+    self.updateOption(el, 'styles', '');
 
-    // get resources (js/css/less)
-    var resources = el.getAttribute('data-iframe-resources');
-
-    if (resources) {
-      resources = resources.split(';');
-      for (var i = 0; i < resources.length; i += 1) {
-        var url = resources[i].replace(/^\s+|\s+$/g, ''),
-            resource = '', attrs = {};
-
-        if (url.indexOf('#') !== -1) {
-          var url2 = url.slice(url.indexOf('#') + 1, url.length).split('&');
-          for (var j = 0; j < url2.length; j += 1) {
-            attr = url2[j].split('=');
-            attrs[attr[0]] = attr[1];
-          }
-          url = url.slice(0, url.indexOf('#'));
-        }
-
-        if (url.slice(-3) === '.js') {
-          resource = document.createElement('script');
-          resource.src = url;
-          resource.type = 'text/javascript';
-          resource.async = false;
-        } else if (url.slice(-4) === '.css') {
-          resource = document.createElement('link');
-          resource.href = url;
-          resource.type = 'text/css';
-          resource.rel = 'stylesheet';
-        } else if (url.slice(-5) === '.less') {
-          resource = document.createElement('link');
-          resource.href = url;
-          resource.type = 'text/less';
-          resource.rel = 'stylesheet';
-        }
-
-        if (resource !== '') {
-          for (attr in attrs) {
-            resource.setAttribute(attr, attrs[attr]);
-          }
-          self.resources += resource.outerHTML;
-        }
-      }
-    }
-    // get manual CSS styles
-    var styles = el.getAttribute('data-iframe-docstyles');
-    if (styles) {
-      var style_node = document.createElement('style');
-      style_node.type = "text/css";
-      style_node.textContent = styles;
-      self.resources += style_node.outerHTML;
-    }
   },
   updateOption: function(el, name, _default) {
     var self = this,
@@ -110,8 +61,57 @@ window.IFrame.prototype = {
       option_name = 'data-iframe';
     }
     var value = el.getAttribute(option_name);
-    if (name === 'data-iframe-resources') {
-      value = value.split(';');
+    if (name === 'resources') {
+      if (value) {
+        value = value.split(';');
+        for (var i = 0; i < value.length; i += 1) {
+          var url = value[i].replace(/^\s+|\s+$/g, ''),
+              resource = '', attrs = {}, attr;
+
+          if (url.indexOf('?') !== -1) {
+            var url2 = url.slice(url.indexOf('?') + 1, url.length).split('&');
+            for (var j = 0; j < url2.length; j += 1) {
+              attr = url2[j].split('=');
+              if (attr[1][0] === "\"" || attr[1][0] === "'") {
+                attr[1] = attr[1].slice(1, attr[1].length - 1);
+              }
+              attrs[attr[0]] = attr[1];
+            }
+            url = url.slice(0, url.indexOf('?'));
+          }
+
+          if (url.slice(-3) === '.js') {
+            resource = document.createElement('script');
+            resource.src = url;
+            resource.type = 'text/javascript';
+            resource.async = false;
+          } else if (url.slice(-4) === '.css') {
+            resource = document.createElement('link');
+            resource.href = url;
+            resource.type = 'text/css';
+            resource.rel = 'stylesheet';
+          } else if (url.slice(-5) === '.less') {
+            resource = document.createElement('link');
+            resource.href = url;
+            resource.type = 'text/less';
+            resource.rel = 'stylesheet';
+          }
+
+          if (resource !== '') {
+            for (attr in attrs) {
+              resource.setAttribute(attr, attrs[attr]);
+            }
+            self.resources += resource.outerHTML;
+          }
+        }
+      }
+    } else if (name === 'styles') {
+      if (value) {
+        var style_node = document.createElement('style');
+        style_node.type = "text/css";
+        style_node.textContent = value;
+        self.resources += style_node.outerHTML;
+      }
     }
     if (value) {
       self.options[name] = value;
@@ -177,23 +177,29 @@ window.IFrame.prototype = {
         'position:absolute;left:0px;position:fixed;overflow:hidden;' +
         'width:100%;background-color:transparent;z-index:500;' +
         self.options.style);
-    if(self.options.alignment === 'top') {
-        self.el.setAttribute('style', self.el.getAttribute('style') +
-            'top:0px;');
-    } if(self.options.alignment === 'bottom') {
-        self.el.setAttribute('style', self.el.getAttribute('style') +
-            'bottom:0px;');
-    }
+
     self.el.setAttribute('style', self.el.getAttribute('style') +
         'height:' + self.document.body.offsetHeight + 'px;');
+
     self.document.body.setAttribute('style',
         (self.document.body.getAttribute('style') || '') +
         'background:transparent;');
-    if(self.options.alignment === 'top') {
-      document.body.setAttribute('style',
-          (document.body.getAttribute('style') || '') +
-          ';border-top:0' +
-          ';margin-top:' + self.el.offsetHeight + 'px;');
+
+    if (self.options.position === 'top') {
+        self.el.setAttribute('style', self.el.getAttribute('style') +
+            'top:0px;');
+        document.body.setAttribute('style',
+            (document.body.getAttribute('style') || '') +
+            ';border-top:0' +
+            ';margin-top:' + self.el.offsetHeight + 'px;');
+
+    } else if(self.options.position === 'bottom') {
+        self.el.setAttribute('style', self.el.getAttribute('style') +
+            'bottom:0px;');
+        document.body.setAttribute('style',
+            (document.body.getAttribute('style') || '') +
+            ';border-bottom:0' +
+            ';margin-bottom:' + self.el.offsetHeight + 'px;');
     }
   }
 };
