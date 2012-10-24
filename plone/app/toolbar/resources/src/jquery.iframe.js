@@ -33,6 +33,20 @@
 (function($, undefined) {
 "use strict";
 
+// TODO: need find place to implement action for below conditions
+//
+// if ($.nodeName(e.target, 'html')) {
+//   self.shrink();
+//
+// if ($(e.target).parents('body').size() === 0 ||
+//        $(e.target).parents('.mceMenuItem').size() === 1 ||
+//        $(e.target).hasClass('modal-backdrop')) {
+//   e.preventDefault();
+//   e.stopPropagation();
+//
+// if (el.attr('data-toggle') === 'dropdown') {
+//   self.stretch();
+
 $.IFrame = function(iframe) { this._init(iframe); };
 $.IFrame.prototype = {
 
@@ -75,11 +89,11 @@ $.IFrame.prototype = {
 
   // Abstract calls to window.parent so its easier to stub/mock in tests
   _window_location: function(url) {
-    //window.parent.location.href = url;
+    window.parent.location.href = url;
   },
 
   _window_open: function(url) {
-    //window.parent.open(url);
+    window.parent.open(url);
   },
 
   // # Shrink IFrame Object
