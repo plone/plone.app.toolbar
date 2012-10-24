@@ -1,4 +1,4 @@
-// This plugin is used to handle all clicks inside toolbar iframe.
+// This plugin is used to handle all clicks inside iframe.
 //
 // @author Rok Garbas
 // @version 1.0
@@ -33,71 +33,53 @@
 (function($, undefined) {
 "use strict";
 
-$.IFrame = function(el) { this._init(el); };
+$.IFrame = function(iframe) { this._init(iframe); };
 $.IFrame.prototype = {
 
   // # Initialization
-  _init: function(el) {
+  _init: function(iframe) {
     var self = this;
 
-    self.el = el;
+    self.el = iframe.el;
+    self.iframe = iframe;
     self.state = null;
+    self.clickActions = [];
 
-    // # on every click we shrink iframe
+    // # Handle clicks inside iframe
     $(document).on('click', function(e) {
-      // TODO: we need to generalize all this
-      //
-      // in case of clicking on modal background or tinyMCE style dropdown we
-      // shouldn't do anything
-      if ($.nodeName(e.target, 'html')) {
-        self.shrink();
-      } else {
-        if ($(e.target).parents('body').size() === 0 ||
-            $(e.target).parents('.mceMenuItem').size() === 1 ||
-            $(e.target).hasClass('modal-backdrop')) {
-          e.preventDefault();
-          e.stopPropagation();
-        } else {
-          self.shrink();
+      var el = $(e.target),
+          condition = false;
+
+      // see if there is any link action registered to handle this click
+      $.each(self.clickActions, function(i, item) {
+        condition = item[0].apply(this, [e, self]);
+        if (condition === true) {
+          item[1].apply(this, [e, self]);
+          return;
         }
-      }
-    });
+      });
 
-    // # Handle every click on every link inside current frame
-    //
-    // Currently script recognizes:
-    //  - twitter bootstrap dropdown
-    //  - ploneOverlay links
-    $('a').on('click', function(e) {
-
-      // only handle left(1) and right(2) click
-      if (e.which === 1 || e.which === 2) {
-        var el = $(this);
-
-        // since we'll be handling this link we prevent any default behaivour
-        e.preventDefault();
-
-        // if link has twitter bootstrap dropdown assigned to it then make sure
-        // current frame gets streched invisibly just in case dropdown goes over
-        // the area of top frame.
-        if (el.attr('data-toggle') === 'dropdown') {
-          self.stretch();
-
-        // TODO: rewrite
-        // if ploneOverlay is registered for currently clicked link then we make
-        // sure that iframe is stretched before being open and shrank on closing
-        // if none of above conditions is met then open link in top frame or new
-        // window in case right button was used
-        } else if (el.data('plone-overlay') === undefined) {
+      // if no condition was met then handle click in top frame
+      if (condition === false) {
+        if ($.nodeName(el[0], 'a')) {
           if (e.which === 1) {
-            window.parent.location.href = el.attr('href');
-          } else {
-            window.parent.open(el.attr('href'));
+            self._window_location(el.attr('href'));
+          } else if (e.which === 2) {
+            self._window_open(el.attr('href'));
           }
         }
       }
-    });
 
+    });
+  },
+
+  // Abstract calls to window.parent so its easier to stub/mock in tests
+  _window_location: function(url) {
+    //window.parent.location.href = url;
+  },
+
+  _window_open: function(url) {
+    //window.parent.open(url);
   },
 
   // # Shrink IFrame Object
@@ -120,18 +102,15 @@ $.IFrame.prototype = {
     if (self.state === null) {
       self.state = {};
       self.state.height = self.el.height();
-      if (self.el.css('position') === 'fixed') {
-        self.el.top = 0;
-        self.el.left = 0;
-      } else {
-        var offset = self.el.offset();
-        self.el.top = offset.top;
-        self.el.left = offset.left;
-      }
+
+      var offset = self.el.offset();
+      self.el.top = offset.top;
+      self.el.left = offset.left;
+
       self.el.css({
-        height: $(window.parent.document).height(),
         top: 0,
-        left: 0
+        left: 0,
+        height: $(window.parent.document).height()
       });
     }
   }
@@ -140,7 +119,7 @@ $.IFrame.prototype = {
 
 if (window.parent.iframe !== undefined && window.name &&
     window.parent.iframe[window.name] !== undefined) {
-  $.iframe = new $.IFrame($(window.parent.iframe[window.name].el));
+  $.iframe = new $.IFrame($(window.parent.iframe[window.name]));
 }
 
 }(jQuery));

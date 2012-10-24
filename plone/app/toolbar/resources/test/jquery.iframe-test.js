@@ -40,7 +40,10 @@ testCase("jquery.iframe.js", {
 
   // create element which triggers iframe to be created
   setUp: function() {
-    $.iframe = new $.IFrame($('<div>some</div>').appendTo('body'));
+    $.iframe = new $.IFrame({
+      el: $('<div><p>some</p><a href="#">some link</a></div>').appendTo('body'),
+      position: 'top'
+    });
   },
 
   // remove iframe and element which triggers iframe to be created
@@ -64,7 +67,35 @@ testCase("jquery.iframe.js", {
     $.iframe.shrink();
 
     assert(initial_height === $.iframe.el.height());
+  },
+
+  "defult handling of clicks inside iframe": function() {
+    var stub_location = this.stub($.iframe, '_window_location'),
+        stub_open = this.stub($.iframe, '_window_open');
+
+    stub_location.returns(1);
+    stub_open.returns(1);
+
+    $('a', $.iframe.el).trigger({ type: 'click', which: 1 });  // left click
+    $('a', $.iframe.el).trigger({ type: 'click', which: 2 });  // middle click
+
+    assert.calledOnceWith(stub_location, '#');
+    assert.calledOnceWith(stub_open, '#');
+    assert.callOrder(stub_location, stub_open);
+  },
+
+  "custom handling of clicks inside iframe": function() {
+    $.iframe.clickActions.push([
+      function(e, iframe) {  // condition
+        return true;
+      },
+      function(e, iframe) {  // action
+        assert(true);
+      }
+    ]);
+    $('p', $.iframe.el).trigger({ type: 'click' });
   }
+
 
 
 });
