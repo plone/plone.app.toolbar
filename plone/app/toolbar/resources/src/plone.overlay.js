@@ -1,11 +1,14 @@
-// Plone Overlay
-// =============
+// overlay for plone based on bootstrap modal
 //
 // Author: Rok Garbas
 // Contact: rok@garbas.si
 // Version: 1.0
 // Depends:
 //    ++resource++plone.app.jquery.js
+//    ++resource++plone.app.toolbar/lib/jquery.form.js
+//    ++resource++plone.app.toolbar/src/plone.init.js
+//    (optional)++resource++plone.app.toolbar/src/jquery.iframe.js
+//    (optional)++resource++plone.app.toolbar/src/jquery.mask.js
 //
 // Description: 
 //    This script is used to provide glue code between iframe and twitter
@@ -36,47 +39,49 @@
 /*global tinyMCE:false, TinyMCEConfig:false, jQuery:false */
 
 
-(function($) {
+(function($, undefined) {
 "use strict";
 
-// # Namespace
+
+// Reserve namespace
 $.plone = $.plone || {};
 $.plone.overlay = $.plone.overlay || {};
 
 
-// # Overlay Class Definition 
-$.plone.overlay.Overlay = function(options) { this._init(options); };
-$.plone.overlay.Overlay.prototype = {
-  _init: function(options) {
-    var self = this;
+// Defaults
+$.plone.overlay.defaults = {
+  window: window.parent,
+  document: window.parent.document,
+  mask: $.mask || undefined,
+  urlPrefix: '++unthemed++',
 
-    self.options = $.extend(true, {
-      url_rewrite: function(url) {
-        // remove hash part of url
-        url = (url.match(/^([^#]+)/)||[])[1];
-        if (url.indexOf('http') === 0) {
-          return url.replace(/^(https?:\/\/[^\/]+)\/(.*)/, '$1/++unthemed++/$2');
-        } else if (url.indexOf('/') === 0) {
-          return window.location.protocol + '//' +
-                 window.location.host + '/++unthemed++' + url;
-        } else {
-          return window.location.protocol + '//' +
-                 window.location.host + '/++unthemed++' +
-                 window.location.pathname + '/' + url;
-        }
-      },
-      modal_template_options: {
-          title: 'h1.documentFirstHeading',
-          body: '#content',
-          footer: '.formControls',
-          cancel: 'input[name="buttons.cancel"],' +
-                'input[name="form.button.Cancel"],' +
-                'input[name="form.button.cancel"],' +
-                'input[name="form.actions.cancel"],' +
-                '.modal-header [data-dismiss="modal"]'
-      },
-      modal_template: function(content, options) {
-        var el = $('' +
+  // hooks
+  onInit: undefined,
+  onBeforeLoad: undefined,
+  onLoad: undefined,
+  onShow: undefined,
+  onHide: undefined,
+  onDestroy: undefined,
+
+  // adding prefix to url (after domain part)
+  addPrefixToURL: function(url, prefix) {
+    // TODO: we should add it after plone site url (head>base)
+    if (url.indexOf('http') === 0) {
+      return url.replace(/^(https?:\/\/[^\/]+)\/(.*)/, '$1/++unthemed++/$2');
+    } else if (url.indexOf('/') === 0) {
+      return window.location.protocol + '//' +
+              window.location.host + '/++unthemed++' + url;
+    } else {
+      return window.location.protocol + '//' +
+              window.location.host + '/++unthemed++' +
+              window.location.pathname + '/' + url;
+    }
+  },
+
+  // template for overlay
+  modalTemplate: function(content, options) {
+    var self = this,
+        el = $('' +
           '<div class="modal fade">' +
           '  <div class="modal-header">' +
           '    <a class="close" data-dismiss="modal">&times;</a>' +
@@ -85,131 +90,161 @@ $.plone.overlay.Overlay.prototype = {
           '  <div class="modal-body">Content</div>' +
           '  <div class="modal-footer">Buttons</div>' +
           '</div>'),
-          title = $('.modal-header > h3', el),
-          body = $('.modal-body', el),
-          footer = $('.modal-footer', el);
+        title = $('.modal-header > h3', el),
+        body = $('.modal-body', el),
+        footer = $('.modal-footer', el);
 
-        // Merge options
-        options = $.extend(self.options.modal_template_options, options || {});
+    // Merge options
+    options = $.extend({
+      title: 'h1.documentFirstHeading',
+      body: '#content',
+      footer: '.formControls',
+      cancel: 'input[name="buttons.cancel"],' +
+            'input[name="form.button.Cancel"],' +
+            'input[name="form.button.cancel"],' +
+            'input[name="form.actions.cancel"],' +
+            '.modal-header [data-dismiss="modal"]'
+    } , options || {});
 
-        // Title
-        title.html($(options.title, content).html());
+    // Title
+    title.html($(options.title, content).html());
 
-        // Footer
-        footer.html($(options.footer, content).html());
+    // Footer
+    footer.html($(options.footer, content).html());
 
-        // Content
-        body.html($(options.body, content).html());
-        $(options.title, body).remove();
-        $(options.footer, body).remove();
+    // Content
+    body.html($(options.body, content).html());
+    $(options.title, body).remove();
+    $(options.footer, body).remove();
 
-        // Cancel buttons
-        $(options.cancel, el).on('click', function(e) {
-          if (self.options.cancel !== undefined) {
-            self.options.cancel.apply(self, [ e, $(this) ]);
-          } else {
-            self.destroy();
-          }
-        });
+    // Cancel buttons
+    $(options.cancel, el).on('click', function(e) {
+      self.destroy();
+    });
 
-        return el;
-      },
-      modal_options: {
-        backdrop: 'static',
-        keyboard: true,
-        dynamic: true
-      },
-      form: 'form#form,form[name="edit_form"]',
-      form_options: {
-        beforeSerialize: function(form, options) {
-          // save tinymce text to textarea
-          var textarea = $('.mce_editable', form),
-              textarea_id = textarea.attr('id');
-          if (textarea.size() !== 0 &&
-              tinyMCE.editors[textarea_id] !== undefined) {
-            tinyMCE.editors[textarea_id].save();
-            tinyMCE.editors[textarea_id].remove();
-          }
-        },
-        success: function(response, state, xhr, form) {
-          var old_el = self._el,
-              response_body = $('<div/>').html(
-                  (/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[1]);
+    return el;
+  },
 
-          if ($('dl.portalMessage.error', response_body).size() !== 0) {
-            self._el = response_body;
-            if (self.options.el !== undefined) {
-              self._el = $(self.options.el, self._el);
-            }
-            old_el.remove();
-            self._init_el();
-            self.show();
-          } else {
-            if (self.options.save !== undefined) {
-              self.options.save.apply(self, [ response_body, state, xhr, form ]);
-            }
-          }
-        }
-      },
-      mask: $.plone.mask || false
-    }, options);
+  // FIXME
+  modalOptions: {
+    backdrop: 'static',
+    keyboard: true,
+    dynamic: true
+  },
 
-    // if no url is specified then no loading is needed
-    if (self.options.el !== undefined) {
-      // in case el option is a string we assume its css selector
-      self._el = self.options.el;
-      if (typeof(self.options.el) === 'string') {
-        self._el = $(self.options.el);
+  // FIXME
+  form: 'form#form,form[name="edit_form"]',
+
+  // FIXME
+  form_options: {
+    beforeSerialize: function(form, options) {
+      // save tinymce text to textarea
+      var textarea = $('.mce_editable', form),
+          textarea_id = textarea.attr('id');
+      if (textarea.size() !== 0 &&
+          tinyMCE.editors[textarea_id] !== undefined) {
+        tinyMCE.editors[textarea_id].save();
+        tinyMCE.editors[textarea_id].remove();
       }
-      self._init_el();
+    },
+    success: function(response, state, xhr, form) {
+      var oldel = self.el,
+          response_body = $('<div/>').html(
+              (/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[1]);
+
+      if ($('dl.portalMessage.error', response_body).size() !== 0) {
+        self.el = response_body;
+        if (self.options.el !== undefined) {
+          self.el = $(self.options.el, self.el);
+        }
+        oldel.remove();
+        self._initel();
+        self.show();
+      } else {
+        if (self.options.save !== undefined) {
+          self.options.save.apply(self, [ response_body, state, xhr, form ]);
+        }
+      }
+    }
+  }
+
+};
+
+
+// Constructor
+$.plone.overlay.Constructor = function(options) { this._init(options); };
+$.plone.overlay.Constructor.prototype = {
+  _init: function(options) {
+    var self = this;
+
+    // define custom options
+    self.options = $.extend(true, $.plone.overlay.defaults, options);
+
+    // if element already exists not loading of document is needed
+    if (self.options.el !== undefined) {
+      self.el = self.options.el.length ? self.options.el : $(self.options.el);
+      self._initElement();
 
     // if url is specified this mean we'll want to load html from that url
     } else {
-      self._el = function(action) {
+      self.el = function(action) {
         var self = this;
-        if (self.options.load !== undefined) {
-          self.options.load.call(self);
+
+        // before ajax request hook
+        if (self.options.onBeforeLoad) {
+          self.options.onBeforeLoad.call(self);
         }
-        $.get(self.options.url_rewrite(self.options.url), function(response) {
-          self._el = $('<div/>').html(
-              (/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[1]);
-          if (self.options.el !== undefined) {
-            self._el = $(self.options.el, self.options.el);
+
+        // remove hash part of url and append prefix to url, eg.
+        //   convert -> http://example.com/something
+        //   into    -> http://example.com/++unthemed++/something
+        var url = $.plone.overlay.addPrefixToURL(
+              (self.options.url.match(/^([^#]+)/) || [])[1],
+              self.options.urlPrefix);
+
+        // do ajax request with prefixed url
+        $.get(url, function(response) {
+
+          // from response get content of body
+          self.el = $('<div/>').html((/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[1]);
+
+          // after ajax request hook
+          if (self.options.onLoad) {
+            self.options.onLoad.call(self);
           }
-          if (self.options.loaded !== undefined) {
-            self.options.loaded.call(self);
-          }
-          self._init_el();
-          self._action(action);
+
+          self._initElement();
         });
       };
     }
-  },
-  _init_el: function() {
+  },  
+
+  _initElement: function() {
     var self = this;
 
-    // use modal_template to create new modal element
-    // this should give us enough functionality to do with overlay html
-    // whatever we want
-    self._el = self.options.modal_template(self._el, self.options.modal_template_options);
+    // use modalTemplate to create new modal element
+    self.el = self.options.modalTemplate.apply(self, [ self.el ]);
 
-    // register _el as twitter bootstrap's modal
-    self._el.modal($.extend(self.options.modal_options, { show: false }));
+    self.el.modal($.extend(self.options.modal_options, { show: false }));
 
     // disable all clicks on modal
-    self._el.on('click', function(e) {
+    self.el.on('click', function(e) {
       var target = $(e.target);
-      if (!target.hasClass("allowDefault")) {
-        if (target.parents(".allowDefault").length === 0 &&
-            target.attr('type') !== 'file' &&
-            target.attr('type') !== 'checkbox') {
-          e.preventDefault();
-        }
-      }
+
       e.stopPropagation();
 
-      if (self.options.form !== false) {
-        var form = $(self.options.form, self._el);
+      // we prevent all clicks inside overlay except:
+      //  - ones who we explicitly mark with allowDefault class
+      //  - file and checkbox input elements
+      if (target.parents(".allowDefault").length === 0 &&
+          target.attr('type') !== 'file' &&
+          target.attr('type') !== 'checkbox') {
+        e.preventDefault();
+      }
+
+      // we use jquery.form.js to submit any form via ajax
+      if (self.options.formButtons) {
+        var form = $(self.options.form, self.el);
         if ( form.size() !== 0  &&
             $.nodeName(e.target, 'input') &&
             $(e.target).attr('type') === 'submit') {
@@ -223,8 +258,9 @@ $.plone.overlay.Overlay.prototype = {
       }
     });
 
+    // FIXME
     // check if there is form and instantiate ajaxForm
-    var form = $(self.options.form, self._el);
+    var form = $(self.options.form, self.el);
     if (form.size() !== 0) {
 
       var new_form = $('<form/>');
@@ -233,35 +269,37 @@ $.plone.overlay.Overlay.prototype = {
       });
 
       form.children().first().unwrap();
-      self._el.wrapInner(new_form);
+      self.el.wrapInner(new_form);
     }
 
-    // $.plone.iframe integration 
-    if ($.plone.iframe !== undefined) {
-      var topFrameHeight = $(window.parent.document).height();
-      self._el
+    // FIXME
+    // $.iframe integration
+    if ($.iframe !== undefined) {
+      var topFrameHeight = $(self.options.document).height();
+      self.el
         .on('show', function() {
-          $.plone.iframe.stretch();
+          $.iframe.stretch();
           $('.dropdown.open a[data-toggle="dropdown"]').dropdown('toggle');
         })
         .on('shown', function() {
-          if (self._el.parents('.modal-wrapper').height() > topFrameHeight) {
-            $('body', window.parent.document).height(
-                self._el.parents('.modal-wrapper').height() +
-                self._el.parents('.modal-wrapper').offset().top);
-            self._el.parents('.modal-backdrop').height(
-                $(window.parent).height());
+          if (self.el.parents('.modal-wrapper').height() > topFrameHeight) {
+            $('body', self.options.document).height(
+                self.el.parents('.modal-wrapper').height() +
+                self.el.parents('.modal-wrapper').offset().top);
+            self.el.parents('.modal-backdrop').height(
+                $(self.options.window).height());
           }
         })
         .on('hidden', function() {
-          $('body', window.parent.document).height(topFrameHeight);
-          $.plone.iframe.shrink();
+          $('body', self.options.document).height(topFrameHeight);
+          $.plone.shrink();
         });
     }
 
+    // FIXME: maybe not needed
     // bind events passes with twitter bootstrap's modal events
     $.each(['show', 'shown', 'hide', 'hidden'], function(i, name) {
-      self._el.on(name, function() {
+      self.el.on(name, function() {
         if (self.options[name] !== undefined) {
           self.options[name].call(self);
         }
@@ -269,93 +307,113 @@ $.plone.overlay.Overlay.prototype = {
     });
 
     // initialize element's javascript widgets
-    self._el.appendTo($('body'));
-    self._el.ploneInit();
+    self.el.appendTo($('body'));
+    self.el.ploneInit();
 
     // scrolling
-    $(window.parent.document).scroll(function () {
-      if (typeof(self._el) === 'object' && self._el.size() === 1) {
-        var modal = self._el.parents('.modal-backdrop');
+    $(self.options.document).scroll(function () {
+      if (typeof(self.el) === 'object' && self.el.size() === 1) {
+        var modal = self.el.parents('.modal-backdrop');
         modal.css({
-          'top': -1 * $(window.parent.document).scrollTop(),
-          'height': $(window.parent.document).scrollTop() + modal.height()
+          'top': -1 * $(self.options.document).scrollTop(),
+          'height': $(self.options.document).scrollTop() + modal.height()
         });
         if ($.plone.tinymce !== undefined && $.plone.tinymce.menuStylePosition === undefined) {
             $.plone.tinymce.menuStylePosition = $('.mceMenu').parent().offset().top;
             $('.mceMenu').parent().css('top',
                 $.plone.tinymce.menuStylePosition -
-                $(window.parent.document).scrollTop());
+                $(self.options.document).scrollTop());
         }
         //modal.modal('show');  // this will make sure backdrop is fully sized
       }
     });
 
-    if (self.options.init !== undefined) {
-      self.options.init.call(self);
+    if (self.options.onInit) {
+      self.options.onInit.call(self);
     }
   },
+
   _action: function(action) {
     var self = this;
 
-    // if _el is a function then we call _action back
-    if (typeof(self._el) === 'function') {
-      self._el(action);
+    // if el is a function then we call _action back
+    // FIXME: is this even used still
+    if (typeof(self.el) === 'function') {
+      self.el(action);
 
     // trigger show/hide action of modal
     } else {
-      self._el.modal(action);
+      self.el.modal(action);
     }
 
     return self;
   },
+
   show: function() {
-    return this._action('show');
+    var self = this;
+    if (self.options.onShow) {
+      self.options.onShow.apply(self);
+    }
+    return self._action('show');
   },
+
   hide: function() {
-    return this._action('hide');
+    var self = this;
+    if (self.options.onHide) {
+      self.options.onHide.apply(self);
+    }
+    return self._action('hide');
   },
+
   destroy: function() {
     var self = this;
     self.hide();
-    self._el.remove();
-    self._init(self.options);
+    if (self.options.onDestroy) {
+      self.options.onDestroy.apply(self);
+    }
+    self.el.remove();
   }
+
 };
 
 
-// # jQuery Integration 
+// jQuery Integration
 $.fn.ploneOverlay = function (options) {
-  if ($(this).size() === 0) { return; }
+  var el = $(this);
 
-  $(this).each(function(i, el) {
-    el = $(el);
-    var data = el.data('plone-overlay');
+  if (el.size() !== 1) { return; }
 
-    if (data === undefined) {
-      var defaults = { el: el };
-      if ($.nodeName(el[0], 'a')) {
-        defaults = { url: el.attr('href') };
-        if (el.attr('rel')) {
-          defaults[el] = el.attr('rel');
-        }
+  var data = el.data('plone-overlay');
+
+  if (data === undefined) {
+    var defaults = { el: el };
+
+    if ($.nodeName(el[0], 'a')) {
+      defaults = { url: el.attr('href') };
+      if (el.attr('rel')) {
+        defaults[el] = el.attr('rel');
       }
-
-      data = new $.plone.overlay.Overlay($.extend({}, defaults, options));
-
-      if ($.nodeName(el[0], 'a')) {
-        el.on('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          data.show();
-        });
-      }
-
-      el.data('plone-overlay', data);
     }
 
-  });
+    // TODO:  move this into Constructor
+    //if ($.nodeName(el[0], 'a')) {
+    //  el.on('click', function(e) {
+    //    e.preventDefault();
+    //    e.stopPropagation();
+    //    data.show();
+    //  });
+    //}
 
-  return this;
+    data = new $.plone.overlay.Constructor($.extend({}, defaults, options));
+    el.data('plone-overlay', data);
+
+  } else {
+    $.extend(true, data.options, options);
+    // TODO: reinitialize
+  }
+
+  return data;
 };
 
-}(jQuery));
+;
+}(jQuery))

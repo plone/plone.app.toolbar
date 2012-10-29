@@ -7,7 +7,6 @@
 // Depends:
 //    ++resource++plone.app.jquery.js
 //    ++resource++plone.app.toolbar/lib/js/bootstrap-tab.js
-//    ++resource++plone.app.toolbar/src/plone.init.js
 //
 // Description: 
 //
@@ -51,27 +50,35 @@ $.plone.tabs.Constructor.prototype = {
     self.el = el;
 
     self.options = $.extend({
+      navClassName: 'nav nav-tabs',
+      panes: 'fieldset',
+      panesTitle: '> legend',
+      panesClassName: 'tab-pane',
+      panesWrappingClassName: 'tab-content',
+      window: window.parent,
+      document: window.parent.document
     }, options);
 
     // create tabs container
-    self.navTabs = $('<ul class="nav nav-tabs" />')
+    self._tabs = $('<ul/>')
+        .addClass(self.options.navClassName)
         .insertBefore($('fieldset', self.el).first());
 
     // generate tabs from fieldsets
-    $('fieldset', self.el).each(function() {
+    $(self.options.panes, self.el).each(function() {
       var fieldset = $(this),
           tab = $('' +
               '<li>' +
                 '<a href="#' + fieldset.attr('id') + '" data-toggle="tab">' +
-                  $('> legend', fieldset).html() +
+                  $(self.options.panesTitle, fieldset).html() +
                 '</a>' +
               '</li>');
 
-      self.navTabs.append(tab);
+      self._tabs.append(tab);
 
-      $('> legend', fieldset).hide();
+      $(self.options.panesTitle, fieldset).hide();
 
-      fieldset.addClass('tab-pane');
+      fieldset.addClass(self.options.panesClassName);
 
       $('> a', tab)
         .on('click', function(e) {
@@ -80,37 +87,53 @@ $.plone.tabs.Constructor.prototype = {
           $(this).tab('show');
         })
         .on('shown', function(e) {
-          $('body', window.parent.document).height(
+          if (self.el.parents('.modal-wrapper').size() !== 0) {
+            $('body', self.options.document).height(
                 self.el.parents('.modal-wrapper').height() +
                 self.el.parents('.modal-wrapper').offset().top);
-          self.el.parents('.modal-backdrop').height($(window.parent).height());
+          }
+          if (self.el.parents('.modal-backdrop').size() !== 0) {
+            self.el.parents('.modal-backdrop').height(
+                $(self.options.window).height());
+          }
         });
 
-    }).wrapAll('<div class="tab-content" />');
+    }).wrapAll('<div class="' + self.options.panesWrappingClassName + '" />');
 
-    self.el.parents('.modal').on('shown', function(e) {
-      $('a', self.navTabs).first().tab('show');
-      $(this).off('shown');
-    });
+    // automaticaly select first tab
+    $('a:first', self._tabs).tab('show');
+  },
 
+  getTab: function(i) {
+    return $('li:eq(' + i + ') a', this._tabs);
+  },
+
+  getTabContent: function(i) {
+    return $(this.options.panes + ':eq(' + i + ')', this.el);
+  },
+
+  show: function(i) {
+    return this.getTab(i).tab('show');
   }
+
 };
 
 
 // # jQuery Integration
 $.fn.ploneTabs = function(options) {
-  var el = $(this),
-      data = el.data('plone-tabs');
+  var el = $(this);
 
-  if (el.size() === 0) { return; }
+  if (el.size() !== 1) { return; }
 
+  var data = el.data('plone-tabs');
   if (data === undefined) {
     data = new $.plone.tabs.Constructor(el, options);
     el.data('plone-tabs', data);
+  } else {
+    $.extend(data.options, options);
   }
 
   return data;
-
 };
 
 // # Initialization

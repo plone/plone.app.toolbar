@@ -1,4 +1,4 @@
-// Helper functions for use in tests.
+// tests for plone.tinymce.js script.
 //
 // @author Rok Garbas
 // @version 1.0
@@ -27,50 +27,29 @@
 /*jshint bitwise:true, curly:true, eqeqeq:true, immed:true, latedef:true,
   newcap:true, noarg:true, noempty:true, nonew:true, plusplus:true,
   regexp:true, undef:true, strict:true, trailing:true, browser:true */
-/*global $:false, window:false */
+/*global buster:false, jQuery:false, */
+
+(function($, undefined) {
+"use strict";
+
+var testCase = buster.testCase,
+    assert = buster.assert;
 
 
-// creates element which will get picked by iframe.js script
-function createIFrameReadyElement(name, resources, content, extra) {
-  "use strict";
+testCase("plone.tinymce.js", {
 
-  return $('<div/>')
-      .html(content)
-      .appendTo('body')
-      .attr(
-        $.extend({
-          'data-iframe': name,
-          'data-iframe-resources': resources
-        }, extra));
-}
+  setUp: function() {
+  },
 
-function onLoad(done, iframes, callable) {
-  "use strict";
-  var iframes_loaded;
+  tearDown: function() {
+  },
 
-  function onLoadInner() {
+  //  --- tests --- //
 
-    if (iframes.loaded !== undefined) {
-      iframes_loaded = iframes.loaded;
-    } else {
-      iframes_loaded = true;
-      $.each(iframes, function(i, iframe) {
-        if (iframe.loaded === false) {
-          iframes_loaded = false;
-          return;
-        }
-      });
-    }
-
-    if (iframes_loaded === true) {
-      callable();
-      done();
-      return;
-    }
-
-    window.setTimeout(onLoadInner, 23);
-    return;
+  "something": function() {
+    assert(true);
   }
 
-  onLoadInner();
-}
+});
+
+}(jQuery));

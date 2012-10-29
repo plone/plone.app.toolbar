@@ -1,14 +1,9 @@
-// plone init script which initialized javascript
+// tests for plone.overlay.js script.
 //
-// Author: Rok Garbas
-// Contact: rok@garbas.si
-// Version: 1.0
-// Depends:
-//    ++resource++plone.app.jquery.js
-//
-// Description: 
-//
-// License:
+// @author Rok Garbas
+// @version 1.0
+// @licstart  The following is the entire license notice for the JavaScript
+//            code in this page.
 //
 // Copyright (C) 2010 Plone Foundation
 //
@@ -25,39 +20,40 @@
 // this program; if not, write to the Free Software Foundation, Inc., 51
 // Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 //
+// @licend  The above is the entire license notice for the JavaScript code in
+//          this page.
+//
 
 /*jshint bitwise:true, curly:true, eqeqeq:true, immed:true, latedef:true,
   newcap:true, noarg:true, noempty:true, nonew:true, plusplus:true,
-  undef:true, strict:true, trailing:true, browser:true, evil:true */
-/*global jQuery:false */
+  regexp:true, undef:true, strict:true, trailing:true, browser:true */
+/*global buster:false, jQuery:false, */
 
-
-(function($) {
+(function($, undefined) {
 "use strict";
 
-// Namespace
-$.plone = $.plone || {};
-$.plone.init = $.plone.init || { _items: [] };
+var testCase = buster.testCase,
+    assert = buster.assert;
 
 
-// Register
-$.plone.init.register = function(callback) {
-  $.plone.init._items.push(callback);
-};
+testCase("plone.overlay.js", {
+
+  setUp: function() {
+  },
+
+  tearDown: function() {
+  },
+
+  //  --- tests --- //
+
+  "simple overlay": function() {
+    var el = $('<div>Modal</div>');
+    el.ploneOverlay();
+    el.remove();
+    assert(true);
+  }
 
 
-// jQuery Integration
-$.fn.ploneInit = function() {
-  var self = this;
-  $.each($.plone.init._items, function(i, callable) {
-    callable.apply(self, [ self ]);
-  });
-};
-
-
-// Initial initialization
-$(document).ready(function() {
-  $(document).ploneInit();
 });
 
 }(jQuery));

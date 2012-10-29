@@ -173,6 +173,10 @@ window.IFrame.prototype = {
     // mark iframe as loaded
     self.loaded = true;
 
+    self.document.body.setAttribute('style',
+        (self.document.body.getAttribute('style') || '') +
+        'background:transparent;');
+
     self.el.setAttribute('style', 'border:0;overflow:hidden;' +
         'position:absolute;left:0px;position:fixed;overflow:hidden;' +
         'width:100%;background-color:transparent;z-index:500;' +
@@ -180,10 +184,6 @@ window.IFrame.prototype = {
 
     self.el.setAttribute('style', self.el.getAttribute('style') +
         'height:' + self.document.body.offsetHeight + 'px;');
-
-    self.document.body.setAttribute('style',
-        (self.document.body.getAttribute('style') || '') +
-        'background:transparent;');
 
     if (self.options.position === 'top') {
         self.el.setAttribute('style', self.el.getAttribute('style') +
@@ -201,6 +201,7 @@ window.IFrame.prototype = {
             ';border-bottom:0' +
             ';margin-bottom:' + self.el.offsetHeight + 'px;');
     }
+
   }
 };
 

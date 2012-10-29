@@ -1,4 +1,4 @@
-// tests for iframe.js script.
+// tests for jquery.iframe.js script.
 //
 // @author Rok Garbas
 // @version 1.0
@@ -28,6 +28,7 @@
   newcap:true, noarg:true, noempty:true, nonew:true, plusplus:true,
   regexp:true, undef:true, strict:true, trailing:true, browser:true */
 /*global buster:false, jQuery:false, */
+
 
 (function($, undefined) {
 "use strict";
@@ -62,11 +63,9 @@ testCase("jquery.iframe.js", {
     assert(initial_height !== 0);
 
     $.iframe.stretch();
-
     assert(initial_height < $.iframe.el.height());
 
     $.iframe.shrink();
-
     assert(initial_height === $.iframe.el.height());
   },
 
@@ -84,12 +83,8 @@ testCase("jquery.iframe.js", {
 
   "custom handling of clicks inside iframe": function() {
     $.iframe.clickActions.push([
-      function(e, iframe) {  // condition
-        return true;
-      },
-      function(e, iframe) {  // action
-        assert(true);
-      }
+      function(e, iframe) { return true; },  // condition
+      function(e, iframe) { assert(true); }  // action
     ]);
     $('p', $.iframe.el).trigger({ type: 'click' });
   }
