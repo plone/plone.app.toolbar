@@ -39,20 +39,253 @@ var testCase = buster.testCase,
 testCase("plone.overlay.js", {
 
   setUp: function() {
+    var self = this;
+    self._modalTemplate = $.fn.ploneOverlay.defaults.modalTemplate,
+    self._addPrefixToURL = $.fn.ploneOverlay.defaults.addPrefixToURL;
+    $.fn.ploneOverlay.defaults.modalTemplate = function(content) {
+      return self._modalTemplate.apply(this, [ content, { title: 'h1', body: '#content' } ]);
+    };
+    $.fn.ploneOverlay.defaults.addPrefixToURL = function(url) { return url; };
   },
 
   tearDown: function() {
+    $('.modal').remove();
+    $.fn.ploneOverlay.defaults.modalTemplate = this._modalTemplate;
+    $.fn.ploneOverlay.defaults.addPrefixToURL = this._addPrefixToURL;
+    $.plone.init._items = [];
+    if ($.iframe) {
+      $.iframe.el.remove();
+      $.iframe = undefined;
+    }
   },
 
   //  --- tests --- //
 
-  "simple overlay": function() {
-    var el = $('<div>Modal</div>');
-    el.ploneOverlay();
-    el.remove();
-    assert(true);
-  }
+  "append overlay element to body if its not part of DOM yet": function() {
+    var el = $('<div><h1>Example Title</h1><div id="content">Example Body</div></div>'),
+        onInit = this.stub(),
+        onShow = this.stub(),
+        onHide = this.stub(),
+        onDestroy = this.stub();
 
+    el.ploneOverlay({
+      onInit: onInit,
+      onShow: onShow,
+      onHide: onHide,
+      onDestroy: onDestroy
+    });
+
+    var overlay = el.data('plone-overlay');
+
+    assert(overlay.el.parents('body').size() === 1);
+    assert(overlay.el.css('display') === 'none');
+
+    assert($('.modal-body', overlay.el).html() === 'Example Body');
+    assert($('.modal-header > h3', overlay.el).html() === 'Example Title');
+    assert($('.modal')[0] === overlay.el[0]);
+
+    el.ploneOverlay('show');
+
+    assert(overlay.el.parents('body').size() === 1);
+    assert(overlay.el.css('display') === 'block');
+
+    el.ploneOverlay('hide');
+
+    assert(overlay.el.parents('body').size() === 1);
+    assert(overlay.el.css('display') === 'none');
+
+    assert.calledOnce(onHide);
+
+    el.ploneOverlay('destroy');
+
+    assert(overlay.el.parents('body').size() === 0);
+
+    assert.calledOnce(onInit);
+    assert.calledOnce(onShow);
+    assert.calledTwice(onHide);
+    assert.calledOnce(onDestroy);
+    assert.callOrder(onInit, onShow, onHide, onDestroy);
+  },
+
+  "custom creation of modal": function() {
+    var el = $('<a/>'),
+        modal = $('<div class="modal">Example Modal</div>');
+
+    el.ploneOverlay({
+      show: true,
+      el: function(callback) { this.el = modal; callback.call(this); }
+    });
+
+    var overlay = el.data('plone-overlay');
+
+    assert(overlay.el[0] === modal[0]);
+  },
+
+  "clicking on any modal element should be disabled": function() {
+    var el = $('<div><h1>Example Title</h1><div id="content"><a ' +
+        'class="allowDefault" href="http://example.com">Example Body</a>' +
+        '</div></div>');
+
+    el.ploneOverlay('show');
+    var overlay = el.data('plone-overlay');
+
+    assert(overlay.el.parents('body').size() === 1);
+    $('[data-dismiss="modal"]', overlay.el).trigger('click');
+    assert(overlay.el.parents('body').size() === 0);
+
+    el = el.clone();
+    el.ploneOverlay('show');
+    overlay = el.data('plone-overlay');
+
+    assert(overlay.el.css('display') === 'block');
+    assert(overlay.el.parents('body').size() === 1);
+    $('h1', overlay.el).trigger('click');
+
+    assert(overlay.el.css('display') === 'block');
+    assert(overlay.el.parents('body').size() === 1);
+
+    $('.modal-body > a', overlay.el).trigger('click');
+    assert(window.location !== 'http://example.com');
+  },
+
+  "loading modal html from remote url": function(done) {
+    var el = $('<div><h1>Example Title</h1><div id="content">Example Body</div></div>'),
+        onBeforeLoad = this.stub(),
+        onLoaded = this.stub();
+
+    el.ploneOverlay({
+      show: true,
+      el: 'test/example-resource.html#wrapper',
+      onBeforeLoad: onBeforeLoad,
+      onLoaded: onLoaded,
+      onInit: function() {
+        var self = this;
+        assert.calledOnce(onBeforeLoad);
+        assert.calledOnce(onLoaded);
+        assert.callOrder(onBeforeLoad, onLoaded);
+        assert($('h3', self.el).html() === 'Example Resource Title');
+        assert($('.modal-body', self.el).html() === 'Example Resource Content');
+        done();
+      }
+    });
+  },
+
+  "submitting forms via ajax": function(done) {
+    var el = $('' +
+          '<div>' +
+          ' <h1>Example Title</h1>' +
+          ' <div id="content">' +
+          '  <form action="test/example-resource.html" method="get">' +
+          '    <input type="text" value="Example Ajax" />' +
+          '    <input type="input" name="form.button.Save" value="Save" />' +
+          '  </form>' +
+          ' </div>' +
+          '</div>');
+
+    el.ploneOverlay({
+      show: true,
+      onAjaxSave: function(responseBody) {
+        assert($('h1', responseBody).html() === 'Example Resource Title');
+        assert($('#content', responseBody).html() === 'Example Resource Content');
+        done();
+      },
+      onShow: function() {
+        $('.modal-footer input[name="form.button.Save"]', this.el).trigger('click');
+      }
+    });
+  },
+
+  "handling error when submitting forms via ajax": function(done) {
+    var el = $('' +
+          '<div>' +
+          ' <h1>Example Title</h1>' +
+          ' <div id="content">' +
+          '  <form action="test/example-resource-errorform.html" method="get">' +
+          '    <input type="text" value="Example Ajax" />' +
+          '    <input type="input" name="form.button.Save" value="Save" />' +
+          '  </form>' +
+          ' </div>' +
+          '</div>');
+
+    el.ploneOverlay({
+      show: true,
+      onAjaxError: function() {
+        var self = this;
+        assert($('h3', self.el).html() === 'Example Error Form Title');
+        assert($('input[type="text"]', self.el).val() === 'Example Error Ajax');
+        done();
+      },
+      onShow: function() {
+        $('.modal-footer input[name="form.button.Save"]', this.el).trigger('click');
+      }
+    });
+  },
+
+  "if no onAjaxSave defined then modal is destroyed": function(done) {
+    var el = $('' +
+          '<div>' +
+          ' <h1>Example Title</h1>' +
+          ' <div id="content">' +
+          '  <form action="test/example-resource.html" method="get">' +
+          '    <input type="text" value="Example Ajax" />' +
+          '    <input type="input" name="form.button.Save" value="Save" />' +
+          '  </form>' +
+          ' </div>' +
+          '</div>');
+
+    el.ploneOverlay({
+      show: true,
+      onShow: function() {
+        var self = this,
+            oldSuccess = self._formButtons['.modal-body [name="form.button.Save"]'].success;
+        function newSuccess(response, state, xhr, form) {
+          oldSuccess(response, state, xhr, form);
+          assert(self.el.parents('body').size() === 0);
+          done();
+        }
+        self._formButtons['.modal-body [name="form.button.Save"]'].success = newSuccess;
+        $('.modal-footer input[name="form.button.Save"]', this.el).trigger('click');
+      }
+    });
+  },
+
+  "addPrefixToURL conversion": function() {
+    assert(this._addPrefixToURL('http://example.com/something', 'prefix') ===
+        'http://example.com/prefix/something');
+    assert(this._addPrefixToURL('/something', 'prefix').substr(-17, 17) ===
+        '/prefix/something');
+    assert(this._addPrefixToURL('something', 'prefix').substr(-17, 17) !==
+        '/prefix/something');
+    assert(this._addPrefixToURL('something', 'prefix').substr(-10, 10) === '/something');
+    assert(this._addPrefixToURL('something', 'prefix').indexOf('prefix') !== -1);
+  },
+
+  "jquery.iframe.js integration": function() {
+    $.iframe = new $.IFrame({
+      el: $('<div><p>some</p><a href="#">some link</a></div>').appendTo('body'),
+      position: 'top'
+    });
+
+    var el = $('<div><h1>Example Title</h1><div id="content">Example Body</div></div>');
+
+    el.ploneOverlay();
+    var old_iframe_height = $.iframe.el.css('height');
+    el.ploneOverlay('show');
+    assert($.iframe.el.css('height') !== old_iframe_height);
+    el.ploneOverlay('hide');
+    assert($.iframe.el.css('height') === old_iframe_height);
+
+    // TODO: not sure how to tests scrollling
+  },
+
+  "ploneinit integration": function(done) {
+    var el = $('<div><h1>Example Title</h1><div id="content">Example Body</div></div>');
+    $.plone.init.register(function(context) {
+      assert(true);
+      done();
+    });
+    el.ploneOverlay();
+  }
 
 });
 

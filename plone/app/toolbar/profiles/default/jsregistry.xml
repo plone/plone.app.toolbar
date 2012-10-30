@@ -67,13 +67,14 @@
     <javascript 
         cacheable="False" compression="safe" cookable="False"
         enabled="True" inline="False" bundle="toolbar"
-        id="++resource++plone.app.toolbar/src/plone.init.js"
+        id="++resource++plone.app.toolbar/src/jquery.mask.js"
         />
 
     <javascript 
         cacheable="False" compression="safe" cookable="False"
         enabled="True" inline="False" bundle="toolbar"
-        id="++resource++plone.app.toolbar/src/plone.mask.js"
+        id="++resource++plone.app.toolbar/src/plone.init.js"
+        insert-after="++resource++plone.app.jquery.js"
         />
 
     <javascript 

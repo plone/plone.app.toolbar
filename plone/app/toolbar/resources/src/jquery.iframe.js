@@ -54,8 +54,10 @@ $.IFrame.prototype = {
   _init: function(iframe) {
     var self = this;
 
+    self._iframe = iframe;
     self.el = iframe.el;
-    self.iframe = iframe;
+    self.window = iframe.window;
+    self.document = iframe.document;
     self.state = null;
     self.clickActions = [];
 
