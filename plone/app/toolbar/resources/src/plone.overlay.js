@@ -54,6 +54,26 @@ PloneOverlay.prototype = {
 
     // store options on instance
     self.options = options;
+    self._el = el;
+
+    // element "a" can also give us info where to load modal content from
+    if ($.nodeName(self._el[0], 'a') && !self.options.el) {
+      options.el = el.attr('href');
+    }
+
+    // if el option passed in then we overrive el
+    if (options.el) {
+      el = options.el;
+    }
+
+    // element "a" will also trigger showing of overlay when clicked
+    if ($.nodeName(self._el[0], 'a')) {
+      self._el.off('click').on('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        self.show();
+      });
+    }
 
     // custom function which will get resolved on first call
     if (typeof el === 'function') {
@@ -284,6 +304,9 @@ PloneOverlay.prototype = {
 
     // remove modal's DOM element
     self.el.remove();
+
+    //  reinitialize
+    self._el.data('plone-overlay', new PloneOverlay(self._el, self.options));
   }
 
 };
@@ -295,16 +318,12 @@ $.fn.ploneOverlay = function (options) {
     var el =  $(this),
         data = $(this).data('plone-overlay');
 
-    if (options && options.el) {
-      el = options.el;
-    }
+    options = options || {};
 
     // create new instance of overlay if not yet created
     if (!data) {
-
       $(this).data('plone-overlay', (data = new PloneOverlay(el, $.extend({},
-          $.fn.ploneOverlay.defaults,
-          typeof options === 'object' && options))));
+          $.fn.ploneOverlay.defaults, typeof options === 'object' && options))));
     }
 
     // expose only certain function as public API
@@ -312,10 +331,83 @@ $.fn.ploneOverlay = function (options) {
       if (['show', 'hide', 'destroy'].indexOf(options) !== -1) {
         data[options]();
       }
-    } else if (options && options.show) {
+    } else if (options.show) {
       data.show();
     }
   });
+};
+
+$.fn.ploneOverlay.defaultFormButton = function(button, options) {
+  var self = this;
+
+  // make this method extendable
+  options = $.extend({
+    errorMsg: '.portalMessage.error',
+    buttonContainer: '.modal-footer',
+    responseFilter: '#wrapper',
+
+    // hooks
+    onError: undefined,
+    onSave: undefined
+
+  } , options || {});
+
+  // hide and copy same button to .modal-footer, clicking on button in
+  // footer should actually click on button inside form
+  button.clone()
+    .appendTo($(options.buttonContainer, self.el))
+    .on('click', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      button.trigger('click');
+    });
+  button.hide();
+
+  // we return array of options which will be passed to ajaxSubmit
+  // TODO: add loading spinner
+  // TODO: hook in notification stuff
+  return {
+
+    dataType: 'html',
+    beforeSerialize: function(form, options) {
+
+      // save tinymce text to textarea
+      var textarea = $('.mce_editable', form),
+          textareaId = textarea.attr('id');
+      if (textarea.size() !== 0 && tinyMCE &&
+          tinyMCE.editors[textareaId] !== undefined) {
+        tinyMCE.editors[textareaId].save();
+        tinyMCE.editors[textareaId].remove();
+      }
+
+    },
+
+    success: function(response, state, xhr, form) {
+      var responseBody = $('<div/>').html(
+              (/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[1]);
+
+      // if error is found res
+      if ($(options.errorMsg, responseBody).size() !== 0) {
+
+        // TODO: this should be done more smooth
+        self.el.remove();
+        self.el = $(options.responseFilter, responseBody);
+        self.initModal();
+
+        if (options.onError) {
+          options.onError.apply(self, [ responseBody, state, xhr, form ]);
+        }
+
+        self.show();
+
+      } else if (options.onSave) {
+        options.onSave.apply(self, [ responseBody, state, xhr, form ]);
+      } else {
+        self.destroy();
+      }
+    }
+
+  };
 };
 
 
@@ -335,81 +427,10 @@ $.fn.ploneOverlay.defaults = {
 
   // buttons which should
   formButtons: {
-
-    // Save button
-    '.modal-body [name="form.button.Save"]': function(button, options) {
-      var self = this;
-
-      // make this method extendable
-      options = $.extend({
-        errorMsg: '.portalMessage.error',
-        buttonContainer: '.modal-footer',
-        responseFilter: '#wrapper',
-
-        // hooks
-        onError: undefined,
-        onSave: undefined
-
-      } , options || {});
-
-      // hide and copy same button to .modal-footer, clicking on button in
-      // footer should actually click on button inside form
-      button.hide();
-      button.clone()
-        .appendTo($(options.buttonContainer, self.el))
-        .on('click', function(e) {
-          e.stopPropagation();
-          e.preventDefault();
-          button.trigger('click');
-        });
-
-      // we return array of options which will be passed to ajaxSubmit
-      // TODO: add loading spinner
-      // TODO: hook in notification stuff
-      return {
-
-        dataType: 'html',
-        beforeSerialize: function(form, options) {
-
-          // save tinymce text to textarea
-          var textarea = $('.mce_editable', form),
-              textareaId = textarea.attr('id');
-          if (textarea.size() !== 0 && tinyMCE &&
-              tinyMCE.editors[textareaId] !== undefined) {
-            tinyMCE.editors[textareaId].save();
-            tinyMCE.editors[textareaId].remove();
-          }
-
-        },
-
-        success: function(response, state, xhr, form) {
-          var responseBody = $('<div/>').html(
-                  (/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[1]);
-
-          // if error is found res
-          if ($(options.errorMsg, responseBody).size() !== 0) {
-
-            // TODO: this should be done more smooth
-            self.el.remove();
-            self.el = $(options.responseFilter, responseBody);
-            self.initModal();
-
-            if (options.onError) {
-              options.onError.apply(self, [ responseBody, state, xhr, form ]);
-            }
-
-            self.show();
-
-          } else if (options.onSave) {
-            options.onSave.apply(self, [ responseBody, state, xhr, form ]);
-          } else {
-            self.destroy();
-          }
-        }
-
-      };
-    }
-
+    '.modal-body [name="form.button.Save"]': $.fn.ploneOverlay.defaultFormButton,
+    '.modal-body [name="form.button.Cancel"]': $.fn.ploneOverlay.defaultFormButton,
+    '.modal-body [name="form.button.Publish"]': $.fn.ploneOverlay.defaultFormButton,
+    '.modal-body [name="form.button.RenameAll"]': $.fn.ploneOverlay.defaultFormButton
   },
 
   // options for bootstrap modal
@@ -426,10 +447,10 @@ $.fn.ploneOverlay.defaults = {
           '<div class="modal fade">' +
           '  <div class="modal-header">' +
           '    <a class="close" data-dismiss="modal">&times;</a>' +
-          '    <h3>Title</h3>' +
+          '    <h3></h3>' +
           '  </div>' +
-          '  <div class="modal-body">Content</div>' +
-          '  <div class="modal-footer">Buttons</div>' +
+          '  <div class="modal-body"></div>' +
+          '  <div class="modal-footer"></div>' +
           '</div>'),
         title = $('.modal-header > h3', el),
         body = $('.modal-body', el),
@@ -451,7 +472,9 @@ $.fn.ploneOverlay.defaults = {
     $(options.footer, body).remove();
 
     // destroying modal
-    $(options.destroy, el).on('click', function(e) {
+    $(options.destroy, el).off('click').on('click', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
       self.destroy();
     });
 

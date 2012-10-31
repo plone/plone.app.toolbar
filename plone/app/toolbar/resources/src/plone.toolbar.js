@@ -48,15 +48,6 @@ $(document).ready(function() {
           } else if ($.iframe._state === null) {
             $.iframe.stretch();
           }
-        })
-      .on('keydown.dropdown.data-api touchstart.dropdown.data-api',
-        '#plone-toolbar [data-toggle=dropdown]', function(e) {
-          if ($.iframe._state !== null &&
-              $('.dropdown.open', $(e.target).parents('#plone-toolbar')).size() === 0) {
-            $.iframe.shrink();
-          } else if ($.iframe._state === null) {
-            $.iframe.stretch();
-          }
         });
 
 
