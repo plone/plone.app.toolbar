@@ -42,16 +42,25 @@ testCase("plone.overlay.js", {
     var self = this;
     self._modalTemplate = $.fn.ploneOverlay.defaults.modalTemplate,
     self._addPrefixToURL = $.fn.ploneOverlay.defaults.addPrefixToURL;
+    self._defaultFormButtonOptions = $.fn.ploneOverlay.defaultFormButtonOptions;
     $.fn.ploneOverlay.defaults.modalTemplate = function(content) {
       return self._modalTemplate.apply(this, [ content, { title: 'h1', body: '#content' } ]);
     };
     $.fn.ploneOverlay.defaults.addPrefixToURL = function(url) { return url; };
+    $.fn.ploneOverlay.defaultFormButtonOptions.responseFilter = '#wrapper';
+    if ($.iframe) {
+      $.iframe.document = document;
+      $.iframe.window = window;
+    }
   },
 
   tearDown: function() {
+    var self = this;
     $('.modal').remove();
-    $.fn.ploneOverlay.defaults.modalTemplate = this._modalTemplate;
-    $.fn.ploneOverlay.defaults.addPrefixToURL = this._addPrefixToURL;
+    $('#wrapper').remove();
+    $.fn.ploneOverlay.defaults.modalTemplate = self._modalTemplate;
+    $.fn.ploneOverlay.defaults.addPrefixToURL = self._addPrefixToURL;
+    $.fn.ploneOverlay.defaultFormButtonOptions = self._defaultFormButtonOptions;
     $.plone.init._items = [];
     if ($.iframe) {
       $.iframe.el.remove();
@@ -100,8 +109,10 @@ testCase("plone.overlay.js", {
 
     assert(overlay.el.parents('body').size() === 0);
 
-    assert.calledOnce(onInit);
+    // twice because 'destroy' will reinitialize overlay
+    assert.calledTwice(onInit);
     assert.calledOnce(onShow);
+    // twice because hide is called again on destroy
     assert.calledTwice(onHide);
     assert.calledOnce(onDestroy);
     assert.callOrder(onInit, onShow, onHide, onDestroy);
@@ -221,7 +232,7 @@ testCase("plone.overlay.js", {
     });
   },
 
-  "if no onAjaxSave defined then modal is destroyed": function(done) {
+  "handling of response on successfull ajaxSubmit": function(done) {
     var el = $('' +
           '<div>' +
           ' <h1>Example Title</h1>' +
@@ -231,7 +242,8 @@ testCase("plone.overlay.js", {
           '    <input type="input" name="form.button.Save" value="Save" />' +
           '  </form>' +
           ' </div>' +
-          '</div>');
+          '</div>'),
+        el2 = $('<div id="wrapper">Something</div>').appendTo('body');
 
     el.ploneOverlay({
       show: true,
@@ -240,7 +252,7 @@ testCase("plone.overlay.js", {
             oldSuccess = self._formButtons['.modal-body [name="form.button.Save"]'].success;
         function newSuccess(response, state, xhr, form) {
           oldSuccess(response, state, xhr, form);
-          assert(self.el.parents('body').size() === 0);
+          assert($('#wrapper').html() !== 'Something');
           done();
         }
         self._formButtons['.modal-body [name="form.button.Save"]'].success = newSuccess;

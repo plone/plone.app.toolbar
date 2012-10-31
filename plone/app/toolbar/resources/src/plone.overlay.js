@@ -337,11 +337,7 @@ $.fn.ploneOverlay = function (options) {
   });
 };
 
-$.fn.ploneOverlay.defaultFormButton = function(button, options) {
-  var self = this;
-
-  // make this method extendable
-  options = $.extend({
+$.fn.ploneOverlay.defaultFormButtonOptions = {
     errorMsg: '.portalMessage.error',
     buttonContainer: '.modal-footer',
     responseFilter: '#content',
@@ -349,8 +345,13 @@ $.fn.ploneOverlay.defaultFormButton = function(button, options) {
     // hooks
     onError: undefined,
     onSave: undefined
+};
 
-  } , options || {});
+$.fn.ploneOverlay.defaultFormButton = function(button, options) {
+  var self = this;
+
+  // make this method extendable
+  options = $.extend({}, $.fn.ploneOverlay.defaultFormButtonOptions, options || {});
 
   // hide and copy same button to .modal-footer, clicking on button in
   // footer should actually click on button inside form
@@ -383,12 +384,17 @@ $.fn.ploneOverlay.defaultFormButton = function(button, options) {
     },
 
     success: function(response, state, xhr, form) {
-      var responseBody = $('<div/>').html(
+      var _document = document,
+          responseBody = $('<div/>').html(
               (/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[1]);
+
+      // use $.iframe's if avaliable
+      if ($.iframe) {
+        _document = $.iframe.document;
+      }
 
       // if error is found res
       if ($(options.errorMsg, responseBody).size() !== 0) {
-
         // TODO: this should be done more smooth
         self.el.remove();
         self.el = $(options.responseFilter, responseBody);
@@ -405,8 +411,8 @@ $.fn.ploneOverlay.defaultFormButton = function(button, options) {
         options.onSave.apply(self, [ responseBody, state, xhr, form ]);
 
       // common save function, we replace what we filtered from response
-      } else if ($(options.responseFilter, $.iframe.document).size() !== 0) {
-        $(options.responseFilter, $.iframe.document)
+      } else if ($(options.responseFilter, _document).size() !== 0) {
+        $(options.responseFilter, _document)
           .html($(options.responseFilter, responseBody).html());
         self.destroy();
 
