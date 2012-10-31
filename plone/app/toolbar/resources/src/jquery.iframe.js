@@ -42,8 +42,8 @@ $.IFrame.prototype = {
 
     self._iframe = iframe;
     self.el = $(iframe.el);
-    self.window = iframe.window;
-    self.document = iframe.document;
+    self.window = window.parent;
+    self.document = window.parent.document;
     self._state = null;
     self._actions = [];
 

@@ -344,7 +344,7 @@ $.fn.ploneOverlay.defaultFormButton = function(button, options) {
   options = $.extend({
     errorMsg: '.portalMessage.error',
     buttonContainer: '.modal-footer',
-    responseFilter: '#wrapper',
+    responseFilter: '#content',
 
     // hooks
     onError: undefined,
@@ -400,8 +400,16 @@ $.fn.ploneOverlay.defaultFormButton = function(button, options) {
 
         self.show();
 
+      // custom save function
       } else if (options.onSave) {
         options.onSave.apply(self, [ responseBody, state, xhr, form ]);
+
+      // common save function, we replace what we filtered from response
+      } else if ($(options.responseFilter, $.iframe.document).size() !== 0) {
+        $(options.responseFilter, $.iframe.document)
+          .html($(options.responseFilter, responseBody).html());
+        self.destroy();
+
       } else {
         self.destroy();
       }
