@@ -32,7 +32,7 @@
 /*global jQuery:false */
 
 
-(function($) {
+(function($, undefined) {
 "use strict";
 
 // Namespace
@@ -60,4 +60,4 @@ $(document).ready(function() {
   $(document).ploneInit();
 });
 
-}(jQuery));
+}(window.jQuery));

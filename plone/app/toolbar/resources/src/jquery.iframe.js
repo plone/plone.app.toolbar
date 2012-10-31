@@ -33,20 +33,6 @@
 (function($, undefined) {
 "use strict";
 
-// TODO: need find place to implement action for below conditions
-//
-// if ($.nodeName(e.target, 'html')) {
-//   self.shrink();
-//
-// if ($(e.target).parents('body').size() === 0 ||
-//        $(e.target).parents('.mceMenuItem').size() === 1 ||
-//        $(e.target).hasClass('modal-backdrop')) {
-//   e.preventDefault();
-//   e.stopPropagation();
-//
-// if (el.attr('data-toggle') === 'dropdown') {
-//   self.stretch();
-
 $.IFrame = function(iframe) { this._init(iframe); };
 $.IFrame.prototype = {
 
@@ -55,11 +41,11 @@ $.IFrame.prototype = {
     var self = this;
 
     self._iframe = iframe;
-    self.el = iframe.el;
+    self.el = $(iframe.el);
     self.window = iframe.window;
     self.document = iframe.document;
-    self.state = null;
-    self.clickActions = [];
+    self._state = null;
+    self._actions = [];
 
     // # Handle clicks inside iframe
     $(document).on('click', function(e) {
@@ -67,26 +53,32 @@ $.IFrame.prototype = {
           condition = false;
 
       // see if there is any link action registered to handle this click
-      $.each(self.clickActions, function(i, item) {
-        condition = item[0].apply(this, [e, self]);
-        if (condition === true) {
+      $.each(self._actions, function(i, item) {
+        if (item[0].apply(this, [e, self])) {
           item[1].apply(this, [e, self]);
-          return;
         }
       });
 
-      // if no condition was met then handle click in top frame
-      if (condition === false) {
-        if ($.nodeName(el[0], 'a')) {
-          if (e.which === 1) {
-            self._window_location(el.attr('href'));
-          } else if (e.which === 2) {
-            self._window_open(el.attr('href'));
-          }
-        }
-      }
-
     });
+
+    // register common actions
+
+    // which opens link in top frame if clicked on
+    self.registerAction(
+      function(e) { return $.nodeName(e.target, 'a') && (e.which === 1 || e.which === 2); },
+      function(e) {
+          if (e.which === 1) {
+            self._window_location($(e.target).attr('href'));
+          } else if (e.which === 2) {
+            self._window_open($(e.target).attr('href'));
+          }
+        });
+
+    // shrink iframe when click happens on stretched & transparent part of iframe
+    self.registerAction(
+        function(e) { return $.nodeName(e.target, 'html'); },
+        function(e) { self.shrink(); });
+
   },
 
   // Abstract calls to window.parent so its easier to stub/mock in tests
@@ -98,14 +90,18 @@ $.IFrame.prototype = {
     window.parent.open(url);
   },
 
+  registerAction: function(condition, action) {
+    this._actions.push([ condition, action ]);
+  },
+
   // # Shrink IFrame Object
   //
   // Shrink current frame to the size that was before stretching it.
   shrink: function() {
     var self = this;
-    if (self.state !== null) {
-      self.el.css(self.state);
-      self.state = null;
+    if (self._state !== null) {
+      self.el.css(self._state);
+      self._state = null;
     }
   },
 
@@ -115,9 +111,9 @@ $.IFrame.prototype = {
   // iframe object trasparent
   stretch: function() {
     var self = this;
-    if (self.state === null) {
-      self.state = {};
-      self.state.height = self.el.height();
+    if (self._state === null) {
+      self._state = {};
+      self._state.height = self.el.height();
 
       var offset = self.el.offset();
       self.el.top = offset.top;
@@ -129,13 +125,27 @@ $.IFrame.prototype = {
         height: $(window.parent.document).height()
       });
     }
+  },
+
+  // # Toggle IFrame Object
+  //
+  // This function check in which state current object is and calls appropriate
+  // action (stretch or shrink)
+  toggle: function() {
+    var self = this;
+    if (self._state === null) {
+      self.stretch();
+    } else {
+      self.shrink();
+    }
   }
+
 
 };
 
 if (window.parent.iframe !== undefined && window.name &&
     window.parent.iframe[window.name] !== undefined) {
-  $.iframe = new $.IFrame($(window.parent.iframe[window.name]));
+  $.iframe = new $.IFrame(window.parent.iframe[window.name]);
 }
 
 }(jQuery));

@@ -19,6 +19,7 @@
         id="++resource++plone.app.toolbar/lib/jquery.form.js"
         />
 
+
     <!-- bootstrap javascript -->
     <javascript 
         cacheable="False" compression="safe" cookable="False"
@@ -44,6 +45,7 @@
         id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-modal.js"
         />
 
+
     <!-- bootstrap datepicker -->
     <javascript 
         cacheable="False" compression="safe" cookable="False"
@@ -51,7 +53,8 @@
         id="++resource++plone.app.toolbar/lib/bootstrap-datepicker/js/bootstrap-datepicker.js"
         />
 
-    <!-- plone scripts -->
+
+    <!-- iframe scripts -->
     <javascript 
         cacheable="False" compression="safe" cookable="False"
         enabled="True" inline="False" bundle="toolbar-init"
@@ -70,11 +73,19 @@
         id="++resource++plone.app.toolbar/src/jquery.mask.js"
         />
 
+
+    <!-- plone scripts -->
     <javascript 
         cacheable="False" compression="safe" cookable="False"
         enabled="True" inline="False" bundle="toolbar"
-        id="++resource++plone.app.toolbar/src/plone.init.js"
         insert-after="++resource++plone.app.jquery.js"
+        id="++resource++plone.app.toolbar/src/plone.init.js"
+        />
+
+    <javascript 
+        cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="toolbar"
+        id="++resource++plone.app.toolbar/src/plone.overlay.js"
         />
 
     <javascript 
@@ -86,13 +97,13 @@
     <javascript 
         cacheable="False" compression="safe" cookable="False"
         enabled="True" inline="False" bundle="toolbar"
-        id="++resource++plone.app.toolbar/src/plone.overlay.js"
+        id="++resource++plone.app.toolbar/src/plone.toolbar.js"
         />
 
-    <!--javascript 
+    <javascript 
         cacheable="False" compression="safe" cookable="False"
         enabled="True" inline="False" bundle="toolbar"
         id="++resource++plone.app.toolbar/src/plone.cmsui.js"
-        /-->
+        />
 
 </object>

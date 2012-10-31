@@ -67,6 +67,12 @@ testCase("jquery.iframe.js", {
 
     $.iframe.shrink();
     assert(initial_height === $.iframe.el.height());
+
+    $.iframe.toggle();
+    assert(initial_height < $.iframe.el.height());
+
+    $.iframe.toggle();
+    assert(initial_height === $.iframe.el.height());
   },
 
   "defult handling of clicks inside iframe": function() {
@@ -82,11 +88,17 @@ testCase("jquery.iframe.js", {
   },
 
   "custom handling of clicks inside iframe": function() {
-    $.iframe.clickActions.push([
-      function(e, iframe) { return true; },  // condition
-      function(e, iframe) { assert(true); }  // action
-    ]);
+    $.iframe.registerAction(
+      function(e, iframe) { return true; },
+      function(e, iframe) { assert(true); });
     $('p', $.iframe.el).trigger({ type: 'click' });
+  },
+
+  "when iframe is stretch click can also happen on html element": function() {
+    $.iframe.registerAction(
+      function(e, iframe) { return true; },
+      function(e, iframe) { assert(true); });
+    $.iframe.el.parents('html').trigger({ type: 'click' });
   }
 
 });
