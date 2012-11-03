@@ -401,14 +401,14 @@ $.fn.ploneOverlay.defaultFormButton = function(button, options) {
         self.initModal();
 
         if (options.onError) {
-          options.onError.apply(self, [ responseBody, state, xhr, form ]);
+          options.onError.apply(self, [ responseBody, state, xhr, form, button ]);
         }
 
         self.show();
 
       // custom save function
       } else if (options.onSave) {
-        options.onSave.apply(self, [ responseBody, state, xhr, form ]);
+        options.onSave.apply(self, [ responseBody, state, xhr, form, button ]);
 
       // common save function, we replace what we filtered from response
       } else if ($(options.responseFilter, _document).size() !== 0) {
@@ -440,12 +440,7 @@ $.fn.ploneOverlay.defaults = {
   onAjaxError: undefined,
 
   // buttons which should
-  formButtons: {
-    '.modal-body [name="form.button.Save"]': $.fn.ploneOverlay.defaultFormButton,
-    '.modal-body [name="form.button.Cancel"]': $.fn.ploneOverlay.defaultFormButton,
-    '.modal-body [name="form.button.Publish"]': $.fn.ploneOverlay.defaultFormButton,
-    '.modal-body [name="form.button.RenameAll"]': $.fn.ploneOverlay.defaultFormButton
-  },
+  formButtons: {},
 
   // options for bootstrap modal
   modalOptions: {

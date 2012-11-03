@@ -32,16 +32,35 @@
 
 $(document).ready(function() {
 
+  $.fn.ploneOverlay.defaults.formButtons = {
+    // delete button on Delete form
+    '.modal-body input.destructive': $.fn.ploneOverlay.defaultFormButton,
+    '.modal-body input[name="form.button.Save"]': $.fn.ploneOverlay.defaultFormButton,
+    '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultFormButton,
+    '.modal-body input[name="form.button.Publish"]': $.fn.ploneOverlay.defaultFormButton,
+    '.modal-body input[name="form.button.RenameAll"]': $.fn.ploneOverlay.defaultFormButton
+  };
+
+  // need redirect to different url after successfull submitting
   $.each([
-    '#plone-toolbar #plone-contentmenu-actions > ul > li#rename > a',
+    '#plone-toolbar #plone-contentmenu-actions > ul > li#delete > a',
+    '#plone-toolbar #plone-contentmenu-actions > ul > li#rename > a'
+  ], function(i, selector) {
+    var el = $(this);
+    $(selector).ploneOverlay({
+      onShow: function() { el.dropdown('toggle'); },
+      onAjaxSave: function(responseBody, state, xhr, form, button) {
+        if (button.attr('name') !== 'form.button.Cancel') {
+          console.log('redirect');
+        }
+      }
+    });
+  });
+
+  $.each([
     '#plone-toolbar #plone-contentmenu-workflow > ul > li#advanced > a',
     '#plone-toolbar #plone-contentmenu-display > ul > li#folderChangeDefaultPage > a',
     '#plone-toolbar #plone-contentmenu-display > ul > li#contextSetDefaultPage > a'
-  //  '#plone-toolbar #plone-action-contentrules > a',
-  //  '#plone-toolbar #plone-action-local_roles > a',
-  //  '#plone-toolbar #plone-personal-actions > ul > li#plone-personal-actions-dashboard > a',
-  //  '#plone-toolbar #plone-personal-actions > ul > li#plone-personal-actions-preferences > a',
-  //  '#plone-toolbar #plone-personal-actions > ul > li#plone-personal-actions-plone_setup > a'
   ], function(i, selector) {
     var el = $(this);
     $(selector).ploneOverlay({
