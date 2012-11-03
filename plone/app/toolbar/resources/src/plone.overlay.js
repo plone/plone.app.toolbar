@@ -52,12 +52,18 @@ PloneOverlay.prototype = {
     // we don't have to initialize if overlay is already initialized
     if (self.el) { return; }
 
+    // no element is passed
+    if (options === undefined) {
+      options = el;
+      el = undefined;
+    }
+
     // store options on instance
     self.options = options;
     self._el = el;
 
     // element "a" can also give us info where to load modal content from
-    if ($.nodeName(self._el[0], 'a') && !self.options.el) {
+    if (self._el && $.nodeName(self._el[0], 'a') && !self.options.el) {
       options.el = el.attr('href');
     }
 
@@ -67,7 +73,7 @@ PloneOverlay.prototype = {
     }
 
     // element "a" will also trigger showing of overlay when clicked
-    if ($.nodeName(self._el[0], 'a')) {
+    if (self._el && $.nodeName(self._el[0], 'a')) {
       self._el.off('click').on('click', function(e) {
         e.stopPropagation();
         e.preventDefault();
@@ -306,7 +312,9 @@ PloneOverlay.prototype = {
     self.el.remove();
 
     //  reinitialize
-    self._el.data('plone-overlay', new PloneOverlay(self._el, self.options));
+    if (self._el) {
+      self._el.data('plone-overlay', new PloneOverlay(self._el, self.options));
+    }
   }
 
 };
@@ -424,7 +432,6 @@ $.fn.ploneOverlay.defaultFormButton = function(button, options) {
   };
 };
 
-
 $.fn.ploneOverlay.defaults = {
   mask: $.mask || undefined,
   urlPrefix: '++unthemed++',
@@ -506,7 +513,6 @@ $.fn.ploneOverlay.defaults = {
   }
 
 };
-
 
 $.fn.ploneOverlay.Constructor = PloneOverlay;
 

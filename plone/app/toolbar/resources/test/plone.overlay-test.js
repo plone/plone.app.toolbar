@@ -40,14 +40,20 @@ testCase("plone.overlay.js", {
 
   setUp: function() {
     var self = this;
-    self._modalTemplate = $.fn.ploneOverlay.defaults.modalTemplate,
+    self._formButtons = $.fn.ploneOverlay.defaults.formButtons;
+    self._modalTemplate = $.fn.ploneOverlay.defaults.modalTemplate;
     self._addPrefixToURL = $.fn.ploneOverlay.defaults.addPrefixToURL;
     self._defaultFormButtonOptions = $.fn.ploneOverlay.defaultFormButtonOptions;
+
+    $.fn.ploneOverlay.defaults.formButtons = {
+      '.modal-body input[name="form.button.Save"]': $.fn.ploneOverlay.defaultFormButton
+    };
     $.fn.ploneOverlay.defaults.modalTemplate = function(content) {
       return self._modalTemplate.apply(this, [ content, { title: 'h1', body: '#content' } ]);
     };
     $.fn.ploneOverlay.defaults.addPrefixToURL = function(url) { return url; };
     $.fn.ploneOverlay.defaultFormButtonOptions.responseFilter = '#wrapper';
+
     if ($.iframe) {
       $.iframe.document = document;
       $.iframe.window = window;
@@ -58,6 +64,7 @@ testCase("plone.overlay.js", {
     var self = this;
     $('.modal').remove();
     $('#wrapper').remove();
+    $.fn.ploneOverlay.defaults.formButtons = self._formButtons;
     $.fn.ploneOverlay.defaults.modalTemplate = self._modalTemplate;
     $.fn.ploneOverlay.defaults.addPrefixToURL = self._addPrefixToURL;
     $.fn.ploneOverlay.defaultFormButtonOptions = self._defaultFormButtonOptions;
@@ -249,13 +256,13 @@ testCase("plone.overlay.js", {
       show: true,
       onShow: function() {
         var self = this,
-            oldSuccess = self._formButtons['.modal-body [name="form.button.Save"]'].success;
+            oldSuccess = self._formButtons['.modal-body input[name="form.button.Save"]'].success;
         function newSuccess(response, state, xhr, form) {
           oldSuccess(response, state, xhr, form);
           assert($('#wrapper').html() !== 'Something');
           done();
         }
-        self._formButtons['.modal-body [name="form.button.Save"]'].success = newSuccess;
+        self._formButtons['.modal-body input[name="form.button.Save"]'].success = newSuccess;
         $('.modal-footer input[name="form.button.Save"]', this.el).trigger('click');
       }
     });
