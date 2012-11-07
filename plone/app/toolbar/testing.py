@@ -42,7 +42,7 @@ class Toolbar(PloneSandboxLayer):
         # inspect CSS, JavaScript, and KSS
         getToolByName(portal, 'portal_css').setDebugMode(True)
         getToolByName(portal, 'portal_javascripts').setDebugMode(True)
-        getToolByName(portal, 'portal_kss').setDebugMode(True)
+        #getToolByName(portal, 'portal_kss').setDebugMode(True)
 
         # set up content required for acceptance tests
         login(portal, TEST_USER_NAME)
