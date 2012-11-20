@@ -4,8 +4,9 @@ Introduction to Toolbar
 
 ``plone.app.toolbar`` installs a new content editing toolbar for Plone.
 
+
 Installation
-------------
+============
 
 To install toolbar drop following lines to your buildout.cfg::
 
@@ -32,7 +33,7 @@ To start developing plone.app.toolbar you can find buildout at
     
 
 How it works
-------------
+============
 
 Registers toolbar tile which creates toolbar html on every page in twitter
 bootstrap structure and is hidden by default. Toolbar tile also lists resources
@@ -70,7 +71,7 @@ integrated into current Plone, eg: hidding old green edit bar, ...
 
 
 Diazo rules
------------
+===========
 
 First we need to copy toolbar's html code, which will be picked by
 `iframe.js`_::
@@ -89,10 +90,101 @@ include `iframe.js`_::
 Above 2 rules should be enought so that your theme will support
 `plone.app.toolbar`_
 
+
+Toolbar and overlays
+====================
+
+`plone.overlay.js`_ script provides us with a jQuery plugin
+(``$.fn.ploneOverlay``) which provides smooth integration of various libraries
+and gives us a lot of options how to plugin custom functionality.
+
+As said there are many options which change default behaivour of
+``ploneOverlay``, you can look them up below at Options section.
+
+
+Example: Trigger overlay from link element
+------------------------------------------
+
+Somewhere in html we have a link element::
+
+    ...
+    <a id="special-link" href="some/url#content">Open in overlay</a>
+    ...
+
+Simplest way::
+
+    $(document).ready(function() {
+        $('#special-link').ploneOverlay();
+    });
+
+Above registration is used for links in Plone's default toolbar menu at the
+top. Code can be found in `plone.cmsui.js`_.
+
+
+Example: Show already existing content in overlay
+-------------------------------------------------
+
+Somewhere in html we have an element which we want to show in overlay::
+
+    ...
+    <div id="special-content">
+        Some very important things to show in overlay
+    </div>
+    ...
+
+When some event happens we show element in overlay::
+
+    $(document).ready(function() {
+        $(document).on('some-event', function() {
+            $('#special-content').ploneOverlay({ show: true; });
+        });
+        $(document).on('some-other-event', function() {
+            $('#special-content').ploneOverlay({ hide: true; });
+        });
+    });
+
+
+Example: Form in overlay
+------------------------
+
+
+Options
+-------
+
+``el``
+    If string it will be treated as url otherwise dom element is expected.
+
+``show``
+    If set to true immidiatly show overlay.
+
+``mask``
+    mask object which should provide ``load`` and ``close`` attributes to call.
+    ``load`` should show mask element and ``close`` should hide it.
+    Default: $.mask (from `jquery.mask.js`_)
+
+``urlPrefix``
+``addPrefixToURL``
+``modalOptions` 
+``modalTemplate``
+``formButtons``
+``onInit``
+``onBeforeLoad``
+``onLoaded``
+``onShow``
+``onHide``
+``onDestroy``
+``onAjaxSave``
+``onAjaxError``
+
+
+
 .. _`buildout.deco`: https://github.com/plone/buildout.deco
 .. _`plone.app.toolbar`: https://github.com/plone/plone.app.toolbar
 .. _`plone.app.blocks`: https://github.com/plone/plone.app.blocks
 .. _`iframe.js`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/resources/src/iframe.js
+.. _`jquery.iframe.js`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/resources/src/jquery.iframe.js
+.. _`jquery.mask.js`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/resources/src/jquery.mask.js
+.. _`jquery.form.js`: http://jquery.malsup.com/form
 .. _`plone.overlay.js`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/resources/src/plone.overlay.js
 .. _`plone.cmsui.js`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/resources/src/plone.cmsui.js
 .. _`bbb`: https://github.com/plone/plone.app.toolbar/blob/master/plone/app/toolbar/bbb.zcml
