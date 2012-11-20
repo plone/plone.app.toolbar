@@ -98,11 +98,10 @@ PloneOverlay.prototype = {
         // remove hash part of url and append prefix to url, eg.
         //   convert -> http://example.com/something
         //   into    -> http://example.com/++unthemed++/something
-        var url = self.options.addPrefixToURL((el.match(/^([^#]+)/) || [])[1],
-                          self.options.urlPrefix);
+        var ajaxURL = self.options.changeAjaxURL((el.match(/^([^#]+)/) || [])[1]);
 
         // do ajax request with prefixed url
-        $.get(url, {}, function(response) {
+        $.get(ajaxURL, {}, function(response) {
 
           // from response get content of body
           self.el = $('<div/>').html((/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[1]);
@@ -434,7 +433,6 @@ $.fn.ploneOverlay.defaultFormButton = function(button, options) {
 
 $.fn.ploneOverlay.defaults = {
   mask: $.mask || undefined,
-  urlPrefix: '++unthemed++',
 
   // hooks
   onInit: undefined,
@@ -498,7 +496,9 @@ $.fn.ploneOverlay.defaults = {
   },
 
   // adding prefix to url (after domain part)
-  addPrefixToURL: function(url, prefix) {
+  changeAjaxURL: function(url, prefix) {
+    prefix = prefix || '++unthemed++';
+
     // TODO: we should add it after plone site url (head>base)
     if (url.indexOf('http') === 0) {
       return url.replace(/^(https?:\/\/[^\/]+)\/(.*)/, '$1/' + prefix + '/$2');

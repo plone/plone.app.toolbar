@@ -147,6 +147,8 @@ When some event happens we show element in overlay::
 Example: Form in overlay
 ------------------------
 
+TODO: write simple form example
+
 
 Options
 -------
@@ -158,13 +160,18 @@ Options
     If set to true immidiatly show overlay.
 
 ``mask``
-    mask object which should provide ``load`` and ``close`` attributes to call.
+    Mask object which should provide ``load`` and ``close`` attributes to call.
     ``load`` should show mask element and ``close`` should hide it.
     Default: $.mask (from `jquery.mask.js`_)
 
-``urlPrefix``
-``addPrefixToURL``
-``modalOptions` 
+``changeAjaxURL``
+    Function which gets called with original URL as paramether and should
+    return URL which is used in AJAX call when retriving content of overlay.
+    Default: function which appends '++unthemed++' before URI. eg:
+        http://plone.org/some/site -> http://plone.org/++unthemed++/some/site
+
+TODO: need to describe options below
+
 ``modalTemplate``
 ``formButtons``
 ``onInit``
@@ -175,6 +182,18 @@ Options
 ``onDestroy``
 ``onAjaxSave``
 ``onAjaxError``
+
+
+Default behaivours
+------------------
+
+TODO: need to describe default behaivours which can be extended
+
+``$.fn.ploneOverlay.Constructor``
+``$.fn.ploneOverlay.defaults``
+``$.fn.ploneOverlay.defaultFormButtonOptions``
+``$.fn.ploneOverlay.defaultFormButton``
+
 
 
 
