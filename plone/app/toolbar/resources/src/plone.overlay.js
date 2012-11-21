@@ -351,7 +351,7 @@ $.fn.ploneOverlay = function (options) {
   });
 };
 
-$.fn.ploneOverlay.defaultFormButton = function(defaultOptions) {
+$.fn.ploneOverlay.defaultAjaxSubmit = function(defaultOptions) {
 
   defaultOptions = $.extend({
     errorMsg: '.portalMessage.error',
