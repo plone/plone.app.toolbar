@@ -52,6 +52,10 @@ PloneOverlay.prototype = {
     // we don't have to initialize if overlay is already initialized
     if (self.el) { return; }
 
+    // merge options with defaults
+    options = $.extend({}, $.fn.ploneOverlay.defaults,
+        typeof options === 'object' && options);
+
     // no element is passed
     if (options === undefined) {
       options = el;
@@ -333,8 +337,7 @@ $.fn.ploneOverlay = function (options) {
 
     // create new instance of overlay if not yet created
     if (!data) {
-      $(this).data('plone-overlay', (data = new PloneOverlay(el, $.extend({},
-          $.fn.ploneOverlay.defaults, typeof options === 'object' && options))));
+      $(this).data('plone-overlay', (data = new PloneOverlay(el, options)));
     }
 
     // expose only certain function as public API
