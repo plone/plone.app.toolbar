@@ -272,13 +272,13 @@ PloneOverlay.prototype = {
 
     } else {
 
+      // showing bootstrap's modal
+      self.el.modal('show');
+
       // show hook
       if (self.options.onShow) {
         self.options.onShow.call(self);
       }
-
-      // showing bootstrap's modal
-      return self.el.modal('show');
     }
   },
 
@@ -290,13 +290,13 @@ PloneOverlay.prototype = {
       return;
     }
 
+    // calling hide on bootstrap's modal
+    self.el.modal('hide');
+
     // hide hook
     if (self.options.onHide) {
       self.options.onHide.call(self);
     }
-
-    // calling hide on bootstrap's modal
-    return self.el.modal('hide');
   },
 
   destroy: function() {
@@ -310,17 +310,17 @@ PloneOverlay.prototype = {
     // first we hide modal, so all nice animations happen.
     self.hide();
 
-    // destroy hook
-    if (self.options.onDestroy) {
-      self.options.onDestroy.call(self);
-    }
-
     // remove modal's DOM element
     self.el.remove();
 
     //  reinitialize
     if (self._el) {
       self._el.data('plone-overlay', new PloneOverlay(self._el, self.options));
+    }
+
+    // destroy hook
+    if (self.options.onDestroy) {
+      self.options.onDestroy.call(self);
     }
   }
 

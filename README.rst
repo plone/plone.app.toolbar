@@ -175,17 +175,34 @@ Options
     which is new modal content. This way we can provide most flexible
     templating of modal.
 
-TODO: need to describe options below
-
 ``formButtons``
-``onInit``
+    TODO: explain
+
 ``onBeforeLoad``
+    Hook which is called before AJAX request. If AJAX request will never happen
+    for our overlay then this hook is never called.
+
 ``onLoaded``
+    Hook which is called after AJAX request and before we initialize modal.
+
+``onInit``
+    Hook which is called after modal is initialized. This happens after AJAX
+    request.
+
 ``onShow``
+    Hook which is called after modal is shown.
+
 ``onHide``
+    Hook which is called after modal is hidden.
+
 ``onDestroy``
+    Hook which is called after modal has been destroyed.
+
 ``onAjaxSave``
+    TODO: explain
+
 ``onAjaxError``
+    TODO: explain
 
 
 Default behaivours
