@@ -176,7 +176,20 @@ Options
     templating of modal.
 
 ``formButtons``
-    TODO: explain
+    Array of buttons and their functions which return ajaxSubmit options.
+    Example::
+    
+        {
+            'input#button-selector': $.fn.ploneOverlay.defaultFormButton({
+                onSave: function() { ... },
+                onError: function() { ... }
+              }),
+            'button#some-other-button': $.fn.ploneOverlay.defaultFormButton({
+                onSave: function() { ... },
+                onError: function() { ... }
+              }),
+            ...
+        }
 
 ``onBeforeLoad``
     Hook which is called before AJAX request. If AJAX request will never happen
@@ -198,12 +211,6 @@ Options
 ``onDestroy``
     Hook which is called after modal has been destroyed.
 
-``onAjaxSave``
-    TODO: explain
-
-``onAjaxError``
-    TODO: explain
-
 
 Default behaivours
 ------------------
@@ -213,7 +220,6 @@ TODO: need to describe default behaivours which can be extended
 ``$.fn.ploneOverlay.Constructor``
 ``$.fn.ploneOverlay.defaults``
 ``$.fn.ploneOverlay.defaultModalTemplate``
-``$.fn.ploneOverlay.defaultFormButtonOptions``
 ``$.fn.ploneOverlay.defaultFormButton``
 
 

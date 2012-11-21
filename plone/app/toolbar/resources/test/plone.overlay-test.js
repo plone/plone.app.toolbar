@@ -40,17 +40,13 @@ testCase("plone.overlay.js", {
 
   setUp: function() {
     var self = this;
-    self._formButtons = $.fn.ploneOverlay.defaults.formButtons;
     self._changeAjaxURL = $.fn.ploneOverlay.defaults.changeAjaxURL;
-    self._defaultFormButtonOptions = $.fn.ploneOverlay.defaultFormButtonOptions;
-
-    $.fn.ploneOverlay.defaults.formButtons = {
-      '.modal-body input[name="form.button.Save"]': $.fn.ploneOverlay.defaultFormButton
-    };
-
-    $.fn.ploneOverlay.defaults.modalTemplate =  $.fn.ploneOverlay.defaultModalTemplate({title: 'h1', body: '#content'});
     $.fn.ploneOverlay.defaults.changeAjaxURL = function(url) { return url; };
-    $.fn.ploneOverlay.defaultFormButtonOptions.responseFilter = '#wrapper';
+
+    $.fn.ploneOverlay.defaults.modalTemplate =  $.fn.ploneOverlay.defaultModalTemplate({
+      title: 'h1',
+      body: '#content'
+    });
 
     if ($.iframe) {
       $.iframe.document = document;
@@ -60,12 +56,14 @@ testCase("plone.overlay.js", {
 
   tearDown: function() {
     var self = this;
+
     $('.modal').remove();
     $('#wrapper').remove();
-    $.fn.ploneOverlay.defaults.formButtons = self._formButtons;
+
     $.fn.ploneOverlay.defaults.changeAjaxURL = self._changeAjaxURL;
-    $.fn.ploneOverlay.defaultFormButtonOptions = self._defaultFormButtonOptions;
+
     $.plone.init._items = [];
+
     if ($.iframe) {
       $.iframe.el.remove();
       $.iframe = undefined;
@@ -174,12 +172,12 @@ testCase("plone.overlay.js", {
       onBeforeLoad: onBeforeLoad,
       onLoaded: onLoaded,
       onInit: function() {
-        var self = this;
+        var overlay = this;
         assert.calledOnce(onBeforeLoad);
         assert.calledOnce(onLoaded);
         assert.callOrder(onBeforeLoad, onLoaded);
-        assert($('h3', self.el).html() === 'Example Resource Title');
-        assert($('.modal-body', self.el).html() === 'Example Resource Content');
+        assert($('h3', overlay.el).html() === 'Example Resource Title');
+        assert($('.modal-body', overlay.el).html() === 'Example Resource Content');
         done();
       }
     });
@@ -199,10 +197,16 @@ testCase("plone.overlay.js", {
 
     el.ploneOverlay({
       show: true,
-      onAjaxSave: function(responseBody) {
-        assert($('h1', responseBody).html() === 'Example Resource Title');
-        assert($('#content', responseBody).html() === 'Example Resource Content');
-        done();
+      formButtons: {
+        '.modal-body input[name="form.button.Save"]':
+            $.fn.ploneOverlay.defaultFormButton({
+              responseFilter: '#wrapper',
+              onSave: function(responseBody) {
+                assert($('h1', responseBody).html() === 'Example Resource Title');
+                assert($('#content', responseBody).html() === 'Example Resource Content');
+                done();
+              }
+            })
       },
       onShow: function() {
         $('.modal-footer input[name="form.button.Save"]', this.el).trigger('click');
@@ -224,11 +228,17 @@ testCase("plone.overlay.js", {
 
     el.ploneOverlay({
       show: true,
-      onAjaxError: function() {
-        var self = this;
-        assert($('h3', self.el).html() === 'Example Error Form Title');
-        assert($('input[type="text"]', self.el).val() === 'Example Error Ajax');
-        done();
+      formButtons: {
+        '.modal-body input[name="form.button.Save"]':
+            $.fn.ploneOverlay.defaultFormButton({
+              responseFilter: '#wrapper',
+              onError: function() {
+                var overlay = this;
+                assert($('h3', overlay.el).html() === 'Example Error Form Title');
+                assert($('input[type="text"]', overlay.el).val() === 'Example Error Ajax');
+                done();
+              }
+            })
       },
       onShow: function() {
         $('.modal-footer input[name="form.button.Save"]', this.el).trigger('click');
@@ -251,15 +261,19 @@ testCase("plone.overlay.js", {
 
     el.ploneOverlay({
       show: true,
+      formButtons: {
+        '.modal-body input[name="form.button.Save"]':
+            $.fn.ploneOverlay.defaultFormButton({ responseFilter: '#wrapper' })
+      },
       onShow: function() {
-        var self = this,
-            oldSuccess = self._formButtons['.modal-body input[name="form.button.Save"]'].success;
+        var overlay = this,
+            oldSuccess = overlay._formButtons['.modal-body input[name="form.button.Save"]'].success;
         function newSuccess(response, state, xhr, form) {
           oldSuccess(response, state, xhr, form);
           assert($('#wrapper').html() !== 'Something');
           done();
         }
-        self._formButtons['.modal-body input[name="form.button.Save"]'].success = newSuccess;
+        overlay._formButtons['.modal-body input[name="form.button.Save"]'].success = newSuccess;
         $('.modal-footer input[name="form.button.Save"]', this.el).trigger('click');
       }
     });

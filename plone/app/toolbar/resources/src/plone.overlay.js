@@ -193,11 +193,7 @@ PloneOverlay.prototype = {
         var button = $(formButton, self.el);
         if (button.size() !== 0) {
           self._formButtons[formButton] = self.options.formButtons[formButton]
-              .apply(self, [ button, {
-                  onSave: self.options.onAjaxSave,
-                  onError: self.options.onAjaxError
-                }
-              ]);
+              .apply(self, [ button ]);
         }
       });
     }
@@ -352,7 +348,9 @@ $.fn.ploneOverlay = function (options) {
   });
 };
 
-$.fn.ploneOverlay.defaultFormButtonOptions = {
+$.fn.ploneOverlay.defaultFormButton = function(defaultOptions) {
+
+  defaultOptions = $.extend({
     errorMsg: '.portalMessage.error',
     buttonContainer: '.modal-footer',
     responseFilter: '#content',
@@ -360,82 +358,81 @@ $.fn.ploneOverlay.defaultFormButtonOptions = {
     // hooks
     onError: undefined,
     onSave: undefined
-};
 
-$.fn.ploneOverlay.defaultFormButton = function(button, options) {
-  var self = this;
+  } , defaultOptions || {});
 
-  // make this method extendable
-  options = $.extend({}, $.fn.ploneOverlay.defaultFormButtonOptions, options || {});
+  return function(button, options) {
+    var overlay = this;
 
-  // hide and copy same button to .modal-footer, clicking on button in
-  // footer should actually click on button inside form
-  button.clone()
-    .appendTo($(options.buttonContainer, self.el))
-    .on('click', function(e) {
-      e.stopPropagation();
-      e.preventDefault();
-      button.trigger('click');
-    });
-  button.hide();
+    // make this method extendable
+    options = $.extend({}, defaultOptions, options || {});
 
-  // we return array of options which will be passed to ajaxSubmit
-  // TODO: add loading spinner
-  // TODO: hook in notification stuff
-  return {
+    // hide and copy same button to .modal-footer, clicking on button in
+    // footer should actually click on button inside form
+    button.clone()
+      .appendTo($(options.buttonContainer, overlay.el))
+      .on('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        button.trigger('click');
+      });
+    button.hide();
 
-    dataType: 'html',
-    beforeSerialize: function(form, options) {
+    // we return array of options which will be passed to ajaxSubmit
+    // TODO: add loading spinner
+    // TODO: hook in notification stuff
+    return {
+      dataType: 'html',
+      beforeSerialize: function(form, options) {
 
-      // save tinymce text to textarea
-      var textarea = $('.mce_editable', form),
-          textareaId = textarea.attr('id');
-      if (textarea.size() !== 0 && tinyMCE &&
-          tinyMCE.editors[textareaId] !== undefined) {
-        tinyMCE.editors[textareaId].save();
-        tinyMCE.editors[textareaId].remove();
-      }
-
-    },
-
-    success: function(response, state, xhr, form) {
-      var _document = document,
-          responseBody = $('<div/>').html(
-              (/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[1]);
-
-      // use $.iframe's if avaliable
-      if ($.iframe) {
-        _document = $.iframe.document;
-      }
-
-      // if error is found res
-      if ($(options.errorMsg, responseBody).size() !== 0) {
-        // TODO: this should be done more smooth
-        self.el.remove();
-        self.el = $(options.responseFilter, responseBody);
-        self.initModal();
-
-        if (options.onError) {
-          options.onError.apply(self, [ responseBody, state, xhr, form, button ]);
+        // save tinymce text to textarea
+        var textarea = $('.mce_editable', form),
+            textareaId = textarea.attr('id');
+        if (textarea.size() !== 0 && tinyMCE &&
+            tinyMCE.editors[textareaId] !== undefined) {
+          tinyMCE.editors[textareaId].save();
+          tinyMCE.editors[textareaId].remove();
         }
 
-        self.show();
+      },
+      success: function(response, state, xhr, form) {
+        var _document = document,
+            responseBody = $('<div/>').html(
+                (/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[1]);
 
-      // custom save function
-      } else if (options.onSave) {
-        options.onSave.apply(self, [ responseBody, state, xhr, form, button ]);
+        // use $.iframe's if avaliable
+        if ($.iframe) {
+          _document = $.iframe.document;
+        }
 
-      // common save function, we replace what we filtered from response
-      } else if ($(options.responseFilter, _document).size() !== 0) {
-        $(options.responseFilter, _document)
-          .html($(options.responseFilter, responseBody).html());
-        self.destroy();
+        // if error is found res
+        if ($(options.errorMsg, responseBody).size() !== 0) {
+          // TODO: this should be done more smooth
+          overlay.el.remove();
+          overlay.el = $(options.responseFilter, responseBody);
+          overlay.initModal();
 
-      } else {
-        self.destroy();
+          if (options.onError) {
+            options.onError.apply(overlay, [ responseBody, state, xhr, form, button ]);
+          }
+
+          overlay.show();
+
+        // custom save function
+        } else if (options.onSave) {
+          options.onSave.apply(overlay, [ responseBody, state, xhr, form, button ]);
+
+        // common save function, we replace what we filtered from response
+        } else if ($(options.responseFilter, _document).size() !== 0) {
+          $(options.responseFilter, _document)
+            .html($(options.responseFilter, responseBody).html());
+          overlay.destroy();
+
+        } else {
+          overlay.destroy();
+        }
       }
-    }
-
+    };
   };
 };
 
@@ -492,8 +489,6 @@ $.fn.ploneOverlay.defaults = {
   onShow: undefined,
   onHide: undefined,
   onDestroy: undefined,
-  onAjaxSave: undefined,
-  onAjaxError: undefined,
 
   // buttons which should
   formButtons: {},
