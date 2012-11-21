@@ -136,7 +136,12 @@ PloneOverlay.prototype = {
     }
 
     // initialize modal but dont show it
-    self.el.modal($.extend(self.options.modalOptions, { show: false }));
+    self.el.modal({
+      backdrop: 'static',
+      dynamic: true,
+      keyboard: false,
+      show: false
+    });
 
     // disable all clicks on modal
     self.el.on('click', function(e) {
@@ -225,10 +230,13 @@ PloneOverlay.prototype = {
       // sync scrolling
       $($.iframe.document).scroll(function () {
         var backdrop = self.el.parents('.modal-backdrop');
-        backdrop.css({
-          'top': -1 * $($.iframe.document).scrollTop(),
-          'height': $($.iframe.document).scrollTop() + backdrop.height()
-        });
+
+        if ($.iframe && $.iframe.document) {
+          backdrop.css({
+            'top': -1 * $($.iframe.document).scrollTop(),
+            'height': $($.iframe.document).scrollTop() + backdrop.height()
+          });
+        }
 
         // make sure tinymce toolbar's menu style position
         if ($.plone.tinymce !== undefined &&
@@ -431,6 +439,49 @@ $.fn.ploneOverlay.defaultFormButton = function(button, options) {
   };
 };
 
+$.fn.ploneOverlay.defaultModalTemplate = function(options) {
+
+  options = $.extend({
+    title: 'h1.documentFirstHeading',
+    body: '#content',
+    destroy: '[data-dismiss="modal"]'
+  } , options || {});
+
+  return function(content) {
+    var overlay = this,
+        el = $('' +
+          '<div class="modal fade">' +
+          '  <div class="modal-header">' +
+          '    <a class="close" data-dismiss="modal">&times;</a>' +
+          '    <h3></h3>' +
+          '  </div>' +
+          '  <div class="modal-body"></div>' +
+          '  <div class="modal-footer"></div>' +
+          '</div>'),
+        title = $('.modal-header > h3', el),
+        body = $('.modal-body', el),
+        footer = $('.modal-footer', el);
+
+
+    // Title
+    title.html($(options.title, content).html());
+
+    // Content
+    body.html($(options.body, content).html());
+    $(options.title, body).remove();
+    $(options.footer, body).remove();
+
+    // destroying modal
+    $(options.destroy, el).off('click').on('click', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      overlay.destroy();
+    });
+
+    return el;
+  };
+};
+
 $.fn.ploneOverlay.defaults = {
   mask: $.mask || undefined,
 
@@ -447,53 +498,8 @@ $.fn.ploneOverlay.defaults = {
   // buttons which should
   formButtons: {},
 
-  // options for bootstrap modal
-  modalOptions: {
-    backdrop: 'static',
-    keyboard: true,
-    dynamic: true
-  },
-
   // template for overlay
-  modalTemplate: function(content, options) {
-    var self = this,
-        el = $('' +
-          '<div class="modal fade">' +
-          '  <div class="modal-header">' +
-          '    <a class="close" data-dismiss="modal">&times;</a>' +
-          '    <h3></h3>' +
-          '  </div>' +
-          '  <div class="modal-body"></div>' +
-          '  <div class="modal-footer"></div>' +
-          '</div>'),
-        title = $('.modal-header > h3', el),
-        body = $('.modal-body', el),
-        footer = $('.modal-footer', el);
-
-    // Merge options
-    options = $.extend({
-      title: 'h1.documentFirstHeading',
-      body: '#content',
-      destroy: '[data-dismiss="modal"]'
-    } , options || {});
-
-    // Title
-    title.html($(options.title, content).html());
-
-    // Content
-    body.html($(options.body, content).html());
-    $(options.title, body).remove();
-    $(options.footer, body).remove();
-
-    // destroying modal
-    $(options.destroy, el).off('click').on('click', function(e) {
-      e.stopPropagation();
-      e.preventDefault();
-      self.destroy();
-    });
-
-    return el;
-  },
+  modalTemplate: $.fn.ploneOverlay.defaultModalTemplate(),
 
   // adding prefix to url (after domain part)
   changeAjaxURL: function(url, prefix) {

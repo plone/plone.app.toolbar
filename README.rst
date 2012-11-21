@@ -125,7 +125,7 @@ Example: Show already existing content in overlay
 -------------------------------------------------
 
 Somewhere in html we have an element which we want to show in overlay::
-
+ 
     ...
     <div id="special-content">
         Some very important things to show in overlay
@@ -168,11 +168,15 @@ Options
     Function which gets called with original URL as paramether and should
     return URL which is used in AJAX call when retriving content of overlay.
     Default: function which appends '++unthemed++' before URI. eg:
-        http://plone.org/some/site -> http://plone.org/++unthemed++/some/site
+    http://plone.org/some/site -> http://plone.org/++unthemed++/some/site
+
+``modalTemplate``
+    Function which takes modal content as first attribute and returns element
+    which is new modal content. This way we can provide most flexible
+    templating of modal.
 
 TODO: need to describe options below
 
-``modalTemplate``
 ``formButtons``
 ``onInit``
 ``onBeforeLoad``
@@ -191,6 +195,7 @@ TODO: need to describe default behaivours which can be extended
 
 ``$.fn.ploneOverlay.Constructor``
 ``$.fn.ploneOverlay.defaults``
+``$.fn.ploneOverlay.defaultModalTemplate``
 ``$.fn.ploneOverlay.defaultFormButtonOptions``
 ``$.fn.ploneOverlay.defaultFormButton``
 

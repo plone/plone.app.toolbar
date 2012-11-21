@@ -41,17 +41,15 @@ testCase("plone.overlay.js", {
   setUp: function() {
     var self = this;
     self._formButtons = $.fn.ploneOverlay.defaults.formButtons;
-    self._modalTemplate = $.fn.ploneOverlay.defaults.modalTemplate;
-    self._addPrefixToURL = $.fn.ploneOverlay.defaults.addPrefixToURL;
+    self._changeAjaxURL = $.fn.ploneOverlay.defaults.changeAjaxURL;
     self._defaultFormButtonOptions = $.fn.ploneOverlay.defaultFormButtonOptions;
 
     $.fn.ploneOverlay.defaults.formButtons = {
       '.modal-body input[name="form.button.Save"]': $.fn.ploneOverlay.defaultFormButton
     };
-    $.fn.ploneOverlay.defaults.modalTemplate = function(content) {
-      return self._modalTemplate.apply(this, [ content, { title: 'h1', body: '#content' } ]);
-    };
-    $.fn.ploneOverlay.defaults.addPrefixToURL = function(url) { return url; };
+
+    $.fn.ploneOverlay.defaults.modalTemplate =  $.fn.ploneOverlay.defaultModalTemplate({title: 'h1', body: '#content'});
+    $.fn.ploneOverlay.defaults.changeAjaxURL = function(url) { return url; };
     $.fn.ploneOverlay.defaultFormButtonOptions.responseFilter = '#wrapper';
 
     if ($.iframe) {
@@ -65,8 +63,7 @@ testCase("plone.overlay.js", {
     $('.modal').remove();
     $('#wrapper').remove();
     $.fn.ploneOverlay.defaults.formButtons = self._formButtons;
-    $.fn.ploneOverlay.defaults.modalTemplate = self._modalTemplate;
-    $.fn.ploneOverlay.defaults.addPrefixToURL = self._addPrefixToURL;
+    $.fn.ploneOverlay.defaults.changeAjaxURL = self._changeAjaxURL;
     $.fn.ploneOverlay.defaultFormButtonOptions = self._defaultFormButtonOptions;
     $.plone.init._items = [];
     if ($.iframe) {
@@ -268,15 +265,15 @@ testCase("plone.overlay.js", {
     });
   },
 
-  "addPrefixToURL conversion": function() {
-    assert(this._addPrefixToURL('http://example.com/something', 'prefix') ===
+  "changeAjaxURL conversion": function() {
+    assert(this._changeAjaxURL('http://example.com/something', 'prefix') ===
         'http://example.com/prefix/something');
-    assert(this._addPrefixToURL('/something', 'prefix').substr(-17, 17) ===
+    assert(this._changeAjaxURL('/something', 'prefix').substr(-17, 17) ===
         '/prefix/something');
-    assert(this._addPrefixToURL('something', 'prefix').substr(-17, 17) !==
+    assert(this._changeAjaxURL('something', 'prefix').substr(-17, 17) !==
         '/prefix/something');
-    assert(this._addPrefixToURL('something', 'prefix').substr(-10, 10) === '/something');
-    assert(this._addPrefixToURL('something', 'prefix').indexOf('prefix') !== -1);
+    assert(this._changeAjaxURL('something', 'prefix').substr(-10, 10) === '/something');
+    assert(this._changeAjaxURL('something', 'prefix').indexOf('prefix') !== -1);
   },
 
   "jquery.iframe.js integration": function() {
