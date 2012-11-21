@@ -52,15 +52,15 @@ PloneOverlay.prototype = {
     // we don't have to initialize if overlay is already initialized
     if (self.el) { return; }
 
-    // merge options with defaults
-    options = $.extend({}, $.fn.ploneOverlay.defaults,
-        typeof options === 'object' && options);
-
     // no element is passed
     if (options === undefined) {
       options = el;
       el = undefined;
     }
+
+    // merge options with defaults
+    options = $.extend({}, $.fn.ploneOverlay.defaults,
+        typeof options === 'object' && options);
 
     // store options on instance
     self.options = options;

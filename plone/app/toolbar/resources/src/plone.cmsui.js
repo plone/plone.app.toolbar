@@ -37,9 +37,9 @@ $(document).ready(function() {
     onShow: function() { $(this).dropdown('toggle'); },
     formButtons: {
       '.modal-body input[name="form.button.Cancel"]':
-          $.fn.ploneOverlay.defaultFormButton(),
+          $.fn.ploneOverlay.defaultAjaxSubmit(),
       '.modal-body input.destructive':
-          $.fn.ploneOverlay.defaultFormButton({
+          $.fn.ploneOverlay.defaultAjaxSubmit({
             onSave: function(response, state, xhr, form, button) {
               // need redirect to different url after successfull submitting
               console.log('redirect');
@@ -53,9 +53,9 @@ $(document).ready(function() {
     onShow: function() { $(this).dropdown('toggle'); },
     formButtons: {
       '.modal-body input[name="form.button.Cancel"]':
-          $.fn.ploneOverlay.defaultFormButton(),
+          $.fn.ploneOverlay.defaultAjaxSubmit(),
       '.modal-body input[name="form.button.RenameAll"]':
-          $.fn.ploneOverlay.defaultFormButton({
+          $.fn.ploneOverlay.defaultAjaxSubmit({
             onSave: function(response, state, xhr, form, button) {
               // need redirect to different url after successfull submitting
               console.log('redirect');
@@ -68,8 +68,8 @@ $(document).ready(function() {
   $('#plone-toolbar #plone-contentmenu-workflow > ul > li#advanced > a').ploneOverlay({
     onShow: function() { $(this).dropdown('toggle'); },
     formButtons: {
-      '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultFormButton(),
-      '.modal-body input[name="form.button.Save"]': $.fn.ploneOverlay.defaultFormButton()
+      '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultAjaxSubmit(),
+      '.modal-body input[name="form.button.Save"]': $.fn.ploneOverlay.defaultAjaxSubmit()
     }
   });
 
@@ -77,8 +77,8 @@ $(document).ready(function() {
   $('#plone-toolbar #plone-contentmenu-display > ul > li#contextSetDefaultPage > a').ploneOverlay({
     onShow: function() { $(this).dropdown('toggle'); },
     formButtons: {
-      '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultFormButton(),
-      '.modal-body input[name="form.button.Save"]': $.fn.ploneOverlay.defaultFormButton()
+      '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultAjaxSubmit(),
+      '.modal-body input[name="form.button.Save"]': $.fn.ploneOverlay.defaultAjaxSubmit()
     }
   });
 
@@ -86,8 +86,8 @@ $(document).ready(function() {
   $('#plone-toolbar #plone-contentmenu-display > ul > li#folderChangeDefaultPage > a').ploneOverlay({
     onShow: function() { $(this).dropdown('toggle'); },
     formButtons: {
-      '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultFormButton(),
-      '.modal-body input[name="form.button.Save"]': $.fn.ploneOverlay.defaultFormButton()
+      '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultAjaxSubmit(),
+      '.modal-body input[name="form.button.Save"]': $.fn.ploneOverlay.defaultAjaxSubmit()
     }
   });
 

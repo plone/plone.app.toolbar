@@ -150,14 +150,14 @@ Example: Form in overlay
 TODO: write simple form example
 
 
-Options
--------
+$.fn.ploneOverlay.Constructor options
+-------------------------------------
+
+Default values for Constructor options can be found
+``$.fn.ploneOverlay.defaults``.
 
 ``el``
     If string it will be treated as url otherwise dom element is expected.
-
-``show``
-    If set to true immidiatly show overlay.
 
 ``mask``
     Mask object which should provide ``load`` and ``close`` attributes to call.
@@ -212,16 +212,29 @@ Options
     Hook which is called after modal has been destroyed.
 
 
-Default behaivours
-------------------
+$.fn.ploneOverlay options
+-------------------------
 
-TODO: need to describe default behaivours which can be extended
+Also all options of Constructor can be passed along with this options.
 
-``$.fn.ploneOverlay.Constructor``
-``$.fn.ploneOverlay.defaults``
-``$.fn.ploneOverlay.defaultModalTemplate``
-``$.fn.ploneOverlay.defaultFormButton``
+``show``
+    If set to true immidiatly show overlay.
 
+``hide``
+    If set to true immidiatly hide overlay.
+
+
+$.fn.ploneOverlay.defaultModalTemplate
+--------------------------------------
+
+TODO: need to describe how to use defaultModalTemplate when overlay template is
+different.
+
+
+$.fn.ploneOverlay.defaultAjaxSubmit
+-----------------------------------
+
+TODO: explain how to defaultAjaxSubmit can be used
 
 
 

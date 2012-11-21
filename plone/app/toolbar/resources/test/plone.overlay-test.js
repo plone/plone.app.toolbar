@@ -161,7 +161,7 @@ testCase("plone.overlay.js", {
     assert(window.location !== 'http://example.com');
   },
 
-  "loading modal html from remote url": function(done) {
+  "loading modal html from custom url": function(done) {
     var el = $('<div><h1>Example Title</h1><div id="content">Example Body</div></div>'),
         onBeforeLoad = this.stub(),
         onLoaded = this.stub();
@@ -183,6 +183,25 @@ testCase("plone.overlay.js", {
     });
   },
 
+  "loading modal html from only url": function(done) {
+    var onBeforeLoad = this.stub(),
+        onLoaded = this.stub(),
+        overlay = new $.fn.ploneOverlay.Constructor('test/example-resource.html#wrapper', {
+            onBeforeLoad: onBeforeLoad,
+            onLoaded: onLoaded,
+            onInit: function() {
+              var overlay = this;
+              assert.calledOnce(onBeforeLoad);
+              assert.calledOnce(onLoaded);
+              assert.callOrder(onBeforeLoad, onLoaded);
+              assert($('h3', overlay.el).html() === 'Example Resource Title');
+              assert($('.modal-body', overlay.el).html() === 'Example Resource Content');
+              done();
+            }
+          });
+    overlay.show();
+  },
+
   "submitting forms via ajax": function(done) {
     var el = $('' +
           '<div>' +
@@ -199,7 +218,7 @@ testCase("plone.overlay.js", {
       show: true,
       formButtons: {
         '.modal-body input[name="form.button.Save"]':
-            $.fn.ploneOverlay.defaultFormButton({
+            $.fn.ploneOverlay.defaultAjaxSubmit({
               responseFilter: '#wrapper',
               onSave: function(responseBody) {
                 assert($('h1', responseBody).html() === 'Example Resource Title');
@@ -230,7 +249,7 @@ testCase("plone.overlay.js", {
       show: true,
       formButtons: {
         '.modal-body input[name="form.button.Save"]':
-            $.fn.ploneOverlay.defaultFormButton({
+            $.fn.ploneOverlay.defaultAjaxSubmit({
               responseFilter: '#wrapper',
               onError: function() {
                 var overlay = this;
@@ -263,7 +282,7 @@ testCase("plone.overlay.js", {
       show: true,
       formButtons: {
         '.modal-body input[name="form.button.Save"]':
-            $.fn.ploneOverlay.defaultFormButton({ responseFilter: '#wrapper' })
+            $.fn.ploneOverlay.defaultAjaxSubmit({ responseFilter: '#wrapper' })
       },
       onShow: function() {
         var overlay = this,
