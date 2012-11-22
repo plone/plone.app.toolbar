@@ -245,6 +245,10 @@ window.iframe_initialize = function() {
     }
   }
 };
-window.iframe_initialize();
+
+if (window.iframe_initialized !== true) {
+  window.iframe_initialized = true;
+  window.iframe_initialize();
+}
 
 }(window, window.document));
