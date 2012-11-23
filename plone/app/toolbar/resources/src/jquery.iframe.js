@@ -65,12 +65,20 @@ $.IFrame.prototype = {
 
     // which opens link in top frame if clicked on
     self.registerAction(
-      function(e) { return $.nodeName(e.target, 'a') && (e.which === 1 || e.which === 2); },
       function(e) {
+        return ($.nodeName(e.target, 'a') ||
+                $(e.target).parents('a').size() === 1
+                  ) && (e.which === 1 || e.which === 2);
+      },
+      function(e) {
+          var url = $(e.target).attr('href');
+          if (!$.nodeName(e.target, 'a')) {
+            url = $(e.target).parents('a').attr('href');
+          }
           if (e.which === 1) {
-            self._window_location($(e.target).attr('href'));
+            self._window_location(url);
           } else if (e.which === 2) {
-            self._window_open($(e.target).attr('href'));
+            self._window_open(url);
           }
         });
 
