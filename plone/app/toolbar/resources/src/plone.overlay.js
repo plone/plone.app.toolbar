@@ -238,14 +238,6 @@ PloneOverlay.prototype = {
           });
         }
 
-        // make sure tinymce toolbar's menu style position
-        if ($.plone.tinymce !== undefined &&
-            $.plone.tinymce.menuStylePosition === undefined) {
-          $.plone.tinymce.menuStylePosition = $('.mceMenu').parent().offset().top;
-          $('.mceMenu').parent().css('top',
-              $.plone.tinymce.menuStylePosition - $($.iframe.document).scrollTop());
-        }
-
         // TODO: is this really needed
         //self.el.modal('show');  // this will make sure backdrop is fully sized
       });
