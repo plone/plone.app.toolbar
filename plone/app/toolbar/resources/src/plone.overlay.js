@@ -41,7 +41,6 @@
 (function ($) {
 "use strict";
 
-
 // Constructor
 var PloneOverlay = function(el, options) { this.init(el, options); };
 PloneOverlay.prototype = {
@@ -511,11 +510,6 @@ $.fn.ploneOverlay.defaults = {
 };
 
 $.fn.ploneOverlay.Constructor = PloneOverlay;
-
-
-$.fn.ploneOverlay.fromUrl = function(url, options){
-  return $('<a style="display:none" href="' + url + '" />').appendTo('body').ploneOverlay(options);
-}
 
 
 }(window.jQuery));
