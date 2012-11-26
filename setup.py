@@ -11,7 +11,7 @@ setup(
         "Framework :: Plone",
         "Programming Language :: Python",
         "Topic :: Software Development :: Libraries :: Python Modules",
-        ],
+    ],
     keywords='plone ui toolbar',
     author='Rok Garbas',
     author_email='rok@garbas.si',
@@ -35,7 +35,9 @@ setup(
         'Acquisition',
         'plone.app.jquery>=1.7.1',
         'Products.ResourceRegistries>=2.1',
-        ],
+        'Products.CMFPlone>4.3a2',
+        'Products.TinyMCE>1.3b7',
+    ],
     extras_require={
         'test': [
             'plone.testing',
@@ -45,7 +47,7 @@ setup(
             'robotsuite',
             'plone.act',
             ],
-        },
+    },
     entry_points="""
         [z3c.autoinclude.plugin]
         target = plone
