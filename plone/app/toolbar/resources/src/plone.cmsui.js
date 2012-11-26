@@ -44,7 +44,7 @@ $(document).ready(function() {
               // need redirect to different url after successfull submitting
               window.parent.location.href = $((/<base[^>]*>((.|[\n\r])*)<\/base>/im).exec(xhr.responseText)[0]).attr('href');
             }
-      })
+          })
     }
   });
 
@@ -60,7 +60,7 @@ $(document).ready(function() {
               // need redirect to different url after successfull submitting
               window.parent.location.href = $((/<base[^>]*>((.|[\n\r])*)<\/base>/im).exec(xhr.responseText)[0]).attr('href');
             }
-      })
+          })
     }
   });
 
@@ -69,7 +69,13 @@ $(document).ready(function() {
     onShow: function() { $(this).dropdown('toggle'); },
     formButtons: {
       '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultAjaxSubmit(),
-      '.modal-body input[name="form.button.Save"]': $.fn.ploneOverlay.defaultAjaxSubmit()
+      '.modal-body input[name="form.button.Publish"]':
+          $.fn.ploneOverlay.defaultAjaxSubmit({
+            onSave: function(response, state, xhr, form, button) {
+              // need redirect to different url after successfull submitting
+              window.parent.location.href = $((/<base[^>]*>((.|[\n\r])*)<\/base>/im).exec(xhr.responseText)[0]).attr('href');
+            }
+          })
     }
   });
 
