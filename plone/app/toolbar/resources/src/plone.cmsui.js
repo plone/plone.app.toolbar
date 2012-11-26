@@ -42,7 +42,7 @@ $(document).ready(function() {
           $.fn.ploneOverlay.defaultAjaxSubmit({
             onSave: function(response, state, xhr, form, button) {
               // need redirect to different url after successfull submitting
-              console.log('redirect');
+              window.parent.location.href = $((/<base[^>]*>((.|[\n\r])*)<\/base>/im).exec(xhr.responseText)[0]).attr('href');
             }
       })
     }
@@ -58,7 +58,7 @@ $(document).ready(function() {
           $.fn.ploneOverlay.defaultAjaxSubmit({
             onSave: function(response, state, xhr, form, button) {
               // need redirect to different url after successfull submitting
-              console.log('redirect');
+              window.parent.location.href = $((/<base[^>]*>((.|[\n\r])*)<\/base>/im).exec(xhr.responseText)[0]).attr('href');
             }
       })
     }
