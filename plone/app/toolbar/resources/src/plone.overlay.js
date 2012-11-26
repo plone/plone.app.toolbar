@@ -157,6 +157,7 @@ PloneOverlay.prototype = {
       //  - file and checkbox input elements
       if (!target.hasClass("allowDefault") &&
           target.attr('type') !== 'file' &&
+          target.attr('type') !== 'radio' &&
           target.attr('type') !== 'checkbox') {
 
         e.preventDefault();
