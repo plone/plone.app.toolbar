@@ -38,7 +38,7 @@
 /*global tinyMCE:false, TinyMCEConfig:false */
 
 
-(function ($) {
+(function ($, undefined) {
 "use strict";
 
 // Constructor
