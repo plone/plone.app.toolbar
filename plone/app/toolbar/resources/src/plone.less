@@ -79,6 +79,11 @@
 
   form { margin: 0; }
 
+  input.destructive[type='submit'] {
+    .btn();
+    .btn-primary();
+    .btn-danger();
+  }
   input.context[type='submit'] {
     .btn();
     .btn-primary();
@@ -151,6 +156,8 @@
     }
     margin-bottom: 1em;
   }
-
+  div.modal-footer > input {
+    margin-left: 1em;
+  }
 }
 // }}}
