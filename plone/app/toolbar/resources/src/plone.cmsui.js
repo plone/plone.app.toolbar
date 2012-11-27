@@ -30,6 +30,10 @@
 (function($, undefined) {
 "use strict";
 
+var getBaseTag = function(text){
+  return $((/<base[^>]*>((.|[\n\r])*)<\/base>/im).exec(text)[0]).attr('href');
+}
+
 $(document).ready(function() {
 
   // Delete Action
@@ -42,7 +46,7 @@ $(document).ready(function() {
           $.fn.ploneOverlay.defaultAjaxSubmit({
             onSave: function(response, state, xhr, form, button) {
               // need redirect to different url after successfull submitting
-              window.parent.location.href = $((/<base[^>]*>((.|[\n\r])*)<\/base>/im).exec(xhr.responseText)[0]).attr('href');
+              window.parent.location.href = getBaseTag(xhr.responseText);
             }
           })
     }
@@ -58,7 +62,7 @@ $(document).ready(function() {
           $.fn.ploneOverlay.defaultAjaxSubmit({
             onSave: function(response, state, xhr, form, button) {
               // need redirect to different url after successfull submitting
-              window.parent.location.href = $((/<base[^>]*>((.|[\n\r])*)<\/base>/im).exec(xhr.responseText)[0]).attr('href');
+              window.parent.location.href = getBaseTag(xhr.responseText);
             }
           })
     }
@@ -73,7 +77,7 @@ $(document).ready(function() {
           $.fn.ploneOverlay.defaultAjaxSubmit({
             onSave: function(response, state, xhr, form, button) {
               // need redirect to different url after successfull submitting
-              window.parent.location.href = $((/<base[^>]*>((.|[\n\r])*)<\/base>/im).exec(xhr.responseText)[0]).attr('href');
+              window.parent.location.href = getBaseTag(xhr.responseText);
             }
           })
     }
