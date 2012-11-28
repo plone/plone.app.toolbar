@@ -35,8 +35,8 @@ setup(
         'Acquisition',
         'plone.app.jquery>=1.7.1',
         'Products.ResourceRegistries>=2.1',
-        'Products.CMFPlone>4.3a2',
-        'Products.TinyMCE>1.3b7',
+#        'Products.CMFPlone>4.3a2',
+#        'Products.TinyMCE>1.3b7',
     ],
     extras_require={
         'test': [
