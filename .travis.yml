@@ -1,0 +1,14 @@
+language: python
+python:
+  - 2.7
+before_install:
+  - pip install --use-mirrors flake8
+  - pip install http://effbot.org/downloads/Imaging-1.1.7.tar.gz
+  - sudo apt-get install -qq libxml2-dev libxslt-dev
+install:
+  - python bootstrap.py
+  - bin/buildout -c travis.cfg -q
+script:
+  - flake8 setup.py
+  - flake8 plone
+  - bin/test -s plone.app.toolbar
