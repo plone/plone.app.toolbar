@@ -11,6 +11,6 @@ def test_suite():
     suite = unittest.TestSuite()
     suite.addTests([
         layered(robotsuite.RobotTestSuite("acceptance/toolbar.txt"),
-        layer=PLONEAPPTOOLBAR_ACCEPTANCE_TESTING),
+                layer=PLONEAPPTOOLBAR_ACCEPTANCE_TESTING),
     ])
     return suite

@@ -44,8 +44,8 @@ class ToolbarTile(Tile):
     def resources(self):
         resources = []
         skinname = self.context.getCurrentSkinName()
-        self.context.changeSkin(
-                self.registry['plone.app.toolbar.skinname'], self.request)
+        self.context.changeSkin(self.registry['plone.app.toolbar.skinname'],
+                                self.request)
         for item in self.styles_view.styles() + self.scripts_view.scripts():
             if item['src']:
                 resources.append(item['src'])
@@ -105,7 +105,7 @@ class ToolbarTile(Tile):
             # button url
             button_url = action['url'].strip()
             if button_url.startswith('http') or \
-                button_url.startswith('javascript'):
+                    button_url.startswith('javascript'):
                 item['url'] = button_url
             else:
                 item['url'] = '%s/%s' % (self.context_url, button_url)
@@ -159,7 +159,7 @@ class ToolbarTile(Tile):
             return buttons
 
         plone_contentmenu = getUtility(IBrowserMenu,
-                name='plone_contentmenu').getMenuItems
+                                       name='plone_contentmenu').getMenuItems
 
         return contentmenu(plone_contentmenu(self.context, self.request))
 

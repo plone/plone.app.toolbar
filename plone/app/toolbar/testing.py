@@ -20,7 +20,7 @@ class Toolbar(PloneSandboxLayer):
         # load ZCML
         import plone.app.toolbar
         xmlconfig.file('configure.zcml', plone.app.toolbar,
-                context=configurationContext)
+                       context=configurationContext)
 
     def setUpPloneSite(self, portal):
         # install into the Plone site
@@ -47,7 +47,7 @@ class Toolbar(PloneSandboxLayer):
         login(portal, TEST_USER_NAME)
         setRoles(portal, TEST_USER_ID, ['Manager', ])
         portal.invokeFactory('Folder', 'acceptance-test-folder',
-                title='Acceptance Test Folder')
+                             title='Acceptance Test Folder')
 
 
 def browser_login(portal, browser, username=None, password=None):
