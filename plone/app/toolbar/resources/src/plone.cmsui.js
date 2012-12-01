@@ -30,9 +30,6 @@
 (function($, undefined) {
 "use strict";
 
-var getBaseTag = function(text){
-  return $((/<base[^>]*>((.|[\n\r])*)<\/base>/im).exec(text)[0]).attr('href');
-}
 
 $(document).ready(function() {
 
@@ -46,7 +43,7 @@ $(document).ready(function() {
           $.fn.ploneOverlay.defaultAjaxSubmit({
             onSave: function(response, state, xhr, form, button) {
               // need redirect to different url after successfull submitting
-              window.parent.location.href = getBaseTag(xhr.responseText);
+              window.parent.location.href = $.fn.getBaseTag(xhr.responseText);
             }
           })
     }
@@ -62,7 +59,7 @@ $(document).ready(function() {
           $.fn.ploneOverlay.defaultAjaxSubmit({
             onSave: function(response, state, xhr, form, button) {
               // need redirect to different url after successfull submitting
-              window.parent.location.href = getBaseTag(xhr.responseText);
+              window.parent.location.href = $.fn.getBaseTag(xhr.responseText);
             }
           })
     }
@@ -77,7 +74,7 @@ $(document).ready(function() {
           $.fn.ploneOverlay.defaultAjaxSubmit({
             onSave: function(response, state, xhr, form, button) {
               // need redirect to different url after successfull submitting
-              window.parent.location.href = getBaseTag(xhr.responseText);
+              window.parent.location.href = $.fn.getBaseTag(xhr.responseText);
             }
           })
     }
@@ -101,6 +98,21 @@ $(document).ready(function() {
     }
   });
 
+  $('#plone-toolbar #plone-personal-actions > ul > li#plone-personal-actions-plone_setup a').ploneOverlay({
+    onShow: function() { $(this).dropdown('toggle'); },
+    onLoaded: function(){
+      var overlay = this;
+      var el = overlay.el;
+      el.find('a').on('click', function(e){
+        el.load($(this).attr('href'));
+        overlay._el = overlay.el = overlay.options.modalTemplate.apply(overlay, [ el ]).hide();
+        e.stopPropagation();
+        e.preventDefault();
+        return false;
+      });
+    },
+    disableClicks: false
+  });
 
 });
 

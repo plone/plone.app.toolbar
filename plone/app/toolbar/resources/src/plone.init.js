@@ -54,6 +54,10 @@ $.fn.ploneInit = function() {
   });
 };
 
+// utilities
+$.fn.getBaseTag = function(text){
+  return $((/<base[^>]*>((.|[\n\r])*)<\/base>/im).exec(text)[0]).attr('href');
+}
 
 // Initial initialization
 $(document).ready(function() {
