@@ -93,8 +93,8 @@ window.IFrame.prototype = {
           } else if (url.slice(-5) === '.less') {
             resource = document.createElement('link');
             resource.href = url;
-            resource.type = 'text/less';
-            resource.rel = 'stylesheet';
+            resource.type = 'text/css';
+            resource.rel = 'stylesheet/less';
           }
 
           if (resource !== '') {
