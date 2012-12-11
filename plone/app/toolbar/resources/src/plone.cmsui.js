@@ -24,7 +24,7 @@
 
 /*jshint bitwise:true, curly:true, eqeqeq:true, immed:true, latedef:true,
   newcap:true, noarg:true, noempty:true, nonew:true, plusplus:true,
-  regexp:true, undef:true, strict:true, trailing:true, browser:true */
+  regexp:false, undef:true, strict:true, trailing:true, browser:true */
 
 
 (function($, undefined) {
@@ -43,7 +43,7 @@ $(document).ready(function() {
           $.fn.ploneOverlay.defaultAjaxSubmit({
             onSave: function(response, state, xhr, form, button) {
               // need redirect to different url after successfull submitting
-              window.parent.location.href = $.fn.getBaseTag(xhr.responseText);
+              window.parent.location.href = this.getBaseURL(xhr.responseText);
             }
           })
     }
@@ -59,7 +59,7 @@ $(document).ready(function() {
           $.fn.ploneOverlay.defaultAjaxSubmit({
             onSave: function(response, state, xhr, form, button) {
               // need redirect to different url after successfull submitting
-              window.parent.location.href = $.fn.getBaseTag(xhr.responseText);
+              window.parent.location.href = this.getBaseURL(xhr.responseText);
             }
           })
     }
@@ -74,7 +74,7 @@ $(document).ready(function() {
           $.fn.ploneOverlay.defaultAjaxSubmit({
             onSave: function(response, state, xhr, form, button) {
               // need redirect to different url after successfull submitting
-              window.parent.location.href = $.fn.getBaseTag(xhr.responseText);
+              window.parent.location.href = this.getBaseURL(xhr.responseText);
             }
           })
     }
@@ -100,18 +100,16 @@ $(document).ready(function() {
 
   $('#plone-toolbar #plone-personal-actions > ul > li#plone-personal-actions-plone_setup a').ploneOverlay({
     onShow: function() { $(this).dropdown('toggle'); },
-    onLoaded: function(){
-      var overlay = this;
-      var el = overlay.el;
+    onLoaded: function() {
+      var overlay = this,
+          el = overlay.el;
       el.find('a').on('click', function(e){
         el.load($(this).attr('href'));
         overlay._el = overlay.el = overlay.options.modalTemplate.apply(overlay, [ el ]).hide();
         e.stopPropagation();
         e.preventDefault();
-        return false;
       });
-    },
-    disableClicks: false
+    }
   });
 
 });

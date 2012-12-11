@@ -67,20 +67,21 @@ $.IFrame.prototype = {
     self.registerAction(
       function(e) {
         return ($.nodeName(e.target, 'a') ||
-                $(e.target).parents('a').size() === 1
-                  ) && (e.which === 1 || e.which === 2);
+                $(e.target).parents('a').size() === 1);
       },
       function(e) {
-          var url = $(e.target).attr('href');
-          if (!$.nodeName(e.target, 'a')) {
-            url = $(e.target).parents('a').attr('href');
-          }
-          if (e.which === 1) {
-            self._window_location(url);
-          } else if (e.which === 2) {
-            self._window_open(url);
-          }
-        });
+        e.stopPropagation();
+        e.preventDefault();
+        var url = $(e.target).attr('href');
+        if (!$.nodeName(e.target, 'a')) {
+          url = $(e.target).parents('a').attr('href');
+        }
+        if (e.which === 1) {
+          self._window_location(url);
+        } else if (e.which === 2) {
+          self._window_open(url);
+        }
+      });
 
     // shrink iframe when click happens on stretched & transparent part of iframe
     self.registerAction(

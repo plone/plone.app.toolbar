@@ -150,9 +150,7 @@ PloneOverlay.prototype = {
     self.el.on('click', function(e) {
       var target = $(e.target);
 
-      if(self.options.disableClicks){
-        e.stopPropagation();
-      }
+      e.stopPropagation();
 
       // we prevent all clicks inside overlay except:
       //  - ones who we explicitly mark with allowDefault class
@@ -162,9 +160,7 @@ PloneOverlay.prototype = {
           target.attr('type') !== 'radio' &&
           target.attr('type') !== 'checkbox') {
 
-        if(self.options.disableClicks){
-          e.preventDefault();
-        }
+        e.preventDefault();
 
         if (self._formButtons) {
 
@@ -318,6 +314,10 @@ PloneOverlay.prototype = {
     if (self.options.onDestroy) {
       self.options.onDestroy.call(self);
     }
+  },
+
+  getBaseURL: function(text){
+    return $((/<base[^>]*>((.|[\n\r])*)<\/base>/im).exec(text)[0]).attr('href');
   }
 
 };
@@ -488,7 +488,6 @@ $.fn.ploneOverlay.defaults = {
   onShow: undefined,
   onHide: undefined,
   onDestroy: undefined,
-  disableClicks: true,
 
   // buttons which should
   formButtons: {},
