@@ -98,6 +98,14 @@ $(document).ready(function() {
     }
   });
 
+  $('#plone-toolbar #plone-action-edit > a').ploneOverlay({
+    onShow: function() { $(this).dropdown('toggle'); },
+    formButtons: {
+      '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultAjaxSubmit(),
+      '.modal-body input[name="form.button.Save"]': $.fn.ploneOverlay.defaultAjaxSubmit()
+    }
+  });
+
   $('#plone-toolbar #plone-personal-actions > ul > li#plone-personal-actions-plone_setup a').ploneOverlay({
     onShow: function() { $(this).dropdown('toggle'); },
     onLoaded: function() {

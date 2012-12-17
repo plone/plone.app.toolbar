@@ -8,6 +8,7 @@
 
     <!-- assign bundle to other scritps, for now -->
     <javascript bundle="tinymce" id="tiny_mce.js"  />
+    <javascript bundle="tinymce" id="jquery.tinymce.js"  />
     <javascript bundle="tinymce" id="tiny_mce_gzip.js"  />
 
     <!-- jquery form -->
