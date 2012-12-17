@@ -65,6 +65,10 @@
   .state-expired { background-color: Red !important; }
 }
 
+.hiddenStructure {
+  display: none !important;
+}
+
 // MODAL {{{
 .modal-backdrop { overflow: hidden; }
 .modal-wrapper { left: 15%; margin-left: 0; width: 100%; }
@@ -90,6 +94,14 @@
   }
   input.standalone[type='submit'] {
     .btn();
+  }
+  .plone_jscalendar {
+    .plone-jscalendar-popup {
+      position: relative;
+    }
+    select {
+      width: auto;
+    }
   }
   dl.portalMessage {
     .alert();

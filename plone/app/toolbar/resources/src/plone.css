@@ -5264,6 +5264,9 @@ a.badge:hover {
 #plone-toolbar .state-expired {
   background-color: Red !important;
 }
+.hiddenStructure {
+  display: none !important;
+}
 .modal-backdrop {
   overflow: hidden;
 }
@@ -5688,6 +5691,12 @@ a.badge:hover {
 .modal input.standalone[type='submit'] .badge {
   position: relative;
   top: -1px;
+}
+.modal .plone_jscalendar .plone-jscalendar-popup {
+  position: relative;
+}
+.modal .plone_jscalendar select {
+  width: auto;
 }
 .modal dl.portalMessage {
   padding: 8px 35px 8px 14px;
