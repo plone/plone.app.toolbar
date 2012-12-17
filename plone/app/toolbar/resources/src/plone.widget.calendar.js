@@ -5,8 +5,9 @@
 // Version: 1.0
 // Depends:
 //    ++resource++plone.app.jquery.js
+//    ++resource++
 //
-// Description: 
+// Description:
 //
 // License:
 //
@@ -31,51 +32,54 @@
   undef:true, strict:true, trailing:true, browser:true, evil:true */
 /*global jQuery:false */
 
-(function($) {
+
+(function($, undefined) {
 "use strict";
 
-// # Initialize Bootstrap Datepicker
 $.plone.init.register(function(context) {
-  $('.plone-jscalendar-popup', context).each(function() {
-    var el = $(this), date = new Date(),
-        base_id = el.attr('id').substr(0, el.attr('id').length - 6);
 
-    if (el.parent().find('#' + base_id + '_year').val() === '0000') {
+  $('.plone-jscalendar-popup', context).each(function() {
+    var $el = $(this),
+        $field = $el.parent(),
+        $calendar = $('img', $el),
+        date = new Date(),
+        fieldId = $el.attr('id').substr(0, $el.attr('id').length - 6);
+
+    function getField(component) {
+      return $field.find('#' + fieldId + '_' + component);
+    }
+
+    // calculate initial date
+    if (getField('year').val() === '0000') {
       date = '' +
         date.getFullYear() + '-' +
         (date.getMonth() < 9 ? '0' : '') + (date.getMonth() + 1) + '-' +
         (date.getDate() < 10 ? '0' : '') + date.getDate();
     } else {
-      date = '' +
-        el.parent().find('#' + base_id + '_year').val() + '-' +
-        el.parent().find('#' + base_id + '_month').val() + '-' +
-        el.parent().find('#' + base_id + '_day').val();
+      date = getField('year').val() + '-' + getField('month').val() + '-' + getField('day').val();
     }
 
-    $('img', el)
+    $calendar
+      // set initial date
       .attr('data-date', date)
+      // initialize datepicker widget
       .datepicker({ format: 'yyyy-mm-dd', autoclose: true })
+      // update dropdowns on calendar change
       .on('changeDate', function(e){
-        el.parent().find('#' + base_id + '_year').val(e.date.getFullYear());
-        el.parent().find('#' + base_id + '_month').val(
-          e.date.getMonth() < 9 ? '0' + (e.date.getMonth() + 1)
-                                : e.date.getMonth() + 1);
-        el.parent().find('#' + base_id + '_day').val(
-          e.date.getDate() < 10 ? '0' + e.date.getDate() : e.date.getDate());
+        getField('year').val(e.date.getFullYear());
+        getField('month').val(e.date.getMonth() < 9 ? '0' + (e.date.getMonth() + 1) : e.date.getMonth() + 1);
+        getField('day').val(e.date.getDate() < 10 ? '0' + e.date.getDate() : e.date.getDate());
       });
 
     // update datepicker on dropdown change
-    el.parent().find('#' + base_id + '_year,' +
-                     '#' + base_id + '_month,' +
-                     '#' + base_id + '_day').on('change', function(e) {
-      $('img', el).data('date', '' +
-          el.parent().find('#' + base_id + '_year').val() + '-' +
-          el.parent().find('#' + base_id + '_month').val() + '-' +
-          el.parent().find('#' + base_id + '_day').val())
-        .datepicker('update');
+    $field.find('#'+fieldId+'_year,' + '#'+fieldId+'_month,' + '#'+fieldId+'_day')
+      .on('change', function(e) {
+        $calendar.data('date', getField('year').val() + '-' + getField('month').val() + '-' + getField('day').val());
+        $calendar.datepicker('update');
     });
 
-    el.show();
+    // make sure calendar is visible
+    $el.show();
 
   });
 });

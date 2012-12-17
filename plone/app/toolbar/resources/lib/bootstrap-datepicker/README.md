@@ -10,87 +10,109 @@ contributed to by him (yet?)
 
 Attached to a field with the format specified via options:
 
-    <input type="text" value="02-16-2012" id="datepicker">  
-######
-    $('#datepicker').datepicker({
-        format: 'mm-dd-yyyy'
-    });
+```html
+<input type="text" value="02-16-2012" id="datepicker">
+```
+```javascript
+$('#datepicker').datepicker({
+    format: 'mm-dd-yyyy'
+});
+```
 
 Attached to a field with the format specified via data tag:
 
-    <input type="text" value="02/16/12" data-date-format="mm/dd/yy" id="datepicker" >
-######
-    $('#datepicker').datepicker();
+```html
+<input type="text" value="02/16/12" data-date-format="mm/dd/yy" id="datepicker" >
+```
+```javascript
+$('#datepicker').datepicker();
+```
 
 As component:
 
-    <div class="input-append date" id="datepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy">
-        <input size="16" type="text" value="12-02-2012" readonly>
-        <span class="add-on"><i class="icon-th"></i></span>
-    </div>
-######
-    $('#datepicker').datepicker();
+```html
+<div class="input-append date" id="datepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy">
+    <input size="16" type="text" value="12-02-2012" readonly>
+    <span class="add-on"><i class="icon-th"></i></span>
+</div>
+```
+```javascript
+$('#datepicker').datepicker();
+```
 
 Attached to non-field element, using events to work with the date values.
 
-    <div class="alert alert-error" id="alert">
-        <strong>Oh snap!</strong>
-    </div>
-    <table class="table">
-        <thead>
-            <tr>
-              <th>
-                  Start date
-                  <a href="#" class="btn small" id="date-start" data-date-format="yyyy-mm-dd" data-date="2012-02-20">Change</a>
-              </th>
-              <th>
-                  End date
-                  <a href="#" class="btn small" id="date-end" data-date-format="yyyy-mm-dd" data-date="2012-02-25">Change</a>
-              </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-              <td id="date-start-display">2012-02-20</td>
-              <td id="date-end-display">2012-02-25</td>
-            </tr>
-        </tbody>
-    </table>
-######
-    var startDate = new Date(2012,1,20);
-    var endDate = new Date(2012,1,25);
-    $('#date-start')
-        .datepicker()
-        .on('changeDate', function(ev){
-            if (ev.date.valueOf() > endDate.valueOf()){
-                $('#alert').show().find('strong').text('The start date must be before the end date.');
-            } else {
-                $('#alert').hide();
-                startDate = new Date(ev.date);
-                $('#date-start-display').text($('#date-start').data('date'));
-            }
-            $('#date-start').datepicker('hide');
-        });
-    $('#date-end')
-        .datepicker()
-        .on('changeDate', function(ev){
-            if (ev.date.valueOf() < startDate.valueOf()){
-                $('#alert').show().find('strong').text('The end date must be after the start date.');
-            } else {
-                $('#alert').hide();
-                endDate = new Date(ev.date);
-                $('#date-end-display').text($('#date-end').data('date'));
-            }
-            $('#date-end').datepicker('hide');
-        });
+```html
+<div class="alert alert-error" id="alert">
+    <strong>Oh snap!</strong>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+          <th>
+              Start date
+              <a href="#" class="btn small" id="date-start" data-date-format="yyyy-mm-dd" data-date="2012-02-20">Change</a>
+          </th>
+          <th>
+              End date
+              <a href="#" class="btn small" id="date-end" data-date-format="yyyy-mm-dd" data-date="2012-02-25">Change</a>
+          </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td id="date-start-display">2012-02-20</td>
+          <td id="date-end-display">2012-02-25</td>
+        </tr>
+    </tbody>
+</table>
+```
+```javascript
+var startDate = new Date(2012,1,20);
+var endDate = new Date(2012,1,25);
+$('#date-start')
+    .datepicker()
+    .on('changeDate', function(ev){
+        if (ev.date.valueOf() > endDate.valueOf()){
+            $('#alert').show().find('strong').text('The start date must be before the end date.');
+        } else {
+            $('#alert').hide();
+            startDate = new Date(ev.date);
+            $('#date-start-display').text($('#date-start').data('date'));
+        }
+        $('#date-start').datepicker('hide');
     });
+$('#date-end')
+    .datepicker()
+    .on('changeDate', function(ev){
+        if (ev.date.valueOf() < startDate.valueOf()){
+            $('#alert').show().find('strong').text('The end date must be after the start date.');
+        } else {
+            $('#alert').hide();
+            endDate = new Date(ev.date);
+            $('#date-end-display').text($('#date-end').data('date'));
+        }
+        $('#date-end').datepicker('hide');
+    });
+```
+
+As inline datepicker:
+
+```html
+<div id="datepicker"></div>
+```
+```javascript
+$('#datepicker').datepicker();
+```
 
 
 # Using bootstrap-datepicker.js
 
 Call the datepicker via javascript:
 
-    $('.datepicker').datepicker()
+```javascript
+$('.datepicker').datepicker()
+```
 
 ## Dependencies
 
@@ -98,7 +120,9 @@ Requires bootstrap's dropdown component (`dropdowns.less`) for some styles, and 
 
 A standalone .css file (including necessary dropdown styles and alternative, text-based arrows) can be generated by running `build/build_standalone.less` through the `lessc` compiler:
 
-    $ lessc build/build_standalone.less datepicker.css
+```bash
+$ lessc build/build_standalone.less datepicker.css
+```
 
 ## Options
 
@@ -128,6 +152,12 @@ Date.  Default: End of time
 
 The latest date that may be selected; all later dates will be disabled.
 
+### daysOfWeekDisabled
+
+String, Array.  Default: '', []
+
+Days of the week that should be disabled. Values are 0 (Sunday) to 6 (Saturday). Multiple values should be comma-separated. Example: disable weekends: `'0,6'` or `[0,6]`.
+
 ### autoclose
 
 Boolean.  Default: false
@@ -139,6 +169,18 @@ Whether or not to close the datepicker immediately when a date is selected.
 Number, String.  Default: 0, 'month'
 
 The view that the datepicker should show when it is opened.  Accepts values of 0 or 'month' for month view (the default), 1 or 'year' for the 12-month overview, and 2 or 'decade' for the 10-year overview.  Useful for date-of-birth datepickers.
+
+### todayBtn
+
+Boolean, "linked".  Default: false
+
+If true or "linked", displays a "Today" button at the bottom of the datepicker to select the current date.  If true, the "Today" button will only move the current date into view; if "linked", the current date will also be selected.
+
+### todayHighlight
+
+Boolean.  Default: false
+
+If true, highlights the current date.
 
 ### keyboardNavigation
 
@@ -152,14 +194,22 @@ String.  Default: 'en'
 
 The two-letter code of the language to use for month and day names.  These will also be used as the input's value (and subsequently sent to the server in the case of form submissions).  Currently ships with English ('en'), German ('de'), Brazilian ('br'), and Spanish ('es') translations, but others can be added (see I18N below).  If an unknown language code is given, English will be used.
 
+### forceParse
+
+Boolean.  Default: true
+
+Whether or not to force parsing of the input value when the picker is closed.  That is, when an invalid date is left in the input field by the user, the picker will forcibly parse that value, and set the input's value to the new, valid date, conforming to the given `format`.
+
 ## Markup
 
 Format a component.
 
-    <div class="input-append date" id="datepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy">
-        <input class="span2" size="16" type="text" value="12-02-2012">
-        <span class="add-on"><i class="icon-th"></i></span>
-    </div>
+```html
+<div class="input-append date" id="datepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy">
+    <input class="span2" size="16" type="text" value="12-02-2012">
+    <span class="add-on"><i class="icon-th"></i></span>
+</div>
+```
 
 ## Methods
 
@@ -167,13 +217,24 @@ Format a component.
 
 Initializes an datepicker.
 
+### remove
+
+Arguments: None
+
+Remove the datepicker.  Removes attached events, internal attached objects, and
+added HTML elements.
+
+    $('#datepicker').datepicker('remove');
+
 ### show
 
 Arguments: None
 
 Show the datepicker.
 
-    $('#datepicker').datepicker('show');
+```javascript
+$('#datepicker').datepicker('show');
+```
 
 ### hide
 
@@ -181,7 +242,9 @@ Arguments: None
 
 Hide the datepicker.
 
-    $('#datepicker').datepicker('hide');
+```javascript
+$('#datepicker').datepicker('hide');
+```
 
 ### update
 
@@ -189,7 +252,9 @@ Arguments: None
 
 Update the datepicker with the current input value.
 
-    $('#datepicker').datepicker('update');
+```javascript
+$('#datepicker').datepicker('update');
+```
 
 ### setStartDate
 
@@ -199,12 +264,16 @@ Arguments:
 
 Sets a new lower date limit on the datepicker.
 
-    $('#datepicker').datepicker('setStartDate', '2012-01-01');
+```javascript
+$('#datepicker').datepicker('setStartDate', '2012-01-01');
+```
 
 Omit startDate (or provide an otherwise falsey value) to unset the limit.
 
-    $('#datepicker').datepicker('setStartDate');
-    $('#datepicker').datepicker('setStartDate', null);
+```javascript
+$('#datepicker').datepicker('setStartDate');
+$('#datepicker').datepicker('setStartDate', null);
+```
 
 ### setEndDate
 
@@ -214,12 +283,35 @@ Arguments:
 
 Sets a new upper date limit on the datepicker.
 
-    $('#datepicker').datepicker('setEndDate', '2012-12-31');
+```javascript
+$('#datepicker').datepicker('setEndDate', '2012-12-31');
+```
 
 Omit endDate (or provide an otherwise falsey value) to unset the limit.
 
-    $('#datepicker').datepicker('setEndDate');
-    $('#datepicker').datepicker('setEndDate', null);
+```javascript
+$('#datepicker').datepicker('setEndDate');
+$('#datepicker').datepicker('setEndDate', null);
+```
+
+### setDaysOfWeekDisabled
+
+Arguments:
+
+* daysOfWeekDisabled (String|Array)
+
+Sets the days of week that should be disabled.
+
+```javascript
+$('#datepicker').datepicker('setDaysOfWeekDisabled', [0,6]);
+```
+
+Omit daysOfWeekDisabled (or provide an otherwise falsey value) to unset the disabled days.
+
+```javascript
+$('#datepicker').datepicker('setDaysOfWeekDisabled');
+$('#datepicker').datepicker('setDaysOfWeekDisabled', null);
+```
 
 ## Events
 
@@ -237,13 +329,15 @@ Fired when the date picker is hidden.
 
 Fired when the date is changed.
 
-    $('#date-end')
-        .datepicker()
-        .on('changeDate', function(ev){
-            if (ev.date.valueOf() < date-start-display.valueOf()){
-                ....
-            }
-        });
+```javascript
+$('#date-end')
+    .datepicker()
+    .on('changeDate', function(ev){
+        if (ev.date.valueOf() < date-start-display.valueOf()){
+            ....
+        }
+    });
+```
 
 ### changeYear
 
@@ -279,14 +373,19 @@ When the picker is visible, enter will simply hide it.  When the picker is not v
 
 The plugin supports i18n for the month and weekday names and the `weekStart` option.  The default is English ('en'); other available translations are avilable in the `js/locales/` directory, simply include your desired locale after the plugin.  To add more languages, simply add a key to `$.fn.datepicker.dates`, before calling `.datepicker()`.  Example:
 
-    $.fn.datepicker.dates['en'] = {
-        days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-        daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        daysMin: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
-        months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-        monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    };
+```javascript
+$.fn.datepicker.dates['en'] = {
+    days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+    daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    daysMin: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+    months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    today: "Today"
+};
+```
 
 If your browser (or those of your users) is displaying characters wrong, chances are the browser is loading the javascript file with a non-unicode encoding.  Simply add `charset="UTF-8"` to your `script` tag:
 
-    <script type="text/javascript" src="bootstrap-datepicker.de.js" charset="UTF-8"></script>
+```html
+<script type="text/javascript" src="bootstrap-datepicker.de.js" charset="UTF-8"></script>
+```
