@@ -34,6 +34,7 @@ setup(
         'plone.tiles',
         'Acquisition',
         'plone.app.jquery>=1.8.3',
+        'plone.app.widgets',
         'Products.ResourceRegistries>=2.1',
 #        'Products.CMFPlone>4.3a2',
 #        'Products.TinyMCE>1.3b7',
