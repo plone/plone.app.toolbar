@@ -87,7 +87,7 @@ include `iframe.js`_::
             src="++resource++plone.app.toolbar/src/iframe.js"></script>
     </append>
 
-Above 2 rules should be enought so that your theme will support
+Above 2 rules should be enough so that your theme will support
 `plone.app.toolbar`_
 
 
@@ -98,7 +98,7 @@ Toolbar and overlays
 (``$.fn.ploneOverlay``) which provides smooth integration of various libraries
 and gives us a lot of options how to plugin custom functionality.
 
-As said there are many options which change default behaivour of
+As said there are many options which change default behaviour of
 ``ploneOverlay``, you can look them up below at Options section.
 
 
@@ -218,10 +218,10 @@ $.fn.ploneOverlay options
 Also all options of Constructor can be passed along with this options.
 
 ``show``
-    If set to true immidiatly show overlay.
+    If set to true immediately show overlay.
 
 ``hide``
-    If set to true immidiatly hide overlay.
+    If set to true immediately hide overlay.
 
 
 $.fn.ploneOverlay.defaultModalTemplate
