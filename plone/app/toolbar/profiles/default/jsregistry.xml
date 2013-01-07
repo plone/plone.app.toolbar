@@ -25,33 +25,19 @@
     <javascript 
         cacheable="False" compression="safe" cookable="False"
         enabled="True" inline="False" bundle="bootstrap"
-        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-tab.js"
-        />
-
-    <javascript 
-        cacheable="False" compression="safe" cookable="False"
-        enabled="True" inline="False" bundle="bootstrap"
         id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-dropdown.js"
         />
 
     <javascript 
         cacheable="False" compression="safe" cookable="False"
         enabled="True" inline="False" bundle="bootstrap"
-        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-tooltip.js"
+        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-transition.js"
         />
 
     <javascript 
         cacheable="False" compression="safe" cookable="False"
         enabled="True" inline="False" bundle="bootstrap"
         id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-modal.js"
-        />
-
-
-    <!-- bootstrap datepicker -->
-    <javascript 
-        cacheable="False" compression="safe" cookable="False"
-        enabled="True" inline="False" bundle="bootstrap"
-        id="++resource++plone.app.toolbar/lib/bootstrap-datepicker/js/bootstrap-datepicker.js"
         />
 
 
@@ -87,18 +73,6 @@
         cacheable="False" compression="safe" cookable="False"
         enabled="True" inline="False" bundle="toolbar"
         id="++resource++plone.app.toolbar/src/plone.overlay.js"
-        />
-
-    <javascript 
-        cacheable="False" compression="safe" cookable="False"
-        enabled="True" inline="False" bundle="toolbar"
-        id="++resource++plone.app.toolbar/src/plone.tabs.js"
-        />
-
-    <javascript 
-        cacheable="False" compression="safe" cookable="False"
-        enabled="True" inline="False" bundle="toolbar"
-        id="++resource++plone.app.toolbar/src/plone.widget.calendar.js"
         />
 
     <javascript 
