@@ -2,7 +2,7 @@ language: python
 python:
   - 2.7
 before_install:
-  - sudo apt-get install -qq build-essential libssl-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev python-distribute python-dev libjpeg62-dev libreadline-gplv2-dev python-imaging
+  - sudo apt-get install -qq build-essential libssl-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev python-dev libjpeg62-dev libreadline-gplv2-dev python-imaging
   - pip install --use-mirrors flake8
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
