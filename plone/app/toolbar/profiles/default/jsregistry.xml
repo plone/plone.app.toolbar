@@ -1,80 +1,16 @@
 <?xml version="1.0"?>
 <object name="portal_javascripts">
 
-    <!-- jquery form -->
-    <!-- TODO: this is actually plone.app.jquerytools.form.js but would be nice
-         to package it out from plone.app.jquerytools package -->
     <javascript 
         cacheable="False" compression="safe" cookable="False"
+        enabled="True" inline="False" bundle="toolbar_init"
+        id="++resource++plone.app.toolbar_init.js"
+        />
+
+    <javascript
+        cacheable="False" compression="none" cookable="False"
         enabled="True" inline="False" bundle="toolbar"
-        id="++resource++plone.app.toolbar/lib/jquery.form.js"
-        />
-
-
-    <!-- bootstrap javascript -->
-    <javascript 
-        cacheable="False" compression="safe" cookable="False"
-        enabled="True" inline="False" bundle="bootstrap"
-        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-dropdown.js"
-        />
-
-    <javascript 
-        cacheable="False" compression="safe" cookable="False"
-        enabled="True" inline="False" bundle="bootstrap"
-        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-transition.js"
-        />
-
-    <javascript 
-        cacheable="False" compression="safe" cookable="False"
-        enabled="True" inline="False" bundle="bootstrap"
-        id="++resource++plone.app.toolbar/lib/bootstrap/js/bootstrap-modal.js"
-        />
-
-
-    <!-- iframe scripts -->
-    <javascript 
-        cacheable="False" compression="safe" cookable="False"
-        enabled="True" inline="False" bundle="toolbar-init"
-        id="++resource++plone.app.toolbar/src/iframe.js"
-        />
-
-    <javascript 
-        cacheable="False" compression="safe" cookable="False"
-        enabled="True" inline="False" bundle="toolbar"
-        id="++resource++plone.app.toolbar/src/jquery.iframe.js"
-        />
-
-    <javascript 
-        cacheable="False" compression="safe" cookable="False"
-        enabled="True" inline="False" bundle="toolbar"
-        id="++resource++plone.app.toolbar/src/jquery.mask.js"
-        />
-
-
-    <!-- plone scripts -->
-    <javascript 
-        cacheable="False" compression="safe" cookable="False"
-        enabled="True" inline="False" bundle="toolbar"
-        insert-after="++resource++plone.app.jquery.js"
-        id="++resource++plone.app.toolbar/src/plone.init.js"
-        />
-
-    <javascript 
-        cacheable="False" compression="safe" cookable="False"
-        enabled="True" inline="False" bundle="toolbar"
-        id="++resource++plone.app.toolbar/src/plone.overlay.js"
-        />
-
-    <javascript 
-        cacheable="False" compression="safe" cookable="False"
-        enabled="True" inline="False" bundle="toolbar"
-        id="++resource++plone.app.toolbar/src/plone.toolbar.js"
-        />
-
-    <javascript 
-        cacheable="False" compression="safe" cookable="False"
-        enabled="True" inline="False" bundle="toolbar"
-        id="++resource++plone.app.toolbar/src/plone.cmsui.js"
+        id="++resource++plone.app.toolbar.js"
         />
 
 </object>

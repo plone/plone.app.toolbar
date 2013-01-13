@@ -19,15 +19,15 @@
       </element>
 
       <element key="Plone Classic Theme" purge="false">
-        <element>toolbar-init</element>
+        <element>toolbar_init</element>
       </element>
 
       <element key="Plone Default" purge="false">
-        <element>toolbar-init</element>
+        <element>toolbar_init</element>
       </element>
 
       <element key="Sunburst Theme" purge="false">
-        <element>toolbar-init</element>
+        <element>toolbar_init</element>
       </element>
 
     </value>

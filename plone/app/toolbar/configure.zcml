@@ -23,9 +23,18 @@
     <include file="bbb.zcml" />
 
     <!-- Static resources -->
-    <browser:resourceDirectory
-        name="plone.app.toolbar"
-        directory="resources" />
+    <browser:resource
+        name="plone.app.toolbar_init.js"
+        file="resources/build/toolbar_init.js" />
+    <browser:resource
+        name="plone.app.toolbar_init.css"
+        file="resources/build/toolbar_init.css" />
+    <browser:resource
+        name="plone.app.toolbar.js"
+        file="resources/build/toolbar.js" />
+    <browser:resource
+        name="plone.app.toolbar.css"
+        file="resources/build/toolbar.css" />
 
     <!-- Add /++unthemed++/ to your url to disable theming -->
     <adapter
