@@ -119,8 +119,8 @@ testCase("iframe.js", {
 
       assert(iframe2_doc.getElementsByTagName('link').length === 1);
       assert(link.getAttribute('href') === 'test/example-resource.less');
-      assert(link.getAttribute('type') === 'text/less');
-      assert(link.getAttribute('rel') === 'stylesheet');
+      assert(link.getAttribute('type') === 'text/css');
+      assert(link.getAttribute('rel') === 'stylesheet/less');
     });
   },
 

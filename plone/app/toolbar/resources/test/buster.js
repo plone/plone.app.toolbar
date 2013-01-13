@@ -16,21 +16,21 @@ function matrixConfig(matrix) {
     config['plone.app.toolbar-jquery.iframe.js-' + key] = _.extend(
       {}, _default, {
         libs:     matrix[key],
-        sources:  [ 'src/jquery.iframe.js' ],
+        sources:  [ 'js/jquery.iframe.js' ],
         tests:    [ 'test/jquery.iframe-test.js' ]
       });
 
     config['plone.app.toolbar-jquery.mask.js-' + key] = _.extend(
       {}, _default, {
         libs:     matrix[key],
-        sources:  [ 'src/jquery.mask.js' ],
+        sources:  [ 'js/jquery.mask.js' ],
         tests:    [ 'test/jquery.mask-test.js' ]
       });
 
     config['plone.app.toolbar-plone.init.js-' + key] = _.extend(
       {}, _default, {
         libs:     matrix[key],
-        sources:  [ 'src/plone.init.js' ],
+        sources:  [ 'js/plone.init.js' ],
         tests:    [ 'test/plone.init-test.js' ]
       });
 
@@ -39,9 +39,9 @@ function matrixConfig(matrix) {
         libs:     [].concat(matrix[key])
                     .concat([
                       'lib/bootstrap/js/bootstrap-tab.js',
-                      'src/plone.init.js'
+                      'js/plone.init.js'
                       ]),
-        sources:  [ 'src/plone.tabs.js' ],
+        sources:  [ 'js/plone.tabs.js' ],
         tests:    [ 'test/plone.tabs-test.js' ]
       });
 
@@ -53,11 +53,11 @@ function matrixConfig(matrix) {
                       .concat([
                         'lib/jquery.form.js',
                         'lib/bootstrap/js/bootstrap-modal.js',
-                        'src/jquery.iframe.js',
-                        'src/jquery.mask.js',
-                        'src/plone.init.js'
+                        'js/jquery.iframe.js',
+                        'js/jquery.mask.js',
+                        'js/plone.init.js'
                         ]),
-        sources:    [ 'src/plone.overlay.js' ],
+        sources:    [ 'js/plone.overlay.js' ],
         tests:      [ 'test/plone.overlay-test.js' ]
       });
 
@@ -66,14 +66,15 @@ function matrixConfig(matrix) {
 
 
 config['plone.app.toolbar-iframe.js'] = _.extend({}, _default, {
-    resources:    [ 'test/example-resource.css', 'test/example-resource.js' ],
+    resources:    [ 'test/example-resource.css', 'test/example-resource.js',
+                    'test/example-resource.less' ],
     testHelpers:  [ 'test/iframe-helpers.js' ],
-    sources:      [ 'src/iframe.js' ],
+    sources:      [ 'js/iframe.js' ],
     tests:        [ 'test/iframe-test.js' ]
   });
 
 
-matrixConfig({
-  'jquery-1.7': [ 'lib/jquery-1.7.2.min.js' ],
-  'jquery-1.8': [ 'lib/jquery-1.8.2.min.js' ]
-  });
+//matrixConfig({
+//  'jquery-1.7': [ 'lib/jquery-1.7.2.min.js' ],
+//  'jquery-1.8': [ 'lib/jquery-1.8.2.min.js' ]
+//  });

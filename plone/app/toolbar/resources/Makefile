@@ -1,10 +1,10 @@
 LESSC = lessc
-UGLIFYJS = uglifyjs
+UGLIFYJS = cat
 CSSMIN = cssmin
 TARGETS = build/toolbar_init.css build/toolbar_init.js build/toolbar.css build/toolbar.js
 
 
-all:: clean $(TARGETS)
+all:: test clean $(TARGETS)
 
 build:
 	mkdir build -p
@@ -12,6 +12,9 @@ build:
 clean:
 	rm -rf $(TARGETS)
 	rmdir build
+
+test:
+	buster test -vv -r specification
 
 
 build/toolbar_init.js: build
@@ -39,4 +42,4 @@ build/toolbar.png: build
 	cp less/toolbar.png $@
 
 
-.PHONY: all clean
+.PHONY: all test clean
