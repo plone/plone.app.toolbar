@@ -41,7 +41,7 @@ $.IFrame.prototype = {
     var self = this;
 
     self._iframe = iframe;
-    self.el = $(iframe.el);
+    self.$el = $(iframe.el);
     self.window = window.parent;
     self.document = window.parent.document;
     self._state = null;
@@ -49,8 +49,7 @@ $.IFrame.prototype = {
 
     // # Handle clicks inside iframe
     $(document).on('click', function(e) {
-      var el = $(e.target),
-          condition = false;
+      var condition = false;
 
       // see if there is any link action registered to handle this click
       $.each(self._actions, function(i, item) {
@@ -88,15 +87,18 @@ $.IFrame.prototype = {
         function(e) { return $.nodeName(e.target, 'html'); },
         function(e) { self.shrink(); });
 
+    $(self.window).on('resize', function(e) {
+      self.fit();
+    });
   },
 
   // Abstract calls to window.parent so its easier to stub/mock in tests
   _window_location: function(url) {
-    window.parent.location.href = url;
+    this.window.location.href = url;
   },
 
   _window_open: function(url) {
-    window.parent.open(url);
+    this.window.open(url);
   },
 
   registerAction: function(condition, action) {
@@ -109,7 +111,7 @@ $.IFrame.prototype = {
   shrink: function() {
     var self = this;
     if (self._state !== null) {
-      self.el.css(self._state);
+      self.$el.css(self._state);
       self._state = null;
     }
   },
@@ -121,17 +123,17 @@ $.IFrame.prototype = {
   stretch: function() {
     var self = this;
     if (self._state === null) {
+      var offset = self.$el.offset();
+
       self._state = {};
-      self._state.height = self.el.height();
+      self._state.top = offset.top;
+      self._state.left = offset.left;
+      self._state.height = self.$el.height();
 
-      var offset = self.el.offset();
-      self.el.top = offset.top;
-      self.el.left = offset.left;
-
-      self.el.css({
+      self.$el.css({
         top: 0,
         left: 0,
-        height: $(window.parent.document).height()
+        height: $(self.document).height()
       });
     }
   },
@@ -147,6 +149,14 @@ $.IFrame.prototype = {
     } else {
       self.shrink();
     }
+  },
+
+  fit: function() {
+    var self = this;
+    if (self._state !== null) {
+      self._state.height = $(document).height();
+    }
+    self.$el.css('height', $(document).height());
   }
 
 };
