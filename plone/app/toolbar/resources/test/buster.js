@@ -13,20 +13,6 @@ var _ = require('underscore'),
 function matrixConfig(matrix) {
   _.each(matrix, function(i, key) {
 
-    config['plone.app.toolbar-jquery.iframe.js-' + key] = _.extend(
-      {}, _default, {
-        libs:     matrix[key],
-        sources:  [ 'js/jquery.iframe.js' ],
-        tests:    [ 'test/jquery.iframe-test.js' ]
-      });
-
-    config['plone.app.toolbar-jquery.mask.js-' + key] = _.extend(
-      {}, _default, {
-        libs:     matrix[key],
-        sources:  [ 'js/jquery.mask.js' ],
-        tests:    [ 'test/jquery.mask-test.js' ]
-      });
-
     config['plone.app.toolbar-plone.init.js-' + key] = _.extend(
       {}, _default, {
         libs:     matrix[key],
@@ -66,20 +52,21 @@ function matrixConfig(matrix) {
 
 
 config['plone.app.toolbar-iframe.js'] = _.extend({}, defaults, {
-    resources:    [ 'test/example-resource.css', 'test/example-resource.js',
-                    'test/example-resource.less' ],
-    testHelpers:  [ 'test/iframe-helpers.js' ],
-    sources:      [ 'js/iframe.js' ],
-    tests:        [ 'test/iframe-test.js' ]
-  });
+  resources:    [ 'test/example-resource.css', 'test/example-resource.js',
+                  'test/example-resource.less' ],
+  testHelpers:  [ 'test/iframe-helpers.js' ],
+  sources:      [ 'js/iframe.js' ],
+  tests:        [ 'test/iframe-test.js' ]
+});
 
 config['plone.app.toolbar-jquery.iframe.js'] = _.extend({}, defaults, {
-        libs:     [ 'lib/jquery.js' ],
-        sources:  [ 'js/jquery.iframe.js' ],
-        tests:    [ 'test/jquery.iframe-test.js' ]
-      });
+  libs:     [ 'lib/jquery.js' ],
+  sources:  [ 'js/jquery.iframe.js' ],
+  tests:    [ 'test/jquery.iframe-test.js' ]
+});
 
-//matrixConfig({
-//  'jquery-1.7': [ 'lib/jquery-1.7.2.min.js' ],
-//  'jquery-1.8': [ 'lib/jquery-1.8.2.min.js' ]
-//  });
+config['plone.app.toolbar-jquery.mask.js'] = _.extend({}, defaults, {
+  libs:     [ 'lib/jquery.js' ],
+  sources:  [ 'js/jquery.mask.js' ],
+  tests:    [ 'test/jquery.mask-test.js' ]
+});
