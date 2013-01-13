@@ -52,36 +52,36 @@ testCase("jquery.iframe.js", {
   },
 
   tearDown: function() {
-    $.iframe.el.remove();
+    $.iframe.$el.remove();
     $.iframe = undefined;
   },
 
   //  --- tests --- //
 
   "simple stretch and shrink": function() {
-    var initial_height = $.iframe.el.height();
+    var initial_height = $.iframe.$el.height();
 
     assert(initial_height !== 0);
 
     $.iframe.stretch();
-    assert(initial_height < $.iframe.el.height());
+    assert(initial_height < $.iframe.$el.height());
 
     $.iframe.shrink();
-    assert(initial_height === $.iframe.el.height());
+    assert(initial_height === $.iframe.$el.height());
 
     $.iframe.toggle();
-    assert(initial_height < $.iframe.el.height());
+    assert(initial_height < $.iframe.$el.height());
 
     $.iframe.toggle();
-    assert(initial_height === $.iframe.el.height());
+    assert(initial_height === $.iframe.$el.height());
   },
 
   "defult handling of clicks inside iframe": function() {
     var stub_location = this.stub($.iframe, '_window_location'),
         stub_open = this.stub($.iframe, '_window_open');
 
-    $('a', $.iframe.el).trigger({ type: 'click', which: 1 });  // left click
-    $('a', $.iframe.el).trigger({ type: 'click', which: 2 });  // middle click
+    $('a', $.iframe.$el).trigger({ type: 'click', which: 1 });  // left click
+    $('a', $.iframe.$el).trigger({ type: 'click', which: 2 });  // middle click
 
     assert.calledOnceWith(stub_location, '#');
     assert.calledOnceWith(stub_open, '#');
@@ -92,14 +92,14 @@ testCase("jquery.iframe.js", {
     $.iframe.registerAction(
       function(e, iframe) { return true; },
       function(e, iframe) { assert(true); });
-    $('p', $.iframe.el).trigger({ type: 'click' });
+    $('p', $.iframe.$el).trigger({ type: 'click' });
   },
 
   "when iframe is stretch click can also happen on html element": function() {
     $.iframe.registerAction(
       function(e, iframe) { return true; },
       function(e, iframe) { assert(true); });
-    $.iframe.el.parents('html').trigger({ type: 'click' });
+    $.iframe.$el.parents('html').trigger({ type: 'click' });
   }
 
 });

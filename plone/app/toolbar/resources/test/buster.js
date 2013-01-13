@@ -1,6 +1,6 @@
 var _ = require('underscore'),
     config = module.exports,
-    _default = {
+    defaults = {
         rootPath: "../",
         environment: "browser",
         extensions: [ require("buster-coverage") ],
@@ -65,7 +65,7 @@ function matrixConfig(matrix) {
 }
 
 
-config['plone.app.toolbar-iframe.js'] = _.extend({}, _default, {
+config['plone.app.toolbar-iframe.js'] = _.extend({}, defaults, {
     resources:    [ 'test/example-resource.css', 'test/example-resource.js',
                     'test/example-resource.less' ],
     testHelpers:  [ 'test/iframe-helpers.js' ],
@@ -73,6 +73,11 @@ config['plone.app.toolbar-iframe.js'] = _.extend({}, _default, {
     tests:        [ 'test/iframe-test.js' ]
   });
 
+config['plone.app.toolbar-jquery.iframe.js'] = _.extend({}, defaults, {
+        libs:     [ 'lib/jquery.js' ],
+        sources:  [ 'js/jquery.iframe.js' ],
+        tests:    [ 'test/jquery.iframe-test.js' ]
+      });
 
 //matrixConfig({
 //  'jquery-1.7': [ 'lib/jquery-1.7.2.min.js' ],
