@@ -7,9 +7,7 @@
 
     <include package="plone.tiles" file="meta.zcml" />
     <include package="plone.tiles" />
-    <include package="plone.app.jquery" />
     <include package="plone.app.widgets" />
-    <include package="Products.ResourceRegistries" />
 
     <!-- Permissions -->
     <permission

@@ -5,41 +5,28 @@
         <field type="plone.registry.field.TextLine">
             <title>Toolbar Skin</title>
         </field>
-        <value>toolbar</value>
+        <value>Toolbar Theme</value>
     </record>
 
     <record
         name="Products.ResourceRegistries.interfaces.settings.IResourceRegistriesSettings.resourceBundlesForThemes">
-        <value purge="false">
-            <element key="toolbar">
-                <element>old</element>
-                <element>tinymce</element>
+        <value>
+            <element key="Toolbar Theme">
                 <element>jquery</element>
-                <element>bootstrap</element>
+                <element>tinymce</element>
+                <element>widgets</element>
                 <element>toolbar</element>
             </element>
 
-            <element key="Plone Classic Theme">
-                <element>old</element>
-                <element>tinymce</element>
-                <element>jquery</element>
-                <element>default</element>
+            <element key="Plone Classic Theme" purge="false">
                 <element>toolbar-init</element>
             </element>
 
-            <element key="Plone Default">
-                <element>old</element>
-                <element>tinymce</element>
-                <element>jquery</element>
-                <element>default</element>
+            <element key="Plone Default" purge="false">
                 <element>toolbar-init</element>
             </element>
 
-            <element key="Sunburst Theme">
-                <element>old</element>
-                <element>tinymce</element>
-                <element>jquery</element>
-                <element>default</element>
+            <element key="Sunburst Theme" purge="false">
                 <element>toolbar-init</element>
             </element>
         </value>
