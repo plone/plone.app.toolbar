@@ -209,4 +209,4 @@ $.Mask.prototype = {
 // create global instance of mask
 $.mask = new $.Mask();
 
-})(jQuery);
+}(window.jQuery));

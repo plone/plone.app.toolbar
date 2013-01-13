@@ -23,8 +23,9 @@ build/toolbar_init.css: build
 
 
 build/toolbar.js: build
-	$(UGLIFYJS) lib/jquery.form.js > $@
-	$(UGLIFYJS) js/jquery.iframe.js > $@
+	$(UGLIFYJS) lib/bootstrap/js/bootstrap-modal.js > $@
+	$(UGLIFYJS) lib/jquery.form.js >> $@
+	$(UGLIFYJS) js/jquery.iframe.js >> $@
 	$(UGLIFYJS) js/jquery.mask.js >> $@
 	$(UGLIFYJS) js/plone.overlay.js >> $@
 	$(UGLIFYJS) js/plone.toolbar.js >> $@

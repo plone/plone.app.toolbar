@@ -38,7 +38,7 @@
 /*global tinyMCE:false, TinyMCEConfig:false */
 
 
-(function ($, undefined) {
+(function ($, iframe, mask, Patterns, undefined) {
 "use strict";
 
 // Constructor
@@ -205,36 +205,36 @@ PloneOverlay.prototype = {
     // $.iframe integration:
     //  - calls stretch/shrink when showing/hidding of modal
     //  - sync scrolling of top frame and current frame
-    if ($.iframe !== undefined) {
+    if (iframe !== undefined) {
 
-      var topFrameHeight = $($.iframe.document).height();
+      var topFrameHeight = $(iframe.document).height();
       self.el
         .on('show', function() {
-          $.iframe.stretch();
-          // TODO: probably we should move this in $.iframe
+          iframe.stretch();
+          // TODO: probably we should move this in iframe
           //$('.dropdown-toggle.open a[data-toggle="dropdown"]').dropdown('toggle');
         })
         .on('shown', function() {
           if (self.el.parents('.modal-wrapper').height() > topFrameHeight) {
-            $('body', $.iframe.document).height(
+            $('body', iframe.document).height(
                 self.el.parents('.modal-wrapper').height() +
                 self.el.parents('.modal-wrapper').offset().top);
-            self.el.parents('.modal-backdrop').height($($.iframe.window).height());
+            self.el.parents('.modal-backdrop').height($(iframe.window).height());
           }
         })
         .on('hidden', function() {
-          $('body', $.iframe.document).height(topFrameHeight);
-          $.iframe.shrink();
+          $('body', iframe.document).height(topFrameHeight);
+          iframe.shrink();
         });
 
       // sync scrolling
-      $($.iframe.document).scroll(function () {
+      $(iframe.document).scroll(function () {
         var backdrop = self.el.parents('.modal-backdrop');
 
-        if ($.iframe && $.iframe.document) {
+        if (iframe && iframe.document) {
           backdrop.css({
-            'top': -1 * $($.iframe.document).scrollTop(),
-            'height': $($.iframe.document).scrollTop() + backdrop.height()
+            'top': -1 * $(iframe.document).scrollTop(),
+            'height': $(iframe.document).scrollTop() + backdrop.height()
           });
         }
 
@@ -243,9 +243,9 @@ PloneOverlay.prototype = {
       });
     }
 
-    // plone.init.js integration
-    if ($.fn.ploneInit) {
-      self.el.ploneInit();
+    // patterns integration
+    if (Patterns) {
+      Patterns.initialize(self.el);
     }
 
     // initialize hook
@@ -399,9 +399,9 @@ $.fn.ploneOverlay.defaultAjaxSubmit = function(defaultOptions) {
             responseBody = $('<div/>').html(
                 (/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[1]);
 
-        // use $.iframe's if avaliable
-        if ($.iframe) {
-          _document = $.iframe.document;
+        // use iframe's document if avaliable
+        if (iframe) {
+          _document = iframe.document;
         }
 
         // if error is found res
@@ -479,7 +479,7 @@ $.fn.ploneOverlay.defaultModalTemplate = function(options) {
 };
 
 $.fn.ploneOverlay.defaults = {
-  mask: $.mask || undefined,
+  mask: mask,
 
   // hooks
   onInit: undefined,
@@ -517,4 +517,4 @@ $.fn.ploneOverlay.defaults = {
 $.fn.ploneOverlay.Constructor = PloneOverlay;
 
 
-}(window.jQuery));
+}(window.jQuery, window.jQuery.iframe, window.jQuery.mask, window.Patterns));

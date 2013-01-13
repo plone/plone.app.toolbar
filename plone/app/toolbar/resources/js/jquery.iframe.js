@@ -149,7 +149,6 @@ $.IFrame.prototype = {
     }
   }
 
-
 };
 
 if (window.parent.iframe !== undefined && window.name &&
@@ -157,4 +156,4 @@ if (window.parent.iframe !== undefined && window.name &&
   $.iframe = new $.IFrame(window.parent.iframe[window.name]);
 }
 
-}(jQuery));
+}(window.jQuery));

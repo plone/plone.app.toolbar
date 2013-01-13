@@ -33,40 +33,38 @@
   undef:true, strict:true, trailing:true, browser:true, evil:true */
 
 
-(function($, undefined) {
+(function($, iframe, undefined) {
 "use strict";
 
 $(document).ready(function() {
 
-  // shrink / stretch iframe when dropdown happens in toolbar
-  $('body')
-      .on('click.dropdown.data-api touchstart.dropdown.data-api',
-        '#plone-toolbar [data-toggle=dropdown]', function(e) {
-          if ($.iframe._state !== null &&
-              $('.dropdown.open', $(e.target).parents('#plone-toolbar')).size() === 0) {
-            $.iframe.shrink();
-          } else if ($.iframe._state === null) {
-            $.iframe.stretch();
+  $('.toolbar-dropdown > a')
+    .on('patterns.toggle.add', function(e) {
+        var $el = $(this);
+        $('.toolbar-dropdown-open > a').each(function() {
+          if ($el[0] !== $(this)[0]) {
+            $(this).patternToggle('remove');
           }
         });
-
+        iframe.stretch();
+      })
+    .on('patterns.toggle.remove', function(e) {
+      iframe.shrink();
+    });
 
   // shrink iframe when click happens on toolbar and no dropdown is open at
   // that time
-  $.iframe.registerAction(
-      function(e) { return $('.dropdown.open', e.target).size() === 0; },
-      function(e) { $.iframe.shrink(); });
-
-
-// TODO:
-// if ($(e.target).parents('body').size() === 0 ||
-//        $(e.target).parents('.mceMenuItem').size() === 1 ||
-//        $(e.target).hasClass('modal-backdrop')) {
-//   e.preventDefault();
-//   e.stopPropagation();
-//
-
+  iframe.registerAction(
+    function(e) {
+      return $('.toolbar-dropdown-open', e.target).size() !== 0;
+    },
+    function(e) {
+      $('.toolbar-dropdown-open > a').each(function() {
+        $(this).patternToggle('remove');
+      });
+      iframe.shrink();
+    });
 
 });
 
-}(window.jQuery));
+}(window.jQuery, window.jQuery.iframe));

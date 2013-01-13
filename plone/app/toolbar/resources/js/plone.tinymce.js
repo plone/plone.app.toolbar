@@ -38,6 +38,7 @@
 
 // # Initialize TinyMCE
 $.plone.init.register(function(context) {
+
   var modal = context.hasClass('modal') ? context : context.parents('.modal');
   $('textarea.mce_editable', context).each(function() {
     var el = $(this),

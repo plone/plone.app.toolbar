@@ -35,7 +35,7 @@ $(document).ready(function() {
 
   // Delete Action
   $('#plone-toolbar #plone-contentmenu-actions > ul > li#delete > a').ploneOverlay({
-    onShow: function() { $(this).dropdown('toggle'); },
+    onShow: function() { $(this).patternToggle('toggle'); },
     formButtons: {
       '.modal-body input[name="form.button.Cancel"]':
           $.fn.ploneOverlay.defaultAjaxSubmit(),
@@ -51,7 +51,7 @@ $(document).ready(function() {
 
   // Rename Action
   $('#plone-toolbar #plone-contentmenu-actions > ul > li#rename > a').ploneOverlay({
-    onShow: function() { $(this).dropdown('toggle'); },
+    onShow: function() { $(this).patternToggle('toggle'); },
     formButtons: {
       '.modal-body input[name="form.button.Cancel"]':
           $.fn.ploneOverlay.defaultAjaxSubmit(),
@@ -67,7 +67,7 @@ $(document).ready(function() {
 
   // Workflow -> Advance
   $('#plone-toolbar #plone-contentmenu-workflow > ul > li#advanced > a').ploneOverlay({
-    onShow: function() { $(this).dropdown('toggle'); },
+    onShow: function() { $(this).patternToggle('toggle'); },
     formButtons: {
       '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultAjaxSubmit(),
       '.modal-body input[name="form.button.Publish"]':
@@ -82,7 +82,7 @@ $(document).ready(function() {
 
   // Display View -> Select default content as default view
   $('#plone-toolbar #plone-contentmenu-display > ul > li#contextSetDefaultPage > a').ploneOverlay({
-    onShow: function() { $(this).dropdown('toggle'); },
+    onShow: function() { $(this).patternToggle('toggle'); },
     formButtons: {
       '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultAjaxSubmit(),
       '.modal-body input[name="form.button.Save"]': $.fn.ploneOverlay.defaultAjaxSubmit()
@@ -91,7 +91,7 @@ $(document).ready(function() {
 
   //
   $('#plone-toolbar #plone-contentmenu-display > ul > li#folderChangeDefaultPage > a').ploneOverlay({
-    onShow: function() { $(this).dropdown('toggle'); },
+    onShow: function() { $(this).patternToggle('toggle'); },
     formButtons: {
       '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultAjaxSubmit(),
       '.modal-body input[name="form.button.Save"]': $.fn.ploneOverlay.defaultAjaxSubmit()
@@ -99,7 +99,7 @@ $(document).ready(function() {
   });
 
   $('#plone-toolbar #plone-action-edit > a').ploneOverlay({
-    onShow: function() { $(this).dropdown('toggle'); },
+    onShow: function() { $(this).patternToggle('toggle'); },
     formButtons: {
       '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultAjaxSubmit(),
       '.modal-body input[name="form.button.Save"]': $.fn.ploneOverlay.defaultAjaxSubmit()
@@ -107,7 +107,7 @@ $(document).ready(function() {
   });
 
   $('#plone-toolbar #plone-personal-actions > ul > li#plone-personal-actions-plone_setup a').ploneOverlay({
-    onShow: function() { $(this).dropdown('toggle'); },
+    onShow: function() { $(this).patternToggle('toggle'); },
     onLoaded: function() {
       var overlay = this,
           el = overlay.el;
