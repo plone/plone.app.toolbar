@@ -1,68 +1,23 @@
+@import "../lib/lesselements/elements.less";
 @import "../lib/bootstrap/less/bootstrap.less";
+@import "../lib/bootstrap/less/responsive.less";
+
+@import "utils.less";
+
+body {
+  padding: 0;
+}
 
 #plone-toolbar {
-  margin-bottom: 0;
-  #plone-personal-actions > a > img {
-    height: 17px;
-    margin-right: 0.5em;
-    background-color: #FFFFFF;
-  }
-  .container { width: 100% }
-  .navbar-inner {
-    .border-radius(0);
-    padding-left: 1em;
-    padding-right: 1em;
-    .nav > li > a { padding: 10px 0.5em; }
-  }
-  .dropdown-menu {
-    a { padding: 3px 9px; }
-    a img { padding-right: 3px; }
-    .contenttype-image > a,
-    .contenttype-file > a,
-    .contenttype-document > a,
-    .contenttype-event > a,
-    .contenttype-folder > a,
-    .contenttype-link > a,
-    .contenttype-news-item > a,
-    .contenttype-plone-site > a,
-    .contenttype-collection > a,
-    .contenttype-topic > a {
-        padding-left: 20px;
-        margin-left: 9px;
-        background-repeat: no-repeat;
-        background-image: url(++resource++plone.app.toolbar/contenttypes-sprite.png);
-    }
-    .contenttype-image > a { background-position: 0px -858px; }
-    .contenttype-file > a { background-position: 0px -426px; }
-    .contenttype-document > a { background-position: 0px 5px; }
-    .contenttype-event > a { background-position: 0px -211px; }
-    .contenttype-folder > a { background-position: 0px -643px; }
-    .contenttype-link > a { background-position: 0px -1075px; }
-    .contenttype-news-item > a { background-position: 0px -1291px; }
-    .contenttype-plone-site > a { background-position: 0px -1503px; }
-    .contenttype-collection > a { background-position: 0px -1721px; }
-    .contenttype-topic > a { background-position: 0px -1721px; }
-  }
-  .state-private,
-  .state-visible,
-  .state-published,
-  .state-pending,
-  .state-expired {
-    .border-radius(0.2em);
-    margin: 0.3em;
-    padding: 0.1em 0.4em;
-    color: #FFFFFF !important;
-    text-shadow: 1px 1px 2px black;
-    -moz-text-shadow: 1px 1px 2px black;
-    -webkit-text-shadow: 1px 1px 2px black;
-    -o-text-shadow: 1px 1px 2px black;
-  }
-  .state-private { background-color: Red !important; }
-  .state-visible { background-color: #74AE0B !important; }
-  .state-published { background-color: #436976 !important; }
-  .state-pending { background-color: #FFA500 !important; }
-  .state-expired { background-color: Red !important; }
+  height: 50px;
+  .toolbar { .makeToolbar(44px); }
+  .toolbar-deco { .makeToolbar(44px, 4px, 1px, #f2f2f2, #e5e5e5); }
 }
+
+
+
+
+
 
 .hiddenStructure {
   display: none !important;
