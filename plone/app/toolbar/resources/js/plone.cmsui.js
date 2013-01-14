@@ -30,95 +30,95 @@
 (function($, undefined) {
 "use strict";
 
-
 $(document).ready(function() {
 
-  // Delete Action
-  $('#plone-toolbar #plone-contentmenu-actions > ul > li#delete > a').ploneOverlay({
-    onShow: function() { $(this).patternToggle('toggle'); },
-    formButtons: {
-      '.modal-body input[name="form.button.Cancel"]':
-          $.fn.ploneOverlay.defaultAjaxSubmit(),
-      '.modal-body input.destructive':
-          $.fn.ploneOverlay.defaultAjaxSubmit({
-            onSave: function(response, state, xhr, form, button) {
-              // need redirect to different url after successfull submitting
-              window.parent.location.href = this.getBaseURL(xhr.responseText);
-            }
-          })
-    }
-  });
+  //// Delete Action
+  //$('#plone-toolbar #plone-contentmenu-actions > ul > li#delete > a').ploneOverlay({
+  //  onShow: function() { $(this).patternToggle('toggle'); },
+  //    formButtons: {
+  //      '.modal-body input[name="form.button.Cancel"]':
+  //          $.fn.ploneOverlay.defaultAjaxSubmit(),
+  //      '.modal-body input.destructive':
+  //          $.fn.ploneOverlay.defaultAjaxSubmit({
+  //            onSave: function(response, state, xhr, form, button) {
+  //              // need redirect to different url after successfull submitting
+  //              window.parent.location.href = this.getBaseURL(xhr.responseText);
+  //            }
+  //          })
+  //    }
+  //});
 
-  // Rename Action
-  $('#plone-toolbar #plone-contentmenu-actions > ul > li#rename > a').ploneOverlay({
-    onShow: function() { $(this).patternToggle('toggle'); },
-    formButtons: {
-      '.modal-body input[name="form.button.Cancel"]':
-          $.fn.ploneOverlay.defaultAjaxSubmit(),
-      '.modal-body input[name="form.button.RenameAll"]':
-          $.fn.ploneOverlay.defaultAjaxSubmit({
-            onSave: function(response, state, xhr, form, button) {
-              // need redirect to different url after successfull submitting
-              window.parent.location.href = this.getBaseURL(xhr.responseText);
-            }
-          })
-    }
-  });
+  //// Rename Action
+  //$('#plone-toolbar #plone-contentmenu-actions > ul > li#rename > a').ploneOverlay({
+  //  onShow: function() { $(this).patternToggle('toggle'); },
+  //  formButtons: {
+  //    '.modal-body input[name="form.button.Cancel"]':
+  //        $.fn.ploneOverlay.defaultAjaxSubmit(),
+  //    '.modal-body input[name="form.button.RenameAll"]':
+  //        $.fn.ploneOverlay.defaultAjaxSubmit({
+  //          onSave: function(response, state, xhr, form, button) {
+  //            // need redirect to different url after successfull submitting
+  //            window.parent.location.href = this.getBaseURL(xhr.responseText);
+  //          }
+  //        })
+  //  }
+  //});
 
-  // Workflow -> Advance
-  $('#plone-toolbar #plone-contentmenu-workflow > ul > li#advanced > a').ploneOverlay({
-    onShow: function() { $(this).patternToggle('toggle'); },
-    formButtons: {
-      '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultAjaxSubmit(),
-      '.modal-body input[name="form.button.Publish"]':
-          $.fn.ploneOverlay.defaultAjaxSubmit({
-            onSave: function(response, state, xhr, form, button) {
-              // need redirect to different url after successfull submitting
-              window.parent.location.href = this.getBaseURL(xhr.responseText);
-            }
-          })
-    }
-  });
+  //// Workflow -> Advance
+  //$('#plone-toolbar #plone-contentmenu-workflow > ul > li#advanced > a').ploneOverlay({
+  //  onShow: function() { $(this).patternToggle('toggle'); },
+  //  formButtons: {
+  //    '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultAjaxSubmit(),
+  //    '.modal-body input[name="form.button.Publish"]':
+  //        $.fn.ploneOverlay.defaultAjaxSubmit({
+  //          onSave: function(response, state, xhr, form, button) {
+  //            // need redirect to different url after successfull submitting
+  //            window.parent.location.href = this.getBaseURL(xhr.responseText);
+  //          }
+  //        })
+  //  }
+  //});
 
-  // Display View -> Select default content as default view
-  $('#plone-toolbar #plone-contentmenu-display > ul > li#contextSetDefaultPage > a').ploneOverlay({
-    onShow: function() { $(this).patternToggle('toggle'); },
-    formButtons: {
-      '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultAjaxSubmit(),
-      '.modal-body input[name="form.button.Save"]': $.fn.ploneOverlay.defaultAjaxSubmit()
-    }
-  });
+  //// Display View -> Select default content as default view
+  //$('#plone-toolbar #plone-contentmenu-display > ul > li#contextSetDefaultPage > a').ploneOverlay({
+  //  onShow: function() { $(this).patternToggle('toggle'); },
+  //  formButtons: {
+  //    '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultAjaxSubmit(),
+  //    '.modal-body input[name="form.button.Save"]': $.fn.ploneOverlay.defaultAjaxSubmit()
+  //  }
+  //});
 
-  //
-  $('#plone-toolbar #plone-contentmenu-display > ul > li#folderChangeDefaultPage > a').ploneOverlay({
-    onShow: function() { $(this).patternToggle('toggle'); },
-    formButtons: {
-      '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultAjaxSubmit(),
-      '.modal-body input[name="form.button.Save"]': $.fn.ploneOverlay.defaultAjaxSubmit()
-    }
-  });
+  ////
+  //$('#plone-toolbar #plone-contentmenu-display > ul > li#folderChangeDefaultPage > a').ploneOverlay({
+  //  onShow: function() { $(this).patternToggle('toggle'); },
+  //  formButtons: {
+  //    '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultAjaxSubmit(),
+  //    '.modal-body input[name="form.button.Save"]': $.fn.ploneOverlay.defaultAjaxSubmit()
+  //  }
+  //});
 
+  // Edit form
   $('#plone-toolbar #plone-action-edit > a').ploneOverlay({
-    onShow: function() { $(this).patternToggle('toggle'); },
+    //onShow: function() { this$.patternToggle('toggle'); },
     formButtons: {
-      '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultAjaxSubmit(),
-      '.modal-body input[name="form.button.Save"]': $.fn.ploneOverlay.defaultAjaxSubmit()
+      '.modal-body input[name="form.button.cancel"]': {},
+      '.modal-body input[name="form.button.save"]': {}
     }
   });
 
-  $('#plone-toolbar #plone-personal-actions > ul > li#plone-personal-actions-plone_setup a').ploneOverlay({
-    onShow: function() { $(this).patternToggle('toggle'); },
-    onLoaded: function() {
-      var overlay = this,
-          el = overlay.el;
-      el.find('a').on('click', function(e){
-        el.load($(this).attr('href'));
-        overlay._el = overlay.el = overlay.options.modalTemplate.apply(overlay, [ el ]).hide();
-        e.stopPropagation();
-        e.preventDefault();
-      });
-    }
-  });
+  //$('#plone-toolbar #plone-personal-actions > ul > li#plone-personal-actions-plone_setup a').ploneOverlay({
+  //  onShow: function() { $(this).patternToggle('toggle'); },
+  //  onLoaded: function() {
+  //    var overlay = this,
+  //    el = overlay.el;
+  //    el.find('a').on('click', function(e){
+  //      el.load($(this).attr('href'));
+  //      overlay._el = overlay.el = overlay.options.modalTemplate.apply(overlay, [ el ]).hide();
+  //      e.stopPropagation();
+  //      e.preventDefault();
+  //    });
+  //  }
+  //});
 
 });
 
