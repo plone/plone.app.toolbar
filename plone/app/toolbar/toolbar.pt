@@ -4,7 +4,7 @@
 </head>
 <body>
 
-  <div id="plone-toolbar">
+  <div id="plone-toolbar" data-pattern="plone-toolbar">
     <div class="toolbar">
       <div class="toolbar-top"></div>
       <div class="toolbar-right">

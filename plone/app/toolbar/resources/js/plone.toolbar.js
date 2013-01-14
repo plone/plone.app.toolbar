@@ -1,15 +1,11 @@
-// 
-//
 // Author: Rok Garbas
 // Contact: rok@garbas.si
 // Version: 1.0
-// Depends:
-//    ++resource++plone.app.jquery.js
-//    ++resource++plone.app.toolbar/lib/bootstrap/bootstrap-dropdown.js
-//    ++resource++plone.app.toolbar/src/jquery.iframe.js
 //
 // Description:
-//
+//    plone.toolbar.js script makes sure that all dropdowns in Plone's toolbar
+//    are in sync with iframe's stretching/schrinking.
+// 
 // License:
 //
 // Copyright (C) 2010 Plone Foundation
@@ -33,13 +29,21 @@
   undef:true, strict:true, trailing:true, browser:true, evil:true */
 
 
-(function($, iframe, undefined) {
+(function($, Patterns, iframe, undefined) {
 "use strict";
 
-$(document).ready(function() {
+var PloneToolbar = Patterns.Base.extend({
+  name: 'plone-toolbar',
+  jqueryPlugin: 'ploneToolbar',
+  init: function() {
+    var self = this;
 
-  $('.toolbar-dropdown > a')
-    .on('patterns.toggle.add', function(e) {
+    // for each dropdown toolbar button
+    $('a[data-pattern~="toggle"]')
+      // at opening dropdown:
+      // - close all other opened dropdown buttons
+      // - stretch iframe
+      .on('patterns.toggle.add', function(e) {
         var $el = $(this);
         $('.toolbar-dropdown-open > a').each(function() {
           if ($el[0] !== $(this)[0]) {
@@ -48,23 +52,20 @@ $(document).ready(function() {
         });
         iframe.stretch();
       })
-    .on('patterns.toggle.remove', function(e) {
-      iframe.shrink();
-    });
+      // at closing dropdown shrink iframe
+      .on('patterns.toggle.removed', function(e) {
+        iframe.shrink();
+      });
 
-  // shrink iframe when click happens on toolbar and no dropdown is open at
-  // that time
-  iframe.registerAction(
-    function(e) {
-      return $('.toolbar-dropdown-open', e.target).size() !== 0;
-    },
-    function(e) {
-      $('.toolbar-dropdown-open > a').each(function() {
+    // make sure we close all dropdowns when iframe is shrinking
+    iframe.$el.on('iframe.shrink', function(e) {
+      $('.toolbar-dropdown-open > a', self.$el).each(function() {
         $(this).patternToggle('remove');
       });
-      iframe.shrink();
     });
-
+  }
 });
 
-}(window.jQuery, window.jQuery.iframe));
+Patterns.register(PloneToolbar);
+
+}(window.jQuery, window.Patterns, window.jQuery.iframe));
