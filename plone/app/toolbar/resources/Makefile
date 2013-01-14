@@ -1,5 +1,5 @@
 LESSC = lessc
-UGLIFYJS = cat
+UGLIFYJS = uglifyjs
 CSSMIN = cssmin
 TARGETS = build/toolbar_init.css build/toolbar_init.js build/toolbar.png build/toolbar.css build/toolbar.js
 

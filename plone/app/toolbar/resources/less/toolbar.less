@@ -37,6 +37,59 @@ body {
 
   form { margin: 0; }
 
+  #cmfeditions_version_comment_block {
+    border-top: 1px solid #DDDDDD;
+    margin-top: 1em;
+    padding-top: 1em;
+  }
+  #atrb_relatedItems { display: none; }
+  .nav-tabs {
+    & > li {
+      & > a:hover {
+        background-color: transparent;
+        color: #0088CC;
+      }
+      & > a:focus{
+        outline-style: none;
+      }
+      &.active > a,
+      &.active > a:hover {
+        border-bottom: 1px solid @white;
+      }
+    }
+  }
+  .pattern-calendar {
+    .pattern-calendar-year,
+    .pattern-calendar-month,
+    .pattern-calendar-day,
+    .pattern-calendar-hour,
+    .pattern-calendar-minute,
+    .pattern-calendar-ampm {
+      height: 2em;
+    }
+    .pickadate__select--year,
+    .pickadate__select--month {
+      height: 2em;
+    }
+    .pattern-calendar-delimiter {
+      display: inline-block;
+      vertical-align: top;
+      margin: 0 0.2em;
+    }
+    .pattern-calendar-icon {
+      background-image: url("++resource++plone.app.toolbar.png");
+      background-position: 14px 14px;
+      background-repeat: no-repeat;
+      display: inline-block;
+      height: 14px;
+      line-height: 14px;
+      margin-top: 1px;
+      margin-bottom: 0.5em;
+      vertical-align: middle;
+      width: 14px;
+      .icon-calendar();
+    }
+  }
   input.destructive[type='submit'] {
     .btn();
     .btn-primary();
@@ -48,14 +101,6 @@ body {
   }
   input.standalone[type='submit'] {
     .btn();
-  }
-  .plone_jscalendar {
-    .plone-jscalendar-popup {
-      position: relative;
-    }
-    select {
-      width: auto;
-    }
   }
   dl.portalMessage {
     .alert();
@@ -96,13 +141,29 @@ body {
       padding: 0;
     }
     .control-group();
+    &.ArchetypesBooleanWidget input[type="checkbox"] {
+      float: left;
+      margin-right: 0.5em;
+    }
     label {
       font-size: 1.2em;
       font-weight: bold;
-      display: inline-block;
+      display: block;
+      span {
+        font-size: 0.8em;
+        font-weight: normal;
+        display: block;
+      }
+      span.required {
+        background-color: Red;
+        display: inline-block;
+        height: 0.3em;
+        width: 0.3em;
+        line-height: 1em;
+      }
     }
     .fieldRequired { color: transparent; }
-    div {
+    & > div {
       .help-block();
       line-height: 2em;
       padding: 0;
@@ -113,12 +174,23 @@ body {
     }
     input#title {
       font-size: 2em;
+      margin-bottom: 0;
     }
     input[type="text"] {
       margin-bottom: 1em;
       margin-top: 0.2em;
       height: 1.2em;
       width: 98%;
+    }
+    input.pattern-autocomplete[type="text"] {
+      width: 40em;
+      height: auto;
+      padding: 3px 5px 4px;
+      margin: 0;
+    }
+    .text-core,
+    .text-wrap {
+      min-height: 1.5em;
     }
     margin-bottom: 1em;
   }
