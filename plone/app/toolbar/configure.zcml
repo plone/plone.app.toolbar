@@ -35,6 +35,9 @@
     <browser:resource
         name="plone.app.toolbar.css"
         file="resources/build/toolbar.css" />
+    <browser:resource
+        name="plone.app.toolbar.png"
+        file="resources/build/toolbar.png" />
 
     <!-- Add /++unthemed++/ to your url to disable theming -->
     <adapter

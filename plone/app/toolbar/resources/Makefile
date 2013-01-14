@@ -1,10 +1,10 @@
 LESSC = lessc
 UGLIFYJS = cat
 CSSMIN = cssmin
-TARGETS = build/toolbar_init.css build/toolbar_init.js build/toolbar.css build/toolbar.js
+TARGETS = build/toolbar_init.css build/toolbar_init.js build/toolbar.png build/toolbar.css build/toolbar.js
 
 
-all:: test clean $(TARGETS)
+all:: clean $(TARGETS)
 
 build:
 	mkdir build -p
@@ -36,10 +36,10 @@ build/toolbar.js: build
 
 build/toolbar.css: build
 	$(LESSC) less/toolbar.less | $(CSSMIN) >> $@
-	sed -i 's@toolbar.png@++resource++plone.app.toolbar.png@g' $@
+	sed -i 's@../img/glyphicons-halflings.png@++resource++plone.app.toolbar.png@g' $@
 
 build/toolbar.png: build
-	cp less/toolbar.png $@
+	cp lib/bootstrap/img/glyphicons-halflings.png $@
 
 
 .PHONY: all test clean
