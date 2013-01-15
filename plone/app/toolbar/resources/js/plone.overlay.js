@@ -30,7 +30,7 @@
   undef:true, strict:true, trailing:true, browser:true */
 
 
-(function ($, Patterns, iframe, mask, undefined) {
+(function ($, Patterns, iframe, undefined) {
 "use strict";
 
 // Constructor
@@ -38,152 +38,33 @@ var PloneOverlay = Patterns.Base.extend({
   name: 'plone-overlay',
   jqueryPlugin: 'ploneOverlay',
   defaults: {
-    mask: mask,
-
-    // hooks
-    onInit: undefined,
-    onBeforeLoad: undefined,
-    onLoaded: undefined,
-    onShow: undefined,
-    onHide: undefined,
-    onDestroy: undefined,
-
-    // buttons which should
-    formButtons: {},
-
-    // adding prefix to url (after domain part)
-    changeAjaxURL: function(url, prefix) {
-      prefix = prefix || '++unthemed++';
-
-      // TODO: we should add it after plone site url (head>base)
-      if (url.indexOf('http') === 0) {
-        return url.replace(/^(https?:\/\/[^\/]+)\/(.*)/, '$1/' + prefix + '/$2');
-      } else if (url.indexOf('/') === 0) {
-        return window.location.protocol + '//' +
-                window.location.host + '/' + prefix + url;
-      } else {
-        return window.location.protocol + '//' +
-                window.location.host + '/' + prefix +
-                window.location.pathname + '/' + url;
-      }
+    loadingText: 'Loading ...',
+    events: {},
+    ajaxSubmitOptions: {
+      error: '.portalMessage.error',
+      modalButtons: '.modal-footer',
+      contentButtons: '.formControls > input[type="submit"]',
+      contentFilters: '#portal-column-content'
     },
-
-    modalTemplate: function(options) {
-      options = $.extend({
-        title: 'h1.documentFirstHeading',
-        body: '#content',
-        destroy: '[data-dismiss="modal"]'
-      } , options || {});
-
-      return function($content) {
-        var overlay = this,
-            $modal = $('' +
-              '<div class="modal fade"' +
-              '     data-pattern="plone-tabs"' +
-              '     data-plone-tabs-tabs-klass="nav nav-tabs"' +
-              '     data-plone-tabs-tab-klass=""' +
-              '     data-plone-tabs-panel-klass="">' +
-              '  <div class="modal-header">' +
-              '    <a class="close" data-dismiss="modal">&times;</a>' +
-              '    <h3></h3>' +
-              '  </div>' +
-              '  <div class="modal-body"></div>' +
-              '  <div class="modal-footer"></div>' +
-              '</div>'),
-            $title = $('.modal-header > h3', $modal),
-            $body = $('.modal-body', $modal),
-            $footer = $('.modal-footer', $modal);
-
-
-        // Title
-        $title.html($(options.title, $content).html());
-
-        // Content
-        $body.html($(options.body, $content).html());
-        $(options.title, $body).remove();
-        $(options.footer, $body).remove();
-
-        // destroying modal
-        $(options.destroy, $modal).off('click').on('click', function(e) {
-          e.stopPropagation();
-          e.preventDefault();
-          overlay.destroy();
-        });
-
-        return $modal;
-      };
-    },
-
-    ajaxSubmit: function(defaults) {
-      return function(button, options) {
-        var overlay = this;
-
-        // make this method extendable
-        options = $.extend({
-          errorMsg: '.portalMessage.error',
-          buttonContainer: '.modal-footer',
-          responseFilter: '#content',
-          replaceFilter: '#portal-column-content',
-          // hooks
-          onError: undefined,
-          onSave: undefined
-        }, defaults || {} , options || {});
-
-        // hide and copy same button to .modal-footer, clicking on button in
-        // footer should actually click on button inside form
-        button.clone()
-          .appendTo($(options.buttonContainer, overlay.$modal))
-          .on('click', function(e) {
-            e.stopPropagation();
-            e.preventDefault();
-            button.trigger('click');
-          });
-        button.hide();
-
-        // we return array of options which will be passed to ajaxSubmit
-        // TODO: add loading spinner
-        // TODO: hook in notification stuff
-        return {
-          dataType: 'html',
-          success: function(response, state, xhr, form) {
-            var _document = document,
-                responseBody = $('<div/>').html(
-                    (/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[1]);
-
-            // use iframe's document if avaliable
-            if (iframe) {
-              _document = iframe.document;
-            }
-
-            // if error is found res
-            if ($(options.errorMsg, responseBody).size() !== 0) {
-              // TODO: this should be done more smooth
-              overlay.$modal.remove();
-              overlay.$modal = $(options.responseFilter, responseBody);
-              overlay.initModal();
-
-              if (options.onError) {
-                options.onError.apply(overlay, [ responseBody, state, xhr, form, button ]);
-              }
-
-              overlay.show();
-
-            // custom save function
-            } else if (options.onSave) {
-              options.onSave.apply(overlay, [ responseBody, state, xhr, form, button ]);
-
-            // common save function, we replace what we filtered from response
-            } else if ($(options.responseFilter, _document).size() !== 0) {
-              $(options.replaceFilter, _document)
-                .html($(options.replaceFilter, responseBody).html());
-              overlay.destroy();
-
-            } else {
-              overlay.destroy();
-            }
-          }
-        };
-      };
+    modalOptions: {
+      contentTitle: 'h1.documentFirstHeading',
+      contentBody: '#content',
+      template: '' +
+          '<div class="modal fade"' +
+          '     data-pattern="plone-tabs"' +
+          '     data-plone-tabs-tabs-klass="nav nav-tabs"' +
+          '     data-plone-tabs-tab-klass=""' +
+          '     data-plone-tabs-panel-klass="">' +
+          '  <div class="modal-header">' +
+          '    <h3></h3>' +
+          '  </div>' +
+          '  <div class="modal-body"></div>' +
+          '  <div class="modal-footer"></div>' +
+          '</div>',
+      templateClose: '<a class="close" data-dismiss="modal">&times;</a>',
+      templateTitle: '.modal-header > h3',
+      templateBody: '.modal-body',
+      templateFooter: '.modal-footer'
     }
   },
   init: function() {
@@ -192,16 +73,16 @@ var PloneOverlay = Patterns.Base.extend({
     // we don't have to initialize modal if already initialized
     if ( self.$modal ) { return self; }
 
-    // no element passed, usually this mean that triggeting will be done
-    // manually
-    if (!self.$el.jquery) {
-      self.options = self.$el;
-      self.$el = undefined;
-    }
+    // no jquery element passed as first argument this means first arguments
+    // are options. also this means that showing/hiding of overlay will be
+    // handled manually
+    if (!self.$el.jquery) { self.options = self.$el; self.$el = undefined; }
 
     // merge options with defaults
     self.options = $.extend({}, self.defaults, self.options);
 
+    // if our element we passed is link then we setup click event which shows
+    // overlay
     if (self.$el && $.nodeName(self.$el[0], 'a')) {
       // element "a" can also give us info where to load modal content from
       if (!self.options.ajaxUrl) {
@@ -215,179 +96,384 @@ var PloneOverlay = Patterns.Base.extend({
       });
     }
 
-    // custom function which will get resolved on first call
-    if (typeof self.options.ajaxUrl === 'function') {
-      self.$modal = self.options.ajaxUrl;
+    // if modal already passed via options
+    if (self.options.modal) {
+      self.$modal = $(self.options.modal).hide();
+      self.initModalEvents(self.$modal);
 
-    // else ajaxUrl is string as its suppose to be
+      // patterns integration
+      if (Patterns) {
+        Patterns.initialize(self.$modal);
+        $('[data-pattern~="tabs"] > li > a', self.$modal).on('shown', function() {
+          self.resizeModal(self.$modal);
+        });
+      }
+
+    // else options.ajaxUrl is used to load modal
+    } else if (self.options.ajaxUrl) {
+      self.$modal = self.prepareAjaxLoad(self.options.ajaxUrl);
+
+    // report error since we cant detect what to use for modal
     } else {
-      self.$modal = function(callback) {
-        var self = this;
+      $.error('ploneOverlay can not recognize any content to use as $modal');
+    }
 
-        // before ajax request hook
-        if (self.options.onBeforeLoad) {
-          self.options.onBeforeLoad.call(self);
+    // stretch iframe when showing overlay
+    if (iframe) {
+      // close overlay if we click on backdrop
+      iframe.$el.on('iframe.click', function(e, original) {
+        if (original.which === 1 && (
+            $(original.target).hasClass('modal-backdrop') ||
+            $(original.target).hasClass('modal-wrapper'))) {
+          self.hide();
         }
-
-        // remove hash part of url and append prefix to url, eg.
-        //   convert -> http://example.com/something
-        //   into    -> http://example.com/++unthemed++/something
-        var ajaxURL = self.options.changeAjaxURL((self.options.ajaxUrl.match(/^([^#]+)/) || [])[1]);
-
-        // do ajax request with prefixed url
-        $.get(ajaxURL, {}, function(response) {
-
-          // from response get content of body
-          self.$modal = $('<div/>').html((/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[1]);
-
-          // after ajax request hook
-          if (self.options.onLoaded) {
-            self.options.onLoaded.call(self);
+      });
+      // sync scrolling of top frame and current frame
+      $(iframe.document).scroll(function () {
+        if (self.$modal && self.$modal.jquery) {
+          var backdrop = self.$modal.parents('.modal-backdrop');
+          if (backdrop.size() !== 0) {
+            backdrop.css({
+              'top': -1 * $(iframe.document).scrollTop(),
+              'height': $(iframe.document).scrollTop() + backdrop.height()
+            });
           }
-
-          self.initModal();
-
-          if (callback) {
-            callback.call(self);
-          }
-        }, 'html');
-      };
+        }
+      });
+      self.initialTopFrameHeight = $(iframe.document).height() +
+          $('body', iframe.document).offset().top;
     }
   },
-  initModal: function() {
+  initModalEvents: function($modal) {
+    var self = this;
+    // handle custom events of overlay
+    if (self.options.events) {
+      $.each(self.options.events, function(item) {
+        var handleEvent,
+            tmp = item.split(' '),
+            eventName = tmp[0],
+            $el = $(tmp.splice(1).join(' '), $modal);
+
+        // custom defined function
+        if (typeof self.options.events[item] === 'function') {
+          handleEvent = self.options.events[item];
+
+        } else if ($el.size() !== 0) {
+
+          // if inside form we expect this to be handled via ajaxSubmit
+          if ($el.parents('form').size() !== 0) {
+            handleEvent = self.prepareAjaxSubmit($el, $modal, self.options.events[item]);
+
+          // if link points to url starting with self.options.overlayUrl
+          } else if (self.startsWithOverlayUrl($el)) {
+            handleEvent = self.prepareNewModal($el, $modal, self.options.events[item]);
+          }
+
+        }
+
+        $el.on(eventName, function(e) {
+          if (handleEvent) {
+            e.stopPropagation();
+            e.preventDefault();
+            handleEvent(self, $el, $modal);
+          }
+        });
+      });
+    }
+  },
+  initModal: function($modal) {
     var self = this;
 
-    // use modalTemplate to create new modal element
-    self.$modal = self.options.modalTemplate().apply(self, [self.$modal]).hide();
-
     // append element to body
-    if (self.$modal.parents('body').size() === 0) {
-      self.$modal.appendTo('body');
+    if ($modal.parents('body').size() === 0) {
+      $modal.appendTo('body');
     }
 
-    // initialize modal but dont show it
-    self.$modal.modal({
-      backdrop: 'static',
-      dynamic: true,
-      keyboard: false,
-      show: false
-    });
+    // initialize modal
+    $modal.modal({
+        backdrop: 'static',
+        dynamic: true,
+        keyboard: false,
+        show: false
+      });
 
-    // disable all clicks on modal
-    self.$modal.on('click', function(e) {
-      var target = $(e.target);
-
+    // stop propagating clicks on modal so that iframe doesn't shrinks
+    $modal.on('click', function(e) {
       e.stopPropagation();
-
-      // we prevent all clicks inside overlay except:
-      //  - ones who we explicitly mark with allowDefault class
-      //  - file and checkbox input elements
-      if (!target.hasClass("allowDefault") &&
-          target.attr('type') !== 'file' &&
-          target.attr('type') !== 'radio' &&
-          target.attr('type') !== 'checkbox') {
-
-        e.preventDefault();
-
-        if (self._formButtons) {
-          // check if any form button was clicked
-          var clickedButton;
-          $.each(self._formButtons, function(formButton) {
-            var el = $(formButton, self.$modal);
-            if (el.size() !== 0 && el[0] === e.target) {
-              clickedButton = formButton;
-            }
-          });
-          if (clickedButton) {
-            var form = $(clickedButton, self.$modal).parents('form');
-            if (form.size() !== 0) {
-              var data = {};
-              data[$(e.target).attr('name')] = $(e.target).attr('value');
-              form.ajaxSubmit($.extend(true,
-                    self._formButtons[clickedButton], { data: data } ));
-            }
-          }
-        }
-
-      }
     });
 
-    // jquery.form integration: at this point we calculate form options which
-    // are passed when button will be clicked
-    if (self.options.formButtons) {
-      self._formButtons = {};
-      $.each(self.options.formButtons, function(formButton) {
-        var button = $(formButton, self.$modal);
-        if (button.size() !== 0) {
-          if (typeof self.options.formButtons[formButton] === 'function') {
-            self._formButtons[formButton] = self.options.formButtons[formButton]
-              .apply(self, [ button ]);
-          } else {
-            self._formButtons[formButton] = self.options.ajaxSubmit().apply(self, [ button ]);
-          }
-        }
-      });
+    self.initModalEvents($modal);
+
+    // initialize hook
+    if (self.options.onInitModal) {
+      self.options.onModalIniu.call(self);
     }
+  },
+  resizeModal: function($modal) {
+    var self = this,
+        modalHeight = self.$modal.height() + self.$modal.offset().top;
+    if (iframe && modalHeight > self.initialTopFrameHeight) {
+      $('body', iframe.document).height(modalHeight);
+      self.$modal.parents('.modal-backdrop').height($(iframe.window).height());
+    }
+  },
+  prepareAjaxLoad: function(ajaxUrl) {
+    var self = this;
+    return function(callback) {
 
-    // $.iframe integration:
-    //  - calls stretch/shrink when showing/hidding of modal
-    //  - sync scrolling of top frame and current frame
-    if (iframe !== undefined) {
+      // show that overlay is loading content
+      self.$modal = self.modalTemplate(self.options.loadingTemplate || $('' +
+        '<div>' +
+        '  <div id="content">' +
+        '    <h1 class="documentFirstHeading">' + self.options.loadingText + '</h1>' +
+        '    <div class="progress progress-striped active">' +
+        '      <div class="bar" style="width: 100%;"></div>' +
+        '    </div>' +
+        '  </div>' +
+        '</div>'));
+      self.initModal(self.$modal.hide());
+      self.show();
+      self.resizeModal(self.$modal);
 
-      var topFrameHeight = $(iframe.document).height();
-      self.$modal
-        .on('show', function() {
-          iframe.stretch();
-        })
-        .on('shown', function() {
-          if (self.$modal.parents('.modal-wrapper').height() > topFrameHeight) {
-            $('body', iframe.document).height(
-                self.$modal.parents('.modal-wrapper').height() +
-                self.$modal.parents('.modal-wrapper').offset().top);
-            self.$modal.parents('.modal-backdrop').height($(iframe.window).height());
-          }
-        })
-        .on('hidden', function() {
-          $('body', iframe.document).height(topFrameHeight);
-          iframe.shrink();
-        });
+      // before ajax request hook
+      if (self.options.onBeforeLoad) {
+        self.options.onBeforeLoad.call(self);
+      }
+      if (self.$el) {
+        self.$el.trigger('plone.overlay.beforeLoad', [ self ]);
+      }
 
-      // sync scrolling
-      $(iframe.document).scroll(function () {
-        var backdrop = self.$modal.parents('.modal-backdrop');
-        if (iframe && iframe.document) {
-          backdrop.css({
-            'top': -1 * $(iframe.document).scrollTop(),
-            'height': $(iframe.document).scrollTop() + backdrop.height()
+      // remove hash part of url and append prefix to url, eg.
+      //   convert -> http://example.com/test/something
+      //   into    -> http://example.com/test/++toolbar++/something
+      //   if options.baseUrl === 'http://example.com/test
+      var ajaxUrl = self.changeAjaxURL(ajaxUrl || self.options.ajaxUrl);
+
+      // do ajax request with prefixed url
+      $.get(ajaxUrl, {}, function(response) {
+
+        // from response get content of body
+        self.$modal.html('');
+        self.$modal.append($('> *', self.modalTemplate(
+          $('<div/>').html((/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[1]))));
+        self.initModalEvents(self.$modal);
+
+        // patterns integration
+        if (Patterns) {
+          Patterns.initialize(self.$modal);
+          $('[data-pattern~="tabs"] > li > a', self.$modal).on('shown', function() {
+            self.resizeModal(self.$modal);
           });
         }
-      });
+
+        self.resizeModal(self.$modal);
+
+        // after ajax request hook
+        if (self.options.onLoaded) {
+          self.options.onLoaded.call(self);
+        }
+        if (self.$el) {
+          self.$el.trigger('plone.overlay.loaded', [ self ]);
+        }
+
+        // after content is loaded call callback
+        if (callback) {
+          callback.call(self);
+        }
+      }, 'html');
+    };
+  },
+  modalTemplate: function($content, options) {
+    var self = this;
+
+    options = $.extend(self.options.modalOptions, options || {});
+
+    var $modal = $(options.template),
+        $title = $(options.templateTitle, $modal),
+        $body = $(options.templateBody, $modal),
+        $footer = $(options.templateFooter, $modal);
+
+    // Body
+    if (options.contentBody) {
+      $body.html($(options.contentBody, $content).html());
     }
-    // patterns integration
-    if (Patterns) {
-      Patterns.initialize(self.$modal);
+
+    // Title
+    if (options.contentTitle) {
+      $title.html($(options.contentTitle, $content).html());
+      $(options.contentTitle, $body).remove();
     }
-    // initialize hook
-    if (self.options.onInit) {
-      self.options.onInit.call(self);
+
+    // Footer
+    if (options.contentFooter) {
+      $body.html($(options.contentFooter, $content).html());
+      $(options.contentFooter, $body).remove();
+    }
+
+    // Close
+    if (options.templateClose && options.templateClose.length !== 0) {
+      $(options.templateClose)
+        .off('click')
+        .on('click', function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+          self.hide();
+        })
+        .insertBefore($title);
+    }
+
+    return $modal;
+  },
+  prepareNewModal: function($el, $modal, defaults) {
+    console.log('TODO: prepareNewModal');
+  },
+  prepareAjaxSubmit: function($el, $modal, defaults) {
+    var self = this;
+    defaults = $.extend({}, self.options.ajaxSubmitOptions, defaults);
+
+    // hide and copy same button to .modal-footer, clicking on button in
+    // footer should actually click on button inside form
+    $(defaults.contentButtons, $modal).each(function() {
+      var $button = $(this);
+      $button.clone()
+        .appendTo($(defaults.modalButtons, $modal))
+        .off('click').on('click', function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+          $button.trigger('click');
+        });
+      $button.hide();
+    });
+
+    return function(self, $button, $modal) {
+
+      var options = $.extend({}, defaults, options);
+
+      if (typeof options.contentFilters === 'string') {
+        options.contentFilters = [ options.contentFilters ];
+      }
+
+      // pass button that was clicked when submiting form
+      var extraData = {};
+      extraData[$button.attr('name')] = $button.attr('value');
+
+      // loading "spinner"
+      $modal
+        .append($('<div/>')
+          .css({
+            position: 'absolute',
+            top: $($('> *', $modal)[0]).outerHeight(),
+            left: 0,
+            width: $modal.width(),
+            height: $($('> *', $modal)[1]).outerHeight() +
+                    $($('> *', $modal)[2]).outerHeight(),
+            background: 'white',
+            opacity: '0.6'
+          }))
+        .append($('' +
+            '<div class="progress progress-striped active">' +
+            '  <div class="bar" style="width: 100%;"></div>' +
+            '</div>')
+          .css({
+            position: 'absolute',
+            left: $modal.width() * 0.1,
+            top: ($($('> *', $modal)[1]).outerHeight() +
+                  $($('> *', $modal)[2]).outerHeight()) * 0.45,
+            width: $modal.width() * 0.8
+          }));
+
+      // we return array of options which will be passed to ajaxSubmit
+      $el.parents('form').ajaxSubmit($.extend(true, {
+        dataType: 'html',
+        url: self.changeAjaxURL($el.parents('form').attr('action')),
+        success: function(response, state, xhr, form) {
+          var _document = iframe ? iframe.document : document,
+              responseBody = $('<div/>').html(
+                  (/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[1]);
+
+          // if error is found
+          if ($(options.error, responseBody).size() !== 0) {
+            self.$modal.html('');
+            self.$modal.append($('> *', self.modalTemplate(responseBody)));
+            self.initModalEvents(self.$modal);
+
+            // patterns integration
+            if (Patterns) {
+              Patterns.initialize(self.$modal);
+              $('[data-pattern~="tabs"] > li > a', self.$modal).on('shown', function() {
+                self.resizeModal(self.$modal);
+              });
+            }
+
+            if (options.onError) {
+              options.onError.apply(self, [ responseBody, state, xhr, form ]);
+            }
+
+          // custom save function
+          } else if (options.onSave) {
+            options.onSave.apply(self, [ responseBody, state, xhr, form ]);
+
+          // common save function, we replace what we filtered from response
+          } else {
+            $.each(options.contentFilters, function(i, selector) {
+              $(selector, _document).html($(selector, responseBody).html());
+            });
+            self.hide();
+          }
+        }
+      }, { data: extraData }));
+    };
+  },
+  changeAjaxURL: function(ajaxUrl) {
+
+    // strip everything after ? or #
+    ajaxUrl = ajaxUrl.match(/^([^#?]+)/)[1];
+
+    var self = this,
+        ajaxUrlPrefix = self.options.ajaxUrlPrefix || '/++toolbar++',
+        portalUrl = self.options.portalUrl ||
+          $('body', iframe ? iframe.document : document).data('portal-navigation-url');
+
+    if (ajaxUrl.indexOf('http') === 0) {
+      return portalUrl + ajaxUrlPrefix + ajaxUrl.substr(portalUrl.length);
+    } else {
+      $.error('For now we suuport only absolute urls');
     }
   },
   show: function() {
     var self = this;
 
+    // close any opened toolbar dropdown
+    $('.toolbar-dropdown-open > a').patternToggle('remove');
+
     // if self.$modal is function then call it and pass this function as parameter
     // which needs to be called once loading of modal's html has been done
     if (typeof(self.$modal) === 'function') {
-      self.$modal.apply(self, [ self.show ]);
+      self.$modal(self.show);
 
     } else {
+
+      if (iframe) {
+        iframe.stretch();
+      }
+
+      // show hook
+      if (self.options.onShow) {
+        self.options.onShow.call(self);
+      }
+      if (self.$el) {
+        self.$el.trigger('plone.overlay.show', [ self ]);
+      }
 
       // showing bootstrap's modal
       self.$modal.modal('show');
 
       // show hook
-      if (self.options.onShow) {
-        self.options.onShow.call(self);
+      if (self.options.onShown) {
+        self.options.onShown.call(self);
+      }
+      if (self.$el) {
+        self.$el.trigger('plone.overlay.shown', [ self ]);
       }
     }
   },
@@ -399,37 +485,42 @@ var PloneOverlay = Patterns.Base.extend({
       return;
     }
 
-    // calling hide on bootstrap's modal
-    self.$modal.modal('hide');
-
     // hide hook
     if (self.options.onHide) {
       self.options.onHide.call(self);
     }
-
-  },
-  destroy: function() {
-    var self = this;
-
-    // destroying of modal is not possible if its not even created
-    if (typeof(self.$modal) === 'function') {
-      return;
+    if (self.$el) {
+      self.$el.trigger('plone.overlay.hide', [ self ]);
     }
 
-    // first we hide modal, so all nice animations happen.
-    self.hide();
+    // calling hide on bootstrap's modal
+    self.$modal.modal('hide');
 
     // remove modal's DOM element
-    self.$modal.remove();
+    self.$modal.parents('body > *').detach();
+    iframe.shrink();
 
-    //  reinitialize
-    //if (self.$el) {
-    //  self.$el.data('plone-overlay', new PloneOverlay(self.$el, self.options));
-    //}
+    // set content frame to initial height
+    if (iframe) {
+      $('body', iframe.document).height(self.initialTopFrameHeight);
+    }
 
-    // destroy hook
-    if (self.options.onDestroy) {
-      self.options.onDestroy.call(self);
+    // reinitialize overlay
+    if (self.$el) {
+      self.$el.data('plone-overlay', new PloneOverlay(self.$el, self.options));
+    }
+
+    // shrink iframe when showing overlay
+    if (iframe) {
+      iframe.shrink();
+    }
+
+    // hidden hook
+    if (self.options.onHidden) {
+      self.options.onHidden.call(self);
+    }
+    if (self.$el) {
+      self.$el.trigger('plone.overlay.hidden');
     }
   },
   getBaseURL: function(text){
@@ -441,4 +532,4 @@ var PloneOverlay = Patterns.Base.extend({
 Patterns.register(PloneOverlay);
 
 
-}(window.jQuery, window.Patterns, window.jQuery.iframe, window.jQuery.mask));
+}(window.jQuery, window.Patterns, window.jQuery.iframe));
