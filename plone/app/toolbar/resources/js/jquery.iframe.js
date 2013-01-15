@@ -68,10 +68,14 @@ $.IFrame.prototype = {
           self._new_window(url);
         }
 
-      // if click on any other element then 'a' of iframe shrink it
-      //return $.nodeName(e.target, 'html');
-      } else {
+      // if we click on empty part of iframe then shrink it
+      } else if ($.nodeName(e.target, 'html')) {
         self.shrink();
+
+      // if click on any other element then 'a' of iframe trigger iframe.click
+      // event
+      } else {
+        self.$el.trigger('iframe.click', e);
       }
 
     });
