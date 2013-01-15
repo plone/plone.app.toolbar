@@ -82,7 +82,11 @@ $(document).ready(function() {
   $('#plone-toolbar #plone-contentmenu-actions > ul > li#plone-contentmenu-actions-delete > a').ploneOverlay({
     events: {
       'click .modal-body input[name="form.button.Cancel"]': {},
-      'click .modal-body input.destructive': {}
+      'click .modal-body input.destructive': {
+        onSuccess: function(responseBody, state, xhr) {
+          window.parent.location.href = window.parent.location.href + '/..';
+        }
+      }
     }
   });
 
@@ -90,19 +94,17 @@ $(document).ready(function() {
   $('#plone-toolbar #plone-contentmenu-actions > ul > li#plone-contentmenu-actions-rename > a').ploneOverlay({
     events: {
       'click .modal-body input[name="form.button.Cancel"]': {},
-      'click .modal-body input[name="form.button.RenameAll"]': {}
+      'click .modal-body input[name="form.button.RenameAll"]': {
+        onSuccess: function(responseBody, state, xhr) {
+          window.parent.location.href = responseBody.data('context-url') || window.parent.location.href;
+        }
+      }
     }
-    //'.modal-body input[name="form.button.RenameAll"]':
-    //    $.fn.ploneOverlay.defaultAjaxSubmit({
-    //      onSave: function(response, state, xhr, form, button) {
-    //        // need redirect to different url after successfull submitting
-    //        window.parent.location.href = this.getBaseURL(xhr.responseText);
-    //      }
-    //    })
   });
 
   // Change content item as default view...
-  $('#plone-toolbar #plone-contentmenu-display > ul > li#folderChangeDefaultPage > a').ploneOverlay({
+  $('#plone-toolbar #plone-contentmenu-display > ul > li#folderChangeDefaultPage > a,' +
+    '#plone-toolbar #plone-contentmenu-display > ul > li#contextSetDefaultPage > a').ploneOverlay({
     modalTemplate: function($modal) {
       // FIXME: we should hack like this
       $('form > dl', $modal).addClass('default-page-listing');
@@ -123,7 +125,11 @@ $(document).ready(function() {
   $('#plone-toolbar #plone-contentmenu-factories > ul > li > a').ploneOverlay({
     events: {
       'click .modal-body input[name="form.button.cancel"]': {},
-      'click .modal-body input[name="form.button.save"]': {}
+      'click .modal-body input[name="form.button.save"]': {
+        onSuccess: function(responseBody, state, xhr) {
+          window.parent.location.href = responseBody.data('context-url') || window.parent.location.href;
+        }
+      }
     }
   });
 

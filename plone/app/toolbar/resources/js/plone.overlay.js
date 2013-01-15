@@ -252,10 +252,12 @@ var PloneOverlay = Patterns.Base.extend({
       // do ajax request with prefixed url
       $.get(ajaxUrl, {}, function(response) {
 
+        var responseBody = $((/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[0]
+            .replace('<body', '<div').replace('</body>', '</div>'));
+
         // from response get content of body
         self.$modal.html('');
-        self.$modal.append($('> *', self.modalTemplate(
-          $('<div/>').html((/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[1]))));
+        self.$modal.append($('> *', self.modalTemplate(responseBody)));
         self.initModalEvents(self.$modal);
 
         // patterns integration
@@ -393,8 +395,8 @@ var PloneOverlay = Patterns.Base.extend({
         url: self.changeAjaxURL($el.parents('form').attr('action')),
         success: function(response, state, xhr, form) {
           var _document = iframe ? iframe.document : document,
-              responseBody = $('<div/>').html(
-                  (/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[1]);
+              responseBody = $((/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[0]
+                  .replace('<body', '<div').replace('</body>', '</div>'));
 
           // if error is found
           if ($(options.error, responseBody).size() !== 0) {
@@ -442,7 +444,12 @@ var PloneOverlay = Patterns.Base.extend({
     if (ajaxUrl.indexOf('http') === 0) {
       return portalUrl + ajaxUrlPrefix + ajaxUrl.substr(portalUrl.length);
     } else {
-      $.error('For now we suuport only absolute urls');
+      if (ajaxUrl.substr(0, 1) === '/') {
+        return portalUrl + ajaxUrlPrefix + ajaxUrl;
+      } else {
+        return portalUrl + ajaxUrlPrefix +
+            (window.location.href + '/' + ajaxUrl).substr(portalUrl.length);
+      }
     }
   },
   show: function() {
