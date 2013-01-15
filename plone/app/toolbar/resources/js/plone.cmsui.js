@@ -99,10 +99,9 @@ $(document).ready(function() {
 
   // Edit form
   $('#plone-toolbar #plone-action-edit > a').ploneOverlay({
-    //onShow: function() { this$.patternToggle('toggle'); },
-    formButtons: {
-      '.modal-body input[name="form.button.cancel"]': {},
-      '.modal-body input[name="form.button.save"]': {}
+    events: {
+      'click .modal-body input[name="form.button.cancel"]': {},
+      'click .modal-body input[name="form.button.save"]': {}
     }
   });
 
