@@ -27,7 +27,7 @@
   regexp:false, undef:true, strict:true, trailing:true, browser:true */
 
 
-(function($, undefined) {
+(function($, Patterns, undefined) {
 "use strict";
 
 $(document).ready(function() {
@@ -105,6 +105,44 @@ $(document).ready(function() {
     }
   });
 
+  // Rules form
+  $('#plone-toolbar #plone-action-contentrules > a').ploneOverlay({
+  });
+
+  // Sharing form
+  $('#plone-toolbar #plone-action-local_roles > a').ploneOverlay({
+    modalTemplate: function($modal) {
+      // FIXME: we should hack like this
+      $('#link-presentation', $modal).remove();
+      return $modal;
+    },
+    ajaxSubmitOptions: {
+      contentButtons: 'input[name="form.button.Save"],input[name="form.button.Cancel"]'
+    },
+    events: {
+      'click .modal-body input[name="form.button.Search"]': {
+        onSuccess: function(responseBody) {
+          var self = this;
+          self.$modal.html('');
+          self.$modal.append($('> *', self.modalTemplate(responseBody)));
+          self.initModalEvents(self.$modal);
+
+          // patterns integration
+          if (Patterns) {
+            Patterns.initialize(self.$modal);
+            $('[data-pattern~="tabs"] > li > a', self.$modal).on('shown', function() {
+              self.resizeModal(self.$modal);
+            });
+          }
+        }
+      },
+      'click .modal-body input[name="form.button.Cancel"]': {},
+      'click .modal-body input[name="form.button.Save"]': {
+        contentFilters: []
+      }
+    }
+  });
+
   //$('#plone-toolbar #plone-personal-actions > ul > li#plone-personal-actions-plone_setup a').ploneOverlay({
   //  onShow: function() { $(this).patternToggle('toggle'); },
   //  onLoaded: function() {
@@ -121,4 +159,4 @@ $(document).ready(function() {
 
 });
 
-}(window.jQuery));
+}(window.jQuery, window.Patterns));

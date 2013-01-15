@@ -79,7 +79,7 @@ var PloneOverlay = Patterns.Base.extend({
     if (!self.$el.jquery) { self.options = self.$el; self.$el = undefined; }
 
     // merge options with defaults
-    self.options = $.extend({}, self.defaults, self.options);
+    self.options = $.extend(true, {}, self.defaults, self.options);
 
     // if our element we passed is link then we setup click event which shows
     // overlay
@@ -322,6 +322,11 @@ var PloneOverlay = Patterns.Base.extend({
         .insertBefore($title);
     }
 
+    // custom
+    if (self.options.modalTemplate) {
+      $modal = self.options.modalTemplate($modal);
+    }
+
     return $modal;
   },
   prepareNewModal: function($el, $modal, defaults) {
@@ -409,9 +414,9 @@ var PloneOverlay = Patterns.Base.extend({
               options.onError.apply(self, [ responseBody, state, xhr, form ]);
             }
 
-          // custom save function
-          } else if (options.onSave) {
-            options.onSave.apply(self, [ responseBody, state, xhr, form ]);
+          // custom success function
+          } else if (options.onSuccess) {
+            options.onSuccess.apply(self, [ responseBody, state, xhr, form ]);
 
           // common save function, we replace what we filtered from response
           } else {
