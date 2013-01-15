@@ -64,32 +64,8 @@ $(document).ready(function() {
   //  }
   //});
 
-  //// Workflow -> Advance
-  //$('#plone-toolbar #plone-contentmenu-workflow > ul > li#advanced > a').ploneOverlay({
-  //  onShow: function() { $(this).patternToggle('toggle'); },
-  //  formButtons: {
-  //    '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultAjaxSubmit(),
-  //    '.modal-body input[name="form.button.Publish"]':
-  //        $.fn.ploneOverlay.defaultAjaxSubmit({
-  //          onSave: function(response, state, xhr, form, button) {
-  //            // need redirect to different url after successfull submitting
-  //            window.parent.location.href = this.getBaseURL(xhr.responseText);
-  //          }
-  //        })
-  //  }
-  //});
-
   //// Display View -> Select default content as default view
   //$('#plone-toolbar #plone-contentmenu-display > ul > li#contextSetDefaultPage > a').ploneOverlay({
-  //  onShow: function() { $(this).patternToggle('toggle'); },
-  //  formButtons: {
-  //    '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultAjaxSubmit(),
-  //    '.modal-body input[name="form.button.Save"]': $.fn.ploneOverlay.defaultAjaxSubmit()
-  //  }
-  //});
-
-  ////
-  //$('#plone-toolbar #plone-contentmenu-display > ul > li#folderChangeDefaultPage > a').ploneOverlay({
   //  onShow: function() { $(this).patternToggle('toggle'); },
   //  formButtons: {
   //    '.modal-body input[name="form.button.Cancel"]': $.fn.ploneOverlay.defaultAjaxSubmit(),
@@ -143,6 +119,47 @@ $(document).ready(function() {
     }
   });
 
+  // Change content item as default view...
+  $('#plone-toolbar #plone-contentmenu-display > ul > li#folderChangeDefaultPage > a').ploneOverlay({
+    modalTemplate: function($modal) {
+      // FIXME: we should hack like this
+      $('form > dl', $modal).addClass('default-page-listing');
+      $('input[name="form.button.Cancel"]', $modal).attr('class', 'standalone');
+      return $modal;
+    },
+    events: {
+      'click .modal-body input[name="form.button.Cancel"]': {},
+      'click .modal-body input[name="form.button.Save"]': {
+        onSuccess: function(responseBody, state, xhr) {
+          window.parent.location.href = window.parent.location.href;
+        }
+      }
+    }
+  });
+
+  // Add forms
+  $('#plone-toolbar #plone-contentmenu-factories > ul > li > a').ploneOverlay({
+    events: {
+      'click .modal-body input[name="form.button.cancel"]': {},
+      'click .modal-body input[name="form.button.save"]': {}
+    }
+  });
+
+  // Advance workflow
+  $('#plone-toolbar #plone-contentmenu-workflow > ul > li#workflow-transition-advanced > a').ploneOverlay({
+    modalTemplate: function($modal) {
+      // FIXME: we should hack like this
+      $('#workflow_action', $modal).parent().find('> br').remove();
+      return $modal;
+    },
+    events: {
+      'click .modal-body input[name="form.button.Cancel"]': {},
+      'click .modal-body input[name="form.button.Publish"]': {}
+    }
+  });
+
+
+  // Site setup
   //$('#plone-toolbar #plone-personal-actions > ul > li#plone-personal-actions-plone_setup a').ploneOverlay({
   //  onShow: function() { $(this).patternToggle('toggle'); },
   //  onLoaded: function() {

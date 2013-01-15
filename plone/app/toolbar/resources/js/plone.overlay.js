@@ -432,7 +432,7 @@ var PloneOverlay = Patterns.Base.extend({
   changeAjaxURL: function(ajaxUrl) {
 
     // strip everything after ? or #
-    ajaxUrl = ajaxUrl.match(/^([^#?]+)/)[1];
+    //ajaxUrl = ajaxUrl.match(/^([^#?]+)/)[1];
 
     var self = this,
         ajaxUrlPrefix = self.options.ajaxUrlPrefix || '/++toolbar++',

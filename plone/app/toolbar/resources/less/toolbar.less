@@ -112,6 +112,23 @@ body {
   input.standalone[type='submit'] {
     .btn();
   }
+  dl.default-page-listing {
+    dt {
+      input[type="radio"] {
+        margin: 0;
+      }
+      label {
+        display: inline-block;
+        font-weight: bold;
+        font-size: 1.5em;
+        line-height: 1.5em;
+        margin: 0 0 0 0.5em;
+      }
+    }
+    dd {
+      margin-left: 2em;      
+    }
+  }
   dl.portalMessage {
     .alert();
     .alert-block();
@@ -151,6 +168,7 @@ body {
       padding: 0;
     }
     .control-group();
+    input[type="radio"],
     input[type="checkbox"] {
       float: left;
       margin-right: 0.5em;
