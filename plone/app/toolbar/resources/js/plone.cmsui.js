@@ -36,7 +36,9 @@ $(document).ready(function() {
   $('#plone-toolbar #plone-action-edit > a').ploneOverlay({
     events: {
       'click .modal-body input[name="form.button.cancel"]': {},
-      'click .modal-body input[name="form.button.save"]': {}
+      'click .modal-body input[name="form.button.save"]': {
+        contentFilters: [ '#portal-column-content' ]
+      }
     }
   });
 
@@ -73,7 +75,6 @@ $(document).ready(function() {
       },
       'click .modal-body input[name="form.button.Cancel"]': {},
       'click .modal-body input[name="form.button.Save"]': {
-        contentFilters: []
       }
     }
   });
@@ -122,7 +123,7 @@ $(document).ready(function() {
   });
 
   // Add forms
-  $('#plone-toolbar #plone-contentmenu-factories > ul > li > a').ploneOverlay({
+  $('#plone-toolbar #plone-contentmenu-factories > ul > li:not(#plone-contentmenu-settings) > a').ploneOverlay({
     events: {
       'click .modal-body input[name="form.button.cancel"]': {},
       'click .modal-body input[name="form.button.save"]': {
@@ -132,6 +133,71 @@ $(document).ready(function() {
       }
     }
   });
+
+  // "Restrictions..." form
+  var restrictionsOverlayOptions = {
+    modalTemplate: function($modal) {
+      var $details = $('#details', $modal)
+        .removeAttr('style')
+        .removeAttr('id')
+        .first().parent();
+
+      function show_submenu($modal) {
+        if ($('#mode_enable', $modal).is(':checked')) {
+          $details.attr({'id': 'details', 'style': ''});
+        } else {
+          $details.attr({'id': 'details', 'style': 'display:none;'});
+        }
+      }
+      function check_mode($modal, value) {
+        // The logic here is that from #6151, comment 12.
+        var $preferred = $('#' + value, $modal),
+            $allowed = $('#' + value + '_allowed', $modal),
+            $allowed_hidden = $('#' + value + '_allowed_hidden', $modal);
+
+        // type is not preferred, so it is not allowed, too.
+        // We uncheck and disable (ghost) the allowed checkbox
+        if (!$preferred.is(':checked')) {
+          $allowed.attr('checked', false);
+          $allowed.attr('disabled', true);
+
+        // type _is_ preferred, so user _may_ want to make it
+        // an "allowed-only" type by checking the "allowed" checkbox.
+        // We need to enable (unghost) the allowed checkbox
+        } else {
+          $allowed.attr('disabled', false);
+        }
+      }
+
+      $('input[name="constrainTypesMode:int"]', $modal)
+        .removeAttr('onclick')
+        .on('click', function() {
+          show_submenu($(this).parents('.modal'));
+        });
+      $('input[name="currentPrefer:list"],input[name="currentAllow:list"]', $modal)
+        .removeAttr('onclick')
+        .on('click', function() {
+          check_mode($(this).parents('.modal'), $(this).attr('id'));
+        });
+      show_submenu($modal);
+
+      return $modal;
+    },
+    events: {
+      'click .modal-body input[name="form.button.Cancel"]': {},
+      'click .modal-body input[name="form.button.Save"]': {
+        onSuccess: function(responseBody, state, xhr) {
+          var self = this;
+          $('#plone-contentmenu-factories').html(
+              $('#plone-contentmenu-factories', responseBody).html());
+          Patterns.initialize($('#plone-contentmenu-factories'));
+          $('#plone-toolbar #plone-contentmenu-factories > ul > li#plone-contentmenu-settings > a').ploneOverlay(restrictionsOverlayOptions);
+          self.hide();
+        }
+      }
+    }
+  };
+  $('#plone-toolbar #plone-contentmenu-factories > ul > li#plone-contentmenu-settings > a').ploneOverlay(restrictionsOverlayOptions);
 
   // Advance workflow
   $('#plone-toolbar #plone-contentmenu-workflow > ul > li#workflow-transition-advanced > a').ploneOverlay({
