@@ -43,8 +43,7 @@ var PloneOverlay = Patterns.Base.extend({
     ajaxSubmitOptions: {
       error: '.portalMessage.error',
       modalButtons: '.modal-footer',
-      contentButtons: '.formControls > input[type="submit"]',
-      contentFilters: '#portal-column-content'
+      contentButtons: '.formControls > input[type="submit"]'
     },
     modalOptions: {
       contentTitle: 'h1.documentFirstHeading',
@@ -421,7 +420,7 @@ var PloneOverlay = Patterns.Base.extend({
             options.onSuccess.apply(self, [ responseBody, state, xhr, form ]);
 
           // common save function, we replace what we filtered from response
-          } else {
+          } else if (options.contentFilters) {
             $.each(options.contentFilters, function(i, selector) {
               $(selector, _document).html($(selector, responseBody).html());
             });
