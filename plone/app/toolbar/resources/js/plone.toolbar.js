@@ -39,11 +39,11 @@ var PloneToolbar = Patterns.Base.extend({
     var self = this;
 
     // for each dropdown toolbar button
-    $('a[data-pattern~="toggle"]')
+    self.$el
       // at opening dropdown:
       // - close all other opened dropdown buttons
       // - stretch iframe
-      .on('patterns.toggle.add', function(e) {
+      .on('patterns.toggle.add', 'a[data-pattern~="toggle"]', function(e) {
         var $el = $(this);
         $('.toolbar-dropdown-open > a').each(function() {
           if ($el[0] !== $(this)[0]) {
@@ -53,7 +53,7 @@ var PloneToolbar = Patterns.Base.extend({
         iframe.stretch();
       })
       // at closing dropdown shrink iframe
-      .on('patterns.toggle.removed', function(e) {
+      .on('patterns.toggle.removed', 'a[data-pattern~="toggle"]', function(e) {
         iframe.shrink();
       });
 
