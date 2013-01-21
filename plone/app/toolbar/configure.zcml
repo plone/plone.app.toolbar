@@ -25,19 +25,19 @@
     <!-- Static resources -->
     <browser:resource
         name="plone.app.toolbar_init.js"
-        file="resources/build/toolbar_init.js" />
+        file="static/toolbar_init.js" />
     <browser:resource
         name="plone.app.toolbar_init.css"
-        file="resources/build/toolbar_init.css" />
+        file="static/toolbar_init.css" />
     <browser:resource
         name="plone.app.toolbar.js"
-        file="resources/build/toolbar.js" />
+        file="static/toolbar.js" />
     <browser:resource
         name="plone.app.toolbar.css"
-        file="resources/build/toolbar.css" />
+        file="static/toolbar.css" />
     <browser:resource
         name="plone.app.toolbar.png"
-        file="resources/build/toolbar.png" />
+        file="static/toolbar.png" />
 
     <!-- Add /++toolbar++/ to your url to disable theming -->
     <adapter

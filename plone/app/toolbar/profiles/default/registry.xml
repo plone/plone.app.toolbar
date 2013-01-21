@@ -14,7 +14,6 @@
       <element key="Toolbar Theme">
         <element>jquery</element>
         <element>tinymce</element>
-        <element>widgets</element>
         <element>toolbar</element>
       </element>
 
