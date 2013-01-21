@@ -91,16 +91,16 @@ class ToolbarTile(Tile):
         for action in actions:
             item = action
 
+            # we skip view button
+            if item['id'] == 'view':
+                continue
+
             # deco edit button should have a bit different id
             if item['id'] == 'edit' and self.is_deco_enabled():
                 item['id'] = 'deco'
 
             # make sure id is unique
             item['id'] = 'plone-action-' + item['id']
-
-            # we force that view is open in parent
-            if item['id'] == 'view':
-                item['link_target'] = '_parent'
 
             # button url
             button_url = action['url'].strip()
