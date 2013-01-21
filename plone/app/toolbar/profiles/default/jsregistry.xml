@@ -11,6 +11,7 @@
         cacheable="False" compression="none" cookable="False"
         enabled="True" inline="False" bundle="toolbar"
         id="++resource++plone.app.toolbar.js"
+        insert-after="++resource++plone.app.jquery.js"
         />
 
 </object>
