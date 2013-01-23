@@ -1,5 +1,6 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
     xmlns:plone="http://namespaces.plone.org/plone"
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
@@ -24,14 +25,24 @@
 
     <!-- Static resources -->
     <browser:resource
+        zcml:condition="not-have devmode"
         name="plone.app.toolbar_init.js"
         file="static/toolbar_init.js" />
+    <browser:resource
+        zcml:condition="have devmode"
+        name="plone.app.toolbar_init.js"
+        file="static/toolbar_init.min.js" />
     <browser:resource
         name="plone.app.toolbar_init.css"
         file="static/toolbar_init.css" />
     <browser:resource
+        zcml:condition="not-have devmode"
         name="plone.app.toolbar.js"
         file="static/toolbar.js" />
+    <browser:resource
+        zcml:condition="have devmode"
+        name="plone.app.toolbar.js"
+        file="static/toolbar.min.js" />
     <browser:resource
         name="plone.app.toolbar.css"
         file="static/toolbar.css" />
