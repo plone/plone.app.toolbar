@@ -2,6 +2,7 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:zcml="http://namespaces.zope.org/zcml"
     xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:cmf="http://namespaces.zope.org/cmf"
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="plone">
@@ -22,6 +23,10 @@
     <!-- BBB: Used to override/disable parts of Plone 4.x that
          should not be in place when using plone.app.toolbar -->
     <include file="bbb.zcml" />
+
+    <!-- skin -->
+    <cmf:registerDirectory
+           name="toolbar"/>
 
     <!-- Static resources -->
     <browser:resource
