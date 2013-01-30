@@ -34,6 +34,8 @@ setup(
         'plone.tiles',
         'Acquisition',
         'plone.app.widgets',
+        'Products.CMFPlone>=4.3b1',
+        'Products.TinyMCE>1.3b8',
     ],
     extras_require={
         'test': [
