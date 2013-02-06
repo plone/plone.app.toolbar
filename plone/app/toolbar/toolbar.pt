@@ -4,7 +4,7 @@
 </head>
 <body>
 
-  <div id="plone-toolbar" data-pattern="plone-toolbar">
+  <div id="plone-toolbar">
     <div class="toolbar">
       <div class="toolbar-top"></div>
       <div class="toolbar-right">
@@ -12,9 +12,6 @@
         <ul class="toolbar-right-actions">
           <li id="plone-personalactions" class="toolbar-dropdown">
             <a href="#"
-               data-pattern="toggle"
-               data-toggle-value="toolbar-dropdown-open"
-               data-toggle-target=".toolbar-dropdown"
                tal:attributes="href view/user_homeurl">
               <img src="#" alt="user portrait"
                   tal:condition="view/user_portrait"
@@ -54,9 +51,6 @@
                 id item/id|nothing;">
 
             <a href="#" 
-               data-pattern="toggle"
-               data-toggle-value="toolbar-dropdown-open"
-               data-toggle-target=".toolbar-dropdown"
                tal:attributes="
                   href item/action;
                   target item/link_target|nothing;">
