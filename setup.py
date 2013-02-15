@@ -44,7 +44,6 @@ setup(
             'Products.CMFCore',
             'zope.configuration',
             'robotsuite',
-            'plone.act',
         ],
     },
 )
