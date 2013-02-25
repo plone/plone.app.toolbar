@@ -2990,7 +2990,7 @@ define('js/patterns/modal.js',[
         self.$wrapper = $('<div/>')
           .hide()
           .css({
-            'z-index': self.options.backdropZIndex + 1,
+            'z-index': parseInt(self.options.backdropZIndex, 10) + 1,
             'overflow-y': 'auto',
             'position': 'fixed',
             'height': '100%',
@@ -3160,7 +3160,7 @@ define('js/patterns/modal.js',[
         self.$modal.css({
           'padding': '0',
           'margin': '0',
-          'width': '',
+          'width': self.options.width,
           'height': self.options.height,
           'position': 'absolute',
           'top': preserve_top ? preserve_top : '0',
@@ -3212,7 +3212,8 @@ define('js/patterns/modal.js',[
         }
         self.$modal.css({
           'left': positionLeft,
-          'right': positionRight
+          'right': positionRight,
+          'width': self.$modal.width() - leftMargin - rightMargin
         });
 
         // if modal is bigger then wrapperInner then resize wrapperInner to
@@ -8202,18 +8203,28 @@ define('js/bundles/toolbar',[
   'jquery',
   'js/jquery.iframe',
   'jam/Patterns/src/registry',
+  'js/patterns/base',
   'js/patterns/backdrop',
   'jam/jquery-form/jquery.form.js',
   'js/patterns/toggle',
   'js/patterns/modal.js',
   'js/bundles/widgets'
-], function($, iframe, registry, Backdrop) {
+], function($, iframe, registry, Base, Backdrop) {
   
 
   window.plone = window.plone || {};
   window.plone.toolbar = window.plone.toolbar || {};
 
   $(document).ready(function() {
+
+    // tinyMCE integration
+    var TinyMCE = Base.extend({
+      name: 'plone-tinymce',
+      jqueryPlugin: 'ploneTinymce',
+      init: function() {
+        window.initTinyMCE(this.$el.parent());
+      }
+    });
 
     // Dropdown {{{
 
@@ -8243,7 +8254,7 @@ define('js/bundles/toolbar',[
 
     // }}}
 
-    // Modals {{{
+    // Modals Helpers {{{
 
     // make sure we close all dropdowns when iframe is shrinking
     iframe.$el.on('shrink.iframe', function(e) {
@@ -8338,105 +8349,180 @@ define('js/bundles/toolbar',[
         formError: '.portalMessage.error'
       }, options);
 
-      $.each(options.buttons, function(button, buttonOptions) {
-        var $button = $(button, modal.$modal);
+      $.each(options.buttons, function(buttons, buttonsOptions) {
+        buttonsOptions = $.extend({}, options, buttonsOptions);
+        $(buttons, modal.$modal).each(function(button) {
+          var $button = $(this);
 
-        buttonOptions = $.extend({}, options, buttonOptions);
+          // pass button that was clicked when submiting form
+          var extraData = {};
+          extraData[$button.attr('name')] = $button.attr('value');
 
-        // pass button that was clicked when submiting form
-        var extraData = {};
-        extraData[$button.attr('name')] = $button.attr('value');
+          $button.on('click', function(e) {
+            e.stopPropagation();
+            e.preventDefault();
 
-        $button.on('click', function(e) {
-          e.stopPropagation();
-          e.preventDefault();
-
-          // loading "spinner"
-          var backdrop = modal.$modal.data('patterns-backdrop');
-          if (!backdrop) {
-            backdrop = new Backdrop(modal.$modal, {
-              closeOnEsc: false,
-              closeOnClick: false
-            });
-            backdrop.$backdrop
-              .html('')
-              .append($('' +
-                  '<div class="progress progress-striped active">' +
-                  '  <div class="bar" style="width: 100%;"></div>' +
-                  '</div>')
-                .css({
-                  position: 'absolute',
-                  left: modal.$modal.width() * 0.1,
-                  top: modal.$modal.height()/2 + 10,
-                  width: modal.$modal.width() * 0.8
-                }));
-            modal.$modal.data('patterns-backdrop', backdrop);
-          } else {
-            modal.$modal.append(backdrop.$backdrop);
-          }
-          backdrop.show();
-
-          $button.parents('form').ajaxSubmit({
-            timeout: buttonOptions.timeout,
-            dataType: 'html',
-            data: extraData,
-            url: $button.parents('form').attr('action'),
-            error: function(xhr, textStatus, errorStatus) {
-              if (textStatus === 'timeout' && buttonOptions.onTimeout) {
-                buttonOptions.onTimeout(modal, xhr, errorStatus);
-
-              // on "error", "abort", and "parsererror"
-              } else if (buttonOptions.onError) {
-                buttonOptions.onError(xhr, textStatus, errorStatus);
-              } else {
-                console.log('error happened do something');
-              }
-            },
-            success: function(response, state, xhr, form) {
-              var responseBody = $((/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[0]
-                      .replace('<body', '<div').replace('</body>', '</div>'));
-
-              // if error is found
-              if ($(buttonOptions.formError, responseBody).size() !== 0) {
-                if (buttonOptions.onFormError) {
-                  buttonOptions.onFormError(modal, responseBody, state, xhr, form);
-                } else {
-                  modal.$modal.html(responseBody.html());
-                  modalInit(modal, modalInit);
-                  registry.scan(modal.$modal);
-                }
-
-              // custom success function
-              } else if (buttonOptions.onSuccess) {
-                buttonOptions.onSuccess(modal, responseBody, state, xhr, form);
-
-              } else {
-                $button.trigger('destroy.modal.patterns');
-              }
+            // loading "spinner"
+            var backdrop = modal.$modal.data('patterns-backdrop');
+            if (!backdrop) {
+              backdrop = new Backdrop(modal.$modal, {
+                closeOnEsc: false,
+                closeOnClick: false
+              });
+              backdrop.$backdrop
+                .html('')
+                .append($('' +
+                    '<div class="progress progress-striped active">' +
+                    '  <div class="bar" style="width: 100%;"></div>' +
+                    '</div>')
+                  .css({
+                    position: 'absolute',
+                    left: modal.$modal.width() * 0.1,
+                    top: modal.$modal.height()/2 + 10,
+                    width: modal.$modal.width() * 0.8
+                  }));
+              modal.$modal.data('patterns-backdrop', backdrop);
+            } else {
+              modal.$modal.append(backdrop.$backdrop);
             }
+            backdrop.show();
+
+            if ($.nodeName($button[0], 'input')) {
+              $button.parents('form').ajaxSubmit({
+                timeout: buttonsOptions.timeout,
+                dataType: 'html',
+                data: extraData,
+                url: $button.parents('form').attr('action'),
+                error: function(xhr, textStatus, errorStatus) {
+                  if (textStatus === 'timeout' && buttonsOptions.onTimeout) {
+                    buttonsOptions.onTimeout(modal, xhr, errorStatus);
+
+                  // on "error", "abort", and "parsererror"
+                  } else if (buttonsOptions.onError) {
+                    buttonsOptions.onError(xhr, textStatus, errorStatus);
+                  } else {
+                    console.log('error happened do something');
+                  }
+                },
+                success: function(response, state, xhr, form) {
+                  var responseBody = $((/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[0]
+                          .replace('<body', '<div').replace('</body>', '</div>'));
+
+                  // if error is found
+                  if ($(buttonsOptions.formError, responseBody).size() !== 0) {
+                    if (buttonsOptions.onFormError) {
+                      buttonsOptions.onFormError(modal, responseBody, state, xhr, form);
+                    } else {
+                      modal.$modal.html(responseBody.html());
+                      modalInit(modal, modalInit);
+                      modal.positionModal();
+                      registry.scan(modal.$modal);
+                    }
+
+                  // custom success function
+                  } else if (buttonsOptions.onSuccess) {
+                    buttonsOptions.onSuccess(modal, responseBody, state, xhr, form);
+
+                  } else {
+                    $button.trigger('destroy.modal.patterns');
+                  }
+                }
+              });
+            } else if ($.nodeName($button[0], 'a')) {
+              $.ajax({
+                url: $button.attr('href'),
+                error: function(xhr, textStatus, errorStatus) {
+                  if (textStatus === 'timeout' && buttonsOptions.onTimeout) {
+                    buttonsOptions.onTimeout(modal, xhr, errorStatus);
+
+                  // on "error", "abort", and "parsererror"
+                  } else if (buttonsOptions.onError) {
+                    buttonsOptions.onError(xhr, textStatus, errorStatus);
+                  } else {
+                    console.log('error happened do something');
+                  }
+                },
+                success: function(response, state, xhr) {
+                  var responseBody = $((/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[0]
+                          .replace('<body', '<div').replace('</body>', '</div>'));
+
+                  // if error is found
+                  if ($(buttonsOptions.formError, responseBody).size() !== 0) {
+                    if (buttonsOptions.onFormError) {
+                      buttonsOptions.onFormError(modal, responseBody, state, xhr);
+                    } else {
+                      modal.$modal.html(responseBody.html());
+                      modalInit(modal, modalInit);
+                      modal.positionModal();
+                      registry.scan(modal.$modal);
+                    }
+
+                  // custom success function
+                  } else if (buttonsOptions.onSuccess) {
+                    buttonsOptions.onSuccess(modal, responseBody, state, xhr);
+
+                  } else {
+                    $button.trigger('destroy.modal.patterns');
+                  }
+                }
+              });
+            }
+
           });
         });
       });
     }
 
-    function modalInit(id, callback) {
-      $('#' + id + ' > a').addClass('modal-trigger').modal();
-      $(document).on('show.modal.patterns', '#' + id +
-            ' > a.modal-trigger', function(e, modal) {
+    function modalInit(selector, callback, modalOptions) {
+      $(selector).addClass('modal-trigger').modal(modalOptions);
+      $(document).on('show.modal.patterns', selector + '.modal-trigger', function(e, modal) {
         callback(modal, callback);
       });
     }
 
     // }}}
 
-    // TODO: Contents
+    // Modals {{{
+
+    // Contents
+    modalInit('#plone-action-folderContents > a', function(modal, modalInit) {
+      modalTemplate(modal.$modal, {
+        buttons: '#folderlisting-main-table > input.context,#folderlisting-main-table > input.standalone,.modal-body .formControls > input'
+      });
+      $('.modal-footer input.context', modal.$modal).removeClass('context').addClass('standalone');
+      function refreshModal(modal, responseBody, state, xhr, form) {
+        modal.$modal.html(responseBody.html());
+        modalInit(modal, modalInit);
+        modal.positionModal();
+        registry.scan(modal.$modal);
+      }
+      $('.modal-body #folderlisting-main-table td:not(.draggable) > a:not(.contenttype-folder)', modal.$modal).css({
+        color: '#333333'
+      }).on('click', function(e) {
+        window.parent.location.href = $(this).attr('href');
+      });
+      modalAjaxForm(modal, modalInit, {
+        buttons: {
+          '.modal-body #folderlisting-main-table > input.standalone': { onSuccess: refreshModal },
+          '.modal-body #folderlisting-main-table > input.context': { onSuccess: refreshModal },
+          '.modal-body .formControls > input.standalone': { onSuccess: refreshModal },
+          '.modal-body .formControls > input.context': { onSuccess: refreshModal },
+          '.modal-body a#foldercontents-selectall': { onSuccess: refreshModal },
+          '.modal-body a#foldercontents-clearselection': { onSuccess: refreshModal },
+          '.modal-body #folderlisting-main-table td:not(.draggable) > a.contenttype-folder': { onSuccess: refreshModal },
+          '.modal-body .link-parent': { onSuccess: refreshModal },
+          '.modal-body td.draggable > a': { onSuccess: refreshModal }
+        }
+      });
+    });
 
     // Edit
-    modalInit('plone-action-edit', function(modal, modalInit) {
+    modalInit('#plone-action-edit > a', function(modal, modalInit) {
       modalTemplate(modal.$modal, {
         buttons: 'input[name="form.buttons.save"],input[name="form.buttons.cancel"]'
       });
       $('span.label', modal.$modal).removeClass('label');
+      $('.mce_editable', modal.$modal).addClass('pat-plone-tinymce');
       modalAjaxForm(modal, modalInit, {
         buttons: {
           '.modal-body input[name="form.buttons.cancel"]': {},
@@ -8451,9 +8537,8 @@ define('js/bundles/toolbar',[
       });
     });
 
-
     // Sharing
-    modalInit('plone-action-local_roles', function(modal, modalInit) {
+    modalInit('#plone-action-local_roles > a', function(modal, modalInit) {
       modalTemplate(modal.$modal, {
         buttons: 'input[name="form.button.Save"],input[name="form.button.Cancel"]'
       });
@@ -8477,15 +8562,34 @@ define('js/bundles/toolbar',[
     });
 
     // Rules form
-    // TODO: for now we only open overlay we need to test that forms are
-    //       working
-    modalInit('plone-action-contentrules', function(modal, modalInit) {
-      modalTemplate(modal.$modal);
-      modalAjaxForm(modal, modalInit);
+    modalInit('#plone-action-contentrules > a', function(modal, modalInit) {
+      modalTemplate(modal.$modal, {
+        buttons: 'input[name="form.button.AddAssignment"],' +
+                 'input[name="form.button.Enable"],' +
+                 'input[name="form.button.Disable"],' +
+                 'input[name="form.button.Bubble"],' +
+                 'input[name="form.button.NoBubble"],' +
+                 'input[name="form.button.Delete"]'
+      });
+      $('.modal-body #content-core > p:first > a', modal.$modal).on('click', function(e) {
+        window.parent.location.href = $(this).attr('href');
+      });
+      modalAjaxForm(modal, modalInit, {
+        buttons: {
+          'input[name="form.button.AddAssignment"],input[name="form.button.Enable"],input[name="form.button.Disable"],input[name="form.button.Bubble"],input[name="form.button.NoBubble"],input[name="form.button.Delete"]': {
+            onSuccess: function(modal, responseBody, state, xhr, form) {
+              modal.$modal.html(responseBody.html());
+              modalInit(modal, modalInit);
+              modal.positionModal();
+              registry.scan(modal.$modal);
+            }
+          }
+        }
+      });
     });
 
     // Delete Action
-    modalInit('plone-contentmenu-actions-delete', function(modal, modalInit) {
+    modalInit('#plone-contentmenu-actions-delete > a', function(modal, modalInit) {
       modalTemplate(modal.$modal, {
         buttons: 'input[name="form.button.Cancel"],input.destructive'
       });
@@ -8494,7 +8598,7 @@ define('js/bundles/toolbar',[
           '.modal-body input[name="form.button.Cancel"]': {},
           '.modal-body input.destructive': {
             onSuccess: function(modal, responseBody, state, xhr, form) {
-              window.parent.location.href = window.parent.location.href + '/..';
+              window.parent.location.href = $($(xhr.responseText).filter('base')[0]).attr('href');
             }
           }
         }
@@ -8502,7 +8606,7 @@ define('js/bundles/toolbar',[
     });
 
     // Rename Action
-    modalInit('plone-contentmenu-actions-rename', function(modal, modalInit) {
+    modalInit('#plone-contentmenu-actions-rename > a', function(modal, modalInit) {
       modalTemplate(modal.$modal, {
         buttons: 'input[name="form.button.Cancel"],input[name="form.button.RenameAll"]'
       });
@@ -8511,7 +8615,7 @@ define('js/bundles/toolbar',[
           '.modal-body input[name="form.button.Cancel"]': {},
           '.modal-body input[name="form.button.RenameAll"]': {
             onSuccess: function(modal, responseBody, state, xhr, form) {
-              window.parent.location.href = responseBody.data('context-url') || window.parent.location.href;
+              window.parent.location.href = $($(xhr.responseText).filter('base')[0]).attr('href') + '/' + $('input[name="new_ids:list"]', form).val();
             }
           }
         }
@@ -8535,13 +8639,32 @@ define('js/bundles/toolbar',[
         }
       });
     };
-    modalInit('folderChangeDefaultPage', changeContentItemAsDefaultView);
-    modalInit('contextSetDefaultPage', changeContentItemAsDefaultView);
+    modalInit('#folderChangeDefaultPage > a', changeContentItemAsDefaultView);
+    modalInit('#contextSetDefaultPage > a', changeContentItemAsDefaultView);
 
-    // TODO: Add forms
+    // Add forms
+    modalInit('#plone-contentmenu-factories > ul > li > a', function(modal, modalInit) {
+      modalTemplate(modal.$modal, {
+        buttons: 'input[name="form.buttons.save"],input[name="form.buttons.cancel"]'
+      });
+      $('span.label', modal.$modal).removeClass('label');
+      $('.mce_editable', modal.$modal).addClass('pat-plone-tinymce');
+      modalAjaxForm(modal, modalInit, {
+        buttons: {
+          '.modal-body input[name="form.buttons.cancel"]': {},
+          '.modal-body input[name="form.buttons.save"]': {
+            onSuccess: function(modal, responseBody, state, xhr, form) {
+              $('#portal-column-content', window.parent.document).html(
+                  $('#portal-column-content', responseBody).html());
+              window.parent.location.href = $($(xhr.responseText).filter('base')[0]).attr('href');
+            }
+          }
+        }
+      });
+    });
 
     // "Restrictions..." form
-    modalInit('plone-contentmenu-settings', function(modal, modalInit) {
+    modalInit('#plone-contentmenu-settings > a', function(modal, modalInit) {
       modalTemplate(modal.$modal);
       // FIXME: we should hack like this
       var $details = $('#details', modal.$modal)
@@ -8603,7 +8726,7 @@ define('js/bundles/toolbar',[
     });
 
     // Advance workflow
-    modalInit('workflow-transition-advanced', function(modal, modalInit) {
+    modalInit('#workflow-transition-advanced > a', function(modal, modalInit) {
       modalTemplate(modal.$modal, {
         buttons: 'input[name="form.button.Cancel"],input[name="form.button.FolderPublish"],input[name="form.button.Publish"]'
       });
@@ -8631,6 +8754,23 @@ define('js/bundles/toolbar',[
         }
       });
     });
+
+    // personal preferences
+    modalInit('#plone-personal-actions-preferences > a', function(modal, modalInit) {
+      modalTemplate(modal.$modal, {
+        buttons: 'input[name="form.actions.save"],input[name="form.actions.cancel"]'
+      });
+      $('select[name="form.wysiwyg_editor"], select[name="form.language"]', modal.$modal).addClass('pat-select2');
+      $('input[name="form.actions.cancel"]', modal.$modal).attr('class', 'standalone');
+      modalAjaxForm(modal, modalInit, {
+        buttons: {
+          '.modal-body input[name="form.actions.cancel"]': {},
+          '.modal-body input[name="form.actions.save"]': {}
+        }
+      });
+    });
+
+    // }}}
 
   });
 
