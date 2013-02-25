@@ -2396,11 +2396,11 @@ $.fn.ajaxForm = function(options) {
     }
 
     if ( options.delegation ) {
-        $(document)
-            .off('submit.form-plugin', this.selector, doAjaxSubmit)
-            .off('click.form-plugin', this.selector, captureSubmittingElement)
-            .on('submit.form-plugin', this.selector, options, doAjaxSubmit)
-            .on('click.form-plugin', this.selector, options, captureSubmittingElement);
+        $(this).off('submit.form-plugin', doAjaxSubmit)
+               .off('click.form-plugin', captureSubmittingElement)
+               .on('submit.form-plugin', options, doAjaxSubmit)
+               .on('click.form-plugin', options, captureSubmittingElement);
+
         return this;
     }
 
