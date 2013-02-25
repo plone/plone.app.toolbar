@@ -63,8 +63,16 @@ class ToolbarTile(Tile):
 
     @memoize
     def actions(self):
+        if self.request.getURL() == self.context.absolute_url() + '/dashboard':
+            return [{
+                'id': 'manage-dashboard',
+                'title': 'Manage Dashboard',  # TODO: translate
+                'url': self.context.absolute_url() + '/@@manage-dashboard'
+            }]
+
         if 'disable_border' in self.request:
             return []
+
         actions = []
 
         # 'folder' actions
