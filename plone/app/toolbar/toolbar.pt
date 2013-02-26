@@ -4,7 +4,8 @@
 </head>
 <body>
 
-  <div id="plone-toolbar" class="navbar">
+  <div id="plone-toolbar" class="navbar"
+       i18n:domain="plone">
     <div class="navbar-inner">
       <div class="container">
 
@@ -15,7 +16,8 @@
               tal:attributes="
                   href item/url|nothing;
                   target item/link_target|nothing;"
-              tal:content="item/title">Link Title</a>
+              tal:content="item/title"
+              i18n:translate="">Link Title</a>
           </li>
         </ul>
 
@@ -24,10 +26,12 @@
               tal:attributes="class string:dropdown ${item/klass|nothing}; id item/id|nothing;">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"
                tal:attributes="href item/action; target item/link_target|nothing;">
-              <span tal:content="item/title">Link Title</span>
+              <span tal:content="item/title"
+                    i18n:translate="">Link Title</span>
               <span tal:condition="python:'extra' in item and 'stateTitle' in item['extra']"
                     tal:attributes="class item/extra/class"
-                    tal:content="item/extra/stateTitle">Private</span>
+                    tal:content="item/extra/stateTitle"
+                    i18n:translate="">Private</span>
               <b class="caret">
             </a>
             <ul class="dropdown-menu" tal:condition="item/submenu">
@@ -38,7 +42,8 @@
                   <img src="#" alt="icon"
                        tal:condition="subitem/icon|nothing"
                        tal:attributes="src subitem/icon" />
-                  <span tal:content="subitem/title">Link Title</span>
+                  <span tal:content="subitem/title"
+                        i18n:translate="">Link Title</span>
                 </a>
               </li>
             </ul>
@@ -60,7 +65,8 @@
                 tal:attributes="id string:plone-personal-actions-${subitem/id};">
                 <a href="#"
                    tal:attributes="href subitem/url; target subitem/link_target|nothing;"
-                   tal:content="subitem/title">Link Title</a>
+                   tal:content="subitem/title"
+                   i18n:translate="">Link Title</a>
               </li>
             </ul>
           </li>

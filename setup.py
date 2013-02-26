@@ -36,6 +36,8 @@ setup(
         'plone.tiles',
         'plone.app.jquery',
         'Products.ResourceRegistries',
+        'plone.app.jquery>=1.7.2',
+        'plone.app.jquerytools>=1.4',
         ],
     extras_require={
         'test': [
