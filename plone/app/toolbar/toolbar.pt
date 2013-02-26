@@ -5,7 +5,7 @@
 <body>
 
   <div id="plone-toolbar"
-       i18n:domain="plone.app.toolbar">
+       i18n:domain="plone">
     <div class="toolbar">
       <div class="toolbar-top"></div>
       <div class="toolbar-right">
