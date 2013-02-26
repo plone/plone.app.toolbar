@@ -4,7 +4,8 @@
 </head>
 <body>
 
-  <div id="plone-toolbar">
+  <div id="plone-toolbar"
+       i18n:domain="plone.app.toolbar">
     <div class="toolbar">
       <div class="toolbar-top"></div>
       <div class="toolbar-right">
@@ -25,7 +26,8 @@
                    tal:attributes="
                       href subitem/url;
                       target subitem/link_target|nothing;"
-                   tal:content="subitem/title">Link Title</a>
+                   tal:content="subitem/title"
+                   i18n:translate="">Link Title</a>
               </li>
             </ul>
           </li>
@@ -41,7 +43,8 @@
               tal:attributes="
                   href item/url|nothing;
                   target item/link_target|nothing;"
-              tal:content="item/title">Link Title</a>
+              tal:content="item/title"
+              i18n:translate="">Link Title</a>
           </li>
         </ul>
         <ul class="toolbar-right-actions">
@@ -54,10 +57,12 @@
                tal:attributes="
                   href item/action;
                   target item/link_target|nothing;">
-              <span tal:content="item/title">Link Title</span>
+              <span tal:content="item/title"
+                    i18n:translate="">Link Title</span>
               <span tal:condition="python:'extra' in item and 'stateTitle' in item['extra']"
                     tal:attributes="class item/extra/class"
-                    tal:content="item/extra/stateTitle">Private</span>
+                    tal:content="item/extra/stateTitle"
+                    i18n:translate="">Private</span>
             </a>
             <ul class="toolbar-dropdown-menu">
               <li tal:repeat="subitem item/submenu"
@@ -69,7 +74,8 @@
                   <img src="#" alt="icon"
                        tal:condition="subitem/icon|nothing"
                        tal:attributes="src subitem/icon" />
-                  <span tal:content="subitem/title">Link Title</span>
+                  <span tal:content="subitem/title"
+                        i18n:translate="">Link Title</span>
                 </a>
               </li>
             </ul>
@@ -79,8 +85,6 @@
       </div>
     </div>
   </div>
-
-
 
 </body>
 </html>
