@@ -50,7 +50,7 @@ Diazo rules
 First we need to copy toolbar's html code::
 
     <append theme="/html/body"
-        content="//div[@data-iframe='toolbar']" />
+        content="//div[@data-iframe='plone-toolbar']" />
 
 Then in case we are not copying all resources from Plone (content) to theme we
 have to include resources as well::
