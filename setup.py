@@ -34,8 +34,8 @@ setup(
         'plone.tiles',
         'Acquisition',
         'plone.app.widgets',
-        'Products.CMFPlone>=4.3b1',
-        'Products.TinyMCE>1.3b8',
+        'Products.CMFPlone>=4.3b2',
+        'Products.TinyMCE>=1.3b10',
         'plone.app.registry>=1.2.2'
     ],
     extras_require={
