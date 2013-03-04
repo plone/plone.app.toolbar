@@ -2,7 +2,7 @@
 <object name="portal_css">
 
     <stylesheet
-        cacheable="False" compression="none" cookable="True"
+        cacheable="False" compression="none" cookable="False"
         enabled="True" bundle="toolbar_init"
         authenticated="True"
         id="++resource++plone.app.toolbar_init.css"

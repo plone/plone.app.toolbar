@@ -8,7 +8,7 @@
         />
 
     <javascript
-        cacheable="False" compression="none" cookable="False"
+        cacheable="False" compression="none" cookable="True"
         enabled="True" inline="False" bundle="toolbar"
         id="++resource++plone.app.toolbar.js"
         insert-after="++resource++plone.app.jquery.js"
