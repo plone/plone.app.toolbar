@@ -15,7 +15,7 @@ class ToolbarViewlet(ViewletBase):
             tile_body += html.tostring(el)
 
         return u'<div style="display:none;" ' + \
-               u'     data-iframe="toolbar" ' + \
+               u'     data-iframe="plone-toolbar" ' + \
                u'     data-iframe-resources="%s">%s</div>' % (
                u';'.join(tile.resources()), tile_body)
 
