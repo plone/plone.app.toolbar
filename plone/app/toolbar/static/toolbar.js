@@ -781,6 +781,23 @@ define('jam/Patterns/src/utils',[
         return base.slice(0, base.lastIndexOf("/")+1) + url;
     };
 
+    function findLabel(input) {
+        for (var label=input.parentNode; label && label.nodeType!==11; label=label.parentNode)
+            if (label.tagName==="LABEL")
+                return label;
+
+        var $label;
+
+        if (input.id)
+            $label = $("label[for="+input.id+"]");
+        if ($label && $label.length===0 && input.form)
+            $label = $("label[for="+input.name+"]", input.form);
+        if ($label && $label.length)
+            return $label[0];
+        else
+            return null;
+    }
+
     // Taken from http://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
     var escapeRegExp = function(str) {
         return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
@@ -791,7 +808,8 @@ define('jam/Patterns/src/utils',[
         jquery_plugin: jquery_plugin,
         debounce: debounce,
         escapeRegExp: escapeRegExp,
-        rebaseURL: rebaseURL
+        rebaseURL: rebaseURL,
+        findLabel: findLabel
     };
 
     return utils;
@@ -1270,33 +1288,57 @@ define('jam/Patterns/src/registry',[
     var log = logger.getLogger("registry"),
         jquery_plugin = utils.jquery_plugin;
 
+    var disable_re = /patterns-disable=([^&]+)/g,
+        disabled = {}, match;
+
+    while ((match=disable_re.exec(window.location.search))!==null) {
+        disabled[match[1]] = true;
+        log.info('Pattern disabled via url config:', match[1]);
+    }
+
     var registry = {
         patterns: {},
+        // as long as the registry is not initialized, pattern
+        // registration just registers a pattern. Once init is called,
+        // the DOM is scanned. After that registering a new pattern
+        // results in rescanning the DOM only for this pattern.
+        initialized: false,
         init: function() {
             $(document).ready(function() {
                 log.info('loaded: ' + Object.keys(registry.patterns).sort().join(', '));
                 registry.scan(document.body);
+                registry.initialized = true;
                 log.info('finished initial scan.');
             });
         },
 
-        scan: function(content, do_not_catch_init_exception) {
+        scan: function(content, do_not_catch_init_exception, patterns) {
             var $content = $(content),
                 all = [], allsel,
-                pattern, $match, plog, name;
+                pattern, $match, plog;
+
+            // If no list of patterns was specified, we scan for all
+            // patterns
+            patterns = patterns || Object.keys(registry.patterns);
 
             // selector for all patterns
-            for (name in registry.patterns) {
+            patterns.forEach(function(name) {
+                if (disabled[name]) {
+                    log.debug('Skipping disabled pattern:', name);
+                    return;
+                }
                 pattern = registry.patterns[name];
-                if (pattern.transform)
+                if (pattern.transform) {
                     try {
                         pattern.transform($content);
                     } catch (e) {
                         log.critical("Transform error for pattern" + name, e);
                     }
-                if (pattern.trigger)
+                }
+                if (pattern.trigger) {
                     all.push(pattern.trigger);
-            }
+                }
+            });
             allsel = all.join(",");
 
             // Find all elements that belong to any pattern.
@@ -1366,6 +1408,10 @@ define('jam/Patterns/src/registry',[
             }
 
             log.debug("Registered pattern:", pattern.name, pattern);
+
+            if (registry.initialized) {
+                registry.scan(document.body, false, [pattern.name]);
+            }
             return true;
         }
     };
@@ -3149,8 +3195,8 @@ define('js/patterns/modal.js',[
         // if backdrop wrapper is set on body then wrapper should have height
         // of window so we can do scrolling of inner wrapper
         self.$wrapperInner.css({
-          'height': '',
-          'width': self.options.width
+          'height': '100%',
+          'width': '100%'
         });
         if (self.$wrapper.parent().is('body')) {
           self.$wrapper.height($(window.parent).height());
@@ -3206,18 +3252,20 @@ define('js/patterns/modal.js',[
             positionLeft = leftMargin + 'px';
             positionRight = rightMargin + 'px';
           } else {
-            positionLeft = positionRight = (self.$wrapperInner.innerWidth()/2 -
-                self.$modal.width()/2 - leftMargin - rightMargin) + 'px';
+            positionLeft = (self.$wrapperInner.innerWidth()/2 -
+                self.$modal.outerWidth()/2 - leftMargin) + 'px';
+            positionRight = (self.$wrapperInner.innerWidth()/2 -
+                self.$modal.outerWidth()/2 - rightMargin) + 'px';
           }
         }
         self.$modal.css({
           'left': positionLeft,
           'right': positionRight,
-          'width': self.$modal.width() - leftMargin - rightMargin
+          'width': self.$modal.width()
         });
 
         // if modal is bigger then wrapperInner then resize wrapperInner to
-        // mach modal height
+        // match modal height
         if (self.$wrapperInner.height() < self.$modal.height()) {
           self.$wrapperInner.height(self.$modal.height() + topMargin + bottomMargin);
         }
@@ -3267,6 +3315,9 @@ define('js/patterns/modal.js',[
           self.$modal.addClass(self.options.klassActive);
           registry.scan(self.$modal);
           self.positionModal();
+          $('img', self.$modal).load(function() {
+            self.positionModal();
+          });
           $(window.parent).on('resize.modal.patterns', function() {
             self.positionModal();
           });
@@ -8342,7 +8393,7 @@ define('js/bundles/toolbar',[
 
     }
 
-    function modalAjaxForm(modal, modalInit, options) {
+    function modalAjaxForm(modal, modalInit, modalOptions, options) {
       options = $.extend({
         buttons: {},
         timeout: 5000,
@@ -8414,7 +8465,7 @@ define('js/bundles/toolbar',[
                       buttonsOptions.onFormError(modal, responseBody, state, xhr, form);
                     } else {
                       modal.$modal.html(responseBody.html());
-                      modalInit(modal, modalInit);
+                      modalInit(modal, modalInit, modalOptions);
                       modal.positionModal();
                       registry.scan(modal.$modal);
                     }
@@ -8452,7 +8503,7 @@ define('js/bundles/toolbar',[
                       buttonsOptions.onFormError(modal, responseBody, state, xhr);
                     } else {
                       modal.$modal.html(responseBody.html());
-                      modalInit(modal, modalInit);
+                      modalInit(modal, modalInit, modalOptions);
                       modal.positionModal();
                       registry.scan(modal.$modal);
                     }
@@ -8485,14 +8536,14 @@ define('js/bundles/toolbar',[
     // Modals {{{
 
     // Contents
-    modalInit('#plone-action-folderContents > a', function(modal, modalInit) {
+    modalInit('#plone-action-folderContents > a', function(modal, modalInit, modalOptions) {
       modalTemplate(modal.$modal, {
         buttons: '#folderlisting-main-table > input.context,#folderlisting-main-table > input.standalone,.modal-body .formControls > input'
       });
       $('.modal-footer input.context', modal.$modal).removeClass('context').addClass('standalone');
       function refreshModal(modal, responseBody, state, xhr, form) {
         modal.$modal.html(responseBody.html());
-        modalInit(modal, modalInit);
+        modalInit(modal, modalInit, modalOptions);
         modal.positionModal();
         registry.scan(modal.$modal);
       }
@@ -8501,7 +8552,7 @@ define('js/bundles/toolbar',[
       }).on('click', function(e) {
         window.parent.location.href = $(this).attr('href');
       });
-      modalAjaxForm(modal, modalInit, {
+      modalAjaxForm(modal, modalInit, modalOptions, {
         buttons: {
           '.modal-body #folderlisting-main-table > input.standalone': { onSuccess: refreshModal },
           '.modal-body #folderlisting-main-table > input.context': { onSuccess: refreshModal },
@@ -8514,16 +8565,16 @@ define('js/bundles/toolbar',[
           '.modal-body td.draggable > a': { onSuccess: refreshModal }
         }
       });
-    });
+    }, { width: '80%' });
 
     // Edit
-    modalInit('#plone-action-edit > a', function(modal, modalInit) {
+    modalInit('#plone-action-edit > a', function(modal, modalInit, modalOptions) {
       modalTemplate(modal.$modal, {
         buttons: 'input[name="form.buttons.save"],input[name="form.buttons.cancel"]'
       });
       $('span.label', modal.$modal).removeClass('label');
       $('.mce_editable', modal.$modal).addClass('pat-plone-tinymce');
-      modalAjaxForm(modal, modalInit, {
+      modalAjaxForm(modal, modalInit, modalOptions, {
         buttons: {
           '.modal-body input[name="form.buttons.cancel"]': {},
           '.modal-body input[name="form.buttons.save"]': {
@@ -8535,23 +8586,23 @@ define('js/bundles/toolbar',[
           }
         }
       });
-    });
+    }, { width: '80%' });
 
     // Sharing
-    modalInit('#plone-action-local_roles > a', function(modal, modalInit) {
+    modalInit('#plone-action-local_roles > a', function(modal, modalInit, modalOptions) {
       modalTemplate(modal.$modal, {
         buttons: 'input[name="form.button.Save"],input[name="form.button.Cancel"]'
       });
       // FIXME: we shouldn't be hacking like this
       $('#link-presentation', modal.$modal).remove();
-      modalAjaxForm(modal, modalInit, {
+      modalAjaxForm(modal, modalInit, modalOptions, {
         buttons: {
           '.modal-body input[name="form.button.Cancel"]': {},
           '.modal-body input[name="form.button.Save"]': {},
-          '.modal-body input[name="form.button.Search"]': {
+          '.modal-body input[name="form.button.Search"], dl.portalMessage.info > dd > a': {
             onSuccess: function(modal, responseBody, state, xhr, form) {
               modal.$modal.html(responseBody.html());
-              modalInit(modal, modalInit);
+              modalInit(modal, modalInit, modalOptions);
               modal.positionModal();
               registry.scan(modal.$modal);
             }
@@ -8562,7 +8613,7 @@ define('js/bundles/toolbar',[
     });
 
     // Rules form
-    modalInit('#plone-action-contentrules > a', function(modal, modalInit) {
+    modalInit('#plone-action-contentrules > a', function(modal, modalInit, modalOptions) {
       modalTemplate(modal.$modal, {
         buttons: 'input[name="form.button.AddAssignment"],' +
                  'input[name="form.button.Enable"],' +
@@ -8574,12 +8625,12 @@ define('js/bundles/toolbar',[
       $('.modal-body #content-core > p:first > a', modal.$modal).on('click', function(e) {
         window.parent.location.href = $(this).attr('href');
       });
-      modalAjaxForm(modal, modalInit, {
+      modalAjaxForm(modal, modalInit, modalOptions, {
         buttons: {
           'input[name="form.button.AddAssignment"],input[name="form.button.Enable"],input[name="form.button.Disable"],input[name="form.button.Bubble"],input[name="form.button.NoBubble"],input[name="form.button.Delete"]': {
             onSuccess: function(modal, responseBody, state, xhr, form) {
               modal.$modal.html(responseBody.html());
-              modalInit(modal, modalInit);
+              modalInit(modal, modalInit, modalOptions);
               modal.positionModal();
               registry.scan(modal.$modal);
             }
@@ -8589,11 +8640,11 @@ define('js/bundles/toolbar',[
     });
 
     // Delete Action
-    modalInit('#plone-contentmenu-actions-delete > a', function(modal, modalInit) {
+    modalInit('#plone-contentmenu-actions-delete > a', function(modal, modalInit, modalOptions) {
       modalTemplate(modal.$modal, {
         buttons: 'input[name="form.button.Cancel"],input.destructive'
       });
-      modalAjaxForm(modal, modalInit, {
+      modalAjaxForm(modal, modalInit, modalOptions, {
         buttons: {
           '.modal-body input[name="form.button.Cancel"]': {},
           '.modal-body input.destructive': {
@@ -8606,11 +8657,11 @@ define('js/bundles/toolbar',[
     });
 
     // Rename Action
-    modalInit('#plone-contentmenu-actions-rename > a', function(modal, modalInit) {
+    modalInit('#plone-contentmenu-actions-rename > a', function(modal, modalInit, modalOptions) {
       modalTemplate(modal.$modal, {
         buttons: 'input[name="form.button.Cancel"],input[name="form.button.RenameAll"]'
       });
-      modalAjaxForm(modal, modalInit, {
+      modalAjaxForm(modal, modalInit, modalOptions, {
         buttons: {
           '.modal-body input[name="form.button.Cancel"]': {},
           '.modal-body input[name="form.button.RenameAll"]': {
@@ -8623,12 +8674,12 @@ define('js/bundles/toolbar',[
     });
 
     // Change content item as default view...
-    var changeContentItemAsDefaultView = function(modal, modalInit) {
+    var changeContentItemAsDefaultView = function(modal, modalInit, modalOptions) {
       modalTemplate(modal.$modal);
       // FIXME: we should hack like this
       $('form > dl', modal.$modal).addClass('default-page-listing');
       $('input[name="form.button.Cancel"]', modal.$modal).attr('class', 'standalone');
-      modalAjaxForm(modal, modalInit, {
+      modalAjaxForm(modal, modalInit, modalOptions, {
         buttons: {
           '.modal-body input[name="form.button.Cancel"]': {},
           '.modal-body input[name="form.button.Save"]': {
@@ -8643,13 +8694,13 @@ define('js/bundles/toolbar',[
     modalInit('#contextSetDefaultPage > a', changeContentItemAsDefaultView);
 
     // Add forms
-    modalInit('#plone-contentmenu-factories > ul > li > a', function(modal, modalInit) {
+    modalInit('#plone-contentmenu-factories > ul > li > a', function(modal, modalInit, modalOptions) {
       modalTemplate(modal.$modal, {
         buttons: 'input[name="form.buttons.save"],input[name="form.buttons.cancel"]'
       });
       $('span.label', modal.$modal).removeClass('label');
       $('.mce_editable', modal.$modal).addClass('pat-plone-tinymce');
-      modalAjaxForm(modal, modalInit, {
+      modalAjaxForm(modal, modalInit, modalOptions, {
         buttons: {
           '.modal-body input[name="form.buttons.cancel"]': {},
           '.modal-body input[name="form.buttons.save"]': {
@@ -8661,10 +8712,10 @@ define('js/bundles/toolbar',[
           }
         }
       });
-    });
+    }, { width: '80%' });
 
     // "Restrictions..." form
-    modalInit('#plone-contentmenu-settings > a', function(modal, modalInit) {
+    modalInit('#plone-contentmenu-settings > a', function(modal, modalInit, modalOptions) {
       modalTemplate(modal.$modal);
       // FIXME: we should hack like this
       var $details = $('#details', modal.$modal)
@@ -8711,7 +8762,7 @@ define('js/bundles/toolbar',[
         });
       show_submenu(modal.$modal);
 
-      modalAjaxForm(modal, modalInit, {
+      modalAjaxForm(modal, modalInit, modalOptions, {
         buttons: {
           '.modal-body input[name="form.button.Cancel"]': {},
           '.modal-body input[name="form.button.Save"]': {
@@ -8726,7 +8777,7 @@ define('js/bundles/toolbar',[
     });
 
     // Advance workflow
-    modalInit('#workflow-transition-advanced > a', function(modal, modalInit) {
+    modalInit('#workflow-transition-advanced > a', function(modal, modalInit, modalOptions) {
       modalTemplate(modal.$modal, {
         buttons: 'input[name="form.button.Cancel"],input[name="form.button.FolderPublish"],input[name="form.button.Publish"]'
       });
@@ -8734,7 +8785,7 @@ define('js/bundles/toolbar',[
       // FIXME: we should _not_ hack like this
       $('#workflow_action', modal.$modal).parent().find('> br').remove();
 
-      modalAjaxForm(modal, modalInit, {
+      modalAjaxForm(modal, modalInit, modalOptions, {
         buttons: {
           '.modal-body input[name="form.button.Cancel"]': {},
           '.modal-body input[name="form.button.Publish"], .modal-body input[name="form.button.FolderPublish"]': {
@@ -8756,19 +8807,19 @@ define('js/bundles/toolbar',[
     });
 
     // personal preferences
-    modalInit('#plone-personal-actions-preferences > a', function(modal, modalInit) {
+    modalInit('#plone-personal-actions-preferences > a', function(modal, modalInit, modalOptions) {
       modalTemplate(modal.$modal, {
         buttons: 'input[name="form.actions.save"],input[name="form.actions.cancel"]'
       });
       $('select[name="form.wysiwyg_editor"], select[name="form.language"]', modal.$modal).addClass('pat-select2');
       $('input[name="form.actions.cancel"]', modal.$modal).attr('class', 'standalone');
-      modalAjaxForm(modal, modalInit, {
+      modalAjaxForm(modal, modalInit, modalOptions, {
         buttons: {
           '.modal-body input[name="form.actions.cancel"]': {},
           '.modal-body input[name="form.actions.save"]': {}
         }
       });
-    });
+    }, { width: '80%' });
 
     // }}}
 
