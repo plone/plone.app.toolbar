@@ -1695,6 +1695,608 @@ define('js/patterns/backdrop',[
 
 });
 
+// modal pattern.
+//
+// Author: Rok Garbas
+// Contact: rok@garbas.si
+// Version: 1.0
+// Depends: jquery.js patterns.js pickadate.js
+//
+// Description:
+//
+// License:
+//
+// Copyright (C) 2010 Plone Foundation
+//
+// This program is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+// FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+// more details.
+//
+// You should have received a copy of the GNU General Public License along with
+// this program; if not, write to the Free Software Foundation, Inc., 51
+// Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+//
+
+/*jshint bitwise:true, curly:true, eqeqeq:true, immed:true, latedef:true,
+  newcap:true, noarg:true, noempty:true, nonew:true, plusplus:true,
+  undef:true, strict:true, trailing:true, browser:true, evil:true */
+/*global define:false */
+define('js/patterns/modal.js',[
+  'jquery',
+  'js/patterns/base',
+  'js/patterns/backdrop',
+  'jam/Patterns/src/registry'
+], function($, Base, Backdrop, registry, undefined) {
+  
+
+  var Modal = Base.extend({
+    name: "modal",
+    jqueryPlugin: "modal",
+    defaults: {
+      triggers: '',
+      position: "center middle",
+      width: "",
+      height: "",
+      margin: "20px",
+      klass: "modal",
+      klassWrapper: "modal-wrapper",
+      klassWrapperInner: "modal-wrapper-inner",
+      klassLoading: "modal-loading",
+      klassActive: "active",
+      backdrop: "body",
+      backdropZIndex: "1000",
+      backdropOpacity: "0.8",
+      backdropKlass: "backdrop",
+      backdropKlassActive: "backdrop-active",
+      backdropCloseOnEsc: true,
+      backdropCloseOnClick: true
+    },
+    init: function() {
+      var self = this;
+
+
+      self.backdrop = new Backdrop(self.$el.parents(self.options.backdrop), {
+        zindex: self.options.backdropZIndex,
+        klass: self.options.backdropKlass,
+        klassActive: self.options.backdropKlassActive,
+        styles: self.options.backdropStyles,
+        opacity: self.options.backdropOpacity,
+        closeOnEsc: self.options.backdropCloseOnEsc,
+        closeOnClick: self.options.backdropCloseOnClick
+      });
+      self.backdrop.on('hidden', function(e) {
+        self.hide();
+      });
+
+      self.$wrapper = $('> .' + self.options.klassWrapper, self.backdrop.$el);
+      if (self.$wrapper.size() === 0) {
+        self.$wrapper = $('<div/>')
+          .hide()
+          .css({
+            'z-index': parseInt(self.options.backdropZIndex, 10) + 1,
+            'overflow-y': 'auto',
+            'position': 'fixed',
+            'height': '100%',
+            'width': '100%',
+            'bottom': '0',
+            'left': '0',
+            'right': '0',
+            'top': '0'
+          })
+          .addClass(self.options.klassWrapper)
+          .insertBefore(self.backdrop.$backdrop)
+          .on('click', function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            self.backdrop.hide();
+          });
+      }
+
+      self.$wrapperInner = $('> .' + self.options.klassWrapperInner, self.$wrapper);
+      if (self.$wrapperInner.size() === 0) {
+        self.$wrapperInner = $('<div/>')
+          .addClass(self.options.klassWrapperInner)
+          .css({
+            'position': 'absolute',
+            'bottom': '0',
+            'left': '0',
+            'right': '0',
+            'top': '0'
+          })
+          .appendTo(self.$wrapper);
+      }
+
+      self.$loading = $('> .' + self.options.klassLoading, self.$wrapperInner);
+      if (self.$loading.size() === 0) {
+        self.$loading = $('<div/>').hide()
+          .addClass(self.options.klassLoading)
+          .appendTo(self.$wrapperInner);
+      }
+      $(window.parent).resize(function() {
+        self.positionModal();
+      });
+
+      if (self.options.triggers) {
+        $.each(self.options.triggers, function(i, item) {
+          item = item.split(' ');
+          $(item[1] || self.$el).on(item[0], function() {
+            self.show();
+          });
+        });
+      }
+
+      if (self.$el.is('a')) {
+        if (self.$el.attr('href')) {
+          if (!self.options.target && self.$el.attr('href').substr(0, 1) === '#') {
+            self.options.target = self.$el.attr('href');
+          }
+          if (!self.options.ajaxUrl && self.$el.attr('href').substr(0, 1) !== '#') {
+            self.options.ajaxUrl = self.$el.attr('href');
+          }
+        }
+        self.$el.on('click', function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+          self.show();
+        });
+      }
+
+      self.initModal();
+      self.$wrapper.on('hidden', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        self.hide();
+      });
+    },
+    initModalElement: function($modal) {
+      var self = this;
+      $modal
+        .addClass(self.options.klass)
+        .on('click', function(e) {
+          e.stopPropagation();
+          if ($.nodeName(e.target, 'a')) {
+            e.preventDefault();
+            // TODO: open links inside modal
+          }
+        })
+        .on('destroy.modal.patterns', function(e) {
+          e.stopPropagation();
+          self.hide();
+        })
+        .on('resize.modal.patterns', function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+          self.positionModal(true);
+        });
+      $modal.data('pattern-' + self.name, self);
+      return $modal;
+    },
+    initModal: function() {
+      var self = this;
+      if (self.options.ajaxUrl) {
+        self.$modal = function() {
+          self.trigger('before-ajax');
+          self.$wrapper.parent().css('overflow', 'hidden');
+          self.$wrapper.show();
+          self.backdrop.show();
+          self.$loading.show();
+          self.positionLoading();
+          self.ajaxXHR = $.ajax({
+              url: self.options.ajaxUrl,
+              type: self.options.ajaxType
+          }).done(function(response, textStatus, xhr) {
+            self.ajaxXHR = undefined;
+            self.$loading.hide();
+            self.$modal = self.initModalElement(
+              $($((/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[0]
+                .replace('<body', '<div').replace('</body>', '</div>'))[0]))
+              .appendTo(self.$wrapperInner);
+            self.trigger('after-ajax', self, textStatus, xhr);
+            self.show();
+          });
+        };
+      } else if (self.options.target) {
+        self.$modal = function() {
+          self.$modal = self.initModalElement($('<div/>'))
+              .html($(self.options.target).clone())
+              .appendTo(self.$wrapperInner);
+          self.show();
+        };
+      } else {
+        self.$modal = self.initModalElement($('<div/>'))
+              .html(self.$el.clone())
+              .appendTo(self.$wrapperInner);
+      }
+
+    },
+    positionLoading: function() {
+      var self = this;
+      self.$loading.css({
+        'margin-left': self.$wrapper.width()/2 - self.$loading.width()/2,
+        'margin-top': self.$wrapper.height()/2 - self.$loading.height()/2,
+        'position': 'absolute',
+        'bottom': '0',
+        'left': '0',
+        'right': '0',
+        'top': '0'
+      });
+    },
+    positionModal: function(preserve_top) {
+      var self = this;
+      if (typeof self.$modal !== 'function') {
+
+        if (preserve_top) {
+          preserve_top = self.$modal.css('top');
+        }
+
+        self.$modal.removeAttr('style');
+        // if backdrop wrapper is set on body then wrapper should have height
+        // of window so we can do scrolling of inner wrapper
+        self.$wrapperInner.css({
+          'height': '100%',
+          'width': '100%'
+        });
+        if (self.$wrapper.parent().is('body')) {
+          self.$wrapper.height($(window.parent).height());
+        }
+
+        // place modal at top left with desired width/height and margin
+        self.$modal.css({
+          'padding': '0',
+          'margin': '0',
+          'width': self.options.width,
+          'height': self.options.height,
+          'position': 'absolute',
+          'top': preserve_top ? preserve_top : '0',
+          'left': '0'
+        });
+
+        self.$modal.css({'margin': '0'});
+        var modalOffsetBefore = self.$modal.offset();
+        self.$modal.css({ 'margin': self.options.margin });
+        var modalOffset = self.$modal.offset(),
+            modalOuterWidth = self.$modal.outerWidth(true),
+            modalInnerWidth = self.$modal.innerWidth(),
+            modalOuterHeight = self.$modal.outerHeight(true),
+            modalInnerHeight = self.$modal.innerHeight();
+        self.$modal.css({ 'margin': '0' });
+
+        var topMargin = modalOffset.top - modalOffsetBefore.top,
+            bottomMargin = modalOuterHeight - modalInnerHeight - topMargin,
+            leftMargin = modalOffset.left - modalOffsetBefore.left,
+            rightMargin = modalOuterWidth - modalInnerWidth - leftMargin;
+
+        // place modal in right position
+        var positionHorizontal = self.options.position.split(' ')[0],
+            positionVertical = self.options.position.split(' ')[1],
+            positionTop, positionBottom, positionLeft, positionRight;
+
+        if (positionHorizontal === 'left') {
+          positionLeft = leftMargin + 'px';
+          if (self.$wrapperInner.width() < self.$modal.width()) {
+            positionRight = rightMargin + 'px';
+          } else {
+            positionRight = 'auto';
+          }
+        } else if (positionHorizontal === 'bottom') {
+          positionRight = leftMargin + 'px';
+          if (self.$wrapperInner.width() < self.$modal.width()) {
+            positionLeft = leftMargin + 'px';
+          } else {
+            positionLeft = 'auto';
+          }
+        } else {
+          if (self.$wrapperInner.width() < self.$modal.width() + leftMargin + rightMargin) {
+            positionLeft = leftMargin + 'px';
+            positionRight = rightMargin + 'px';
+          } else {
+            positionLeft = (self.$wrapperInner.innerWidth()/2 -
+                self.$modal.outerWidth()/2 - leftMargin) + 'px';
+            positionRight = (self.$wrapperInner.innerWidth()/2 -
+                self.$modal.outerWidth()/2 - rightMargin) + 'px';
+          }
+        }
+        self.$modal.css({
+          'left': positionLeft,
+          'right': positionRight,
+          'width': self.$modal.width()
+        });
+
+        // if modal is bigger then wrapperInner then resize wrapperInner to
+        // match modal height
+        if (self.$wrapperInner.height() < self.$modal.height()) {
+          self.$wrapperInner.height(self.$modal.height() + topMargin + bottomMargin);
+        }
+
+        if (preserve_top || positionVertical === 'top') {
+          positionTop = topMargin + 'px';
+          if (self.$wrapperInner.height() < self.$modal.height()) {
+            positionBottom = bottomMargin + 'px';
+          } else {
+            positionBottom = 'auto';
+          }
+        } else if (positionVertical === 'bottom') {
+          positionBottom = bottomMargin + 'px';
+          if (self.$wrapperInner.height() < self.$modal.height()) {
+            positionTop = topMargin + 'px';
+          } else {
+            positionTop= 'auto';
+          }
+        } else {
+          if (self.$wrapperInner.height() < self.$modal.height()) {
+            positionTop = topMargin + 'px';
+            positionBottom = bottomMargin + 'px';
+          } else {
+            positionTop = positionBottom = (self.$wrapperInner.height()/2 -
+                self.$modal.height()/2) + 'px';
+          }
+        }
+        self.$modal.css({
+          'top': positionTop,
+          'bottom': positionBottom
+        });
+
+      }
+    },
+    show: function() {
+      var self = this;
+      if (!self.$el.hasClass(self.options.klassActive)) {
+        if (typeof self.$modal === 'function') {
+          self._$modal = self.$modal;
+          self.$modal();
+        } else {
+          self.trigger('show');
+          self.backdrop.show();
+          self.$wrapper.show();
+          self.$wrapper.parent().css('overflow', 'hidden');
+          self.$el.addClass(self.options.klassActive);
+          self.$modal.addClass(self.options.klassActive);
+          registry.scan(self.$modal);
+          self.positionModal();
+          $('img', self.$modal).load(function() {
+            self.positionModal();
+          });
+          $(window.parent).on('resize.modal.patterns', function() {
+            self.positionModal();
+          });
+          self.trigger('shown');
+        }
+      }
+    },
+    hide: function() {
+      var self = this;
+      if (self.ajaxXHR) {
+        self.ajaxXHR.abort();
+      }
+      if (self.$el.hasClass(self.options.klassActive)) {
+        self.trigger('hide');
+        self.backdrop.hide();
+        self.$wrapper.hide();
+        self.$wrapper.parent().css('overflow', 'visible');
+        self.$el.removeClass(self.options.klassActive);
+        if (self.$modal.remove) {
+          self.$modal.remove();
+          self.initModal();
+        }
+        $(window.parent).off('resize.modal.patterns');
+        self.trigger('hidden');
+      }
+    }
+  });
+
+  return Modal;
+
+});
+
+define('js/patterns/modalform.js',[
+  'jquery',
+  'js/patterns/backdrop',
+  'js/patterns/modal.js'
+], function($, Backdrop) {
+
+  // modal template for plone
+  function createTemplate($modal, options) {
+    var $content = $modal.html();
+
+    options = $.extend({
+      title: 'h1.documentFirstHeading',
+      buttons: '.formControls > input[type="submit"]',
+      content: '#content'
+    }, options || {});
+
+    $modal
+      .html('<div class="modal-header">' +
+            '  <a class="close">&times;</a>' +
+            '  <h3></h3>' +
+            '</div>' +
+            '<div class="modal-body"></div>' +
+            '<div class="modal-footer"></div>');
+
+
+    $('.modal-header > h3', $modal).html($(options.title, $content).html());
+    $('.modal-body', $modal).html($(options.content, $content).html());
+    $(options.title, $modal).remove();
+    $('.modal-header > a.close', $modal)
+      .off('click')
+      .on('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        $(e.target).trigger('destroy.modal.patterns');
+      });
+
+    // cleanup html
+    $('.row', $modal).removeClass('row');
+
+    $(options.buttons, $modal).each(function() {
+      var $button = $(this);
+      $button
+        .on('click', function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+        })
+        .clone()
+        .appendTo($('.modal-footer', $modal))
+        .off('click').on('click', function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+          $button.trigger('click');
+        });
+      $button.hide();
+    });
+
+  }
+
+  function createAjaxForm(modal, modalInit, modalOptions, options) {
+    options = $.extend({
+      buttons: {},
+      timeout: 5000,
+      formError: '.portalMessage.error'
+    }, options);
+
+    $.each(options.buttons, function(buttons, buttonsOptions) {
+      buttonsOptions = $.extend({}, options, buttonsOptions);
+      $(buttons, modal.$modal).each(function(button) {
+        var $button = $(this);
+
+        // pass button that was clicked when submiting form
+        var extraData = {};
+        extraData[$button.attr('name')] = $button.attr('value');
+
+        $button.on('click', function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+
+          // loading "spinner"
+          var backdrop = modal.$modal.data('patterns-backdrop');
+          if (!backdrop) {
+            backdrop = new Backdrop(modal.$modal, {
+              closeOnEsc: false,
+              closeOnClick: false
+            });
+            backdrop.$backdrop
+              .html('')
+              .append($('' +
+                  '<div class="progress progress-striped active">' +
+                  '  <div class="bar" style="width: 100%;"></div>' +
+                  '</div>')
+                .css({
+                  position: 'absolute',
+                  left: modal.$modal.width() * 0.1,
+                  top: modal.$modal.height()/2 + 10,
+                  width: modal.$modal.width() * 0.8
+                }));
+            modal.$modal.data('patterns-backdrop', backdrop);
+          } else {
+            modal.$modal.append(backdrop.$backdrop);
+          }
+          backdrop.show();
+
+          if ($.nodeName($button[0], 'input')) {
+            $button.parents('form').ajaxSubmit({
+              timeout: buttonsOptions.timeout,
+              dataType: 'html',
+              data: extraData,
+              url: $button.parents('form').attr('action'),
+              error: function(xhr, textStatus, errorStatus) {
+                if (textStatus === 'timeout' && buttonsOptions.onTimeout) {
+                  buttonsOptions.onTimeout(modal, xhr, errorStatus);
+
+                // on "error", "abort", and "parsererror"
+                } else if (buttonsOptions.onError) {
+                  buttonsOptions.onError(xhr, textStatus, errorStatus);
+                } else {
+                  console.log('error happened do something');
+                }
+              },
+              success: function(response, state, xhr, form) {
+                var responseBody = $((/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[0]
+                        .replace('<body', '<div').replace('</body>', '</div>'));
+
+                // if error is found
+                if ($(buttonsOptions.formError, responseBody).size() !== 0) {
+                  if (buttonsOptions.onFormError) {
+                    buttonsOptions.onFormError(modal, responseBody, state, xhr, form);
+                  } else {
+                    modal.$modal.html(responseBody.html());
+                    modalInit(modal, modalInit, modalOptions);
+                    modal.positionModal();
+                    registry.scan(modal.$modal);
+                  }
+
+                // custom success function
+                } else if (buttonsOptions.onSuccess) {
+                  buttonsOptions.onSuccess(modal, responseBody, state, xhr, form);
+
+                } else {
+                  $button.trigger('destroy.modal.patterns');
+                }
+              }
+            });
+          } else if ($.nodeName($button[0], 'a')) {
+            $.ajax({
+              url: $button.attr('href'),
+              error: function(xhr, textStatus, errorStatus) {
+                if (textStatus === 'timeout' && buttonsOptions.onTimeout) {
+                  buttonsOptions.onTimeout(modal, xhr, errorStatus);
+
+                // on "error", "abort", and "parsererror"
+                } else if (buttonsOptions.onError) {
+                  buttonsOptions.onError(xhr, textStatus, errorStatus);
+                } else {
+                  console.log('error happened do something');
+                }
+              },
+              success: function(response, state, xhr) {
+                var responseBody = $((/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[0]
+                        .replace('<body', '<div').replace('</body>', '</div>'));
+
+                // if error is found
+                if ($(buttonsOptions.formError, responseBody).size() !== 0) {
+                  if (buttonsOptions.onFormError) {
+                    buttonsOptions.onFormError(modal, responseBody, state, xhr);
+                  } else {
+                    modal.$modal.html(responseBody.html());
+                    modalInit(modal, modalInit, modalOptions);
+                    modal.positionModal();
+                    registry.scan(modal.$modal);
+                  }
+
+                // custom success function
+                } else if (buttonsOptions.onSuccess) {
+                  buttonsOptions.onSuccess(modal, responseBody, state, xhr);
+
+                } else {
+                  $button.trigger('destroy.modal.patterns');
+                }
+              }
+            });
+          }
+
+        });
+      });
+    });
+  }
+
+  function init(selector, callback, modalOptions) {
+    $(selector).addClass('modal-trigger').modal(modalOptions);
+    $(document).on('show.modal.patterns', selector + '.modal-trigger', function(e, modal) {
+      callback(modal, callback);
+    });
+  }
+
+  return {
+    template: createTemplate,
+    form: createAjaxForm,
+    init: init
+  };
+
+});
+
 /*!
  * jQuery Form Plugin
  * version: 3.25.0-2013.01.18
@@ -2950,403 +3552,6 @@ define('js/patterns/toggle',[
   });
 
   return Toggle;
-
-});
-
-// modal pattern.
-//
-// Author: Rok Garbas
-// Contact: rok@garbas.si
-// Version: 1.0
-// Depends: jquery.js patterns.js pickadate.js
-//
-// Description:
-//
-// License:
-//
-// Copyright (C) 2010 Plone Foundation
-//
-// This program is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License.
-//
-// This program is distributed in the hope that it will be useful, but WITHOUT
-// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-// FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-// more details.
-//
-// You should have received a copy of the GNU General Public License along with
-// this program; if not, write to the Free Software Foundation, Inc., 51
-// Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-//
-
-/*jshint bitwise:true, curly:true, eqeqeq:true, immed:true, latedef:true,
-  newcap:true, noarg:true, noempty:true, nonew:true, plusplus:true,
-  undef:true, strict:true, trailing:true, browser:true, evil:true */
-/*global define:false */
-define('js/patterns/modal.js',[
-  'jquery',
-  'js/patterns/base',
-  'js/patterns/backdrop',
-  'jam/Patterns/src/registry'
-], function($, Base, Backdrop, registry, undefined) {
-  
-
-  var Modal = Base.extend({
-    name: "modal",
-    jqueryPlugin: "modal",
-    defaults: {
-      triggers: '',
-      position: "center middle",
-      width: "",
-      height: "",
-      margin: "20px",
-      klass: "modal",
-      klassWrapper: "modal-wrapper",
-      klassWrapperInner: "modal-wrapper-inner",
-      klassLoading: "modal-loading",
-      klassActive: "active",
-      backdrop: "body",
-      backdropZIndex: "1000",
-      backdropOpacity: "0.8",
-      backdropKlass: "backdrop",
-      backdropKlassActive: "backdrop-active",
-      backdropCloseOnEsc: true,
-      backdropCloseOnClick: true
-    },
-    init: function() {
-      var self = this;
-
-
-      self.backdrop = new Backdrop(self.$el.parents(self.options.backdrop), {
-        zindex: self.options.backdropZIndex,
-        klass: self.options.backdropKlass,
-        klassActive: self.options.backdropKlassActive,
-        styles: self.options.backdropStyles,
-        opacity: self.options.backdropOpacity,
-        closeOnEsc: self.options.backdropCloseOnEsc,
-        closeOnClick: self.options.backdropCloseOnClick
-      });
-      self.backdrop.on('hidden', function(e) {
-        self.hide();
-      });
-
-      self.$wrapper = $('> .' + self.options.klassWrapper, self.backdrop.$el);
-      if (self.$wrapper.size() === 0) {
-        self.$wrapper = $('<div/>')
-          .hide()
-          .css({
-            'z-index': parseInt(self.options.backdropZIndex, 10) + 1,
-            'overflow-y': 'auto',
-            'position': 'fixed',
-            'height': '100%',
-            'width': '100%',
-            'bottom': '0',
-            'left': '0',
-            'right': '0',
-            'top': '0'
-          })
-          .addClass(self.options.klassWrapper)
-          .insertBefore(self.backdrop.$backdrop)
-          .on('click', function(e) {
-            e.stopPropagation();
-            e.preventDefault();
-            self.backdrop.hide();
-          });
-      }
-
-      self.$wrapperInner = $('> .' + self.options.klassWrapperInner, self.$wrapper);
-      if (self.$wrapperInner.size() === 0) {
-        self.$wrapperInner = $('<div/>')
-          .addClass(self.options.klassWrapperInner)
-          .css({
-            'position': 'absolute',
-            'bottom': '0',
-            'left': '0',
-            'right': '0',
-            'top': '0'
-          })
-          .appendTo(self.$wrapper);
-      }
-
-      self.$loading = $('> .' + self.options.klassLoading, self.$wrapperInner);
-      if (self.$loading.size() === 0) {
-        self.$loading = $('<div/>').hide()
-          .addClass(self.options.klassLoading)
-          .appendTo(self.$wrapperInner);
-      }
-      $(window.parent).resize(function() {
-        self.positionModal();
-      });
-
-      if (self.options.triggers) {
-        $.each(self.options.triggers, function(i, item) {
-          item = item.split(' ');
-          $(item[1] || self.$el).on(item[0], function() {
-            self.show();
-          });
-        });
-      }
-
-      if (self.$el.is('a')) {
-        if (self.$el.attr('href')) {
-          if (!self.options.target && self.$el.attr('href').substr(0, 1) === '#') {
-            self.options.target = self.$el.attr('href');
-          }
-          if (!self.options.ajaxUrl && self.$el.attr('href').substr(0, 1) !== '#') {
-            self.options.ajaxUrl = self.$el.attr('href');
-          }
-        }
-        self.$el.on('click', function(e) {
-          e.stopPropagation();
-          e.preventDefault();
-          self.show();
-        });
-      }
-
-      self.initModal();
-      self.$wrapper.on('hidden', function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        self.hide();
-      });
-    },
-    initModalElement: function($modal) {
-      var self = this;
-      $modal
-        .addClass(self.options.klass)
-        .on('click', function(e) {
-          e.stopPropagation();
-          if ($.nodeName(e.target, 'a')) {
-            e.preventDefault();
-            // TODO: open links inside modal
-          }
-        })
-        .on('destroy.modal.patterns', function(e) {
-          e.stopPropagation();
-          self.hide();
-        })
-        .on('resize.modal.patterns', function(e) {
-          e.stopPropagation();
-          e.preventDefault();
-          self.positionModal(true);
-        });
-      return $modal;
-    },
-    initModal: function() {
-      var self = this;
-      if (self.options.ajaxUrl) {
-        self.$modal = function() {
-          self.trigger('before-ajax');
-          self.$wrapper.parent().css('overflow', 'hidden');
-          self.$wrapper.show();
-          self.backdrop.show();
-          self.$loading.show();
-          self.positionLoading();
-          self.ajaxXHR = $.ajax({
-              url: self.options.ajaxUrl,
-              type: self.options.ajaxType
-          }).done(function(response, textStatus, xhr) {
-            self.ajaxXHR = undefined;
-            self.$loading.hide();
-            self.$modal = self.initModalElement(
-              $($((/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[0]
-                .replace('<body', '<div').replace('</body>', '</div>'))[0]))
-              .appendTo(self.$wrapperInner);
-            self.trigger('after-ajax', self, textStatus, xhr);
-            self.show();
-          });
-        };
-      } else if (self.options.target) {
-        self.$modal = function() {
-          self.$modal = self.initModalElement($('<div/>'))
-              .html($(self.options.target).clone())
-              .appendTo(self.$wrapperInner);
-          self.show();
-        };
-      } else {
-        self.$modal = self.initModalElement($('<div/>'))
-              .html(self.$el.clone())
-              .appendTo(self.$wrapperInner);
-      }
-
-    },
-    positionLoading: function() {
-      var self = this;
-      self.$loading.css({
-        'margin-left': self.$wrapper.width()/2 - self.$loading.width()/2,
-        'margin-top': self.$wrapper.height()/2 - self.$loading.height()/2,
-        'position': 'absolute',
-        'bottom': '0',
-        'left': '0',
-        'right': '0',
-        'top': '0'
-      });
-    },
-    positionModal: function(preserve_top) {
-      var self = this;
-      if (typeof self.$modal !== 'function') {
-
-        if (preserve_top) {
-          preserve_top = self.$modal.css('top');
-        }
-
-        self.$modal.removeAttr('style');
-        // if backdrop wrapper is set on body then wrapper should have height
-        // of window so we can do scrolling of inner wrapper
-        self.$wrapperInner.css({
-          'height': '100%',
-          'width': '100%'
-        });
-        if (self.$wrapper.parent().is('body')) {
-          self.$wrapper.height($(window.parent).height());
-        }
-
-        // place modal at top left with desired width/height and margin
-        self.$modal.css({
-          'padding': '0',
-          'margin': '0',
-          'width': self.options.width,
-          'height': self.options.height,
-          'position': 'absolute',
-          'top': preserve_top ? preserve_top : '0',
-          'left': '0'
-        });
-
-        self.$modal.css({'margin': '0'});
-        var modalOffsetBefore = self.$modal.offset();
-        self.$modal.css({ 'margin': self.options.margin });
-        var modalOffset = self.$modal.offset(),
-            modalOuterWidth = self.$modal.outerWidth(true),
-            modalInnerWidth = self.$modal.innerWidth(),
-            modalOuterHeight = self.$modal.outerHeight(true),
-            modalInnerHeight = self.$modal.innerHeight();
-        self.$modal.css({ 'margin': '0' });
-
-        var topMargin = modalOffset.top - modalOffsetBefore.top,
-            bottomMargin = modalOuterHeight - modalInnerHeight - topMargin,
-            leftMargin = modalOffset.left - modalOffsetBefore.left,
-            rightMargin = modalOuterWidth - modalInnerWidth - leftMargin;
-
-        // place modal in right position
-        var positionHorizontal = self.options.position.split(' ')[0],
-            positionVertical = self.options.position.split(' ')[1],
-            positionTop, positionBottom, positionLeft, positionRight;
-
-        if (positionHorizontal === 'left') {
-          positionLeft = leftMargin + 'px';
-          if (self.$wrapperInner.width() < self.$modal.width()) {
-            positionRight = rightMargin + 'px';
-          } else {
-            positionRight = 'auto';
-          }
-        } else if (positionHorizontal === 'bottom') {
-          positionRight = leftMargin + 'px';
-          if (self.$wrapperInner.width() < self.$modal.width()) {
-            positionLeft = leftMargin + 'px';
-          } else {
-            positionLeft = 'auto';
-          }
-        } else {
-          if (self.$wrapperInner.width() < self.$modal.width() + leftMargin + rightMargin) {
-            positionLeft = leftMargin + 'px';
-            positionRight = rightMargin + 'px';
-          } else {
-            positionLeft = (self.$wrapperInner.innerWidth()/2 -
-                self.$modal.outerWidth()/2 - leftMargin) + 'px';
-            positionRight = (self.$wrapperInner.innerWidth()/2 -
-                self.$modal.outerWidth()/2 - rightMargin) + 'px';
-          }
-        }
-        self.$modal.css({
-          'left': positionLeft,
-          'right': positionRight,
-          'width': self.$modal.width()
-        });
-
-        // if modal is bigger then wrapperInner then resize wrapperInner to
-        // match modal height
-        if (self.$wrapperInner.height() < self.$modal.height()) {
-          self.$wrapperInner.height(self.$modal.height() + topMargin + bottomMargin);
-        }
-
-        if (preserve_top || positionVertical === 'top') {
-          positionTop = topMargin + 'px';
-          if (self.$wrapperInner.height() < self.$modal.height()) {
-            positionBottom = bottomMargin + 'px';
-          } else {
-            positionBottom = 'auto';
-          }
-        } else if (positionVertical === 'bottom') {
-          positionBottom = bottomMargin + 'px';
-          if (self.$wrapperInner.height() < self.$modal.height()) {
-            positionTop = topMargin + 'px';
-          } else {
-            positionTop= 'auto';
-          }
-        } else {
-          if (self.$wrapperInner.height() < self.$modal.height()) {
-            positionTop = topMargin + 'px';
-            positionBottom = bottomMargin + 'px';
-          } else {
-            positionTop = positionBottom = (self.$wrapperInner.height()/2 -
-                self.$modal.height()/2) + 'px';
-          }
-        }
-        self.$modal.css({
-          'top': positionTop,
-          'bottom': positionBottom
-        });
-
-      }
-    },
-    show: function() {
-      var self = this;
-      if (!self.$el.hasClass(self.options.klassActive)) {
-        if (typeof self.$modal === 'function') {
-          self._$modal = self.$modal;
-          self.$modal();
-        } else {
-          self.trigger('show');
-          self.backdrop.show();
-          self.$wrapper.show();
-          self.$wrapper.parent().css('overflow', 'hidden');
-          self.$el.addClass(self.options.klassActive);
-          self.$modal.addClass(self.options.klassActive);
-          registry.scan(self.$modal);
-          self.positionModal();
-          $('img', self.$modal).load(function() {
-            self.positionModal();
-          });
-          $(window.parent).on('resize.modal.patterns', function() {
-            self.positionModal();
-          });
-          self.trigger('shown');
-        }
-      }
-    },
-    hide: function() {
-      var self = this;
-      if (self.ajaxXHR) {
-        self.ajaxXHR.abort();
-      }
-      if (self.$el.hasClass(self.options.klassActive)) {
-        self.trigger('hide');
-        self.backdrop.hide();
-        self.$wrapper.hide();
-        self.$wrapper.parent().css('overflow', 'visible');
-        self.$el.removeClass(self.options.klassActive);
-        if (self.$modal.remove) {
-          self.$modal.remove();
-          self.initModal();
-        }
-        $(window.parent).off('resize.modal.patterns');
-        self.trigger('hidden');
-      }
-    }
-  });
-
-  return Modal;
 
 });
 
@@ -8256,11 +8461,12 @@ define('js/bundles/toolbar',[
   'jam/Patterns/src/registry',
   'js/patterns/base',
   'js/patterns/backdrop',
+  'js/patterns/modalform.js',
   'jam/jquery-form/jquery.form.js',
   'js/patterns/toggle',
   'js/patterns/modal.js',
   'js/bundles/widgets'
-], function($, iframe, registry, Base, Backdrop) {
+], function($, iframe, registry, Base, Backdrop, modalform) {
   
 
   window.plone = window.plone || {};
@@ -8341,206 +8547,48 @@ define('js/bundles/toolbar',[
         iframe.shrink();
       });
 
-    // modal template for plone
-    function modalTemplate($modal, options) {
-      var $content = $modal.html();
-
-      options = $.extend({
-        title: 'h1.documentFirstHeading',
-        buttons: '.formControls > input[type="submit"]',
-        content: '#content'
-      }, options || {});
-
-      $modal
-        .html('<div class="modal-header">' +
-              '  <a class="close">&times;</a>' +
-              '  <h3></h3>' +
-              '</div>' +
-              '<div class="modal-body"></div>' +
-              '<div class="modal-footer"></div>');
-
-
-      $('.modal-header > h3', $modal).html($(options.title, $content).html());
-      $('.modal-body', $modal).html($(options.content, $content).html());
-      $(options.title, $modal).remove();
-      $('.modal-header > a.close', $modal)
-        .off('click')
-        .on('click', function(e) {
-          e.stopPropagation();
-          e.preventDefault();
-          $(e.target).trigger('destroy.modal.patterns');
-        });
-
-      // cleanup html
-      $('.row', $modal).removeClass('row');
-
-      $(options.buttons, $modal).each(function() {
-        var $button = $(this);
-        $button
-          .on('click', function(e) {
-            e.stopPropagation();
-            e.preventDefault();
-          })
-          .clone()
-          .appendTo($('.modal-footer', $modal))
-          .off('click').on('click', function(e) {
-            e.stopPropagation();
-            e.preventDefault();
-            $button.trigger('click');
-          });
-        $button.hide();
-      });
-
-    }
-
-    function modalAjaxForm(modal, modalInit, modalOptions, options) {
-      options = $.extend({
-        buttons: {},
-        timeout: 5000,
-        formError: '.portalMessage.error'
-      }, options);
-
-      $.each(options.buttons, function(buttons, buttonsOptions) {
-        buttonsOptions = $.extend({}, options, buttonsOptions);
-        $(buttons, modal.$modal).each(function(button) {
-          var $button = $(this);
-
-          // pass button that was clicked when submiting form
-          var extraData = {};
-          extraData[$button.attr('name')] = $button.attr('value');
-
-          $button.on('click', function(e) {
-            e.stopPropagation();
-            e.preventDefault();
-
-            // loading "spinner"
-            var backdrop = modal.$modal.data('patterns-backdrop');
-            if (!backdrop) {
-              backdrop = new Backdrop(modal.$modal, {
-                closeOnEsc: false,
-                closeOnClick: false
-              });
-              backdrop.$backdrop
-                .html('')
-                .append($('' +
-                    '<div class="progress progress-striped active">' +
-                    '  <div class="bar" style="width: 100%;"></div>' +
-                    '</div>')
-                  .css({
-                    position: 'absolute',
-                    left: modal.$modal.width() * 0.1,
-                    top: modal.$modal.height()/2 + 10,
-                    width: modal.$modal.width() * 0.8
-                  }));
-              modal.$modal.data('patterns-backdrop', backdrop);
-            } else {
-              modal.$modal.append(backdrop.$backdrop);
-            }
-            backdrop.show();
-
-            if ($.nodeName($button[0], 'input')) {
-              $button.parents('form').ajaxSubmit({
-                timeout: buttonsOptions.timeout,
-                dataType: 'html',
-                data: extraData,
-                url: $button.parents('form').attr('action'),
-                error: function(xhr, textStatus, errorStatus) {
-                  if (textStatus === 'timeout' && buttonsOptions.onTimeout) {
-                    buttonsOptions.onTimeout(modal, xhr, errorStatus);
-
-                  // on "error", "abort", and "parsererror"
-                  } else if (buttonsOptions.onError) {
-                    buttonsOptions.onError(xhr, textStatus, errorStatus);
-                  } else {
-                    console.log('error happened do something');
-                  }
-                },
-                success: function(response, state, xhr, form) {
-                  var responseBody = $((/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[0]
-                          .replace('<body', '<div').replace('</body>', '</div>'));
-
-                  // if error is found
-                  if ($(buttonsOptions.formError, responseBody).size() !== 0) {
-                    if (buttonsOptions.onFormError) {
-                      buttonsOptions.onFormError(modal, responseBody, state, xhr, form);
-                    } else {
-                      modal.$modal.html(responseBody.html());
-                      modalInit(modal, modalInit, modalOptions);
-                      modal.positionModal();
-                      registry.scan(modal.$modal);
-                    }
-
-                  // custom success function
-                  } else if (buttonsOptions.onSuccess) {
-                    buttonsOptions.onSuccess(modal, responseBody, state, xhr, form);
-
-                  } else {
-                    $button.trigger('destroy.modal.patterns');
-                  }
-                }
-              });
-            } else if ($.nodeName($button[0], 'a')) {
-              $.ajax({
-                url: $button.attr('href'),
-                error: function(xhr, textStatus, errorStatus) {
-                  if (textStatus === 'timeout' && buttonsOptions.onTimeout) {
-                    buttonsOptions.onTimeout(modal, xhr, errorStatus);
-
-                  // on "error", "abort", and "parsererror"
-                  } else if (buttonsOptions.onError) {
-                    buttonsOptions.onError(xhr, textStatus, errorStatus);
-                  } else {
-                    console.log('error happened do something');
-                  }
-                },
-                success: function(response, state, xhr) {
-                  var responseBody = $((/<body[^>]*>((.|[\n\r])*)<\/body>/im).exec(response)[0]
-                          .replace('<body', '<div').replace('</body>', '</div>'));
-
-                  // if error is found
-                  if ($(buttonsOptions.formError, responseBody).size() !== 0) {
-                    if (buttonsOptions.onFormError) {
-                      buttonsOptions.onFormError(modal, responseBody, state, xhr);
-                    } else {
-                      modal.$modal.html(responseBody.html());
-                      modalInit(modal, modalInit, modalOptions);
-                      modal.positionModal();
-                      registry.scan(modal.$modal);
-                    }
-
-                  // custom success function
-                  } else if (buttonsOptions.onSuccess) {
-                    buttonsOptions.onSuccess(modal, responseBody, state, xhr);
-
-                  } else {
-                    $button.trigger('destroy.modal.patterns');
-                  }
-                }
-              });
-            }
-
-          });
-        });
-      });
-    }
-
-    function modalInit(selector, callback, modalOptions) {
-      $(selector).addClass('modal-trigger').modal(modalOptions);
-      $(document).on('show.modal.patterns', selector + '.modal-trigger', function(e, modal) {
-        callback(modal, callback);
-      });
-    }
-
     // }}}
 
     // Modals {{{
 
     // Contents
-    modalInit('#plone-action-folderContents > a', function(modal, modalInit, modalOptions) {
-      modalTemplate(modal.$modal, {
+    modalform.init('#plone-action-folderContents > a', function(modal, modalInit, modalOptions) {
+      modalform.template(modal.$modal, {
         buttons: '#folderlisting-main-table > input.context,#folderlisting-main-table > input.standalone,.modal-body .formControls > input'
       });
+      $('#plone-document-byline', modal.$modal).hide();  // TODO: not sure exectly how to handle this for now we hide it
       $('.modal-footer input.context', modal.$modal).removeClass('context').addClass('standalone');
+      $('.listingBar', modal.$modal).each(function() {  // TODO: we shouldn't hack like this
+        var $el = $(this),                              // create boostrap style pagination
+            $pagination = $('<ul/>'),
+            $previous, $next;
+        console.log($el.html());
+        $('> *', $el).each(function() {
+          if ($(this).hasClass('previous')) {
+            $previous = $('<li/>').append($('a', this).clone());
+          } else if ($(this).hasClass('next')) {
+            $next = $('<li/>').append($('a', this).clone());
+          } else if ($.nodeName(this, 'span')) {
+            if ($('a', this).size() !== 0) {
+              $pagination.append($('<li/>').append($('a', this).clone()));
+              if ($(this).html().indexOf("...") !== -1) {
+                $pagination.append($('<li class="deactive"><span>...</span></li>'));
+              }
+            } else {
+              $pagination.append($('<li class="active"/>').append($(this).clone()));
+            }
+          } else {
+            $pagination.append($('<li/>').append($(this).clone()));
+          }
+        });
+        if ($previous) {
+          $pagination.prepend($previous);
+        }
+        if ($next) {
+          $pagination.append($next);
+        }
+        $el.hide().before($('<div class="pagination pagination-centered"/>').append($pagination));
+      });
       function refreshModal(modal, responseBody, state, xhr, form) {
         modal.$modal.html(responseBody.html());
         modalInit(modal, modalInit, modalOptions);
@@ -8552,15 +8600,19 @@ define('js/bundles/toolbar',[
       }).on('click', function(e) {
         window.parent.location.href = $(this).attr('href');
       });
-      modalAjaxForm(modal, modalInit, modalOptions, {
+      modalform.form(modal, modalInit, modalOptions, {
         buttons: {
+          '.modal-body a#foldercontents-show-batched': { onSuccess: refreshModal },
+          '.modal-body a#foldercontents-show-all': { onSuccess: refreshModal },
+          '.modal-body .pagination a': { onSuccess: refreshModal },
           '.modal-body #folderlisting-main-table > input.standalone': { onSuccess: refreshModal },
           '.modal-body #folderlisting-main-table > input.context': { onSuccess: refreshModal },
           '.modal-body .formControls > input.standalone': { onSuccess: refreshModal },
           '.modal-body .formControls > input.context': { onSuccess: refreshModal },
+          '.modal-body a#foldercontents-selectall-completebatch': { onSuccess: refreshModal },
           '.modal-body a#foldercontents-selectall': { onSuccess: refreshModal },
           '.modal-body a#foldercontents-clearselection': { onSuccess: refreshModal },
-          '.modal-body #folderlisting-main-table td:not(.draggable) > a.contenttype-folder': { onSuccess: refreshModal },
+          '.modal-body #folderlisting-main-table td:not(.draggable > a.contenttype-folder': { onSuccess: refreshModal },
           '.modal-body .link-parent': { onSuccess: refreshModal },
           '.modal-body td.draggable > a': { onSuccess: refreshModal }
         }
@@ -8568,13 +8620,13 @@ define('js/bundles/toolbar',[
     }, { width: '80%' });
 
     // Edit
-    modalInit('#plone-action-edit > a', function(modal, modalInit, modalOptions) {
-      modalTemplate(modal.$modal, {
+    modalform.init('#plone-action-edit > a', function(modal, modalInit, modalOptions) {
+      modalform.template(modal.$modal, {
         buttons: 'input[name="form.buttons.save"],input[name="form.buttons.cancel"],input[name="form.button.save"],input[name="form.button.cancel"]'
       });
       $('span.label', modal.$modal).removeClass('label');
       $('.mce_editable', modal.$modal).addClass('pat-plone-tinymce');
-      modalAjaxForm(modal, modalInit, modalOptions, {
+      modalform.form(modal, modalInit, modalOptions, {
         buttons: {
           '.modal-body input[name="form.buttons.cancel"],.modal-body input[name="form.button.cancel"]': {},
           '.modal-body input[name="form.buttons.save"],.modal-body input[name="form.button.save"]': {
@@ -8589,13 +8641,13 @@ define('js/bundles/toolbar',[
     }, { width: '80%' });
 
     // Sharing
-    modalInit('#plone-action-local_roles > a', function(modal, modalInit, modalOptions) {
-      modalTemplate(modal.$modal, {
+    modalform.init('#plone-action-local_roles > a', function(modal, modalInit, modalOptions) {
+      modalform.template(modal.$modal, {
         buttons: 'input[name="form.button.Save"],input[name="form.button.Cancel"]'
       });
       // FIXME: we shouldn't be hacking like this
       $('#link-presentation', modal.$modal).remove();
-      modalAjaxForm(modal, modalInit, modalOptions, {
+      modalform.form(modal, modalInit, modalOptions, {
         buttons: {
           '.modal-body input[name="form.button.Cancel"]': {},
           '.modal-body input[name="form.button.Save"]': {},
@@ -8613,8 +8665,8 @@ define('js/bundles/toolbar',[
     });
 
     // Rules form
-    modalInit('#plone-action-contentrules > a', function(modal, modalInit, modalOptions) {
-      modalTemplate(modal.$modal, {
+    modalform.init('#plone-action-contentrules > a', function(modal, modalInit, modalOptions) {
+      modalform.template(modal.$modal, {
         buttons: 'input[name="form.button.AddAssignment"],' +
                  'input[name="form.button.Enable"],' +
                  'input[name="form.button.Disable"],' +
@@ -8625,7 +8677,7 @@ define('js/bundles/toolbar',[
       $('.modal-body #content-core > p:first > a', modal.$modal).on('click', function(e) {
         window.parent.location.href = $(this).attr('href');
       });
-      modalAjaxForm(modal, modalInit, modalOptions, {
+      modalform.form(modal, modalInit, modalOptions, {
         buttons: {
           'input[name="form.button.AddAssignment"],input[name="form.button.Enable"],input[name="form.button.Disable"],input[name="form.button.Bubble"],input[name="form.button.NoBubble"],input[name="form.button.Delete"]': {
             onSuccess: function(modal, responseBody, state, xhr, form) {
@@ -8640,11 +8692,11 @@ define('js/bundles/toolbar',[
     });
 
     // Delete Action
-    modalInit('#plone-contentmenu-actions-delete > a', function(modal, modalInit, modalOptions) {
-      modalTemplate(modal.$modal, {
+    modalform.init('#plone-contentmenu-actions-delete > a', function(modal, modalInit, modalOptions) {
+      modalform.template(modal.$modal, {
         buttons: 'input[name="form.button.Cancel"],input.destructive'
       });
-      modalAjaxForm(modal, modalInit, modalOptions, {
+      modalform.form(modal, modalInit, modalOptions, {
         buttons: {
           '.modal-body input[name="form.button.Cancel"]': {},
           '.modal-body input.destructive': {
@@ -8657,11 +8709,11 @@ define('js/bundles/toolbar',[
     });
 
     // Rename Action
-    modalInit('#plone-contentmenu-actions-rename > a', function(modal, modalInit, modalOptions) {
-      modalTemplate(modal.$modal, {
+    modalform.init('#plone-contentmenu-actions-rename > a', function(modal, modalInit, modalOptions) {
+      modalform.template(modal.$modal, {
         buttons: 'input[name="form.button.Cancel"],input[name="form.button.RenameAll"]'
       });
-      modalAjaxForm(modal, modalInit, modalOptions, {
+      modalform.form(modal, modalInit, modalOptions, {
         buttons: {
           '.modal-body input[name="form.button.Cancel"]': {},
           '.modal-body input[name="form.button.RenameAll"]': {
@@ -8675,11 +8727,11 @@ define('js/bundles/toolbar',[
 
     // Change content item as default view...
     var changeContentItemAsDefaultView = function(modal, modalInit, modalOptions) {
-      modalTemplate(modal.$modal);
+      modalform.template(modal.$modal);
       // FIXME: we should hack like this
       $('form > dl', modal.$modal).addClass('default-page-listing');
       $('input[name="form.button.Cancel"]', modal.$modal).attr('class', 'standalone');
-      modalAjaxForm(modal, modalInit, modalOptions, {
+      modalform.form(modal, modalInit, modalOptions, {
         buttons: {
           '.modal-body input[name="form.button.Cancel"]': {},
           '.modal-body input[name="form.button.Save"]': {
@@ -8690,17 +8742,17 @@ define('js/bundles/toolbar',[
         }
       });
     };
-    modalInit('#folderChangeDefaultPage > a', changeContentItemAsDefaultView);
-    modalInit('#contextSetDefaultPage > a', changeContentItemAsDefaultView);
+    modalform.init('#folderChangeDefaultPage > a', changeContentItemAsDefaultView);
+    modalform.init('#contextSetDefaultPage > a', changeContentItemAsDefaultView);
 
     // Add forms
-    modalInit('#plone-contentmenu-factories > ul > li > a', function(modal, modalInit, modalOptions) {
-      modalTemplate(modal.$modal, {
+    modalform.init('#plone-contentmenu-factories > ul > li > a', function(modal, modalInit, modalOptions) {
+      modalform.template(modal.$modal, {
         buttons: 'input[name="form.buttons.save"],input[name="form.buttons.cancel"],input[name="form.button.save"],input[name="form.button.cancel"]'
       });
       $('span.label', modal.$modal).removeClass('label');
       $('.mce_editable', modal.$modal).addClass('pat-plone-tinymce');
-      modalAjaxForm(modal, modalInit, modalOptions, {
+      modalform.form(modal, modalInit, modalOptions, {
         buttons: {
           '.modal-body input[name="form.buttons.cancel"],.modal-body input[name="form.button.cancel"]': {},
           '.modal-body input[name="form.buttons.save"],.modal-body input[name="form.button.save"]': {
@@ -8715,8 +8767,8 @@ define('js/bundles/toolbar',[
     }, { width: '80%' });
 
     // "Restrictions..." form
-    modalInit('#plone-contentmenu-settings > a', function(modal, modalInit, modalOptions) {
-      modalTemplate(modal.$modal);
+    modalform.init('#plone-contentmenu-settings > a', function(modal, modalInit, modalOptions) {
+      modalform.template(modal.$modal);
       // FIXME: we should hack like this
       var $details = $('#details', modal.$modal)
         .removeAttr('style')
@@ -8762,7 +8814,7 @@ define('js/bundles/toolbar',[
         });
       show_submenu(modal.$modal);
 
-      modalAjaxForm(modal, modalInit, modalOptions, {
+      modalform.form(modal, modalInit, modalOptions, {
         buttons: {
           '.modal-body input[name="form.button.Cancel"]': {},
           '.modal-body input[name="form.button.Save"]': {
@@ -8777,15 +8829,15 @@ define('js/bundles/toolbar',[
     });
 
     // Advance workflow
-    modalInit('#workflow-transition-advanced > a', function(modal, modalInit, modalOptions) {
-      modalTemplate(modal.$modal, {
+    modalform.init('#workflow-transition-advanced > a', function(modal, modalInit, modalOptions) {
+      modalform.template(modal.$modal, {
         buttons: 'input[name="form.button.Cancel"],input[name="form.button.FolderPublish"],input[name="form.button.Publish"]'
       });
 
       // FIXME: we should _not_ hack like this
       $('#workflow_action', modal.$modal).parent().find('> br').remove();
 
-      modalAjaxForm(modal, modalInit, modalOptions, {
+      modalform.form(modal, modalInit, modalOptions, {
         buttons: {
           '.modal-body input[name="form.button.Cancel"]': {},
           '.modal-body input[name="form.button.Publish"], .modal-body input[name="form.button.FolderPublish"]': {
@@ -8807,13 +8859,13 @@ define('js/bundles/toolbar',[
     });
 
     // personal preferences
-    modalInit('#plone-personal-actions-preferences > a', function(modal, modalInit, modalOptions) {
-      modalTemplate(modal.$modal, {
+    modalform.init('#plone-personal-actions-preferences > a', function(modal, modalInit, modalOptions) {
+      modalform.template(modal.$modal, {
         buttons: 'input[name="form.actions.save"],input[name="form.actions.cancel"]'
       });
       $('select[name="form.wysiwyg_editor"], select[name="form.language"]', modal.$modal).addClass('pat-select2');
       $('input[name="form.actions.cancel"]', modal.$modal).attr('class', 'standalone');
-      modalAjaxForm(modal, modalInit, modalOptions, {
+      modalform.form(modal, modalInit, modalOptions, {
         buttons: {
           '.modal-body input[name="form.actions.cancel"]': {},
           '.modal-body input[name="form.actions.save"]': {}
