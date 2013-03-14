@@ -211,8 +211,16 @@ class ToolbarTile(Tile):
 
     @memoize
     def user_actions(self):
-        actions = self.context_state.actions('user')
-        return [item for item in actions if item['available']]
+        return [
+            item for item in self.context_state.actions('user')
+            if item['available'] and item['id'] != 'plone_setup'
+        ]
+
+    @memoize
+    def site_setup(self):
+        for item in self.context_state.actions('user'):
+            if item['id'] == 'plone_setup' and item['available']:
+                return item
 
 
 class ToolbarRequest(object):
