@@ -4,6 +4,9 @@ Changelog
 1.3 (unreleased)
 ----------------
 
+- Fix ZCML loading using z3c.autoinclude.
+  [rpatterson]
+
 
 1.2 (2012-03-04)
 ----------------
