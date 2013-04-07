@@ -47,9 +47,17 @@
         name="plone.app.toolbar.css"
         file="static/toolbar.css" />
     <browser:resource
-        name="plone.app.toolbar.png"
-        file="static/toolbar.png" />
-
+        name="plone.app.toolbar.eot"
+        file="static/toolbar-webfont.eot" />
+    <browser:resource
+        name="plone.app.toolbar.otf"
+        file="static/toolbar-webfont.otf" />
+    <browser:resource
+        name="plone.app.toolbar.ttf"
+        file="static/toolbar-webfont.ttf" />
+    <browser:resource
+        name="plone.app.toolbar.woff"
+        file="static/toolbar-webfont.woff" />
     <!-- Add /++toolbar++/ to your url to disable theming -->
     <adapter
         name="toolbar"
