@@ -13,7 +13,7 @@
     <!-- Permissions -->
     <permission
         id="plone.AddToolbar"
-        title="Plone: Add Toolbar" />
+        title="Plone: Add Toolbar" /><!-- TODO: is this permission even used -->
     <permission
         id="plone.ViewToolbar"
         title="Plone: View Toolbar" />
@@ -25,40 +25,61 @@
 
     <!-- Static resources -->
     <browser:resource
-        zcml:condition="not-have devmode"
-        name="plone.app.toolbar_init.js"
-        file="static/toolbar_init.js" />
-    <browser:resource
-        zcml:condition="have devmode"
-        name="plone.app.toolbar_init.js"
-        file="static/toolbar_init.min.js" />
-    <browser:resource
         name="plone.app.toolbar_init.css"
-        file="static/toolbar_init.css" />
-    <browser:resource
-        zcml:condition="not-have devmode"
-        name="plone.app.toolbar.js"
-        file="static/toolbar.js" />
-    <browser:resource
-        zcml:condition="have devmode"
-        name="plone.app.toolbar.js"
-        file="static/toolbar.min.js" />
+        file="static/toolbar_init.css"
+        />
     <browser:resource
         name="plone.app.toolbar.css"
-        file="static/toolbar.css" />
+        file="static/toolbar.css"
+        layer=".interfaces.IToolbarLayer"
+        />
     <browser:resource
         name="plone.app.toolbar.eot"
-        file="static/toolbar-webfont.eot" />
+        file="static/toolbar-webfont.eot"
+        layer=".interfaces.IToolbarLayer"
+        />
     <browser:resource
         name="plone.app.toolbar.otf"
-        file="static/toolbar-webfont.otf" />
+        file="static/toolbar-webfont.otf"
+        layer=".interfaces.IToolbarLayer"
+        />
     <browser:resource
         name="plone.app.toolbar.ttf"
-        file="static/toolbar-webfont.ttf" />
+        file="static/toolbar-webfont.ttf"
+        layer=".interfaces.IToolbarLayer"
+        />
     <browser:resource
         name="plone.app.toolbar.woff"
-        file="static/toolbar-webfont.woff" />
-    <!-- Add /++toolbar++/ to your url to disable theming -->
+        file="static/toolbar-webfont.woff"
+        layer=".interfaces.IToolbarLayer"
+        />
+
+    <configure zcml:condition="installed mockup">
+        <browser:resource
+            name="plone.app.toolbar_init.js"
+            file="static/toolbar_init.js"
+            />
+        <browser:resource
+            name="plone.app.toolbar.js"
+            file="static/toolbar.js"
+            layer=".interfaces.IToolbarLayer"
+            />
+    </configure>
+
+    <configure zcml:condition="not-installed mockup">
+        <browser:resource
+            name="plone.app.toolbar_init.js"
+            file="static/toolbar_init.min.js"
+            />
+        <browser:resource
+            name="plone.app.toolbar.js"
+            file="static/toolbar.min.js"
+            layer=".interfaces.IToolbarLayer"
+            />
+    </configure>
+
+    <!-- Add /++toolbar++/ to your url to disable diazo theming and use toolbar
+         skin (which can be also changed via plone's registry) -->
     <adapter
         name="toolbar"
         for="* zope.publisher.interfaces.IRequest"
