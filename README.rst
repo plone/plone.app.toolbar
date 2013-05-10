@@ -64,13 +64,13 @@ To start developing plone.app.toolbar you can find buildout at
 Diazo rules
 ===========
 
-First we need to copy toolbar's html code::
+First we need to copy the toolbar's HTML code::
 
     <append theme="/html/body"
         content="//div[@data-iframe='plone-toolbar']" />
 
-Then in case we are not copying all resources from Plone (content) to theme we
-have to include resources as well::
+Then, in case we are not copying all resources from Plone (content) into 
+the theme we have to include the toolbar's resources as well::
 
     <append theme="/html/head">
         <link rel="stylesheet" type="text/css"
@@ -79,8 +79,22 @@ have to include resources as well::
             src="++resource++plone.app.toolbar_init.js"></script>
     </append>
 
-Above 2 rules should be enough so that your theme will support
-`plone.app.toolbar`_.
+Also, in order to correctly support updating a page after using `Edit`, you
+must ensure that the element ``#portal-column-content`` exists within your
+theme.  In short, as with Plone's default theme, this element should correspond
+to the main content column. It will be repopulated with updated content after
+an edit action takes place via the toolbar.  A rule similar to this is 
+needed - in this case, the entire element is placed into the theme:: 
+
+    <replace css:theme-children="#content article"
+        css:content="#portal-column-content" />
+
+For the technically minded, the element of
+``#portal-column-content`` will be repopulated with HTML corresponding to the
+same element ID from a response body returned after an edit takes place.
+
+The above rules and consideration should be enough so that your theme 
+will support `plone.app.toolbar`_.
 
 
 .. _`buildout.deco`: https://github.com/plone/buildout.deco
