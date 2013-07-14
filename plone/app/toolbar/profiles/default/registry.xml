@@ -7,6 +7,13 @@
     </field>
     <value>Toolbar Theme</value>
   </record>
+  <record name="plone.app.toolbar.NoDiazoSkinName">
+    <field type="plone.registry.field.TextLine">
+      <title>No Diazo Skin</title>
+    </field>
+    <value>No Diazo Theme</value>
+  </record>
+
 
   <record name="Products.ResourceRegistries.interfaces.settings.IResourceRegistriesSettings.resourceBundlesForThemes">
     <value purge="false">

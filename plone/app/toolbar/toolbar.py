@@ -241,3 +241,23 @@ class ToolbarRequest(object):
                 self.registry['plone.app.toolbar.skinname'],
                 self.request)
         return self.context
+
+
+class NoDiazoRequest(object):
+    implements(ITraversable)
+
+    def __init__(self, context, request=None):
+        self.context = context
+        self.request = request
+        self.registry = getUtility(IRegistry)
+
+    def traverse(self, name, ignore):
+        if self.request is not None:
+            # make sure no diazo theme is applied
+            self.request.response.setHeader('X-Theme-Disabled', 'True')
+            self.request['HTTP_X_THEME_ENABLED'] = False
+            # change skin to the one in registry
+            self.context.changeSkin(
+                self.registry['plone.app.toolbar.NoDiazoSkinName'],
+                self.request)
+        return self.context

@@ -86,6 +86,12 @@
         provides="zope.traversing.interfaces.ITraversable"
         factory=".toolbar.ToolbarRequest"
         />
+    <adapter
+        name="nodiazo"
+        for="* zope.publisher.interfaces.IRequest"
+        provides="zope.traversing.interfaces.ITraversable"
+        factory=".toolbar.NoDiazoRequest"
+        />
 
     <!-- Toolbar Tile -->
     <plone:tile
