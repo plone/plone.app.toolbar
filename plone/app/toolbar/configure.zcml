@@ -29,22 +29,22 @@
     <!-- Static resources -->
     <browser:resource
         name="plone.app.toolbar.eot"
-        file="static/toolbar-webfont.eot"
+        file="static/toolbar-fontawesome.eot"
         layer=".interfaces.IToolbarLayer"
         />
     <browser:resource
         name="plone.app.toolbar.otf"
-        file="static/toolbar-webfont.otf"
+        file="static/toolbar-fontawesome.otf"
         layer=".interfaces.IToolbarLayer"
         />
     <browser:resource
         name="plone.app.toolbar.ttf"
-        file="static/toolbar-webfont.ttf"
+        file="static/toolbar-fontawesome.ttf"
         layer=".interfaces.IToolbarLayer"
         />
     <browser:resource
         name="plone.app.toolbar.woff"
-        file="static/toolbar-webfont.woff"
+        file="static/toolbar-fontawesome.woff"
         layer=".interfaces.IToolbarLayer"
         />
 
