@@ -10,6 +10,9 @@
     <include package="plone.tiles" />
     <include package="plone.app.widgets" />
 
+    <include package="mockup"
+        zcml:condition="installed mockup" />
+
     <!-- Permissions -->
     <permission
         id="plone.AddToolbar"
