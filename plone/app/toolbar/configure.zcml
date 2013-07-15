@@ -28,15 +28,6 @@
 
     <!-- Static resources -->
     <browser:resource
-        name="plone.app.toolbar_init.css"
-        file="static/toolbar_init.css"
-        />
-    <browser:resource
-        name="plone.app.toolbar.css"
-        file="static/toolbar.css"
-        layer=".interfaces.IToolbarLayer"
-        />
-    <browser:resource
         name="plone.app.toolbar.eot"
         file="static/toolbar-webfont.eot"
         layer=".interfaces.IToolbarLayer"
@@ -59,6 +50,16 @@
 
     <configure zcml:condition="installed mockup">
         <browser:resource
+            name="plone.app.toolbar_init.css"
+            file="static/toolbar_init.css"
+            layer=".interfaces.IToolbarLayer"
+            />
+        <browser:resource
+            name="plone.app.toolbar.css"
+            file="static/toolbar.css"
+            layer=".interfaces.IToolbarLayer"
+            />
+        <browser:resource
             name="plone.app.toolbar_init.js"
             file="static/toolbar_init.js"
             />
@@ -70,6 +71,16 @@
     </configure>
 
     <configure zcml:condition="not-installed mockup">
+        <browser:resource
+            name="plone.app.toolbar_init.css"
+            file="static/toolbar_init.min.css"
+            layer=".interfaces.IToolbarLayer"
+            />
+        <browser:resource
+            name="plone.app.toolbar.css"
+            file="static/toolbar.min.css"
+            layer=".interfaces.IToolbarLayer"
+            />
         <browser:resource
             name="plone.app.toolbar_init.js"
             file="static/toolbar_init.min.js"
