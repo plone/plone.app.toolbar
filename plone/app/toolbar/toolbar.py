@@ -8,6 +8,7 @@ from zope.traversing.interfaces import ITraversable
 from plone.registry.interfaces import IRegistry
 from plone.memoize.instance import memoize
 from plone.tiles import Tile
+from Products.CMFCore.utils import _checkPermission
 
 
 class ToolbarTile(Tile):
@@ -80,7 +81,17 @@ class ToolbarTile(Tile):
             actions.extend(self.context_state.actions('folder'))
 
         # 'object' actions
-        actions.extend(self.context_state.actions('object'))
+        object_actions = self.context_state.actions('object')
+        actions.extend(object_actions)
+        if object_actions and \
+           _checkPermission('CMFEditions: Access previous versions',
+                            self.context):
+            history_action = {
+                'id': 'content-history',
+                'title': 'History',  # TODO: translate
+                'url': '%s/@@historyview' % self.context.absolute_url(),
+            }
+            actions.append(history_action)
 
         # sort actions
         sort_order = ['folderContents']
