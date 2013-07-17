@@ -1,12 +1,15 @@
 from urllib import unquote
+from AccessControl import getSecurityManager
 from Acquisition import aq_inner
 from zope.interface import implements
 from zope.component import getMultiAdapter
 from zope.component import getUtility
+from zope.component import getUtilitiesFor
 from zope.browsermenu.interfaces import IBrowserMenu
 from zope.traversing.interfaces import ITraversable
 from plone.registry.interfaces import IRegistry
 from plone.memoize.instance import memoize
+from plone.portlets.interfaces import IPortletManager
 from plone.tiles import Tile
 from Products.CMFCore.utils import _checkPermission
 
@@ -232,6 +235,39 @@ class ToolbarTile(Tile):
         for item in self.context_state.actions('user'):
             if item['id'] == 'plone_setup' and item['available']:
                 return item
+
+    @memoize
+    def portlet_managers(self):
+        items = []
+        sm = getSecurityManager()
+        perm = 'plone.app.portlets.ManagePortlets'
+        # Bail out if the user can't manage portlets
+        if not sm.checkPermission(perm, self.context):
+            return items
+        blacklist = self.registry.get(
+            'plone.app.toolbar.PortletManagerBlacklist', [])
+        manager_titles = self.registry.get(
+            'plone.app.toolbar.PortletManagerTitles', {})
+        managers = getUtilitiesFor(IPortletManager)
+        current_url = self.context.absolute_url()
+        for manager in managers:
+            manager_name = manager[0]
+            # Don't show items like 'plone.dashboard1' by default
+            if manager_name in blacklist:
+                continue
+            item = {}
+            item['id'] = 'portlet-manager-%s' % manager_name
+            # Look up a pretty title in the registry, otherwise
+            # generate a human friendly title
+            if manager_name in manager_titles:
+                item['title'] = manager_titles[manager_name]
+            else:
+                item['title'] = ' '.join(manager_name.split('.')).title()
+            item['url'] = '%s/@@toolbar-manage-portlets/%s' % (
+                current_url, manager_name)
+            items.append(item)
+        items.sort()
+        return items
 
 
 class ToolbarRequest(object):
