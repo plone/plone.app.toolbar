@@ -127,4 +127,12 @@
         provides="Products.GenericSetup.interfaces.EXTENSION"
         />
 
+    <browser:page
+        name="toolbar-manage-portlets"
+        for="*"
+        class=".browser.ManagePortlets"
+        permission="plone.app.portlets.ManagePortlets"
+        template="manage_portlets.pt"
+        />
+
 </configure>

@@ -56,6 +56,22 @@
           </li>
         </ul>
         <ul class="toolbar-right-actions">
+          <li class="toolbar-dropdown"
+              tal:define="portlet_managers view/portlet_managers"
+              tal:condition="portlet_managers">
+            <a href="#">Manage Portlets</a>
+            <ul id="toolbar-manage-portlets"
+                class="toolbar-dropdown-menu">
+              <li tal:repeat="item portlet_managers">
+                <a class="pat-modal"
+                   tal:attributes="href item/url;
+                                   id item/id"
+                   tal:content="item/title">
+                 Manager Title
+                </a>
+              </li>
+            </ul>
+          </li>
           <li tal:repeat="item view/contentmenu"
               tal:attributes="
                 class string:toolbar-dropdown ${item/klass|nothing};

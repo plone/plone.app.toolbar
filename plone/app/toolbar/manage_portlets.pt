@@ -1,0 +1,31 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="plone.app.toolbar">
+<body>
+
+  <div metal:fill-slot="main">
+    <dl class="portalMessage info"
+        tal:condition="ploneview/isDefaultPageInFolder|nothing">
+      <dt i18n:translate="">
+          Info
+      </dt>
+      <dd i18n:translate="label_manage_portlets_default_view_container">
+          You are managing the portlets of the default view of a container. If
+          you wanted to manage the portlets of the container itself,
+        <a href=""
+            i18n:name="go_here"
+            i18n:translate="label_manage_portlets_default_view_container_go_here"
+            tal:attributes="href string:${context/aq_inner/aq_parent/absolute_url}/@@manage-portlets">go here</a>.
+      </dd>
+    </dl>
+
+    <h2 tal:content="view/manager_name"></h2>
+    <span tal:replace="structure provider:${view/manager_name}" />
+
+  </div>
+
+</body>
+</html>
