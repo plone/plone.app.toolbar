@@ -66,18 +66,29 @@ Diazo rules
 
 First we need to copy the toolbar's HTML code::
 
-    <append theme="/html/body"
+    <before theme-children="/html/body"
         content="//div[@data-iframe='plone-toolbar']" />
 
 Then, in case we are not copying all resources from Plone (content) into 
-the theme we have to include the toolbar's resources as well::
+the theme we have to include the toolbar's resources and its dependencies
+as well::
 
-    <append theme="/html/head">
+    <before theme-children="/html/head">
+        <link rel="stylesheet" type="text/css"
+            href="++resource++plone.app.widgets.css"/>
         <link rel="stylesheet" type="text/css"
             href="++resource++plone.app.toolbar_init.css"/>
+        <link rel="stylesheet" type="text/css"
+            href="++resource++plone.app.toolbar.css"/>
+        <script type="text/javascript"
+            src="++resource++plone.app.jquery.js"></script>
         <script type="text/javascript"
             src="++resource++plone.app.toolbar_init.js"></script>
-    </append>
+        <script type="text/javascript"
+            src="++resource++plone.app.toolbar.js"></script>
+        <script type="text/javascript"
+            src="++resource++plone.app.widgets.js"></script>
+    </before>
 
 Also, in order to correctly support updating a page after using `Edit`, you
 must ensure that the element ``#portal-column-content`` exists within your
