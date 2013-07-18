@@ -110,4 +110,4 @@ will support `plone.app.toolbar`_.
 
 .. _`buildout.deco`: https://github.com/plone/buildout.deco
 .. _`plone.app.toolbar`: https://github.com/plone/plone.app.toolbar
-.. _`issue tracker`: https://github.com/plone/plone.app.toolbar/issues
+.. _`issue tracker`: https://github.com/plone/mockup/issues?labels=toolbar
