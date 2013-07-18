@@ -21,11 +21,10 @@
     };
     document.getElementsByTagName("head")[0].appendChild(script1);
 
-    var link1 = document.createElement('link');
-    link1.setAttribute('type', 'text/css');
-    link1.setAttribute('rel', 'stylesheet/less');
-    link1.setAttribute('href', '/++resource++mockup/less/toolbar.less');
-    document.getElementsByTagName("head")[0].appendChild(link1);
+    var style1 = document.createElement('style');
+    style1.setAttribute('type', 'text/less');
+    style1.innerHTML = '@import (less) "/++resource++mockup/less/toolbar.less"; @isBrowser: true; @pathPrefix: \'/++resource++mockup/less/\';';
+    document.getElementsByTagName("head")[0].appendChild(style1);
 
     var script3 = document.createElement('script');
     script3.setAttribute('type', 'text/javascript');
