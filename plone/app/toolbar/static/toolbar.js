@@ -29,7 +29,7 @@
 
     var script3 = document.createElement('script');
     script3.setAttribute('type', 'text/javascript');
-    script3.setAttribute('src', '/++resource++mockup/node_modules/less/dist/less-1.4.1.js');
+    script3.setAttribute('src', '/++resource++mockup/node_modules/grunt-contrib-less/node_modules/less/dist/less-1.4.1.js');
     document.getElementsByTagName("head")[0].appendChild(script3);
 
   });
