@@ -28,25 +28,99 @@
 
     <!-- Static resources -->
     <browser:resource
-        name="plone.app.toolbar.eot"
-        file="static/toolbar-fontawesome.eot"
+        name="plone.app.toolbar-glyphicons-halflings.png"
+        file="static/toolbar-glyphicons-halflings.png"
         layer=".interfaces.IToolbarLayer"
         />
     <browser:resource
-        name="plone.app.toolbar.otf"
-        file="static/toolbar-fontawesome.otf"
+        name="plone.app.toolbar-glyphicons-halflings-white.png"
+        file="static/toolbar-glyphicons-halflings-white.png"
+        layer=".interfaces.IToolbarLayer"
+        />
+
+    <browser:resource
+        name="plone.app.toolbar-fontawesome-webfont.eot"
+        file="static/toolbar-fontawesome-webfont.eot"
         layer=".interfaces.IToolbarLayer"
         />
     <browser:resource
-        name="plone.app.toolbar.ttf"
-        file="static/toolbar-fontawesome.ttf"
+        name="plone.app.toolbar-fontawesome-webfont.woff"
+        file="static/toolbar-fontawesome-webfont.woff"
         layer=".interfaces.IToolbarLayer"
         />
     <browser:resource
-        name="plone.app.toolbar.woff"
-        file="static/toolbar-fontawesome.woff"
+        name="plone.app.toolbar-fontawesome-webfont.ttf"
+        file="static/toolbar-fontawesome-webfont.ttf"
         layer=".interfaces.IToolbarLayer"
         />
+    <browser:resource
+            name="plone.app.toolbar-fontawesome-webfont.svg"
+            file="static/toolbar-fontawesome-webfont.svg"
+            layer=".interfaces.IToolbarLayer"
+            />
+
+    <browser:resource
+            name="plone.app.toolbar-select2.png"
+            file="static/toolbar-select2.png"
+            layer=".interfaces.IToolbarLayer"
+            />
+    <browser:resource
+            name="plone.app.toolbar-select2-spinner.gif"
+            file="static/toolbar-select2-spinner.gif"
+            layer=".interfaces.IToolbarLayer"
+            />
+
+    <browser:resource
+            name="plone.app.toolbar-icomoon.eot"
+            file="static/toolbar-icomoon.eot"
+            layer=".interfaces.IToolbarLayer"
+            />
+    <browser:resource
+            name="plone.app.toolbar-icomoon.svg"
+            file="static/toolbar-icomoon.svg"
+            layer=".interfaces.IToolbarLayer"
+            />
+    <browser:resource
+            name="plone.app.toolbar-icomoon.woff"
+            file="static/toolbar-icomoon.woff"
+            layer=".interfaces.IToolbarLayer"
+            />
+    <browser:resource
+            name="plone.app.toolbar-icomoon.ttf"
+            file="static/toolbar-icomoon.ttf"
+            layer=".interfaces.IToolbarLayer"
+            />
+    <browser:resource
+            name="plone.app.toolbar-icomoon-small.eot"
+            file="static/toolbar-icomoon.eot"
+            layer=".interfaces.IToolbarLayer"
+            />
+    <browser:resource
+            name="plone.app.toolbar-icomoon-small.svg"
+            file="static/toolbar-icomoon.svg"
+            layer=".interfaces.IToolbarLayer"
+            />
+    <browser:resource
+            name="plone.app.toolbar-icomoon-small.woff"
+            file="static/toolbar-icomoon.woff"
+            layer=".interfaces.IToolbarLayer"
+            />
+    <browser:resource
+            name="plone.app.toolbar-icomoon-small.ttf"
+            file="static/toolbar-icomoon.ttf"
+            layer=".interfaces.IToolbarLayer"
+            />
+
+    <browser:resource
+            name="plone.app.toolbar-spritemap.png"
+            file="static/toolbar-spritemap.png"
+            layer=".interfaces.IToolbarLayer"
+            />
+    <browser:resource
+            name="plone.app.toolbar-spritemap@2x.png"
+            file="static/toolbar-spritemap@2x.png"
+            layer=".interfaces.IToolbarLayer"
+            />
 
     <configure zcml:condition="installed mockup">
         <browser:resource
