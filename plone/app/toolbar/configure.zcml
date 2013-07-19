@@ -200,6 +200,14 @@
         for="Products.CMFPlone.interfaces.IPloneSiteRoot"
         provides="Products.GenericSetup.interfaces.EXTENSION"
         />
+    <genericsetup:registerProfile
+        name="uninstall"
+        title="Plone Toolbar Uninstall"
+        directory="profiles/uninstall"
+        description="Removes Toolbar."
+        provides="Products.GenericSetup.interfaces.EXTENSION"
+        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+        />
 
     <browser:page
         name="toolbar-manage-portlets"
