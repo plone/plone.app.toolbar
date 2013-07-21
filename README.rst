@@ -7,20 +7,14 @@ Introduction to Toolbar
 .. contents::
 
 
-Current status
-==============
+Motivation
+==========
 
-Current focus of ``plone.app.toolbar`` is to get interfaces of Content editors
-into overlays. This excludes all pages in ``Site Setup``.
+- Move the admin toolbar currently found in the content of a page (when
+    logged in) to a separate, encapsulated, bar at the top of the page.
 
-There are 2 form widgets which haven't yet been made functional in
-``plone.app.toolbar``:
-
-- ``Related Items`` widget.
-- ``Search filter`` widget in Collection content type.
-
-Other then that things **should** be working, if they don't please report them
-to `issue tracker`_.
+- Make it so themer's do not need to handle or manage admin specific UI,
+        unless it is something they are are intentionally doing
 
 
 Installation
