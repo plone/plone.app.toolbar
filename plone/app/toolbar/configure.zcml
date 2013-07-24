@@ -4,6 +4,7 @@
     xmlns:plone="http://namespaces.plone.org/plone"
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:cmf="http://namespaces.zope.org/cmf"
     i18n_domain="plone">
 
     <include package="plone.tiles" file="meta.zcml" />
@@ -165,6 +166,9 @@
             layer=".interfaces.IToolbarLayer"
             />
     </configure>
+
+
+    <cmf:registerDirectory name="skins" directory="skins" recursive="True" />
 
     <!-- Add /++toolbar++/ to your url to disable diazo theming and use toolbar
          skin (which can be also changed via plone's registry) -->
