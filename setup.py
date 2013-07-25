@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.3'
+version = '1.4.0'
 
 setup(
     name='plone.app.toolbar',
@@ -35,7 +35,6 @@ setup(
         'Acquisition',
         'plone.app.widgets',
         'Products.CMFPlone>=4.3b2',
-        'Products.TinyMCE>=1.3b10',
         'plone.app.registry>=1.2.2'
     ],
     extras_require={
