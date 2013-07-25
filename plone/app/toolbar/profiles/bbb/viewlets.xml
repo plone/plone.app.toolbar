@@ -6,4 +6,15 @@
     <order manager="plone.portaltop" skinname="toolbar">
         <viewlet name="plone.toolbar" remove="True" />
     </order>
+
+    <hidden manager="plone.portaltop" skinname="Toolbar Theme">
+        <viewlet name="plone.portalheader" />
+    </hidden>
+
+    <hidden manager="plone.portalheader" skinname="Toolbar Theme">
+        <viewlet name="plone.global_sections" />
+        <viewlet name="plone.logo" />
+        <viewlet name="plone.searchbox" />
+    </hidden>
+
 </object>

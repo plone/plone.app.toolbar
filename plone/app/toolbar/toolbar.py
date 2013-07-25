@@ -1,7 +1,7 @@
 from urllib import unquote
 from AccessControl import getSecurityManager
 from Acquisition import aq_inner
-from zope.interface import implements
+from zope.interface import implements, alsoProvides
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import getUtilitiesFor
@@ -12,7 +12,7 @@ from plone.memoize.instance import memoize
 from plone.portlets.interfaces import IPortletManager
 from plone.tiles import Tile
 from Products.CMFCore.utils import _checkPermission
-
+from interfaces import ISiteSetupLayer
 
 class ToolbarTile(Tile):
 
@@ -307,4 +307,7 @@ class NoDiazoRequest(object):
             self.context.changeSkin(
                 self.registry['plone.app.toolbar.NoDiazoSkinName'],
                 self.request)
+
+            # special browser layer to simplify display of the control panels
+            alsoProvides(self.request, ISiteSetupLayer)
         return self.context

@@ -64,14 +64,12 @@
                     body_class python:plone_view.bodyClass(template, view);"
         tal:attributes="class body_class;
                         dir python: isRTL and 'rtl' or 'ltr'">
- 
+
 
     <div id="visual-portal-wrapper">
-<!--
       <div id="portal-top" i18n:domain="plone">
         <div tal:replace="structure provider:plone.portaltop" tal:condition="not:ajax_load" />
       </div>
--->
       <div class="visualClear" id="clear-space-before-wrapper-table"><!-- --></div>
       <table id="portal-columns">
         <tbody>
