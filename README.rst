@@ -42,7 +42,7 @@ To install toolbar drop following lines to your buildout.cfg::
     [versions]
     plone.app.jquery = 1.8.3
 
-Bellow version pins are for Plone version 4.3rc1 or higher.
+Above version pins are for Plone version 4.3rc1 or higher.
 
 Make sure you install the "Plone Toolbar" profile when creating your Plone site
 or include ``plone.app.toolbar:default`` profile in your ``metadata.xml``..
