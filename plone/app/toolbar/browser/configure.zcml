@@ -1,0 +1,90 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="plone.app.toolbar">
+
+  <browser:page
+    for="plone.folder.interfaces.IOrderableFolder"
+    class=".folder.FolderContentsView"
+    name="folder_contents"
+    template="templates/folder_contents.pt"
+    permission="cmf.ListFolderContents"
+    layer="..interfaces.IToolbarLayer"
+    />
+
+  <browser:page
+    for="plone.folder.interfaces.IOrderableFolder"
+    name="fc-delete"
+    class=".folder.FolderContentsActionView"
+    attribute="delete"
+    permission="cmf.ListFolderContents"
+    layer="..interfaces.IToolbarLayer"
+    />
+
+  <browser:page
+    for="plone.folder.interfaces.IOrderableFolder"
+    name="fc-paste"
+    class=".folder.FolderContentsActionView"
+    attribute="paste"
+    permission="cmf.ListFolderContents"
+    layer="..interfaces.IToolbarLayer"
+    />
+
+  <browser:page
+    for="plone.folder.interfaces.IOrderableFolder"
+    name="fc-workflow"
+    class=".folder.FolderContentsActionView"
+    attribute="workflow"
+    permission="cmf.ListFolderContents"
+    layer="..interfaces.IToolbarLayer"
+    />
+
+  <browser:page
+    for="plone.folder.interfaces.IOrderableFolder"
+    name="fc-tags"
+    class=".folder.FolderContentsActionView"
+    attribute="tags"
+    permission="cmf.ListFolderContents"
+    layer="..interfaces.IToolbarLayer"
+    />
+
+  <browser:page
+    for="plone.folder.interfaces.IOrderableFolder"
+    name="fc-properties"
+    class=".folder.FolderContentsActionView"
+    attribute="properties"
+    permission="cmf.ListFolderContents"
+    layer="..interfaces.IToolbarLayer"
+    />
+
+  <browser:page
+    for="plone.folder.interfaces.IOrderableFolder"
+    name="fc-rename"
+    class=".folder.FolderContentsActionView"
+    attribute="rename"
+    permission="cmf.ListFolderContents"
+    layer="..interfaces.IToolbarLayer"
+    />
+
+  <browser:page
+    for="plone.folder.interfaces.IOrderableFolder"
+    name="fc-order"
+    class=".folder.FolderContentsActionView"
+    attribute="order"
+    permission="cmf.ListFolderContents"
+    layer="..interfaces.IToolbarLayer"
+    />
+
+  <browser:page
+    name="toolbar-manage-portlets"
+    for="*"
+    class=".portlets.ManagePortlets"
+    permission="plone.app.portlets.ManagePortlets"
+    template="templates/manage_portlets.pt"
+    />
+
+</configure>
+
+

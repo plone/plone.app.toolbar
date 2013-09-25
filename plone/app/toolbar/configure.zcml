@@ -9,6 +9,7 @@
     <include package="plone.tiles" file="meta.zcml" />
     <include package="plone.tiles" />
     <include package="plone.app.widgets" />
+    <include package=".browser" />
 
     <include package="mockup"
         zcml:condition="installed mockup" />
@@ -209,12 +210,5 @@
         for="Products.CMFPlone.interfaces.IPloneSiteRoot"
         />
 
-    <browser:page
-        name="toolbar-manage-portlets"
-        for="*"
-        class=".browser.ManagePortlets"
-        permission="plone.app.portlets.ManagePortlets"
-        template="manage_portlets.pt"
-        />
-
+    
 </configure>
