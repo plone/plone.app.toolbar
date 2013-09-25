@@ -14,6 +14,15 @@ from plone.tiles import Tile
 from Products.CMFCore.utils import _checkPermission
 
 
+def ajax_url(url):
+    if not 'ajax_load' in url:
+        op = '?'
+        if '?' in url:
+            op = '&'
+        url = '%s%sajax_load=1' % (url, op)
+    return url
+
+
 class ToolbarTile(Tile):
 
     def get_multi_adapter(self, name):
@@ -96,17 +105,6 @@ class ToolbarTile(Tile):
             }
             actions.append(history_action)
 
-        for act in actions:
-            # Append ajax_load=1 where senseful. This skips rendering of the
-            # plone border, which makes things a lot faster.
-            if act['id'] == 'view': continue  ## don't ajax_load the view. TODO: OK?
-            url = act['url']
-            if 'ajax_load' in url: continue
-            op = '?'
-            if '?' in url:
-                op = '&'
-            act['url'] = '%s%sajax_load=1' % (url, op)
-
         # sort actions
         sort_order = ['folderContents']
 
@@ -142,6 +140,10 @@ class ToolbarTile(Tile):
                 item['url'] = button_url
             else:
                 item['url'] = '%s/%s' % (self.context_url, button_url)
+
+            # Append ajax_load=1 to the url. This skips rendering of the
+            # Plone border, which makes things a lot faster.
+            item['url'] = ajax_url(item['url'])
 
             # Action method may be a method alias:
             # Attempt to resolve to a template.
