@@ -96,6 +96,17 @@ class ToolbarTile(Tile):
             }
             actions.append(history_action)
 
+        for act in actions:
+            # Append ajax_load=1 where senseful. This skips rendering of the
+            # plone border, which makes things a lot faster.
+            if act['id'] == 'view': continue  ## don't ajax_load the view. TODO: OK?
+            url = act['url']
+            if 'ajax_load' in url: continue
+            op = '?'
+            if '?' in url:
+                op = '&'
+            act['url'] = '%s%sajax_load=1' % (url, op)
+
         # sort actions
         sort_order = ['folderContents']
 
