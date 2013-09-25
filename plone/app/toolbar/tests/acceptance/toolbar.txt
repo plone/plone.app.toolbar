@@ -94,7 +94,7 @@ Sharing tab should open sharing view
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  Sharing
     Click Link  Sharing
 
-    Location Should Be  ${PLONE_URL}/@@sharing
+    Location Should Be  ${PLONE_URL}/@@sharing?ajax_load=1
 
 Actions menu dropdown should open on click
     Log in as site owner
