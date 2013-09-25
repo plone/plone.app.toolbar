@@ -190,6 +190,8 @@ class ToolbarTile(Tile):
                                 item['klass'] = item['extra']['class']
                     if 'submenu' in item and item['submenu']:
                         item['submenu'] = contentmenu(item['submenu'])
+                item['action'] = ajax_url(item['action'])
+
                 buttons.append(item)
             return buttons
 
@@ -247,6 +249,7 @@ class ToolbarTile(Tile):
     def site_setup(self):
         for item in self.context_state.actions('user'):
             if item['id'] == 'plone_setup' and item['available']:
+                item['url'] = ajax_url(item['url'])
                 return item
 
     @memoize
@@ -276,8 +279,9 @@ class ToolbarTile(Tile):
                 item['title'] = manager_titles[manager_name]
             else:
                 item['title'] = ' '.join(manager_name.split('.')).title()
-            item['url'] = '%s/@@toolbar-manage-portlets/%s' % (
-                current_url, manager_name)
+            item['url'] = ajax_url('%s/@@toolbar-manage-portlets/%s' % (
+                current_url, manager_name))
+
             items.append(item)
         items.sort()
         return items

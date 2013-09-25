@@ -4,8 +4,8 @@ Changelog
 1.3 (unreleased)
 ----------------
 
-- Add ajax_load=1 to actions entries (@@sharing, folder_contents, etc.) for
-  faster loading without the plone border.
+- Add ajax_load=1 to toolbar target urls for faster loading without the
+  plone border.
   [thet]
 
 - Fix ZCML loading using z3c.autoinclude.
