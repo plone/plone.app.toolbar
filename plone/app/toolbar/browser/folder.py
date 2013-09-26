@@ -1,15 +1,19 @@
+import transaction
 from AccessControl import Unauthorized
+from AccessControl import getSecurityManager
+from Acquisition import aq_inner
+from Acquisition import aq_parent
 from zope.component import getMultiAdapter
 from OFS.CopySupport import CopyError
-from Acquisition import aq_inner
 from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
 from Products.CMFPlone import utils
 from Products.CMFPlone import PloneMessageFactory as _
 from plone.protect.postonly import check as checkpost
 from ZODB.POSException import ConflictError
-from Products.PythonScripts.standard import url_unquote
 from zope.component.hooks import getSite
+from zope.event import notify
+from zope.lifecycleevent import ObjectModifiedEvent
 
 import json
 
@@ -131,6 +135,9 @@ class FolderContentsActionView(BrowserView):
             obj = brains[0].getObject()
             msg += self.action(obj)
 
+        return self.message(msg, missing)
+
+    def message(self, msg, missing=[]):
         if len(missing) > 0:
             msg += _('${items} could not be found', mapping={
                 'items': str(len(missing))}) + '\n'
@@ -139,7 +146,7 @@ class FolderContentsActionView(BrowserView):
         else:
             msg = self.failure_msg + '\n' + msg
 
-        return json.dumps({
+        return self.json({
             'status': 'success',
             'msg': msg
         })
@@ -231,49 +238,60 @@ class DeleteAction(FolderContentsActionView):
 
 
 class RenameAction(FolderContentsActionView):
+    success_msg = _('Items renamed')
+    failure_msg = _('Failed to rename all items')
 
-    def rename(self, paths=[], new_ids=[], new_titles=[]):
+    def __call__(self):
         self.protect()
         context = aq_inner(self.context)
-        req = self.request
-        plone_utils = getToolByName(context, 'plone_utils')
-        orig_template = req.get('orig_template', None)
-        change_template = paths and orig_template is not None
-        message = None
-        if change_template:
-            # We were called by 'object_rename'.  So now we take care that the
-            # user is redirected to the object with the new id.
-            portal_url = getToolByName(context, 'portal_url')
-            portal = portal_url.getPortalObject()
-            obj = portal.restrictedTraverse(paths[0])
-            new_id = new_ids[0]
-            obid = obj.getId()
-            if new_id and new_id != obid:
-                orig_path = obj.absolute_url_path()
-                # replace the id in the object path with the new id
-                base_path = orig_path.split('/')[:-1]
-                base_path.append(new_id)
-                new_path = '/'.join(base_path)
-                orig_template = orig_template.replace(url_unquote(orig_path),
-                                                      new_path)
-                req.set('orig_template', orig_template)
-                message = _(u"Renamed '${oldid}' to '${newid}'.",
-                            mapping={u'oldid': obid, u'newid': new_id})
 
-        success, failure = plone_utils.renameObjectsByPaths(
-            paths, new_ids, new_titles, REQUEST=req)
+        torename = json.loads(self.request.form['torename'])
 
-        if message is None:
-            message = _(u'${count} item(s) renamed.',
-                        mapping={u'count': str(len(success))})
+        catalog = getToolByName(context, 'portal_catalog')
+        mtool = getToolByName(context, 'portal_membership')
 
-        if failure:
-            message = _(u'The following item(s) could not be '
-                        u'renamed: ${items}.',
-                        mapping={u'items': ', '.join(failure.keys())})
+        msg = ''
+        missing = []
+        for data in torename:
+            uid = data['UID']
+            brains = catalog(UID=uid)
+            if len(brains) == 0:
+                missing.append(uid)
+                continue
+            obj = brains[0].getObject()
+            title = self.objectTitle(obj)
+            if not mtool.checkPermission('Copy or Move', obj):
+                msg += _(u'Permission denied to rename ${title}.',
+                         mapping={u'title': title})
+                continue
 
-        context.plone_utils.addPortalMessage(message)
-        return self.redirectFolderContents()
+            sp = transaction.savepoint(optimistic=True)
+
+            newid = data['newid'].encode('utf8')
+            newtitle = data['newtitle']
+            try:
+                obid = obj.getId()
+                title = obj.Title()
+                change_title = newtitle and title != newtitle
+                if change_title:
+                    getSecurityManager().validate(obj, obj, 'setTitle',
+                                                  obj.setTitle)
+                    obj.setTitle(newtitle)
+                    notify(ObjectModifiedEvent(obj))
+                if newid and obid != newid:
+                    parent = aq_parent(aq_inner(obj))
+                    parent.manage_renameObjects((obid,), (newid,))
+                elif change_title:
+                    # the rename will have already triggered a reindex
+                    obj.reindexObject()
+            except ConflictError:
+                raise
+            except Exception:
+                sp.rollback()
+                msg += _('Error renaming ${title}', mapping={
+                    'title': title})
+
+        return self.message(msg, missing)
 
 
 class TagsAction(FolderContentsActionView):
