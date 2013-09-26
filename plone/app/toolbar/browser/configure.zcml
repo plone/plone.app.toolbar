@@ -17,8 +17,7 @@
   <browser:page
     for="plone.folder.interfaces.IOrderableFolder"
     name="fc-delete"
-    class=".folder.FolderContentsActionView"
-    attribute="delete"
+    class=".folder.DeleteAction"
     permission="cmf.ListFolderContents"
     layer="..interfaces.IToolbarLayer"
     />
@@ -26,8 +25,7 @@
   <browser:page
     for="plone.folder.interfaces.IOrderableFolder"
     name="fc-paste"
-    class=".folder.FolderContentsActionView"
-    attribute="paste"
+    class=".folder.PasteAction"
     permission="cmf.ListFolderContents"
     layer="..interfaces.IToolbarLayer"
     />
@@ -35,8 +33,7 @@
   <browser:page
     for="plone.folder.interfaces.IOrderableFolder"
     name="fc-workflow"
-    class=".folder.FolderContentsActionView"
-    attribute="workflow"
+    class=".folder.WorkflowAction"
     permission="cmf.ListFolderContents"
     layer="..interfaces.IToolbarLayer"
     />
@@ -44,8 +41,7 @@
   <browser:page
     for="plone.folder.interfaces.IOrderableFolder"
     name="fc-tags"
-    class=".folder.FolderContentsActionView"
-    attribute="tags"
+    class=".folder.TagsAction"
     permission="cmf.ListFolderContents"
     layer="..interfaces.IToolbarLayer"
     />
@@ -53,8 +49,7 @@
   <browser:page
     for="plone.folder.interfaces.IOrderableFolder"
     name="fc-properties"
-    class=".folder.FolderContentsActionView"
-    attribute="properties"
+    class=".folder.PropertiesAction"
     permission="cmf.ListFolderContents"
     layer="..interfaces.IToolbarLayer"
     />
@@ -62,8 +57,7 @@
   <browser:page
     for="plone.folder.interfaces.IOrderableFolder"
     name="fc-rename"
-    class=".folder.FolderContentsActionView"
-    attribute="rename"
+    class=".folder.RenameAction"
     permission="cmf.ListFolderContents"
     layer="..interfaces.IToolbarLayer"
     />
@@ -71,8 +65,7 @@
   <browser:page
     for="plone.folder.interfaces.IOrderableFolder"
     name="fc-order"
-    class=".folder.FolderContentsActionView"
-    attribute="order"
+    class=".folder.OrderAction"
     permission="cmf.ListFolderContents"
     layer="..interfaces.IToolbarLayer"
     />
