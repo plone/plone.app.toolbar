@@ -133,7 +133,7 @@ class FolderContentsActionView(BrowserView):
                 missing.append(uid)
                 continue
             obj = brains[0].getObject()
-            msg += self.action(obj)
+            msg += self.action(obj) or ''
 
         return self.message(msg, missing)
 
@@ -213,7 +213,6 @@ class PasteAction(FolderContentsActionView):
             # context"
             return _(u'You are not authorized to paste ${title} here.',
                      mapping={u'title': self.objectTitle(obj)})
-        return ''
 
 
 class DeleteAction(FolderContentsActionView):
@@ -234,7 +233,6 @@ class DeleteAction(FolderContentsActionView):
             parent.manage_delObjects(obj.getId())
             return _(u'${title} has been deleted.',
                      mapping={u'title': title})
-        return ''
 
 
 class RenameAction(FolderContentsActionView):
@@ -296,8 +294,17 @@ class RenameAction(FolderContentsActionView):
 
 class TagsAction(FolderContentsActionView):
 
+    def __call__(self):
+        self.remove = set(json.loads(self.request.form.get('remove')))
+        self.add = set(json.loads(self.request.form.get('add')))
+        return super(TagsAction, self).__call__()
+
     def action(self, obj):
-        pass
+        tags = set(obj.Subject())
+        tags = tags - self.remove
+        tags = tags | self.add
+        obj.setSubject(list(tags))
+        obj.reindexObject()
 
 
 class WorkflowAction(FolderContentsActionView):
