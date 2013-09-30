@@ -14,6 +14,8 @@ from ZODB.POSException import ConflictError
 from zope.component.hooks import getSite
 from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent
+from plone.folder.interfaces import IExplicitOrdering
+from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 
 import json
 
@@ -32,6 +34,7 @@ class FolderContentsView(BrowserView):
                 base_vocabulary),
             'usersAjaxVocabulary': '%splone.app.vocabularies.Users' % (
                 base_vocabulary),
+            'moveUrl': '%s/fc-itemOrder' % base_url,
             'indexOptionsUrl': '%s/@@qsOptions' % base_url,
             'buttonGroups': {
                 'primary': [{
@@ -76,7 +79,8 @@ class FolderContentsView(BrowserView):
                 'id': 'creationDate',
                 'title': 'Creation Date'
             }],
-            'folderOrder': ''
+            'folderOrder': '',
+
         }
         self.options = json.dumps(options)
         return super(FolderContentsView, self).__call__()
@@ -115,6 +119,7 @@ class FolderContentsActionView(BrowserView):
 
     def __call__(self):
         self.protect()
+        self.errors = []
         site = getSite()
         context = aq_inner(self.context)
         selection = self.get_selection()
@@ -125,7 +130,6 @@ class FolderContentsActionView(BrowserView):
 
         catalog = getToolByName(context, 'portal_catalog')
 
-        msg = ''
         missing = []
         for uid in selection:
             brains = catalog(UID=uid)
@@ -133,22 +137,22 @@ class FolderContentsActionView(BrowserView):
                 missing.append(uid)
                 continue
             obj = brains[0].getObject()
-            msg += self.action(obj) or ''
+            self.action(obj)
 
-        return self.message(msg, missing)
+        return self.message(missing)
 
-    def message(self, msg, missing=[]):
+    def message(self, missing=[]):
         if len(missing) > 0:
-            msg += _('${items} could not be found', mapping={
-                'items': str(len(missing))}) + '\n'
-        if not msg:
-            msg = self.success_msg + '\n' + msg
+            self.errors.append(_('${items} could not be found', mapping={
+                'items': str(len(missing))}))
+        if not self.errors:
+            msg = self.success_msg
         else:
-            msg = self.failure_msg + '\n' + msg
+            msg = self.failure_msg
 
         return self.json({
             'status': 'success',
-            'msg': msg
+            'msg': '%s: %s' % (msg, '\n'.join(self.errors))
         })
 
 
@@ -160,23 +164,23 @@ class PasteAction(FolderContentsActionView):
         mtool = getToolByName(self.context, 'portal_membership')
         title = self.objectTitle(obj)
         if not mtool.checkPermission('Copy or Move', obj):
-            return _(u'Permission denied to copy ${title}.',
-                     mapping={u'title': title}) + '\n'
+            self.errors.append(_(u'Permission denied to copy ${title}.',
+                     mapping={u'title': title}))
+            return
 
         parent = obj.aq_inner.aq_parent
         try:
             parent.manage_copyObjects(obj.getId(), self.request)
         except CopyError:
-            return _(u'${title} is not copyable.',
-                     mapping={u'title': title}) + '\n'
-        return ''
+            self.errors.append(_(u'${title} is not copyable.',
+                mapping={u'title': title}))
 
     def cut(self, obj):
         mtool = getToolByName(self.context, 'portal_membership')
         title = self.objectTitle(obj)
         if not mtool.checkPermission('Copy or Move', obj):
-            msg = _(u'Permission denied to cut ${title}.',
-                    mapping={u'title': title})
+            self.errors.append(_(u'Permission denied to cut ${title}.',
+                mapping={u'title': title}))
             raise Unauthorized(msg)
 
         try:
@@ -185,24 +189,24 @@ class PasteAction(FolderContentsActionView):
             lock_info = None
 
         if lock_info is not None and lock_info.is_locked():
-            return _(u'${title} is locked and cannot be cut.',
-                     mapping={u'title': title}) + '\n'
+            self.errors.append(_(u'${title} is locked and cannot be cut.',
+                     mapping={u'title': title}))
+            return
 
         parent = obj.aq_inner.aq_parent
         try:
             parent.manage_cutObjects(obj.getId(), self.request)
         except CopyError:
-            return _(u'${title} is not moveable.',
-                     mapping={u'title': title}) + '\n'
-        return ''
+            self.errors.append(_(u'${title} is not moveable.',
+                mapping={u'title': title}))
 
     def action(self, obj):
         if self.operation == 'copy':
-            msg = self.copy(obj)
+            self.copy(obj)
         else:  # cut
-            msg = self.cut(obj)
-        if msg:
-            return msg
+            self.cut(obj)
+        if self.errors:
+            return
         try:
             self.dest.manage_pasteObjects(self.request['__cp'])
         except ConflictError:
@@ -211,9 +215,9 @@ class PasteAction(FolderContentsActionView):
             # avoid this unfriendly exception text:
             # "You are not allowed to access 'manage_pasteObjects' in this
             # context"
-            return _(u'You are not authorized to paste ${title} here.',
-                     mapping={u'title': self.objectTitle(obj)})
-
+            self.errors.append(
+                _(u'You are not authorized to paste ${title} here.',
+                    mapping={u'title': self.objectTitle(obj)}))
 
 class DeleteAction(FolderContentsActionView):
 
@@ -227,12 +231,11 @@ class DeleteAction(FolderContentsActionView):
             lock_info = None
 
         if lock_info is not None and lock_info.is_locked():
-            return _(u'${title} is locked and cannot be deleted.',
-                     mapping={u'title': title})
+            self.errors.append(_(u'${title} is locked and cannot be deleted.',
+                mapping={u'title': title}))
+            return
         else:
             parent.manage_delObjects(obj.getId())
-            return _(u'${title} has been deleted.',
-                     mapping={u'title': title})
 
 
 class RenameAction(FolderContentsActionView):
@@ -240,6 +243,7 @@ class RenameAction(FolderContentsActionView):
     failure_msg = _('Failed to rename all items')
 
     def __call__(self):
+        self.errors = []
         self.protect()
         context = aq_inner(self.context)
 
@@ -248,7 +252,6 @@ class RenameAction(FolderContentsActionView):
         catalog = getToolByName(context, 'portal_catalog')
         mtool = getToolByName(context, 'portal_membership')
 
-        msg = ''
         missing = []
         for data in torename:
             uid = data['UID']
@@ -259,8 +262,8 @@ class RenameAction(FolderContentsActionView):
             obj = brains[0].getObject()
             title = self.objectTitle(obj)
             if not mtool.checkPermission('Copy or Move', obj):
-                msg += _(u'Permission denied to rename ${title}.',
-                         mapping={u'title': title})
+                self.errors(_(u'Permission denied to rename ${title}.',
+                    mapping={u'title': title}))
                 continue
 
             sp = transaction.savepoint(optimistic=True)
@@ -286,10 +289,10 @@ class RenameAction(FolderContentsActionView):
                 raise
             except Exception:
                 sp.rollback()
-                msg += _('Error renaming ${title}', mapping={
-                    'title': title})
+                self.errors.append(_('Error renaming ${title}', mapping={
+                    'title': title}))
 
-        return self.message(msg, missing)
+        return self.message(missing)
 
 
 class TagsAction(FolderContentsActionView):
@@ -320,13 +323,57 @@ class WorkflowAction(FolderContentsActionView):
         pass
 
 
-class OrderAction(FolderContentsActionView):
-
-    def __call__(self):
-        pass
-
 
 class PropertiesAction(FolderContentsActionView):
 
     def action(self, obj):
         pass
+
+
+class SetFolderOrderAction(FolderContentsActionView):
+
+    def __call__(self):
+        self.errors = []
+        self.protect()
+
+
+class ItemOrder(FolderContentsActionView):
+    success_msg = _('Successfully moved item')
+    failure_msg = _('Error moving item')
+
+    def getOrdering(self, obj):
+        if IPloneSiteRoot.providedBy(obj):
+            return obj
+        else:
+            ordering = obj.getOrdering()
+            if not IExplicitOrdering.providedBy(ordering):
+                return None
+            return ordering
+
+    def __call__(self):
+        self.errors = []
+        self.protect()
+        catalog = getToolByName(self.context, 'portal_catalog')
+        uid = self.request.form.get('UID')
+        brains = catalog(UID=uid)
+        if len(brains) == 0:
+            self.errors.append(_(u'Item not found to move'))
+        else:
+            obj = brains[0].getObject()
+            parent = obj.aq_inner.aq_parent
+
+            ordering = self.getOrdering(parent)
+            id = obj.getId()
+            delta = int(self.request.form['delta'])
+            subset_ids = json.loads(self.request.form.get('subset_ids', '[]'))
+
+            if subset_ids:
+                position_id = [(ordering.getObjectPosition(i), i)
+                               for i in subset_ids]
+                position_id.sort()
+                if subset_ids != [i for position, i in position_id]:
+                    self.errors.append(_('Client/server ordering mismatch'))
+                    return self.message()
+
+            ordering.moveObjectsByDelta([id], delta)
+        return self.message()

@@ -63,9 +63,9 @@
     />
 
   <browser:page
-    for="Products.CMFCore.interfaces._content.IFolderish"
-    name="fc-order"
-    class=".folder.OrderAction"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    name="fc-folderOrder"
+    class=".folder.SetFolderOrderAction"
     permission="cmf.ListFolderContents"
     layer="..interfaces.IToolbarLayer"
     />
@@ -76,6 +76,14 @@
     class=".portlets.ManagePortlets"
     permission="plone.app.portlets.ManagePortlets"
     template="templates/manage_portlets.pt"
+    />
+
+  <browser:page
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    name="fc-itemOrder"
+    class=".folder.ItemOrder"
+    permission="cmf.ListFolderContents"
+    layer="..interfaces.IToolbarLayer"
     />
 
 </configure>
