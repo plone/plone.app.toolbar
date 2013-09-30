@@ -6,7 +6,7 @@
     i18n_domain="plone.app.toolbar">
 
   <browser:page
-    for="plone.folder.interfaces.IOrderableFolder"
+    for="Products.CMFCore.interfaces._content.IFolderish"
     class=".folder.FolderContentsView"
     name="folder_contents"
     template="templates/folder_contents.pt"
@@ -15,7 +15,7 @@
     />
 
   <browser:page
-    for="plone.folder.interfaces.IOrderableFolder"
+    for="Products.CMFCore.interfaces._content.IFolderish"
     name="fc-delete"
     class=".folder.DeleteAction"
     permission="cmf.ListFolderContents"
@@ -23,7 +23,7 @@
     />
 
   <browser:page
-    for="plone.folder.interfaces.IOrderableFolder"
+    for="Products.CMFCore.interfaces._content.IFolderish"
     name="fc-paste"
     class=".folder.PasteAction"
     permission="cmf.ListFolderContents"
@@ -31,7 +31,7 @@
     />
 
   <browser:page
-    for="plone.folder.interfaces.IOrderableFolder"
+    for="Products.CMFCore.interfaces._content.IFolderish"
     name="fc-workflow"
     class=".folder.WorkflowAction"
     permission="cmf.ListFolderContents"
@@ -39,7 +39,7 @@
     />
 
   <browser:page
-    for="plone.folder.interfaces.IOrderableFolder"
+    for="Products.CMFCore.interfaces._content.IFolderish"
     name="fc-tags"
     class=".folder.TagsAction"
     permission="cmf.ListFolderContents"
@@ -47,7 +47,7 @@
     />
 
   <browser:page
-    for="plone.folder.interfaces.IOrderableFolder"
+    for="Products.CMFCore.interfaces._content.IFolderish"
     name="fc-properties"
     class=".folder.PropertiesAction"
     permission="cmf.ListFolderContents"
@@ -55,7 +55,7 @@
     />
 
   <browser:page
-    for="plone.folder.interfaces.IOrderableFolder"
+    for="Products.CMFCore.interfaces._content.IFolderish"
     name="fc-rename"
     class=".folder.RenameAction"
     permission="cmf.ListFolderContents"
@@ -63,7 +63,7 @@
     />
 
   <browser:page
-    for="plone.folder.interfaces.IOrderableFolder"
+    for="Products.CMFCore.interfaces._content.IFolderish"
     name="fc-order"
     class=".folder.OrderAction"
     permission="cmf.ListFolderContents"
