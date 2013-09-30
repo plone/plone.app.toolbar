@@ -309,6 +309,13 @@ class TagsAction(FolderContentsActionView):
 
 class WorkflowAction(FolderContentsActionView):
 
+    def __call__(self):
+        if self.request.REQUEST_METHOD == 'POST':
+            return super(WorkflowAction, self).__call__()
+        else:
+            # for GET, we return available transitions
+            pass
+
     def action(self, obj):
         pass
 
