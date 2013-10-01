@@ -16,6 +16,8 @@ from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent
 from plone.folder.interfaces import IExplicitOrdering
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
+from DateTime import DateTime
+from Products.CMFCore.interfaces._content import IFolderish
 
 import json
 
@@ -165,23 +167,21 @@ class PasteAction(FolderContentsActionView):
         title = self.objectTitle(obj)
         if not mtool.checkPermission('Copy or Move', obj):
             self.errors.append(_(u'Permission denied to copy ${title}.',
-                     mapping={u'title': title}))
-            return
+                                 mapping={u'title': title}))
 
         parent = obj.aq_inner.aq_parent
         try:
             parent.manage_copyObjects(obj.getId(), self.request)
         except CopyError:
             self.errors.append(_(u'${title} is not copyable.',
-                mapping={u'title': title}))
+                                 mapping={u'title': title}))
 
     def cut(self, obj):
         mtool = getToolByName(self.context, 'portal_membership')
         title = self.objectTitle(obj)
         if not mtool.checkPermission('Copy or Move', obj):
             self.errors.append(_(u'Permission denied to cut ${title}.',
-                mapping={u'title': title}))
-            raise Unauthorized(msg)
+                                 mapping={u'title': title}))
 
         try:
             lock_info = obj.restrictedTraverse('@@plone_lock_info')
@@ -190,15 +190,14 @@ class PasteAction(FolderContentsActionView):
 
         if lock_info is not None and lock_info.is_locked():
             self.errors.append(_(u'${title} is locked and cannot be cut.',
-                     mapping={u'title': title}))
-            return
+                                 mapping={u'title': title}))
 
         parent = obj.aq_inner.aq_parent
         try:
             parent.manage_cutObjects(obj.getId(), self.request)
         except CopyError:
             self.errors.append(_(u'${title} is not moveable.',
-                mapping={u'title': title}))
+                                 mapping={u'title': title}))
 
     def action(self, obj):
         if self.operation == 'copy':
@@ -232,7 +231,7 @@ class DeleteAction(FolderContentsActionView):
 
         if lock_info is not None and lock_info.is_locked():
             self.errors.append(_(u'${title} is locked and cannot be deleted.',
-                mapping={u'title': title}))
+                                 mapping={u'title': title}))
             return
         else:
             parent.manage_delObjects(obj.getId())
@@ -263,7 +262,7 @@ class RenameAction(FolderContentsActionView):
             title = self.objectTitle(obj)
             if not mtool.checkPermission('Copy or Move', obj):
                 self.errors(_(u'Permission denied to rename ${title}.',
-                    mapping={u'title': title}))
+                              mapping={u'title': title}))
                 continue
 
             sp = transaction.savepoint(optimistic=True)
@@ -313,15 +312,52 @@ class TagsAction(FolderContentsActionView):
 class WorkflowAction(FolderContentsActionView):
 
     def __call__(self):
+        self.pworkflow = getToolByName(self.context, 'portal_workflow')
+        self.putils = getToolByName(self.context, 'plone_utils')
+        self.transition_id = self.request.form.get('transition', None)
+        self.comments = self.request.form.get('comments', '')
+        self.recurse = self.request.form.get('recurse', 'no') == 'yes'
         if self.request.REQUEST_METHOD == 'POST':
             return super(WorkflowAction, self).__call__()
         else:
             # for GET, we return available transitions
-            pass
+            selection = self.get_selection()
+            catalog = getToolByName(self.context, 'portal_catalog')
+            brains = catalog(UID=selection)
+            transitions = []
+            for brain in brains:
+                obj = brain.getObject()
+                for transition in self.pworkflow.getTransitionsFor(obj):
+                    tdata = {
+                        'id': transition['id'],
+                        'title': transition['name']
+                    }
+                    if tdata not in transitions:
+                        transitions.append(tdata)
+            return self.json({
+                'transitions': transitions
+            })
 
     def action(self, obj):
-        pass
+        transitions = self.pworkflow.getTransitionsFor(obj)
+        if self.transition_id in [t['id'] for t in transitions]:
+            try:
+                # set effective date if not already set
+                if obj.EffectiveDate() == 'None':
+                    obj.setEffectiveDate(DateTime())
 
+                self.pworkflow.doActionFor(obj, self.transition_id,
+                                           comment=self.comments)
+                if self.putils.isDefaultPage(obj):
+                    self.action(obj.aq_parent.aq_parent)
+                if self.recurse and IFolderish.providedBy(obj):
+                    for sub in obj.values():
+                        self.action(sub)
+            except ConflictError:
+                raise
+            except Exception:
+                self.errors.append('Could not transition: %s' % (
+                    self.objectTitle(obj)))
 
 
 class PropertiesAction(FolderContentsActionView):
