@@ -63,10 +63,10 @@
     />
 
   <browser:page
-    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    for="Products.CMFCore.interfaces._content.IFolderish"
     name="fc-folderOrder"
     class=".folder.SetFolderOrderAction"
-    permission="cmf.ListFolderContents"
+    permission="cmf.ModifyPortalContent"
     layer="..interfaces.IToolbarLayer"
     />
 
@@ -79,10 +79,10 @@
     />
 
   <browser:page
-    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    for="Products.CMFCore.interfaces._content.IFolderish"
     name="fc-itemOrder"
     class=".folder.ItemOrder"
-    permission="cmf.ListFolderContents"
+    permission="cmf.ModifyPortalContent"
     layer="..interfaces.IToolbarLayer"
     />
 

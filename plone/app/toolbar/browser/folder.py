@@ -36,7 +36,7 @@ class FolderContentsView(BrowserView):
                 base_vocabulary),
             'usersAjaxVocabulary': '%splone.app.vocabularies.Users' % (
                 base_vocabulary),
-            'moveUrl': '%s/fc-itemOrder' % base_url,
+            'moveUrl': '%s{path}/fc-itemOrder' % base_url,
             'indexOptionsUrl': '%s/@@qsOptions' % base_url,
             'buttonGroups': {
                 'primary': [{
@@ -92,6 +92,7 @@ class FolderContentsActionView(BrowserView):
 
     success_msg = _('Success')
     failure_msg = _('Failure')
+    required_obj_permission = None
 
     def objectTitle(self, obj):
         context = aq_inner(obj)
@@ -130,18 +131,23 @@ class FolderContentsActionView(BrowserView):
             str(self.request.form['folder'].lstrip('/')))
         self.operation = self.request.form['pasteOperation']
 
-        catalog = getToolByName(context, 'portal_catalog')
+        self.catalog = getToolByName(context, 'portal_catalog')
+        self.mtool = getToolByName(self.context, 'portal_membership')
 
-        missing = []
-        for uid in selection:
-            brains = catalog(UID=uid)
-            if len(brains) == 0:
-                missing.append(uid)
-                continue
-            obj = brains[0].getObject()
+        for brain in self.catalog(UID=selection):
+            selection.remove(brain.UID)  # remove everyone so we know if we
+                                         # missed any
+            obj = brain.getObject()
+            if self.required_obj_permission:
+                if not self.mtool.checkPermission(self.required_obj_permission,
+                                                  obj):
+                    self.errors.append(_('Permission denied for "${title}"',
+                                         mapping={
+                                             'title': self.objectTitle(obj)
+                                         }))
             self.action(obj)
 
-        return self.message(missing)
+        return self.message(selection)
 
     def message(self, missing=[]):
         if len(missing) > 0:
@@ -161,14 +167,10 @@ class FolderContentsActionView(BrowserView):
 class PasteAction(FolderContentsActionView):
     success_msg = _('Successfully pasted all items')
     failure_msg = _('Error during paste, some items were not pasted')
+    required_obj_permission = 'Copy or Move'
 
     def copy(self, obj):
-        mtool = getToolByName(self.context, 'portal_membership')
         title = self.objectTitle(obj)
-        if not mtool.checkPermission('Copy or Move', obj):
-            self.errors.append(_(u'Permission denied to copy ${title}.',
-                                 mapping={u'title': title}))
-
         parent = obj.aq_inner.aq_parent
         try:
             parent.manage_copyObjects(obj.getId(), self.request)
@@ -177,11 +179,7 @@ class PasteAction(FolderContentsActionView):
                                  mapping={u'title': title}))
 
     def cut(self, obj):
-        mtool = getToolByName(self.context, 'portal_membership')
         title = self.objectTitle(obj)
-        if not mtool.checkPermission('Copy or Move', obj):
-            self.errors.append(_(u'Permission denied to cut ${title}.',
-                                 mapping={u'title': title}))
 
         try:
             lock_info = obj.restrictedTraverse('@@plone_lock_info')
@@ -217,6 +215,7 @@ class PasteAction(FolderContentsActionView):
             self.errors.append(
                 _(u'You are not authorized to paste ${title} here.',
                     mapping={u'title': self.objectTitle(obj)}))
+
 
 class DeleteAction(FolderContentsActionView):
 
@@ -295,6 +294,7 @@ class RenameAction(FolderContentsActionView):
 
 
 class TagsAction(FolderContentsActionView):
+    required_obj_permission = 'Modify portal content'
 
     def __call__(self):
         self.remove = set(json.loads(self.request.form.get('remove')))
@@ -310,6 +310,7 @@ class TagsAction(FolderContentsActionView):
 
 
 class WorkflowAction(FolderContentsActionView):
+    required_obj_permission = 'Modify portal content'
 
     def __call__(self):
         self.pworkflow = getToolByName(self.context, 'portal_workflow')
@@ -363,6 +364,7 @@ class WorkflowAction(FolderContentsActionView):
 class PropertiesAction(FolderContentsActionView):
     success_msg = _(u'Successfully updated metadata')
     failure_msg = _(u'Failure updating metadata')
+    required_obj_permission = 'Modify portal content'
 
     def __call__(self):
         self.effectiveDate = self.request.form['effectiveDate']
@@ -407,11 +409,11 @@ class ItemOrder(FolderContentsActionView):
     success_msg = _('Successfully moved item')
     failure_msg = _('Error moving item')
 
-    def getOrdering(self, obj):
-        if IPloneSiteRoot.providedBy(obj):
-            return obj
+    def getOrdering(self):
+        if IPloneSiteRoot.providedBy(self.context):
+            return self.context
         else:
-            ordering = obj.getOrdering()
+            ordering = self.context.getOrdering()
             if not IExplicitOrdering.providedBy(ordering):
                 return None
             return ordering
@@ -419,27 +421,18 @@ class ItemOrder(FolderContentsActionView):
     def __call__(self):
         self.errors = []
         self.protect()
-        catalog = getToolByName(self.context, 'portal_catalog')
-        uid = self.request.form.get('UID')
-        brains = catalog(UID=uid)
-        if len(brains) == 0:
-            self.errors.append(_(u'Item not found to move'))
-        else:
-            obj = brains[0].getObject()
-            parent = obj.aq_inner.aq_parent
+        id = self.request.form.get('id')
+        ordering = self.getOrdering()
+        delta = int(self.request.form['delta'])
+        subset_ids = json.loads(self.request.form.get('subset_ids', '[]'))
 
-            ordering = self.getOrdering(parent)
-            id = obj.getId()
-            delta = int(self.request.form['delta'])
-            subset_ids = json.loads(self.request.form.get('subset_ids', '[]'))
+        if subset_ids:
+            position_id = [(ordering.getObjectPosition(i), i)
+                           for i in subset_ids]
+            position_id.sort()
+            if subset_ids != [i for position, i in position_id]:
+                self.errors.append(_('Client/server ordering mismatch'))
+                return self.message()
 
-            if subset_ids:
-                position_id = [(ordering.getObjectPosition(i), i)
-                               for i in subset_ids]
-                position_id.sort()
-                if subset_ids != [i for position, i in position_id]:
-                    self.errors.append(_('Client/server ordering mismatch'))
-                    return self.message()
-
-            ordering.moveObjectsByDelta([id], delta)
+        ordering.moveObjectsByDelta([id], delta)
         return self.message()
