@@ -112,7 +112,6 @@ class FolderContentsActionView(BrowserView):
 
         self.dest = site.restrictedTraverse(
             str(self.request.form['folder'].lstrip('/')))
-        self.operation = self.request.form['pasteOperation']
 
         self.catalog = getToolByName(context, 'portal_catalog')
         self.mtool = getToolByName(self.context, 'portal_membership')
@@ -181,7 +180,8 @@ class PasteAction(FolderContentsActionView):
                                  mapping={u'title': title}))
 
     def action(self, obj):
-        if self.operation == 'copy':
+        operation = self.request.form['pasteOperation']
+        if operation == 'copy':
             self.copy(obj)
         else:  # cut
             self.cut(obj)
