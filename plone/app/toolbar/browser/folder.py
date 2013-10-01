@@ -36,6 +36,7 @@ class FolderContentsView(BrowserView):
                 base_vocabulary),
             'usersAjaxVocabulary': '%splone.app.vocabularies.Users' % (
                 base_vocabulary),
+            'uploadUrl': '%s{path}/fileUpload' % base_url,
             'moveUrl': '%s{path}/fc-itemOrder' % base_url,
             'indexOptionsUrl': '%s/@@qsOptions' % base_url,
             'buttonGroups': {
