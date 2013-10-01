@@ -63,14 +63,6 @@
     />
 
   <browser:page
-    for="Products.CMFCore.interfaces._content.IFolderish"
-    name="fc-folderOrder"
-    class=".folder.SetFolderOrderAction"
-    permission="cmf.ModifyPortalContent"
-    layer="..interfaces.IToolbarLayer"
-    />
-
-  <browser:page
     name="toolbar-manage-portlets"
     for="*"
     class=".portlets.ManagePortlets"

@@ -63,26 +63,8 @@ class FolderContentsView(BrowserView):
                 }, {
                     'title': 'Rename',
                     'url': context_url + '/@@fc-rename'
-                }],
-                'folder': [{
-                    'title': 'Order',
-                    # {path} is rewritten by javascript to the current
-                    # viewed path
-                    'url': base_url + '{path}/@@fc-order'
                 }]
-            },
-            'folderOrderModes': [{
-                'id': '',
-                'title': 'Manual'
-            }, {
-                'id': 'effectiveDate',
-                'title': 'Publication Date'
-            }, {
-                'id': 'creationDate',
-                'title': 'Creation Date'
-            }],
-            'folderOrder': '',
-
+            }
         }
         self.options = json.dumps(options)
         return super(FolderContentsView, self).__call__()
@@ -396,13 +378,6 @@ class PropertiesAction(FolderContentsActionView):
         if self.exclude:
             obj.setExcludeFromNav(self.exclude == 'yes')
         obj.reindexObject()
-
-
-class SetFolderOrderAction(FolderContentsActionView):
-
-    def __call__(self):
-        self.errors = []
-        self.protect()
 
 
 class ItemOrder(FolderContentsActionView):
