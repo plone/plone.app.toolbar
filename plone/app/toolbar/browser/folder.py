@@ -361,9 +361,39 @@ class WorkflowAction(FolderContentsActionView):
 
 
 class PropertiesAction(FolderContentsActionView):
+    success_msg = _(u'Successfully updated metadata')
+    failure_msg = _(u'Failure updating metadata')
+
+    def __call__(self):
+        self.effectiveDate = self.request.form['effectiveDate']
+        effectiveTime = self.request.form['effectiveTime']
+        if effectiveTime:
+            self.effectiveDate = ' ' + effectiveTime
+        self.expirationDate = self.request.form['expirationDate']
+        expirationTime = self.request.form['expirationTime']
+        if expirationTime:
+            self.expirationDate + ' ' + expirationTime
+        self.copyright = self.request.form.get('copyright', '')
+        self.contributors = json.loads(
+            self.request.form.get('contributors', '[]'))
+        self.creators = json.loads(self.request.form.get('creators', '[]'))
+        self.exclude = self.request.form.get('exclude_from_nav', None)
+        return super(PropertiesAction, self).__call__()
 
     def action(self, obj):
-        pass
+        if self.effectiveDate:
+            obj.setEffectiveDate(DateTime(self.effectiveDate))
+        if self.expirationDate:
+            obj.setExpirationDate(DateTime(self.expirationDate))
+        if self.copyright:
+            obj.setRights(self.copyright)
+        if self.contributors:
+            obj.setContributors([c['id'] for c in self.contributors])
+        if self.creators:
+            obj.setCreators([c['id'] for c in self.creators])
+        if self.exclude:
+            obj.setExcludeFromNav(self.exclude == 'yes')
+        obj.reindexObject()
 
 
 class SetFolderOrderAction(FolderContentsActionView):
