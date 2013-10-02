@@ -4,6 +4,7 @@ from AccessControl import getSecurityManager
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from zope.component import getMultiAdapter
+from zope.component import getUtility
 from OFS.CopySupport import CopyError
 from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
@@ -18,6 +19,7 @@ from plone.folder.interfaces import IExplicitOrdering
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from DateTime import DateTime
 from Products.CMFCore.interfaces._content import IFolderish
+from zope.browsermenu.interfaces import IBrowserMenu
 
 import json
 
@@ -39,6 +41,7 @@ class FolderContentsView(BrowserView):
             'uploadUrl': '%s{path}/fileUpload' % base_url,
             'moveUrl': '%s{path}/fc-itemOrder' % base_url,
             'indexOptionsUrl': '%s/@@qsOptions' % base_url,
+            'contextInfoUrl': '%s{path}/@@fc-contextInfo' % base_url,
             'buttonGroups': {
                 'primary': [{
                     'title': 'Cut',
@@ -412,3 +415,16 @@ class ItemOrder(FolderContentsActionView):
 
         ordering.moveObjectsByDelta([id], delta)
         return self.message()
+
+
+class ContextInfo(BrowserView):
+
+    def __call__(self):
+        factories_menu = getUtility(
+            IBrowserMenu, name='plone_contentmenu_factory',
+            context=self.context).getMenuItems(self.context, self.request)
+        factories_menu = [m for m in factories_menu
+                          if m.get('title') != 'folder_add_settings']
+        return json.dumps({
+            'addButtons': factories_menu
+        })

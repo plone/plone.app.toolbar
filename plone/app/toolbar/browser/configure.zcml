@@ -78,6 +78,14 @@
     layer="..interfaces.IToolbarLayer"
     />
 
+  <browser:page
+    for="Products.CMFCore.interfaces._content.IFolderish"
+    name="fc-contextInfo"
+    class=".folder.ContextInfo"
+    permission="cmf.ListFolderContents"
+    layer="..interfaces.IToolbarLayer"
+    />
+
 </configure>
 
 
