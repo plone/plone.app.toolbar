@@ -402,18 +402,24 @@ class ItemOrder(FolderContentsActionView):
         self.protect()
         id = self.request.form.get('id')
         ordering = self.getOrdering()
-        delta = int(self.request.form['delta'])
+        delta = self.request.form['delta']
         subset_ids = json.loads(self.request.form.get('subset_ids', '[]'))
 
-        if subset_ids:
-            position_id = [(ordering.getObjectPosition(i), i)
-                           for i in subset_ids]
-            position_id.sort()
-            if subset_ids != [i for position, i in position_id]:
-                self.errors.append(_('Client/server ordering mismatch'))
-                return self.message()
+        if delta == 'top':
+            ordering.moveObjectsToTop([id])
+        elif delta == 'bottom':
+            ordering.moveObjectsToBottom([id])
+        else:
+            delta = int(delta)
+            if subset_ids:
+                position_id = [(ordering.getObjectPosition(i), i)
+                               for i in subset_ids]
+                position_id.sort()
+                if subset_ids != [i for position, i in position_id]:
+                    self.errors.append(_('Client/server ordering mismatch'))
+                    return self.message()
 
-        ordering.moveObjectsByDelta([id], delta)
+            ordering.moveObjectsByDelta([id], delta)
         return self.message()
 
 
