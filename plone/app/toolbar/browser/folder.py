@@ -42,6 +42,7 @@ class FolderContentsView(BrowserView):
             'moveUrl': '%s{path}/fc-itemOrder' % base_url,
             'indexOptionsUrl': '%s/@@qsOptions' % base_url,
             'contextInfoUrl': '%s{path}/@@fc-contextInfo' % base_url,
+            'setDefaultPageUrl': '%s{path}/@@fc-setDefaultPage' % base_url,
             'buttonGroups': {
                 'primary': [{
                     'title': 'Cut',
@@ -423,6 +424,24 @@ class ItemOrder(FolderContentsActionView):
         return self.message()
 
 
+class SetDefaultPage(FolderContentsActionView):
+    success_msg = _(u'Default page set successfully')
+    failure_msg = _(u'Failed to set default page')
+
+    def __call__(self):
+        id = self.request.form.get('id')
+        self.errors = []
+
+        if id not in self.context.objectIds():
+            self.errors.append(
+                _(u'There is no object with short name '
+                  u'${name} in this folder.',
+                  mapping={u'name': id}))
+        else:
+            self.context.setDefaultPage(id)
+        return self.message()
+
+
 class ContextInfo(BrowserView):
 
     def __call__(self):
@@ -432,5 +451,6 @@ class ContextInfo(BrowserView):
         factories_menu = [m for m in factories_menu
                           if m.get('title') != 'folder_add_settings']
         return json.dumps({
-            'addButtons': factories_menu
+            'addButtons': factories_menu,
+            'defaultPage': self.context.getDefaultPage()
         })
