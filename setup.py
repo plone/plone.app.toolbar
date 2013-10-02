@@ -39,11 +39,11 @@ setup(
     ],
     extras_require={
         'test': [
-            'plone.testing',
-            'plone.app.testing',
             'Products.CMFCore',
+            'plone.app.robotframework',
+            'plone.app.testing',
+            'plone.testing',
             'zope.configuration',
-            'robotsuite',
         ],
     },
     entry_points="""

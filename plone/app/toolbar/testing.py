@@ -1,15 +1,15 @@
-from plone.testing import z2
+from Products.CMFCore.utils import getToolByName
+from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
 from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import PloneSandboxLayer
-from plone.app.testing import TEST_USER_NAME
-from plone.app.testing import TEST_USER_PASSWORD
 from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import applyProfile
 from plone.app.testing import login
 from plone.app.testing import setRoles
 from plone.app.testing.layers import FunctionalTesting
 from plone.app.testing.layers import IntegrationTesting
-from Products.CMFCore.utils import getToolByName
+from plone.testing import z2
 from zope.configuration import xmlconfig
 
 
@@ -38,41 +38,37 @@ class Toolbar(PloneSandboxLayer):
             **error_props)
 
         # Put resource registries in debug mode to make it easier to
-        # inspect CSS, JavaScript, and KSS
+        # inspect CSS and JavaScript
         getToolByName(portal, 'portal_css').setDebugMode(True)
         getToolByName(portal, 'portal_javascripts').setDebugMode(True)
-        #getToolByName(portal, 'portal_kss').setDebugMode(True)
 
-        # set up content required for acceptance tests
         login(portal, TEST_USER_NAME)
-        setRoles(portal, TEST_USER_ID, ['Manager', ])
-        portal.invokeFactory('Folder', 'acceptance-test-folder',
-                             title='Acceptance Test Folder')
+        portal.portal_workflow.setDefaultChain("simple_publication_workflow")
+        setRoles(portal, TEST_USER_ID, ['Manager'])
+        portal.invokeFactory(
+            "Folder",
+            id="test-folder",
+            title=u"Test Folder"
+        )
 
-
-def browser_login(portal, browser, username=None, password=None):
-    handleErrors = browser.handleErrors
-    try:
-        browser.handleErrors = False
-        browser.open(portal.absolute_url() + '/login_form')
-        if username is None:
-            username = TEST_USER_NAME
-        if password is None:
-            password = TEST_USER_PASSWORD
-        browser.getControl(name='__ac_name').value = username
-        browser.getControl(name='__ac_password').value = password
-        browser.getControl(name='submit').click()
-    finally:
-        browser.handleErrors = handleErrors
+    def tearDownPloneSite(self, portal):
+        login(portal, TEST_USER_NAME)
+        setRoles(portal, TEST_USER_ID, ['Manager'])
+        portal.manage_delObjects(['test-folder'])
 
 
 PLONEAPPTOOLBAR_FIXTURE = Toolbar()
+
 PLONEAPPTOOLBAR_INTEGRATION_TESTING = IntegrationTesting(
     bases=(PLONEAPPTOOLBAR_FIXTURE,),
     name="PloneAppToolbarLayer:Integration")
+
 PLONEAPPTOOLBAR_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(PLONEAPPTOOLBAR_FIXTURE,),
     name="PloneAppToolbarLayer:Functional")
-PLONEAPPTOOLBAR_ACCEPTANCE_TESTING = FunctionalTesting(
-    bases=(PLONEAPPTOOLBAR_FIXTURE, z2.ZSERVER_FIXTURE,),
+
+PLONEAPPTOOLBAR_ROBOT_TESTING = FunctionalTesting(
+    bases=(PLONEAPPTOOLBAR_FIXTURE,
+           REMOTE_LIBRARY_BUNDLE_FIXTURE,
+           z2.ZSERVER_FIXTURE,),
     name="PloneAppToolbarLayer:Acceptance")

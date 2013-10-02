@@ -1,13 +1,19 @@
 *** Settings ***
 
-Library  plone.act.PloneLibrary
-Library  Selenium2Library  run_on_failure=Capture Page Screenshot
-Variables  plone/app/testing/interfaces.py
-Resource  plone/act/keywords.txt
+Resource  plone/app/robotframework/keywords.robot
+Resource  plone/app/robotframework/saucelabs.robot
+Resource  plone/app/robotframework/variables.robot
 
-Suite Setup  Open Plone Root
+Library  Remote  ${PLONE_URL}/RobotRemote
 
-Suite Teardown  Close All Browsers
+Test Setup  Run keywords  Open SauceLabs test browser
+Test Teardown  Run keywords  Report test status  Close all browsers
+
+
+*** Variables ***
+
+${TEST_FOLDER}  test-folder
+
 
 *** Test cases ***
 
@@ -23,7 +29,7 @@ Toolbar should contain content action tabs
     Log in as site owner
     Go to  ${PLONE_URL}
 
-    Wait Until Page Contains Element  id=toolbar
+    Wait Until Page Contains Element  css=div.toolbar
 
     Frame Should Contain  id=toolbar  Contents
     Frame Should Contain  id=toolbar  View
@@ -36,7 +42,7 @@ Toolbar should contain document actions menus
     Log in as site owner
     Go to  ${PLONE_URL}
 
-    Wait Until Page Contains Element  id=toolbar
+    Wait Until Page Contains Element  css=div.toolbar
 
     Frame Should Contain  id=toolbar  Display
     Frame Should Contain  id=toolbar  Add new
@@ -45,7 +51,7 @@ Contents tab should open folder listing
     Log in as site owner
     Go to  ${PLONE_URL}
 
-    Wait Until Page Contains Element  id=toolbar
+    Wait Until Page Contains Element  css=div.toolbar
     Select Frame  id=toolbar
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  Contents
     Click Link  Contents
@@ -54,31 +60,31 @@ Contents tab should open folder listing
 
 Edit tab should open edit view
     Log in as site owner
-    Go to  ${TEST_FOLDER}
+    Go to  ${PLONE_URL}/${TEST_FOLDER}
 
-    Wait Until Page Contains Element  id=toolbar
+    Wait Until Page Contains Element  css=div.toolbar
     Select Frame  id=toolbar
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  Edit
     Click Link  Edit
 
-    Location Should Be  ${TEST_FOLDER}/edit
+    Location Should Be  ${PLONE_URL}/${TEST_FOLDER}/edit
 
 View tab should return to view
     Log in as site owner
-    Go to  ${TEST_FOLDER}/edit
+    Go to  ${PLONE_URL}/${TEST_FOLDER}/edit
 
-    Wait Until Page Contains Element  id=toolbar
+    Wait Until Page Contains Element  css=div.toolbar
     Select Frame  id=toolbar
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  View
     Click Link  View
 
-    Location Should Be  ${TEST_FOLDER}
+    Location Should Be  ${PLONE_URL}/${TEST_FOLDER}
 
 Rules tab should open rules view
     Log in as site owner
     Go to  ${PLONE_URL}
 
-    Wait Until Page Contains Element  id=toolbar
+    Wait Until Page Contains Element  css=div.toolbar
     Select Frame  id=toolbar
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  Rules
     Click Link  Rules
@@ -89,7 +95,7 @@ Sharing tab should open sharing view
     Log in as site owner
     Go to  ${PLONE_URL}
 
-    Wait Until Page Contains Element  id=toolbar
+    Wait Until Page Contains Element  css=div.toolbar
     Select Frame  id=toolbar
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  Sharing
     Click Link  Sharing
@@ -98,8 +104,8 @@ Sharing tab should open sharing view
 
 Actions menu dropdown should open on click
     Log in as site owner
-    Go to  ${TEST_FOLDER}
-    Wait Until Page Contains Element  id=toolbar
+    Go to  ${PLONE_URL}/${TEST_FOLDER}
+    Wait Until Page Contains Element  css=div.toolbar
     Select Frame  id=toolbar
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  Actions
 
@@ -110,8 +116,8 @@ Actions menu dropdown should open on click
 
 Display menu dropdown should open on click
     Log in as site owner
-    Go to  ${TEST_FOLDER}
-    Wait Until Page Contains Element  id=toolbar
+    Go to  ${PLONE_URL}/${TEST_FOLDER}
+    Wait Until Page Contains Element  css=div.toolbar
     Select Frame  id=toolbar
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  Display
 
@@ -122,8 +128,8 @@ Display menu dropdown should open on click
 
 Factories menu dropdown should open on click
     Log in as site owner
-    Go to  ${TEST_FOLDER}
-    Wait Until Page Contains Element  id=toolbar
+    Go to  ${PLONE_URL}/${TEST_FOLDER}
+    Wait Until Page Contains Element  css=div.toolbar
     Select Frame  id=toolbar
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  Add new…
 
@@ -134,8 +140,8 @@ Factories menu dropdown should open on click
 
 Workflow menu dropdown should open on click
     Log in as site owner
-    Go to  ${TEST_FOLDER}
-    Wait Until Page Contains Element  id=toolbar
+    Go to  ${PLONE_URL}/${TEST_FOLDER}
+    Wait Until Page Contains Element  css=div.toolbar
     Select Frame  id=toolbar
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  State:
 
@@ -146,8 +152,8 @@ Workflow menu dropdown should open on click
 
 Personal actions dropdown should open on click
     Log in as site owner
-    Go to  ${TEST_FOLDER}
-    Wait Until Page Contains Element  id=toolbar
+    Go to  ${PLONE_URL}/${TEST_FOLDER}
+    Wait Until Page Contains Element  css=div.toolbar
     Select Frame  id=toolbar
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  State:
 
