@@ -4,6 +4,9 @@ Changelog
 1.3 (unreleased)
 ----------------
 
+- Upgrade robot test suite to use plone.app.robotframework instead plone.act.
+  [thet]
+
 - Fix ZCML loading using z3c.autoinclude.
   [rpatterson]
 
