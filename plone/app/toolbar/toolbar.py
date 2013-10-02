@@ -14,6 +14,13 @@ from plone.tiles import Tile
 from Products.CMFCore.utils import _checkPermission
 
 
+def ajax_load_url(url):
+    if url and not 'ajax_load' in url:
+        sep = '?' in url and '&' or '?'  # url parameter seperator
+        url = '%s%sajax_load=1' % (url, sep)
+    return url
+
+
 class ToolbarTile(Tile):
 
     def get_multi_adapter(self, name):
@@ -132,6 +139,10 @@ class ToolbarTile(Tile):
             else:
                 item['url'] = '%s/%s' % (self.context_url, button_url)
 
+            # Append ajax_load=1 to the url. This skips rendering of the
+            # Plone border, which makes things a lot faster.
+            item['url'] = ajax_load_url(item['url'])
+
             # Action method may be a method alias:
             # Attempt to resolve to a template.
             action_method = item['url'].split('/')[-1]
@@ -177,6 +188,8 @@ class ToolbarTile(Tile):
                                 item['klass'] = item['extra']['class']
                     if 'submenu' in item and item['submenu']:
                         item['submenu'] = contentmenu(item['submenu'])
+                item['action'] = ajax_load_url(item['action'])
+
                 buttons.append(item)
             return buttons
 
@@ -234,6 +247,7 @@ class ToolbarTile(Tile):
     def site_setup(self):
         for item in self.context_state.actions('user'):
             if item['id'] == 'plone_setup' and item['available']:
+                item['url'] = ajax_load_url(item['url'])
                 return item
 
     @memoize
@@ -263,8 +277,9 @@ class ToolbarTile(Tile):
                 item['title'] = manager_titles[manager_name]
             else:
                 item['title'] = ' '.join(manager_name.split('.')).title()
-            item['url'] = '%s/@@toolbar-manage-portlets/%s' % (
-                current_url, manager_name)
+            item['url'] = ajax_load_url('%s/@@toolbar-manage-portlets/%s' % (
+                current_url, manager_name))
+
             items.append(item)
         items.sort()
         return items

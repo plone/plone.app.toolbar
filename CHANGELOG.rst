@@ -4,6 +4,10 @@ Changelog
 1.3 (unreleased)
 ----------------
 
+- Add ajax_load=1 to toolbar target urls for faster loading without the
+  plone border.
+  [thet]
+
 - Upgrade robot test suite to use plone.app.robotframework instead plone.act.
   [thet]
 
