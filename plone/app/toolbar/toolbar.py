@@ -15,7 +15,7 @@ from Products.CMFCore.utils import _checkPermission
 
 
 def ajax_load_url(url):
-    if not 'ajax_load' in url:
+    if url and not 'ajax_load' in url:
         sep = '?' in url and '&' or '?'  # url parameter seperator
         url = '%s%sajax_load=1' % (url, sep)
     return url
