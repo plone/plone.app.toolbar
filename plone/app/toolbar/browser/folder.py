@@ -42,6 +42,7 @@ class FolderContentsView(BrowserView):
             'moveUrl': '%s{path}/fc-itemOrder' % base_url,
             'indexOptionsUrl': '%s/@@qsOptions' % base_url,
             'contextInfoUrl': '%s{path}/@@fc-contextInfo' % base_url,
+            'setDefaultPageUrl': '%s{path}/@@fc-setDefaultPage' % base_url,
             'buttonGroups': {
                 'primary': [{
                     'title': 'Cut',
@@ -402,18 +403,42 @@ class ItemOrder(FolderContentsActionView):
         self.protect()
         id = self.request.form.get('id')
         ordering = self.getOrdering()
-        delta = int(self.request.form['delta'])
+        delta = self.request.form['delta']
         subset_ids = json.loads(self.request.form.get('subset_ids', '[]'))
 
-        if subset_ids:
-            position_id = [(ordering.getObjectPosition(i), i)
-                           for i in subset_ids]
-            position_id.sort()
-            if subset_ids != [i for position, i in position_id]:
-                self.errors.append(_('Client/server ordering mismatch'))
-                return self.message()
+        if delta == 'top':
+            ordering.moveObjectsToTop([id])
+        elif delta == 'bottom':
+            ordering.moveObjectsToBottom([id])
+        else:
+            delta = int(delta)
+            if subset_ids:
+                position_id = [(ordering.getObjectPosition(i), i)
+                               for i in subset_ids]
+                position_id.sort()
+                if subset_ids != [i for position, i in position_id]:
+                    self.errors.append(_('Client/server ordering mismatch'))
+                    return self.message()
 
-        ordering.moveObjectsByDelta([id], delta)
+            ordering.moveObjectsByDelta([id], delta)
+        return self.message()
+
+
+class SetDefaultPage(FolderContentsActionView):
+    success_msg = _(u'Default page set successfully')
+    failure_msg = _(u'Failed to set default page')
+
+    def __call__(self):
+        id = self.request.form.get('id')
+        self.errors = []
+
+        if id not in self.context.objectIds():
+            self.errors.append(
+                _(u'There is no object with short name '
+                  u'${name} in this folder.',
+                  mapping={u'name': id}))
+        else:
+            self.context.setDefaultPage(id)
         return self.message()
 
 
@@ -426,5 +451,6 @@ class ContextInfo(BrowserView):
         factories_menu = [m for m in factories_menu
                           if m.get('title') != 'folder_add_settings']
         return json.dumps({
-            'addButtons': factories_menu
+            'addButtons': factories_menu,
+            'defaultPage': self.context.getDefaultPage()
         })
