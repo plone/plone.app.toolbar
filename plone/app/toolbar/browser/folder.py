@@ -1,15 +1,25 @@
+import transaction
 from AccessControl import Unauthorized
-from zope.component import getMultiAdapter
-from OFS.CopySupport import CopyError
+from AccessControl import getSecurityManager
 from Acquisition import aq_inner
+from Acquisition import aq_parent
+from zope.component import getMultiAdapter
+from zope.component import getUtility
+from OFS.CopySupport import CopyError
 from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
 from Products.CMFPlone import utils
 from Products.CMFPlone import PloneMessageFactory as _
 from plone.protect.postonly import check as checkpost
 from ZODB.POSException import ConflictError
-from Products.PythonScripts.standard import url_unquote
 from zope.component.hooks import getSite
+from zope.event import notify
+from zope.lifecycleevent import ObjectModifiedEvent
+from plone.folder.interfaces import IExplicitOrdering
+from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
+from DateTime import DateTime
+from Products.CMFCore.interfaces._content import IFolderish
+from zope.browsermenu.interfaces import IBrowserMenu
 
 import json
 
@@ -28,7 +38,11 @@ class FolderContentsView(BrowserView):
                 base_vocabulary),
             'usersAjaxVocabulary': '%splone.app.vocabularies.Users' % (
                 base_vocabulary),
+            'uploadUrl': '%s{path}/fileUpload' % base_url,
+            'moveUrl': '%s{path}/fc-itemOrder' % base_url,
             'indexOptionsUrl': '%s/@@qsOptions' % base_url,
+            'contextInfoUrl': '%s{path}/@@fc-contextInfo' % base_url,
+            'setDefaultPageUrl': '%s{path}/@@fc-setDefaultPage' % base_url,
             'buttonGroups': {
                 'primary': [{
                     'title': 'Cut',
@@ -54,25 +68,8 @@ class FolderContentsView(BrowserView):
                 }, {
                     'title': 'Rename',
                     'url': context_url + '/@@fc-rename'
-                }],
-                'folder': [{
-                    'title': 'Order',
-                    # {path} is rewritten by javascript to the current
-                    # viewed path
-                    'url': base_url + '{path}/@@fc-order'
                 }]
-            },
-            'folderOrderModes': [{
-                'id': '',
-                'title': 'Manual'
-            }, {
-                'id': 'effectiveDate',
-                'title': 'Publication Date'
-            }, {
-                'id': 'creationDate',
-                'title': 'Creation Date'
-            }],
-            'folderOrder': ''
+            }
         }
         self.options = json.dumps(options)
         return super(FolderContentsView, self).__call__()
@@ -82,6 +79,7 @@ class FolderContentsActionView(BrowserView):
 
     success_msg = _('Success')
     failure_msg = _('Failure')
+    required_obj_permission = None
 
     def objectTitle(self, obj):
         context = aq_inner(obj)
@@ -111,66 +109,63 @@ class FolderContentsActionView(BrowserView):
 
     def __call__(self):
         self.protect()
+        self.errors = []
         site = getSite()
         context = aq_inner(self.context)
         selection = self.get_selection()
 
         self.dest = site.restrictedTraverse(
             str(self.request.form['folder'].lstrip('/')))
-        self.operation = self.request.form['pasteOperation']
 
-        catalog = getToolByName(context, 'portal_catalog')
+        self.catalog = getToolByName(context, 'portal_catalog')
+        self.mtool = getToolByName(self.context, 'portal_membership')
 
-        msg = ''
-        missing = []
-        for uid in selection:
-            brains = catalog(UID=uid)
-            if len(brains) == 0:
-                missing.append(uid)
-                continue
-            obj = brains[0].getObject()
-            msg += self.action(obj)
+        for brain in self.catalog(UID=selection):
+            selection.remove(brain.UID)  # remove everyone so we know if we
+                                         # missed any
+            obj = brain.getObject()
+            if self.required_obj_permission:
+                if not self.mtool.checkPermission(self.required_obj_permission,
+                                                  obj):
+                    self.errors.append(_('Permission denied for "${title}"',
+                                         mapping={
+                                             'title': self.objectTitle(obj)
+                                         }))
+            self.action(obj)
 
+        return self.message(selection)
+
+    def message(self, missing=[]):
         if len(missing) > 0:
-            msg += _('${items} could not be found', mapping={
-                'items': str(len(missing))}) + '\n'
-        if not msg:
-            msg = self.success_msg + '\n' + msg
+            self.errors.append(_('${items} could not be found', mapping={
+                'items': str(len(missing))}))
+        if not self.errors:
+            msg = self.success_msg
         else:
-            msg = self.failure_msg + '\n' + msg
+            msg = self.failure_msg
 
-        return json.dumps({
+        return self.json({
             'status': 'success',
-            'msg': msg
+            'msg': '%s: %s' % (msg, '\n'.join(self.errors))
         })
 
 
 class PasteAction(FolderContentsActionView):
     success_msg = _('Successfully pasted all items')
     failure_msg = _('Error during paste, some items were not pasted')
+    required_obj_permission = 'Copy or Move'
 
     def copy(self, obj):
-        mtool = getToolByName(self.context, 'portal_membership')
         title = self.objectTitle(obj)
-        if not mtool.checkPermission('Copy or Move', obj):
-            return _(u'Permission denied to copy ${title}.',
-                     mapping={u'title': title}) + '\n'
-
         parent = obj.aq_inner.aq_parent
         try:
             parent.manage_copyObjects(obj.getId(), self.request)
         except CopyError:
-            return _(u'${title} is not copyable.',
-                     mapping={u'title': title}) + '\n'
-        return ''
+            self.errors.append(_(u'${title} is not copyable.',
+                                 mapping={u'title': title}))
 
     def cut(self, obj):
-        mtool = getToolByName(self.context, 'portal_membership')
         title = self.objectTitle(obj)
-        if not mtool.checkPermission('Copy or Move', obj):
-            msg = _(u'Permission denied to cut ${title}.',
-                    mapping={u'title': title})
-            raise Unauthorized(msg)
 
         try:
             lock_info = obj.restrictedTraverse('@@plone_lock_info')
@@ -178,24 +173,24 @@ class PasteAction(FolderContentsActionView):
             lock_info = None
 
         if lock_info is not None and lock_info.is_locked():
-            return _(u'${title} is locked and cannot be cut.',
-                     mapping={u'title': title}) + '\n'
+            self.errors.append(_(u'${title} is locked and cannot be cut.',
+                                 mapping={u'title': title}))
 
         parent = obj.aq_inner.aq_parent
         try:
             parent.manage_cutObjects(obj.getId(), self.request)
         except CopyError:
-            return _(u'${title} is not moveable.',
-                     mapping={u'title': title}) + '\n'
-        return ''
+            self.errors.append(_(u'${title} is not moveable.',
+                                 mapping={u'title': title}))
 
     def action(self, obj):
-        if self.operation == 'copy':
-            msg = self.copy(obj)
+        operation = self.request.form['pasteOperation']
+        if operation == 'copy':
+            self.copy(obj)
         else:  # cut
-            msg = self.cut(obj)
-        if msg:
-            return msg
+            self.cut(obj)
+        if self.errors:
+            return
         try:
             self.dest.manage_pasteObjects(self.request['__cp'])
         except ConflictError:
@@ -204,9 +199,9 @@ class PasteAction(FolderContentsActionView):
             # avoid this unfriendly exception text:
             # "You are not allowed to access 'manage_pasteObjects' in this
             # context"
-            return _(u'You are not authorized to paste ${title} here.',
-                     mapping={u'title': self.objectTitle(obj)})
-        return ''
+            self.errors.append(
+                _(u'You are not authorized to paste ${title} here.',
+                    mapping={u'title': self.objectTitle(obj)}))
 
 
 class DeleteAction(FolderContentsActionView):
@@ -221,80 +216,241 @@ class DeleteAction(FolderContentsActionView):
             lock_info = None
 
         if lock_info is not None and lock_info.is_locked():
-            return _(u'${title} is locked and cannot be deleted.',
-                     mapping={u'title': title})
+            self.errors.append(_(u'${title} is locked and cannot be deleted.',
+                                 mapping={u'title': title}))
+            return
         else:
             parent.manage_delObjects(obj.getId())
-            return _(u'${title} has been deleted.',
-                     mapping={u'title': title})
-        return ''
 
 
 class RenameAction(FolderContentsActionView):
+    success_msg = _('Items renamed')
+    failure_msg = _('Failed to rename all items')
 
-    def rename(self, paths=[], new_ids=[], new_titles=[]):
+    def __call__(self):
+        self.errors = []
         self.protect()
         context = aq_inner(self.context)
-        req = self.request
-        plone_utils = getToolByName(context, 'plone_utils')
-        orig_template = req.get('orig_template', None)
-        change_template = paths and orig_template is not None
-        message = None
-        if change_template:
-            # We were called by 'object_rename'.  So now we take care that the
-            # user is redirected to the object with the new id.
-            portal_url = getToolByName(context, 'portal_url')
-            portal = portal_url.getPortalObject()
-            obj = portal.restrictedTraverse(paths[0])
-            new_id = new_ids[0]
-            obid = obj.getId()
-            if new_id and new_id != obid:
-                orig_path = obj.absolute_url_path()
-                # replace the id in the object path with the new id
-                base_path = orig_path.split('/')[:-1]
-                base_path.append(new_id)
-                new_path = '/'.join(base_path)
-                orig_template = orig_template.replace(url_unquote(orig_path),
-                                                      new_path)
-                req.set('orig_template', orig_template)
-                message = _(u"Renamed '${oldid}' to '${newid}'.",
-                            mapping={u'oldid': obid, u'newid': new_id})
 
-        success, failure = plone_utils.renameObjectsByPaths(
-            paths, new_ids, new_titles, REQUEST=req)
+        torename = json.loads(self.request.form['torename'])
 
-        if message is None:
-            message = _(u'${count} item(s) renamed.',
-                        mapping={u'count': str(len(success))})
+        catalog = getToolByName(context, 'portal_catalog')
+        mtool = getToolByName(context, 'portal_membership')
 
-        if failure:
-            message = _(u'The following item(s) could not be '
-                        u'renamed: ${items}.',
-                        mapping={u'items': ', '.join(failure.keys())})
+        missing = []
+        for data in torename:
+            uid = data['UID']
+            brains = catalog(UID=uid)
+            if len(brains) == 0:
+                missing.append(uid)
+                continue
+            obj = brains[0].getObject()
+            title = self.objectTitle(obj)
+            if not mtool.checkPermission('Copy or Move', obj):
+                self.errors(_(u'Permission denied to rename ${title}.',
+                              mapping={u'title': title}))
+                continue
 
-        context.plone_utils.addPortalMessage(message)
-        return self.redirectFolderContents()
+            sp = transaction.savepoint(optimistic=True)
+
+            newid = data['newid'].encode('utf8')
+            newtitle = data['newtitle']
+            try:
+                obid = obj.getId()
+                title = obj.Title()
+                change_title = newtitle and title != newtitle
+                if change_title:
+                    getSecurityManager().validate(obj, obj, 'setTitle',
+                                                  obj.setTitle)
+                    obj.setTitle(newtitle)
+                    notify(ObjectModifiedEvent(obj))
+                if newid and obid != newid:
+                    parent = aq_parent(aq_inner(obj))
+                    parent.manage_renameObjects((obid,), (newid,))
+                elif change_title:
+                    # the rename will have already triggered a reindex
+                    obj.reindexObject()
+            except ConflictError:
+                raise
+            except Exception:
+                sp.rollback()
+                self.errors.append(_('Error renaming ${title}', mapping={
+                    'title': title}))
+
+        return self.message(missing)
 
 
 class TagsAction(FolderContentsActionView):
+    required_obj_permission = 'Modify portal content'
+
+    def __call__(self):
+        self.remove = set(json.loads(self.request.form.get('remove')))
+        self.add = set(json.loads(self.request.form.get('add')))
+        return super(TagsAction, self).__call__()
 
     def action(self, obj):
-        pass
+        tags = set(obj.Subject())
+        tags = tags - self.remove
+        tags = tags | self.add
+        obj.setSubject(list(tags))
+        obj.reindexObject()
 
 
 class WorkflowAction(FolderContentsActionView):
-
-    def action(self, obj):
-        pass
-
-
-class OrderAction(FolderContentsActionView):
+    required_obj_permission = 'Modify portal content'
 
     def __call__(self):
-        pass
+        self.pworkflow = getToolByName(self.context, 'portal_workflow')
+        self.putils = getToolByName(self.context, 'plone_utils')
+        self.transition_id = self.request.form.get('transition', None)
+        self.comments = self.request.form.get('comments', '')
+        self.recurse = self.request.form.get('recurse', 'no') == 'yes'
+        if self.request.REQUEST_METHOD == 'POST':
+            return super(WorkflowAction, self).__call__()
+        else:
+            # for GET, we return available transitions
+            selection = self.get_selection()
+            catalog = getToolByName(self.context, 'portal_catalog')
+            brains = catalog(UID=selection)
+            transitions = []
+            for brain in brains:
+                obj = brain.getObject()
+                for transition in self.pworkflow.getTransitionsFor(obj):
+                    tdata = {
+                        'id': transition['id'],
+                        'title': transition['name']
+                    }
+                    if tdata not in transitions:
+                        transitions.append(tdata)
+            return self.json({
+                'transitions': transitions
+            })
+
+    def action(self, obj):
+        transitions = self.pworkflow.getTransitionsFor(obj)
+        if self.transition_id in [t['id'] for t in transitions]:
+            try:
+                # set effective date if not already set
+                if obj.EffectiveDate() == 'None':
+                    obj.setEffectiveDate(DateTime())
+
+                self.pworkflow.doActionFor(obj, self.transition_id,
+                                           comment=self.comments)
+                if self.putils.isDefaultPage(obj):
+                    self.action(obj.aq_parent.aq_parent)
+                if self.recurse and IFolderish.providedBy(obj):
+                    for sub in obj.values():
+                        self.action(sub)
+            except ConflictError:
+                raise
+            except Exception:
+                self.errors.append('Could not transition: %s' % (
+                    self.objectTitle(obj)))
 
 
 class PropertiesAction(FolderContentsActionView):
+    success_msg = _(u'Successfully updated metadata')
+    failure_msg = _(u'Failure updating metadata')
+    required_obj_permission = 'Modify portal content'
+
+    def __call__(self):
+        self.effectiveDate = self.request.form['effectiveDate']
+        effectiveTime = self.request.form['effectiveTime']
+        if effectiveTime:
+            self.effectiveDate = ' ' + effectiveTime
+        self.expirationDate = self.request.form['expirationDate']
+        expirationTime = self.request.form['expirationTime']
+        if expirationTime:
+            self.expirationDate + ' ' + expirationTime
+        self.copyright = self.request.form.get('copyright', '')
+        self.contributors = json.loads(
+            self.request.form.get('contributors', '[]'))
+        self.creators = json.loads(self.request.form.get('creators', '[]'))
+        self.exclude = self.request.form.get('exclude_from_nav', None)
+        return super(PropertiesAction, self).__call__()
 
     def action(self, obj):
-        pass
+        if self.effectiveDate:
+            obj.setEffectiveDate(DateTime(self.effectiveDate))
+        if self.expirationDate:
+            obj.setExpirationDate(DateTime(self.expirationDate))
+        if self.copyright:
+            obj.setRights(self.copyright)
+        if self.contributors:
+            obj.setContributors([c['id'] for c in self.contributors])
+        if self.creators:
+            obj.setCreators([c['id'] for c in self.creators])
+        if self.exclude:
+            obj.setExcludeFromNav(self.exclude == 'yes')
+        obj.reindexObject()
+
+
+class ItemOrder(FolderContentsActionView):
+    success_msg = _('Successfully moved item')
+    failure_msg = _('Error moving item')
+
+    def getOrdering(self):
+        if IPloneSiteRoot.providedBy(self.context):
+            return self.context
+        else:
+            ordering = self.context.getOrdering()
+            if not IExplicitOrdering.providedBy(ordering):
+                return None
+            return ordering
+
+    def __call__(self):
+        self.errors = []
+        self.protect()
+        id = self.request.form.get('id')
+        ordering = self.getOrdering()
+        delta = self.request.form['delta']
+        subset_ids = json.loads(self.request.form.get('subset_ids', '[]'))
+
+        if delta == 'top':
+            ordering.moveObjectsToTop([id])
+        elif delta == 'bottom':
+            ordering.moveObjectsToBottom([id])
+        else:
+            delta = int(delta)
+            if subset_ids:
+                position_id = [(ordering.getObjectPosition(i), i)
+                               for i in subset_ids]
+                position_id.sort()
+                if subset_ids != [i for position, i in position_id]:
+                    self.errors.append(_('Client/server ordering mismatch'))
+                    return self.message()
+
+            ordering.moveObjectsByDelta([id], delta)
+        return self.message()
+
+
+class SetDefaultPage(FolderContentsActionView):
+    success_msg = _(u'Default page set successfully')
+    failure_msg = _(u'Failed to set default page')
+
+    def __call__(self):
+        id = self.request.form.get('id')
+        self.errors = []
+
+        if id not in self.context.objectIds():
+            self.errors.append(
+                _(u'There is no object with short name '
+                  u'${name} in this folder.',
+                  mapping={u'name': id}))
+        else:
+            self.context.setDefaultPage(id)
+        return self.message()
+
+
+class ContextInfo(BrowserView):
+
+    def __call__(self):
+        factories_menu = getUtility(
+            IBrowserMenu, name='plone_contentmenu_factory',
+            context=self.context).getMenuItems(self.context, self.request)
+        factories_menu = [m for m in factories_menu
+                          if m.get('title') != 'folder_add_settings']
+        return json.dumps({
+            'addButtons': factories_menu,
+            'defaultPage': self.context.getDefaultPage()
+        })

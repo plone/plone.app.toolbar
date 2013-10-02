@@ -8,6 +8,9 @@ Changelog
   plone border.
   [thet]
 
+- Upgrade robot test suite to use plone.app.robotframework instead plone.act.
+  [thet]
+
 - Fix ZCML loading using z3c.autoinclude.
   [rpatterson]
 
