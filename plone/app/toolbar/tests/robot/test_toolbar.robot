@@ -29,30 +29,39 @@ Toolbar should contain content action tabs
     Log in as site owner
     Go to  ${PLONE_URL}
 
-    Wait Until Page Contains Element  css=div.toolbar
+    Wait Until Page Contains Element  css=iframe#plone-toolbar
+    Select Frame  xpath=//iframe[@name='plone-toolbar']
 
-    Frame Should Contain  id=toolbar  Contents
-    Frame Should Contain  id=toolbar  View
     # The 'Edit' button is not present, as we are viewing a Plone Site, not
     #   a default front page for a Plone Site.
-    Frame Should Contain  id=toolbar  Rules
-    Frame Should Contain  id=toolbar  Sharing
+
+    Current Frame Contains  Contents
+    Current Frame Contains  Sharing
+    Current Frame Contains  History
+
+    # Current Frame Contains  View
+    # Current Frame Contains  Rules
+
 
 Toolbar should contain document actions menus
     Log in as site owner
     Go to  ${PLONE_URL}
 
-    Wait Until Page Contains Element  css=div.toolbar
+    Wait Until Page Contains Element  css=iframe#plone-toolbar
+    Select Frame  xpath=//iframe[@name='plone-toolbar']
 
-    Frame Should Contain  id=toolbar  Display
-    Frame Should Contain  id=toolbar  Add new
+    Current Frame Contains  Manage Portlets
+    Current Frame Contains  Display
+    Current Frame Contains  Add New...
+
 
 Contents tab should open folder listing
     Log in as site owner
     Go to  ${PLONE_URL}
 
-    Wait Until Page Contains Element  css=div.toolbar
-    Select Frame  id=toolbar
+    Wait Until Page Contains Element  css=iframe#plone-toolbar
+    Select Frame  xpath=//iframe[@name='plone-toolbar']
+    
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  Contents
     Click Link  Contents
 
@@ -62,8 +71,9 @@ Edit tab should open edit view
     Log in as site owner
     Go to  ${PLONE_URL}/${TEST_FOLDER}
 
-    Wait Until Page Contains Element  css=div.toolbar
-    Select Frame  id=toolbar
+    Wait Until Page Contains Element  css=iframe#plone-toolbar
+    Select Frame  xpath=//iframe[@name='plone-toolbar']
+    
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  Edit
     Click Link  Edit
 
@@ -73,8 +83,9 @@ View tab should return to view
     Log in as site owner
     Go to  ${PLONE_URL}/${TEST_FOLDER}/edit
 
-    Wait Until Page Contains Element  css=div.toolbar
-    Select Frame  id=toolbar
+    Wait Until Page Contains Element  css=iframe#plone-toolbar
+    Select Frame  xpath=//iframe[@name='plone-toolbar']
+
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  View
     Click Link  View
 
@@ -84,8 +95,9 @@ Rules tab should open rules view
     Log in as site owner
     Go to  ${PLONE_URL}
 
-    Wait Until Page Contains Element  css=div.toolbar
-    Select Frame  id=toolbar
+    Wait Until Page Contains Element  css=iframe#plone-toolbar
+    Select Frame  xpath=//iframe[@name='plone-toolbar']
+
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  Rules
     Click Link  Rules
 
@@ -95,8 +107,9 @@ Sharing tab should open sharing view
     Log in as site owner
     Go to  ${PLONE_URL}
 
-    Wait Until Page Contains Element  css=div.toolbar
-    Select Frame  id=toolbar
+    Wait Until Page Contains Element  css=iframe#plone-toolbar
+    Select Frame  xpath=//iframe[@name='plone-toolbar']
+
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  Sharing
     Click Link  Sharing
 
@@ -105,8 +118,10 @@ Sharing tab should open sharing view
 Actions menu dropdown should open on click
     Log in as site owner
     Go to  ${PLONE_URL}/${TEST_FOLDER}
-    Wait Until Page Contains Element  css=div.toolbar
-    Select Frame  id=toolbar
+
+    Wait Until Page Contains Element  css=iframe#plone-toolbar
+    Select Frame  xpath=//iframe[@name='plone-toolbar']
+
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  Actions
 
     Element Should Not Be Visible  id=cut
@@ -117,8 +132,10 @@ Actions menu dropdown should open on click
 Display menu dropdown should open on click
     Log in as site owner
     Go to  ${PLONE_URL}/${TEST_FOLDER}
-    Wait Until Page Contains Element  css=div.toolbar
-    Select Frame  id=toolbar
+   
+    Wait Until Page Contains Element  css=iframe#plone-toolbar
+    Select Frame  xpath=//iframe[@name='plone-toolbar']
+
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  Display
 
     Element Should Not Be Visible  id=contextSetDefaultPage
@@ -129,8 +146,10 @@ Display menu dropdown should open on click
 Factories menu dropdown should open on click
     Log in as site owner
     Go to  ${PLONE_URL}/${TEST_FOLDER}
-    Wait Until Page Contains Element  css=div.toolbar
-    Select Frame  id=toolbar
+
+    Wait Until Page Contains Element  css=iframe#plone-toolbar
+    Select Frame  xpath=//iframe[@name='plone-toolbar']
+
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  Add new…
 
     Element Should Not Be Visible  id=document
@@ -141,8 +160,10 @@ Factories menu dropdown should open on click
 Workflow menu dropdown should open on click
     Log in as site owner
     Go to  ${PLONE_URL}/${TEST_FOLDER}
-    Wait Until Page Contains Element  css=div.toolbar
-    Select Frame  id=toolbar
+
+    Wait Until Page Contains Element  css=iframe#plone-toolbar
+    Select Frame  xpath=//iframe[@name='plone-toolbar']
+
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  State:
 
     Element Should Not Be Visible  id=advanced
@@ -153,8 +174,10 @@ Workflow menu dropdown should open on click
 Personal actions dropdown should open on click
     Log in as site owner
     Go to  ${PLONE_URL}/${TEST_FOLDER}
-    Wait Until Page Contains Element  css=div.toolbar
-    Select Frame  id=toolbar
+
+    Wait Until Page Contains Element  css=iframe#plone-toolbar
+    Select Frame  xpath=//iframe[@name='plone-toolbar']
+
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  State:
 
     Element Should Not Be Visible  id=plone-personal-actions-logout
