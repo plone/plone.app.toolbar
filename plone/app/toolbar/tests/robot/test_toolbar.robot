@@ -55,6 +55,45 @@ Toolbar should contain document actions menus
     Current Frame Contains  Add New...
 
 
+Toolbar buttons urls should contain ajax_load=1
+    Log in as site owner
+    Go to  ${PLONE_URL}
+
+    Wait Until Page Contains Element  css=iframe#plone-toolbar
+    Select Frame  xpath=//iframe[@name='plone-toolbar']
+
+    ${href} =  Get element attribute  css=li#plone-action-folderContents>a@href
+    Should Contain  ${href}  folder_contents?ajax_load=1
+
+    ${href} =  Get element attribute  css=li#plone-action-local_roles>a@href
+    Should Contain  ${href}  @@sharing?ajax_load=1
+
+    ${href} =  Get element attribute  css=li#plone-action-content-history>a@href
+    Should Contain  ${href}  @@historyview?ajax_load=1
+
+    ${href} =  Get element attribute  css=li#plone-sitesetup>a@href
+    Should Contain  ${href}  @@overview-controlpanel?ajax_load=1 
+
+    ${href} =  Get element attribute  css=li#folder>a@href
+    Should Contain  ${href}  createObject?type_name=Folder&ajax_load=1
+    # TODO: or this one...
+    # ++add++Folder?ajax_load=1
+
+    # TODO: BREAKS, but shouldn't in my understanding.
+
+    ${href} =  Get element attribute  css=li#plone-action-edit>a@href
+    Should Contain  ${href}  edit?ajax_load=1
+
+    # NOTE: the id's portlet-manager-plone.leftcolumn and
+    # portlet-manager-plone.rightcolumn contain dots, which can be
+    # misinterpreted as CSS class selectors!
+    ${href} =  Get element attribute  css=a#portlet-manager-plone.leftcolumn@href
+    Should Contain  ${href}  @@toolbar-manage-portlets/plone.leftcolumn?ajax_load=1
+
+    ${href} =  Get element attribute  css=a#portlet-manager-plone.rightcolumn@href
+    Should Contain  ${href}  @@toolbar-manage-portlets/plone.rightcolumn?ajax_load=1
+
+
 Contents tab should open folder listing
     Log in as site owner
     Go to  ${PLONE_URL}
