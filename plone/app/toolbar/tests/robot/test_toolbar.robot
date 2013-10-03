@@ -42,7 +42,6 @@ Toolbar should contain content action tabs
     # Current Frame Contains  View
     # Current Frame Contains  Rules
 
-
 Toolbar should contain document actions menus
     Log in as site owner
     Go to  ${PLONE_URL}
@@ -53,7 +52,6 @@ Toolbar should contain document actions menus
     Current Frame Contains  Manage Portlets
     Current Frame Contains  Display
     Current Frame Contains  Add New...
-
 
 Toolbar buttons urls should contain ajax_load=1
     Log in as site owner
@@ -72,7 +70,7 @@ Toolbar buttons urls should contain ajax_load=1
     Should Contain  ${href}  @@historyview?ajax_load=1
 
     ${href} =  Get element attribute  css=li#plone-sitesetup>a@href
-    Should Contain  ${href}  @@overview-controlpanel?ajax_load=1 
+    Should Contain  ${href}  @@overview-controlpanel?ajax_load=1
 
     ${href} =  Get element attribute  css=li#folder>a@href
     Should Contain  ${href}  createObject?type_name=Folder&ajax_load=1
@@ -93,14 +91,13 @@ Toolbar buttons urls should contain ajax_load=1
     ${href} =  Get element attribute  css=a#portlet-manager-plone.rightcolumn@href
     Should Contain  ${href}  @@toolbar-manage-portlets/plone.rightcolumn?ajax_load=1
 
-
 Contents tab should open folder listing
     Log in as site owner
     Go to  ${PLONE_URL}
 
     Wait Until Page Contains Element  css=iframe#plone-toolbar
     Select Frame  xpath=//iframe[@name='plone-toolbar']
-    
+
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  Contents
     Click Link  Contents
 
@@ -112,7 +109,7 @@ Edit tab should open edit view
 
     Wait Until Page Contains Element  css=iframe#plone-toolbar
     Select Frame  xpath=//iframe[@name='plone-toolbar']
-    
+
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  Edit
     Click Link  Edit
 
@@ -171,7 +168,7 @@ Actions menu dropdown should open on click
 Display menu dropdown should open on click
     Log in as site owner
     Go to  ${PLONE_URL}/${TEST_FOLDER}
-   
+
     Wait Until Page Contains Element  css=iframe#plone-toolbar
     Select Frame  xpath=//iframe[@name='plone-toolbar']
 
