@@ -32,11 +32,11 @@ class FolderContentsView(BrowserView):
         context_url = self.context.absolute_url()
         base_vocabulary = '%s/@@getVocabulary?name=' % base_url
         options = {
-            'ajaxVocabulary': '%splone.app.vocabularies.Catalog' % (
+            'vocabularyUrl': '%splone.app.vocabularies.Catalog' % (
                 base_vocabulary),
-            'tagsAjaxVocabulary': '%splone.app.vocabularies.Keywords' % (
+            'tagsVocabularyUrl': '%splone.app.vocabularies.Keywords' % (
                 base_vocabulary),
-            'usersAjaxVocabulary': '%splone.app.vocabularies.Users' % (
+            'usersVocabularyUrl': '%splone.app.vocabularies.Users' % (
                 base_vocabulary),
             'uploadUrl': '%s{path}/fileUpload' % base_url,
             'moveUrl': '%s{path}/fc-itemOrder' % base_url,
