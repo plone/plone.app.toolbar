@@ -31,6 +31,8 @@ class FolderContentsView(BrowserView):
         base_url = site.absolute_url()
         context_url = self.context.absolute_url()
         base_vocabulary = '%s/@@getVocabulary?name=' % base_url
+        site_path = site.getPhysicalPath()
+        context_path = self.context.getPhysicalPath()
         options = {
             'vocabularyUrl': '%splone.app.vocabularies.Catalog' % (
                 base_vocabulary),
@@ -69,7 +71,8 @@ class FolderContentsView(BrowserView):
                     'title': 'Rename',
                     'url': context_url + '/@@fc-rename'
                 }]
-            }
+            },
+            'basePath': '/' + '/'.join(context_path[len(site_path):])
         }
         self.options = json.dumps(options)
         return super(FolderContentsView, self).__call__()
