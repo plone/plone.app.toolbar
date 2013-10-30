@@ -29,7 +29,6 @@ class FolderContentsView(BrowserView):
     def __call__(self):
         site = getSite()
         base_url = site.absolute_url()
-        context_url = self.context.absolute_url()
         base_vocabulary = '%s/@@getVocabulary?name=' % base_url
         site_path = site.getPhysicalPath()
         context_path = self.context.getPhysicalPath()
@@ -52,24 +51,24 @@ class FolderContentsView(BrowserView):
                     'title': 'Copy',
                 }, {
                     'title': 'Paste',
-                    'url': context_url + '/@@fc-paste'
+                    'url': base_url + '/@@fc-paste'
                 }, {
                     'title': 'Delete',
-                    'url': context_url + '/@@fc-delete',
+                    'url': base_url + '/@@fc-delete',
                     'context': 'danger'
                 }],
                 'secondary': [{
                     'title': 'Workflow',
-                    'url': context_url + '/@@fc-workflow'
+                    'url': base_url + '/@@fc-workflow'
                 }, {
                     'title': 'Tags',
-                    'url': context_url + '/@@fc-tags'
+                    'url': base_url + '/@@fc-tags'
                 }, {
                     'title': 'Properties',
-                    'url': context_url + '/@@fc-properties'
+                    'url': base_url + '/@@fc-properties'
                 }, {
                     'title': 'Rename',
-                    'url': context_url + '/@@fc-rename'
+                    'url': base_url + '/@@fc-rename'
                 }]
             },
             'basePath': '/' + '/'.join(context_path[len(site_path):])
@@ -360,11 +359,11 @@ class PropertiesAction(FolderContentsActionView):
         self.effectiveDate = self.request.form['effectiveDate']
         effectiveTime = self.request.form['effectiveTime']
         if effectiveTime:
-            self.effectiveDate = ' ' + effectiveTime
+            self.effectiveDate = self.effectiveDate + ' ' + effectiveTime
         self.expirationDate = self.request.form['expirationDate']
         expirationTime = self.request.form['expirationTime']
         if expirationTime:
-            self.expirationDate + ' ' + expirationTime
+            self.expirationDate = self.expirationDate + ' ' + expirationTime
         self.copyright = self.request.form.get('copyright', '')
         self.contributors = json.loads(
             self.request.form.get('contributors', '[]'))
