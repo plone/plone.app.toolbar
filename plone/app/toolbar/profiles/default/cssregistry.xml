@@ -3,8 +3,7 @@
 
     <stylesheet
         cacheable="False" compression="none" cookable="False"
-        enabled="True" bundle="toolbar_init"
-        authenticated="True"
+        enabled="True" authenticated="True"
         id="++resource++plone.app.toolbar_init.css"
         />
 

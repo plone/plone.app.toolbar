@@ -3,7 +3,7 @@
 
     <javascript 
         cacheable="False" compression="safe" cookable="False"
-        enabled="True" inline="False" bundle="toolbar_init"
+        enabled="True" inline="False"
         id="++resource++plone.app.toolbar_init.js"
         />
 
