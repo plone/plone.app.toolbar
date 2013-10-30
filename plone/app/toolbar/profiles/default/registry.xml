@@ -46,20 +46,7 @@
 
       <element key="Toolbar Theme" purge="false">
         <element>jquery</element>
-        <element>tinymce</element>
         <element>toolbar</element>
-      </element>
-
-      <element key="Plone Classic Theme" purge="false">
-        <element>toolbar_init</element>
-      </element>
-
-      <element key="Plone Default" purge="false">
-        <element>toolbar_init</element>
-      </element>
-
-      <element key="Sunburst Theme" purge="false">
-        <element>toolbar_init</element>
       </element>
 
     </value>
