@@ -55,7 +55,8 @@ class FolderContentsView(BrowserView):
                 }, {
                     'title': 'Delete',
                     'url': base_url + '/@@fc-delete',
-                    'context': 'danger'
+                    'context': 'danger',
+                    'icon': 'trash'
                 }],
                 'secondary': [{
                     'title': 'Workflow',
