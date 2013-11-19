@@ -6,209 +6,190 @@
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="plone">
 
-    <include package="plone.tiles" file="meta.zcml" />
-    <include package="plone.tiles" />
-    <include package="plone.app.widgets" />
-    <include package=".browser" />
+  <include package="plone.tiles" file="meta.zcml" />
+  <include package="plone.tiles" />
+  <include package="plone.app.widgets" />
+  <include package=".browser" />
 
-    <include package="mockup"
-        zcml:condition="installed mockup" />
+  <include package="mockup"
+      zcml:condition="installed mockup" />
 
-    <!-- Permissions -->
-    <permission
-        id="plone.AddToolbar"
-        title="Plone: Add Toolbar" /><!-- TODO: is this permission even used -->
-    <permission
-        id="plone.ViewToolbar"
-        title="Plone: View Toolbar" />
+  <!-- Permissions -->
+  <permission
+      id="plone.AddToolbar"
+      title="Plone: Add Toolbar" /><!-- TODO: is this permission even used -->
+  <permission
+      id="plone.ViewToolbar"
+      title="Plone: View Toolbar" />
 
 
-    <!-- BBB: Used to override/disable parts of Plone 4.x that
-         should not be in place when using plone.app.toolbar -->
-    <include file="bbb.zcml" />
+  <!-- BBB: Used to override/disable parts of Plone 4.x that
+       should not be in place when using plone.app.toolbar -->
+  <include file="bbb.zcml" />
 
-    <!-- Static resources -->
-    <browser:resource
-        name="plone.app.toolbar-glyphicons-halflings.png"
-        file="static/toolbar-glyphicons-halflings.png"
-        layer=".interfaces.IToolbarLayer"
-        />
-    <browser:resource
-        name="plone.app.toolbar-glyphicons-halflings-white.png"
-        file="static/toolbar-glyphicons-halflings-white.png"
-        layer=".interfaces.IToolbarLayer"
-        />
+  <!-- Static resources -->
+  <browser:resource
+      name="plone.app.toolbar-select2.png"
+      file="static/toolbar-select2.png"
+      layer=".interfaces.IToolbarLayer"
+      />
+  <browser:resource
+      name="plone.app.toolbar-select2-spinner.gif"
+      file="static/toolbar-select2-spinner.gif"
+      layer=".interfaces.IToolbarLayer"
+      />
 
-    <browser:resource
-        name="plone.app.toolbar-fontawesome-webfont.eot"
-        file="static/toolbar-fontawesome-webfont.eot"
-        layer=".interfaces.IToolbarLayer"
-        />
-    <browser:resource
-        name="plone.app.toolbar-fontawesome-webfont.woff"
-        file="static/toolbar-fontawesome-webfont.woff"
-        layer=".interfaces.IToolbarLayer"
-        />
-    <browser:resource
-        name="plone.app.toolbar-fontawesome-webfont.ttf"
-        file="static/toolbar-fontawesome-webfont.ttf"
-        layer=".interfaces.IToolbarLayer"
-        />
-    <browser:resource
-            name="plone.app.toolbar-fontawesome-webfont.svg"
-            file="static/toolbar-fontawesome-webfont.svg"
-            layer=".interfaces.IToolbarLayer"
-            />
+  <browser:resource
+      name="plone.app.toolbar-glyphicons-halflings-regular.eot"
+      file="static/toolbar-glyphicons-halflings-regular.eot"
+      layer=".interfaces.IToolbarLayer"
+      />
+  <browser:resource
+      name="plone.app.toolbar-glyphicons-halflings-regular.svg"
+      file="static/toolbar-glyphicons-halflings-regular.svg"
+      layer=".interfaces.IToolbarLayer"
+      />
+  <browser:resource
+      name="plone.app.toolbar-glyphicons-halflings-regular.ttf"
+      file="static/toolbar-glyphicons-halflings-regular.ttf"
+      layer=".interfaces.IToolbarLayer"
+      />
+  <browser:resource
+      name="plone.app.toolbar-glyphicons-halflings-regular.woff"
+      file="static/toolbar-glyphicons-halflings-regular.woff"
+      layer=".interfaces.IToolbarLayer"
+      />
 
-    <browser:resource
-            name="plone.app.toolbar-select2.png"
-            file="static/toolbar-select2.png"
-            layer=".interfaces.IToolbarLayer"
-            />
-    <browser:resource
-            name="plone.app.toolbar-select2-spinner.gif"
-            file="static/toolbar-select2-spinner.gif"
-            layer=".interfaces.IToolbarLayer"
-            />
+  <browser:resource
+      name="plone.app.toolbar-tinymce-icomoon.eot"
+      file="static/toolbar-tinymce-icomoon.eot"
+      layer=".interfaces.IToolbarLayer"
+      />
+  <browser:resource
+      name="plone.app.toolbar-tinymce-icomoon.svg"
+      file="static/toolbar-tinymce-icomoon.svg"
+      layer=".interfaces.IToolbarLayer"
+      />
+  <browser:resource
+      name="plone.app.toolbar-tinymce-icomoon.woff"
+      file="static/toolbar-tinymce-icomoon.woff"
+      layer=".interfaces.IToolbarLayer"
+      />
+  <browser:resource
+      name="plone.app.toolbar-tinymce-icomoon.ttf"
+      file="static/toolbar-tinymce-icomoon.ttf"
+      layer=".interfaces.IToolbarLayer"
+      />
+  <browser:resource
+      name="plone.app.toolbar-tinymce-icomoon-small.eot"
+      file="static/toolbar-tinymce-icomoon-small.eot"
+      layer=".interfaces.IToolbarLayer"
+      />
+  <browser:resource
+      name="plone.app.toolbar-tinymce-icomoon-small.svg"
+      file="static/toolbar-tinymce-icomoon-small.svg"
+      layer=".interfaces.IToolbarLayer"
+      />
+  <browser:resource
+      name="plone.app.toolbar-tinymce-icomoon-small.woff"
+      file="static/toolbar-tinymce-icomoon-small.woff"
+      layer=".interfaces.IToolbarLayer"
+      />
+  <browser:resource
+      name="plone.app.toolbar-tinymce-icomoon-small.ttf"
+      file="static/toolbar-tinymce-icomoon-small.ttf"
+      layer=".interfaces.IToolbarLayer"
+      />
 
-    <browser:resource
-            name="plone.app.toolbar-icomoon.eot"
-            file="static/toolbar-icomoon.eot"
-            layer=".interfaces.IToolbarLayer"
-            />
-    <browser:resource
-            name="plone.app.toolbar-icomoon.svg"
-            file="static/toolbar-icomoon.svg"
-            layer=".interfaces.IToolbarLayer"
-            />
-    <browser:resource
-            name="plone.app.toolbar-icomoon.woff"
-            file="static/toolbar-icomoon.woff"
-            layer=".interfaces.IToolbarLayer"
-            />
-    <browser:resource
-            name="plone.app.toolbar-icomoon.ttf"
-            file="static/toolbar-icomoon.ttf"
-            layer=".interfaces.IToolbarLayer"
-            />
-    <browser:resource
-            name="plone.app.toolbar-icomoon-small.eot"
-            file="static/toolbar-icomoon.eot"
-            layer=".interfaces.IToolbarLayer"
-            />
-    <browser:resource
-            name="plone.app.toolbar-icomoon-small.svg"
-            file="static/toolbar-icomoon.svg"
-            layer=".interfaces.IToolbarLayer"
-            />
-    <browser:resource
-            name="plone.app.toolbar-icomoon-small.woff"
-            file="static/toolbar-icomoon.woff"
-            layer=".interfaces.IToolbarLayer"
-            />
-    <browser:resource
-            name="plone.app.toolbar-icomoon-small.ttf"
-            file="static/toolbar-icomoon.ttf"
-            layer=".interfaces.IToolbarLayer"
-            />
+  <browser:resource
+      name="plone.app.toolbar-dropzone-spritemap.png"
+      file="static/toolbar-dropzone-spritemap.png"
+      layer=".interfaces.IToolbarLayer"
+      />
+  <browser:resource
+      name="plone.app.toolbar-dropzone-spritemap@2x.png"
+      file="static/toolbar-dropzone-spritemap@2x.png"
+      layer=".interfaces.IToolbarLayer"
+      />
 
-    <browser:resource
-            name="plone.app.toolbar-spritemap.png"
-            file="static/toolbar-spritemap.png"
-            layer=".interfaces.IToolbarLayer"
-            />
-    <browser:resource
-            name="plone.app.toolbar-spritemap@2x.png"
-            file="static/toolbar-spritemap@2x.png"
-            layer=".interfaces.IToolbarLayer"
-            />
+  <browser:resource
+      name="plone.app.toolbar_init.css"
+      file="static/toolbar_init.min.css"
+      layer=".interfaces.IToolbarLayer"
+      />
+  <browser:resource
+      name="plone.app.toolbar_init.js"
+      file="static/toolbar_init.min.js"
+      />
 
-    <configure zcml:condition="installed mockup">
-        <browser:resource
-            name="plone.app.toolbar_init.css"
-            file="static/toolbar_init.css"
-            layer=".interfaces.IToolbarLayer"
-            />
-        <browser:resource
-            name="plone.app.toolbar.css"
-            file="static/toolbar.css"
-            layer=".interfaces.IToolbarLayer"
-            />
-        <browser:resource
-            name="plone.app.toolbar_init.js"
-            file="static/toolbar_init.js"
-            />
-        <browser:resource
-            name="plone.app.toolbar.js"
-            file="static/toolbar.js"
-            layer=".interfaces.IToolbarLayer"
-            />
-    </configure>
+  <configure zcml:condition="installed mockup">
+      <browser:resource
+          name="plone.app.toolbar.css"
+          file="static/toolbar.css"
+          layer=".interfaces.IToolbarLayer"
+          />
+      <browser:resource
+          name="plone.app.toolbar.js"
+          file="static/toolbar.js"
+          layer=".interfaces.IToolbarLayer"
+          />
+  </configure>
 
-    <configure zcml:condition="not-installed mockup">
-        <browser:resource
-            name="plone.app.toolbar_init.css"
-            file="static/toolbar_init.min.css"
-            layer=".interfaces.IToolbarLayer"
-            />
-        <browser:resource
-            name="plone.app.toolbar.css"
-            file="static/toolbar.min.css"
-            layer=".interfaces.IToolbarLayer"
-            />
-        <browser:resource
-            name="plone.app.toolbar_init.js"
-            file="static/toolbar_init.min.js"
-            />
-        <browser:resource
-            name="plone.app.toolbar.js"
-            file="static/toolbar.min.js"
-            layer=".interfaces.IToolbarLayer"
-            />
-    </configure>
+  <configure zcml:condition="not-installed mockup">
+      <browser:resource
+          name="plone.app.toolbar.css"
+          file="static/toolbar.min.css"
+          layer=".interfaces.IToolbarLayer"
+          />
+      <browser:resource
+          name="plone.app.toolbar.js"
+          file="static/toolbar.min.js"
+          layer=".interfaces.IToolbarLayer"
+          />
+  </configure>
 
-    <!-- Add /++toolbar++/ to your url to disable diazo theming and use toolbar
-         skin (which can be also changed via plone's registry) -->
-    <adapter
-        name="toolbar"
-        for="* zope.publisher.interfaces.IRequest"
-        provides="zope.traversing.interfaces.ITraversable"
-        factory=".toolbar.ToolbarRequest"
-        />
-    <adapter
-        name="nodiazo"
-        for="* zope.publisher.interfaces.IRequest"
-        provides="zope.traversing.interfaces.ITraversable"
-        factory=".toolbar.NoDiazoRequest"
-        />
+  <!-- Add /++toolbar++/ to your url to disable diazo theming and use toolbar
+       skin (which can be also changed via plone's registry) -->
+  <adapter
+      name="toolbar"
+      for="* zope.publisher.interfaces.IRequest"
+      provides="zope.traversing.interfaces.ITraversable"
+      factory=".toolbar.ToolbarRequest"
+      />
+  <adapter
+      name="nodiazo"
+      for="* zope.publisher.interfaces.IRequest"
+      provides="zope.traversing.interfaces.ITraversable"
+      factory=".toolbar.NoDiazoRequest"
+      />
 
-    <!-- Toolbar Tile -->
-    <plone:tile
-        name="plone.toolbar"
-        title="Plone toolbar"
-        class=".toolbar.ToolbarTile"
-        template="toolbar.pt"
-        for="*"
-        add_permission="plone.AddToolbar"
-        permission="plone.ViewToolbar" />
+  <!-- Toolbar Tile -->
+  <plone:tile
+      name="plone.toolbar"
+      title="Plone toolbar"
+      class=".toolbar.ToolbarTile"
+      template="toolbar.pt"
+      for="*"
+      add_permission="plone.AddToolbar"
+      permission="plone.ViewToolbar" />
 
-    <!-- GS profile -->
-    <genericsetup:registerProfile
-        name="default"
-        title="Plone Toolbar"
-        description="Installs the Plone Toolbar"
-        directory="profiles/default"
-        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-        provides="Products.GenericSetup.interfaces.EXTENSION"
-        />
-    <genericsetup:registerProfile
-        name="uninstall"
-        title="Plone Toolbar Uninstall"
-        directory="profiles/uninstall"
-        description="Removes Toolbar."
-        provides="Products.GenericSetup.interfaces.EXTENSION"
-        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-        />
+  <!-- GS profile -->
+  <genericsetup:registerProfile
+      name="default"
+      title="Plone Toolbar"
+      description="Installs the Plone Toolbar"
+      directory="profiles/default"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+  <genericsetup:registerProfile
+      name="uninstall"
+      title="Plone Toolbar Uninstall"
+      directory="profiles/uninstall"
+      description="Removes Toolbar."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      />
 
     
 </configure>
