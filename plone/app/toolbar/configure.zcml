@@ -8,7 +8,6 @@
 
     <include package="plone.tiles" file="meta.zcml" />
     <include package="plone.tiles" />
-    <include package="plone.app.widgets" />
     <include package=".browser" />
 
     <include package="mockup"
