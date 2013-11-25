@@ -33,9 +33,19 @@ setup(
         'plone.memoize',
         'plone.tiles',
         'Acquisition',
-        'plone.app.widgets',
+        # needed because we use bundles
+        'Products.ResourceRegistries>=2.1',
+        # nedded because users vocabulary was added here
+        'plone.app.vocabularies>=2.1.12dev',
+        # needed for pickadate javascript
+        'plone.app.jquery>=1.8.0',
+        # needed so it works with jquery >= 1.8
+        'plone.app.search>=1.1.2',
+        'plone.app.registry>=1.2.2',
+        'plone.app.querystring>=1.1.0',
         'Products.CMFPlone>=4.3b2',
-        'plone.app.registry>=1.2.2'
+        'plone.app.contenttypes>=1.0.99',
+        'plone.app.event>1.0.99',
     ],
     extras_require={
         'test': [

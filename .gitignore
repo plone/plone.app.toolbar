@@ -7,12 +7,15 @@
 /.mr.developer.cfg
 /.project
 /.pydevproject
+/buildout.cfg
 /tags
+/nixenv
 
 /bin/
 /develop-eggs/
 /dist/
 /eggs/
+/buildout-cache/
 /lib/
 /include/
 /parts/

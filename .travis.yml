@@ -1,19 +1,46 @@
 language: python
 python:
   - 2.7
-env:
-  - PLONE_VERSION=4.3
+addons:
+  sauce_connect:
+    - username: $SAUCE_USERNAME
+    - access_key: $SAUCE_ACCESS_KEY
 install:
   - mkdir -p buildout-cache/downloads
-  - sed -ie "s#travis-4.3.x.cfg#travis-$PLONE_VERSION.x.cfg#" travis.cfg
-  - git clone git://github.com/plone/plone.app.contenttypes.git
-  - git clone git://github.com/plone/plone.app.vocabularies.git
   - python bootstrap.py -c travis.cfg
-  - bin/buildout -c travis.cfg -q
-before_script:
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
+  - bin/buildout -N -t 3 -c travis.cfg
 script:
-  - bin/flake8 setup.py
-  - bin/flake8 plone
-  - bin/test -vvv
+  - if [ "$BROWSER" != "code-analysis" ]; then export ROBOT_DESIRED_CAPABILITIES="$BROWSER,tunnel-identifier:$TRAVIS_JOB_NUMBER"; fi
+  - if [ "$BROWSER" != "code-analysis" ]; then bin/test -vvv --all; fi
+  - if [ "$BROWSER" == "code-analysis" ]; then bin/flake8 setup.py; fi
+  - if [ "$BROWSER" == "code-analysis" ]; then bin/flake8 plone; fi
+  - if [ "$BROWSER" == "code-analysis" ]; then bin/coverage run --source=plone.app.toolbar bin/test --layer=\!PloneAppToolbarLayer; fi
+after_success:
+  - bin/coveralls
+env:
+  matrix:
+    - BROWSER="code-analysis"
+    - BROWSER="platform:OS X 10.8,browserName:iphone,version:6.1,device-orientation:portrait"
+    - BROWSER="platform:OS X 10.8,browserName:ipad,version:6.1,device-orientation:portrait"
+    - BROWSER="platform:Linux,browserName:android,version:4.0,device-type:tablet,device-orientation:portrait"
+    - BROWSER="platform:Windows 7,browserName:firefox,version:25"
+    - BROWSER="platform:Windows 7,browserName:chrome,version:31"
+    - BROWSER="platform:Windows 8.1,browserName:internet explorer,version:11"
+    - BROWSER="platform:Windows 7,browserName:internet explorer,version:10"
+    - BROWSER="platform:Windows 7,browserName:internet explorer,version:9"
+    - BROWSER="platform:Windows 7,browserName:internet explorer,version:8"
+    - BROWSER="platform:Windows 7,browserName:opera,version:12"
+    - BROWSER="platform:OS X 10.8,browserName:safari,version:6"
+  global:
+    - secure: "So9EwABsEHr15eIePu6M07vvh7qBAuAu09tLeO3JWUafY99ol3l2+iiiPw4H7vLqsTJN17NOjK+VWelEJcy5VjEzVP5/hGvSb003aPWJ45FoQJXgdoXrjn0TIMALo3Ll5uuGvVCwdiZPYGsANeEz3U14Ia2B5TBWPfbDk+sT0Fs="
+    - secure: "jROuadVVkLQrH5GPPs3ud6NwQe9XD5oYiG3snsTIhVKEThS215oag0tLE+fFDHlmqibaW0q6KAGOH9I14YIcqryzgxvpDk8m0WwXtfWG7KdxJZxIAXwtASKFEjCe62OeWmJ1mjt+NV+k3//9YORkMqmYjNloCJQOO04niNfYDjE="
+    - ROBOT_BUILD_NUMBER=plone.app.toolbar-travis-$TRAVIS_BUILD_NUMBER
+    - ROBOT_REMOTE_URL=http://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@ondemand.saucelabs.com:80/wd/hub
+matrix:
+  allow_failures:
+    - env: BROWSER="platform:Linux,browserName:android,version:4.0,device-type:tablet,device-orientation:portrait"
+    - env: BROWSER="platform:Windows 8.1,browserName:internet explorer,version:11"
+    - env: BROWSER="platform:Windows 7,browserName:internet explorer,version:10"
+    - env: BROWSER="platform:Windows 7,browserName:internet explorer,version:9"
+    - env: BROWSER="platform:Windows 7,browserName:internet explorer,version:8"
+

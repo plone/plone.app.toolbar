@@ -1,0 +1,4 @@
+[buildout]
+extends =
+    develop.cfg
+#    mockup.cfg
