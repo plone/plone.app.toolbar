@@ -31,10 +31,12 @@ packaged javascript inside is still in sync with `Mockup`_ project.
 Installation
 ============
 
-For now only tested with Plone 4.3.2::
+For now only tested with latest Plone 4.3::
 
     [buildout]
-    extends = http://dist.plone.org/release/4.3.2/versions.cfg
+    extends =
+         http://dist.plone.org/release/4.3-latest/versions.cfg
+         https://raw.github.com/plone/plone.app.toolbar/master/versions.cfg
     versions = versions
     parts = instance
 
@@ -45,20 +47,8 @@ For now only tested with Plone 4.3.2::
     eggs =
         Pillow
         Plone
-        plone.app.widgets[archetypes,dexterity]
-        plone.app.toolbar
-    zcml =
-        plone.app.widgets
         plone.app.toolbar
 
-    [versions]
-    plone.app.jquery = 1.8.3
-    plone.app.vocabularies = 2.1.12
-    plone.app.querystring = 1.1.0
-
-
-    [versions]
-    plone.app.jquery = 1.8.3
 
 Make sure you install the "Plone Toolbar" profile when creating your Plone site
 or include ``plone.app.toolbar:default`` profile in your ``metadata.xml``..
