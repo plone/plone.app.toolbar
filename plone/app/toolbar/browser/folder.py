@@ -20,7 +20,6 @@ from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from DateTime import DateTime
 from Products.CMFCore.interfaces._content import IFolderish
 from zope.browsermenu.interfaces import IBrowserMenu
-
 import json
 
 
@@ -464,13 +463,20 @@ class ContextInfo(BrowserView):
             context=self.context).getMenuItems(self.context, self.request)
         factories_menu = [m for m in factories_menu
                           if m.get('title') != 'folder_add_settings']
-        # get breadcrumbs...
-        breadcrumbs_view = getMultiAdapter((self.context, self.request),
-                                           name='breadcrumbs_view')
+
+        context = aq_inner(self.context)
+        crumbs = []
+        while not IPloneSiteRoot.providedBy(context):
+            crumbs.append({
+                'id': context.getId(),
+                'title': utils.pretty_title_or_id(context, context)
+            })
+            context = utils.parent(context)
+
         return json.dumps({
             'addButtons': factories_menu,
             'defaultPage': self.context.getDefaultPage(),
-            'breadcrumbs': breadcrumbs_view.breadcrumbs()
+            'breadcrumbs': [c for c in reversed(crumbs)]
         })
 
 
