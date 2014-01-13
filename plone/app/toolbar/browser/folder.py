@@ -72,6 +72,17 @@ class FolderContentsView(BrowserView):
                     'url': base_url + '/@@fc-rename'
                 }]
             },
+            'sort': {
+                'properties': {
+                    'id': 'ID',
+                    'sortable_title': 'Title',
+                    'modified': 'Last Modified',
+                    'created': 'Created on',
+                    'effective': 'Publication Date',
+                    'Type': 'Type'
+                },
+                'url': '%s{path}/@@fc-sort' % base_url
+            },
             'basePath': '/' + '/'.join(context_path[len(site_path):])
         }
         self.options = json.dumps(options)
@@ -453,7 +464,41 @@ class ContextInfo(BrowserView):
             context=self.context).getMenuItems(self.context, self.request)
         factories_menu = [m for m in factories_menu
                           if m.get('title') != 'folder_add_settings']
+        # get breadcrumbs...
+        breadcrumbs_view = getMultiAdapter((self.context, self.request),
+                                           name='breadcrumbs_view')
         return json.dumps({
             'addButtons': factories_menu,
-            'defaultPage': self.context.getDefaultPage()
+            'defaultPage': self.context.getDefaultPage(),
+            'breadcrumbs': breadcrumbs_view.breadcrumbs()
         })
+
+
+def getOrdering(context):
+    if IPloneSiteRoot.providedBy(context):
+        return context
+    else:
+        ordering = context.getOrdering()
+        if not IExplicitOrdering.providedBy(ordering):
+            return None
+        return ordering
+
+
+class Sort(FolderContentsActionView):
+    def __call__(self):
+        self.protect()
+        self.errors = []
+        ordering = getOrdering(self.context)
+        if ordering:
+            catalog = getToolByName(self.context, 'portal_catalog')
+            brains = catalog(path={
+                'query': '/'.join(self.context.getPhysicalPath()),
+                'depth': 1
+            }, sort_on=self.request.form.get('sort_on'))
+            if self.request.form.get('reversed') == 'true':
+                brains = [b for b in reversed(brains)]
+            for idx, brain in enumerate(brains):
+                ordering.moveObjectToPosition(brain.id, idx)
+        else:
+            self.errors.append(u'cannot sort folder')
+        return self.message()

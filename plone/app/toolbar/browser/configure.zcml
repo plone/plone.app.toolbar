@@ -94,6 +94,13 @@
     layer="..interfaces.IToolbarLayer"
     />
 
+  <browser:page
+    for="Products.CMFCore.interfaces._content.IFolderish"
+    name="fc-sort"
+    class=".folder.Sort"
+    permission="cmf.ModifyPortalContent"
+    layer="..interfaces.IToolbarLayer"
+    />
 
 </configure>
 
