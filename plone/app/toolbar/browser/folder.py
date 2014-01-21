@@ -22,6 +22,11 @@ from Products.CMFCore.interfaces._content import IFolderish
 from zope.browsermenu.interfaces import IBrowserMenu
 import json
 
+try:
+    from plone.app.widgets.browser.file import TUS_ENABLED
+except ImportError:
+    TUS_ENABLED = False
+
 
 class FolderContentsView(BrowserView):
 
@@ -82,7 +87,8 @@ class FolderContentsView(BrowserView):
                 },
                 'url': '%s{path}/@@fc-sort' % base_url
             },
-            'basePath': '/' + '/'.join(context_path[len(site_path):])
+            'basePath': '/' + '/'.join(context_path[len(site_path):]),
+            'useTus': TUS_ENABLED
         }
         self.options = json.dumps(options)
         return super(FolderContentsView, self).__call__()
@@ -418,7 +424,6 @@ class ItemOrder(FolderContentsActionView):
         ordering = self.getOrdering()
         delta = self.request.form['delta']
         subset_ids = json.loads(self.request.form.get('subset_ids', '[]'))
-
         if delta == 'top':
             ordering.moveObjectsToTop([id])
         elif delta == 'bottom':
