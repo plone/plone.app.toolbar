@@ -13,7 +13,7 @@ from plone.testing import z2
 from zope.configuration import xmlconfig
 
 
-class Toolbar(PloneSandboxLayer):
+class ToolbarLayer(PloneSandboxLayer):
     defaultBases = (PLONE_FIXTURE,)
 
     def setUpZope(self, app, configurationContext):
@@ -57,7 +57,31 @@ class Toolbar(PloneSandboxLayer):
         portal.manage_delObjects(['test-folder'])
 
 
-PLONEAPPTOOLBAR_FIXTURE = Toolbar()
+class ToolbarDXLayer(ToolbarLayer):
+
+    def setUpZope(self, app, configurationContext):
+        super(ToolbarDXLayer, self).setUpZope(app, configurationContext)
+        import plone.app.contenttypes
+        xmlconfig.file('configure.zcml',
+                       plone.app.contenttypes,
+                       context=configurationContext)
+
+        try:
+            import mockup
+            self.loadZCML(package=mockup)
+        except:
+            pass
+
+        z2.installProduct(app, 'Products.DateRecurringIndex')
+
+    def setUpPloneSite(self, portal):
+        super(ToolbarDXLayer, self).setUpPloneSite(portal)
+        portal.portal_workflow.setDefaultChain("simple_publication_workflow")
+        # we need contenttypes before installing widgets
+        self.applyProfile(portal, 'plone.app.contenttypes:default')
+
+
+PLONEAPPTOOLBAR_FIXTURE = ToolbarLayer()
 
 PLONEAPPTOOLBAR_INTEGRATION_TESTING = IntegrationTesting(
     bases=(PLONEAPPTOOLBAR_FIXTURE,),
@@ -65,7 +89,18 @@ PLONEAPPTOOLBAR_INTEGRATION_TESTING = IntegrationTesting(
 
 PLONEAPPTOOLBAR_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(PLONEAPPTOOLBAR_FIXTURE,),
-    name="PloneAppToolbarLayer:Functional")
+    name="PloneAppToolbarDXLayer:Functional")
+
+PLONEAPPTOOLBARDX_FIXTURE = ToolbarDXLayer()
+
+PLONEAPPTOOLBARDX_INTEGRATION_TESTING = IntegrationTesting(
+    bases=(PLONEAPPTOOLBARDX_FIXTURE,),
+    name="PloneAppToolbarDXLayer:Integration")
+
+PLONEAPPTOOLBARDX_FUNCTIONAL_TESTING = FunctionalTesting(
+    bases=(PLONEAPPTOOLBARDX_FIXTURE,),
+    name="PloneAppToolbarDXLayer:Functional")
+
 
 PLONEAPPTOOLBAR_ROBOT_TESTING = FunctionalTesting(
     bases=(PLONEAPPTOOLBAR_FIXTURE,

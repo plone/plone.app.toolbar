@@ -27,37 +27,55 @@
 
   <!-- Static resources -->
   <browser:resource
-      name="plone.app.toolbar-select2.png"
-      file="static/toolbar-select2.png"
+      name="plone.app.toolbar-bootstrap-glyphicons-halflings-regular.eot"
+      file="static/toolbar-bootstrap-glyphicons-halflings-regular.eot"
       layer=".interfaces.IToolbarLayer"
       />
   <browser:resource
-      name="plone.app.toolbar-select2-spinner.gif"
-      file="static/toolbar-select2-spinner.gif"
-      layer=".interfaces.IToolbarLayer"
-      />
-
-  <browser:resource
-      name="plone.app.toolbar-glyphicons-halflings-regular.eot"
-      file="static/toolbar-glyphicons-halflings-regular.eot"
+      name="plone.app.toolbar-bootstrap-glyphicons-halflings-regular.svg"
+      file="static/toolbar-bootstrap-glyphicons-halflings-regular.svg"
       layer=".interfaces.IToolbarLayer"
       />
   <browser:resource
-      name="plone.app.toolbar-glyphicons-halflings-regular.svg"
-      file="static/toolbar-glyphicons-halflings-regular.svg"
+      name="plone.app.toolbar-bootstrap-glyphicons-halflings-regular.ttf"
+      file="static/toolbar-bootstrap-glyphicons-halflings-regular.ttf"
       layer=".interfaces.IToolbarLayer"
       />
   <browser:resource
-      name="plone.app.toolbar-glyphicons-halflings-regular.ttf"
-      file="static/toolbar-glyphicons-halflings-regular.ttf"
+      name="plone.app.toolbar-bootstrap-glyphicons-halflings-regular.woff"
+      file="static/toolbar-bootstrap-glyphicons-halflings-regular.woff"
       layer=".interfaces.IToolbarLayer"
       />
   <browser:resource
-      name="plone.app.toolbar-glyphicons-halflings-regular.woff"
-      file="static/toolbar-glyphicons-halflings-regular.woff"
+      name="plone.app.toolbar-dropzone-spritemap@2x.png"
+      file="static/toolbar-dropzone-spritemap@2x.png"
       layer=".interfaces.IToolbarLayer"
       />
-
+  <browser:resource
+      name="plone.app.toolbar-dropzone-spritemap.png"
+      file="static/toolbar-dropzone-spritemap.png"
+      layer=".interfaces.IToolbarLayer"
+      />
+  <browser:resource
+      name="plone.app.toolbar-jqtree-jqtree-circle.png"
+      file="static/toolbar-jqtree-jqtree-circle.png"
+      layer=".interfaces.IToolbarLayer"
+      />
+  <browser:resource
+      name="plone.app.toolbar-select2-select2.png"
+      file="static/toolbar-select2-select2.png"
+      layer=".interfaces.IToolbarLayer"
+      />
+  <browser:resource
+      name="plone.app.toolbar-select2-select2-spinner.gif"
+      file="static/toolbar-select2-select2-spinner.gif"
+      layer=".interfaces.IToolbarLayer"
+      />
+  <browser:resource
+      name="plone.app.toolbar-select2-select2x2.png"
+      file="static/toolbar-select2-select2x2.png"
+      layer=".interfaces.IToolbarLayer"
+      />
   <browser:resource
       name="plone.app.toolbar-tinymce-icomoon.eot"
       file="static/toolbar-tinymce-icomoon.eot"
@@ -69,44 +87,18 @@
       layer=".interfaces.IToolbarLayer"
       />
   <browser:resource
-      name="plone.app.toolbar-tinymce-icomoon.woff"
-      file="static/toolbar-tinymce-icomoon.woff"
-      layer=".interfaces.IToolbarLayer"
-      />
-  <browser:resource
       name="plone.app.toolbar-tinymce-icomoon.ttf"
       file="static/toolbar-tinymce-icomoon.ttf"
       layer=".interfaces.IToolbarLayer"
       />
   <browser:resource
-      name="plone.app.toolbar-tinymce-icomoon-small.eot"
-      file="static/toolbar-tinymce-icomoon-small.eot"
+      name="plone.app.toolbar-tinymce-icomoon.woff"
+      file="static/toolbar-tinymce-icomoon.woff"
       layer=".interfaces.IToolbarLayer"
       />
   <browser:resource
-      name="plone.app.toolbar-tinymce-icomoon-small.svg"
-      file="static/toolbar-tinymce-icomoon-small.svg"
-      layer=".interfaces.IToolbarLayer"
-      />
-  <browser:resource
-      name="plone.app.toolbar-tinymce-icomoon-small.woff"
-      file="static/toolbar-tinymce-icomoon-small.woff"
-      layer=".interfaces.IToolbarLayer"
-      />
-  <browser:resource
-      name="plone.app.toolbar-tinymce-icomoon-small.ttf"
-      file="static/toolbar-tinymce-icomoon-small.ttf"
-      layer=".interfaces.IToolbarLayer"
-      />
-
-  <browser:resource
-      name="plone.app.toolbar-dropzone-spritemap.png"
-      file="static/toolbar-dropzone-spritemap.png"
-      layer=".interfaces.IToolbarLayer"
-      />
-  <browser:resource
-      name="plone.app.toolbar-dropzone-spritemap@2x.png"
-      file="static/toolbar-dropzone-spritemap@2x.png"
+      name="plone.app.toolbar-tinymce-loader.gif"
+      file="static/toolbar-tinymce-loader.gif"
       layer=".interfaces.IToolbarLayer"
       />
 

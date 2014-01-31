@@ -21,6 +21,7 @@ from DateTime import DateTime
 from Products.CMFCore.interfaces._content import IFolderish
 from zope.browsermenu.interfaces import IBrowserMenu
 import json
+from plone.dexterity.interfaces import IDexterityContent
 
 try:
     from plone.app.widgets.browser.file import TUS_ENABLED
@@ -373,13 +374,13 @@ class PropertiesAction(FolderContentsActionView):
     required_obj_permission = 'Modify portal content'
 
     def __call__(self):
-        self.effectiveDate = self.request.form['effectiveDate']
-        effectiveTime = self.request.form['effectiveTime']
-        if effectiveTime:
+        self.effectiveDate = self.request.form.get('effectiveDate')
+        effectiveTime = self.request.form.get('effectiveTime')
+        if self.effectiveDate and effectiveTime:
             self.effectiveDate = self.effectiveDate + ' ' + effectiveTime
-        self.expirationDate = self.request.form['expirationDate']
-        expirationTime = self.request.form['expirationTime']
-        if expirationTime:
+        self.expirationDate = self.request.form.get('expirationDate')
+        expirationTime = self.request.form.get('expirationTime')
+        if self.expirationDate and expirationTime:
             self.expirationDate = self.expirationDate + ' ' + expirationTime
         self.copyright = self.request.form.get('copyright', '')
         self.contributors = json.loads(
@@ -388,19 +389,36 @@ class PropertiesAction(FolderContentsActionView):
         self.exclude = self.request.form.get('exclude_from_nav', None)
         return super(PropertiesAction, self).__call__()
 
+    def dx_action(self, obj):
+        if self.effectiveDate and hasattr(obj, 'effective'):
+            obj.effective = DateTime(self.effectiveDate)
+        if self.expirationDate and hasattr(obj, 'expires'):
+            obj.expires = DateTime(self.expirationDate)
+        if self.copyright and hasattr(obj, 'rights'):
+            obj.rights = self.copyright
+        if self.contributors and hasattr(obj, 'contributors'):
+            obj.contributors = tuple([c['id'] for c in self.contributors])
+        if self.creators and hasattr(obj, 'creators'):
+            obj.creators = tuple([c['id'] for c in self.creators])
+        if self.exclude and hasattr(obj, 'exclude_from_nav'):
+            obj.exclude_from_nav = self.exclude == 'yes'
+
     def action(self, obj):
-        if self.effectiveDate:
-            obj.setEffectiveDate(DateTime(self.effectiveDate))
-        if self.expirationDate:
-            obj.setExpirationDate(DateTime(self.expirationDate))
-        if self.copyright:
-            obj.setRights(self.copyright)
-        if self.contributors:
-            obj.setContributors([c['id'] for c in self.contributors])
-        if self.creators:
-            obj.setCreators([c['id'] for c in self.creators])
-        if self.exclude:
-            obj.setExcludeFromNav(self.exclude == 'yes')
+        if IDexterityContent.providedBy(obj):
+            self.dx_action(obj)
+        else:
+            if self.effectiveDate:
+                obj.setEffectiveDate(DateTime(self.effectiveDate))
+            if self.expirationDate:
+                obj.setExpirationDate(DateTime(self.expirationDate))
+            if self.copyright:
+                obj.setRights(self.copyright)
+            if self.contributors:
+                obj.setContributors([c['id'] for c in self.contributors])
+            if self.creators:
+                obj.setCreators([c['id'] for c in self.creators])
+            if self.exclude:
+                obj.setExcludeFromNav(self.exclude == 'yes')
         obj.reindexObject()
 
 
