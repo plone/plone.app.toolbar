@@ -7,8 +7,8 @@ addons:
     - access_key: $SAUCE_ACCESS_KEY
 install:
   - mkdir -p buildout-cache/downloads
-  - python bootstrap.py -c travis.cfg
-  - bin/buildout -N -t 3 -c travis.cfg
+  - python bootstrap.py -c travis.cfg -v 1.7.1
+  - bin/buildout -N -t 15 -c travis.cfg
 script:
   - if [ "$BROWSER" != "code-analysis" ]; then export ROBOT_DESIRED_CAPABILITIES="$BROWSER,tunnel-identifier:$TRAVIS_JOB_NUMBER"; fi
   - if [ "$BROWSER" != "code-analysis" ]; then bin/test -vvv --all; fi

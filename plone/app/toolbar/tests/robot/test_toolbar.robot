@@ -217,6 +217,6 @@ Personal actions dropdown should open on click
     Wait Until Keyword Succeeds  3  5  Current Frame Contains  State:
 
     Element Should Not Be Visible  id=plone-personal-actions-logout
-    Click Element  xpath=id('plone-personal-actions')/a
+    Click Element  xpath=id('plone-personalactions')/a
 
     Element Should Be Visible  id=plone-personal-actions-logout
