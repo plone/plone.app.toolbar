@@ -76,7 +76,7 @@ class FolderContentsView(BrowserView):
                     'url': base_url + '/@@fc-rename'
                 }]
             },
-            'sort': {
+            'rearrange': {
                 'properties': {
                     'id': 'ID',
                     'sortable_title': 'Title',
@@ -85,7 +85,7 @@ class FolderContentsView(BrowserView):
                     'effective': 'Publication Date',
                     'Type': 'Type'
                 },
-                'url': '%s{path}/@@fc-sort' % base_url
+                'url': '%s{path}/@@fc-rearrange' % base_url
             },
             'basePath': '/' + '/'.join(context_path[len(site_path):]),
             'useTus': TUS_ENABLED
@@ -495,7 +495,7 @@ def getOrdering(context):
         return ordering
 
 
-class Sort(FolderContentsActionView):
+class Rearrange(FolderContentsActionView):
     def __call__(self):
         self.protect()
         self.errors = []
@@ -505,11 +505,11 @@ class Sort(FolderContentsActionView):
             brains = catalog(path={
                 'query': '/'.join(self.context.getPhysicalPath()),
                 'depth': 1
-            }, sort_on=self.request.form.get('sort_on'))
+            }, sort_on=self.request.form.get('rearrange_on'))
             if self.request.form.get('reversed') == 'true':
                 brains = [b for b in reversed(brains)]
             for idx, brain in enumerate(brains):
                 ordering.moveObjectToPosition(brain.id, idx)
         else:
-            self.errors.append(u'cannot sort folder')
+            self.errors.append(u'cannot rearrange folder')
         return self.message()
