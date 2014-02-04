@@ -55,6 +55,7 @@ setup(
             'plone.app.testing',
             'plone.testing',
             'zope.configuration',
+            'plone.app.contenttypes'
         ],
     },
     entry_points="""
