@@ -102,6 +102,11 @@
       layer=".interfaces.IToolbarLayer"
       />
 
+  <browser:resource
+      name="plone.app.toolbar_init.js"
+      file="static/toolbar_init.min.js"
+      />
+
   <configure zcml:condition="installed mockup">
       <browser:resource
           name="plone.app.toolbar_init.css"
@@ -112,10 +117,6 @@
           name="plone.app.toolbar.css"
           file="static/toolbar.css"
           layer=".interfaces.IToolbarLayer"
-          />
-      <browser:resource
-          name="plone.app.toolbar_init.js"
-          file="static/toolbar_init.js"
           />
       <browser:resource
           name="plone.app.toolbar.js"
@@ -133,15 +134,6 @@
       <browser:resource
           name="plone.app.toolbar.css"
           file="static/toolbar.min.css"
-          layer=".interfaces.IToolbarLayer"
-          />
-      <browser:resource
-          name="plone.app.toolbar_init.js"
-          file="static/toolbar_init.min.js"
-          />
-      <browser:resource
-          name="plone.app.toolbar.js"
-          file="static/toolbar.min.js"
           layer=".interfaces.IToolbarLayer"
           />
   </configure>
