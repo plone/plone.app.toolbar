@@ -77,7 +77,7 @@
                 class string:toolbar-dropdown ${item/klass|nothing};
                 id item/id|nothing;">
 
-            <a href="#" 
+            <a href="#"
                tal:attributes="
                   href item/action;
                   target item/link_target|nothing;">
