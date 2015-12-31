@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.5.0dev'
+version = '1.5.0.dev0'
 
 setup(
     name='plone.app.toolbar',
